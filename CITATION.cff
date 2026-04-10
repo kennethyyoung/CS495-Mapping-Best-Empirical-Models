@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+title: "CS495 Nebulous Future"
+authors:
+
+    family-names: Young
+    given-names: Kenneth
+    date-released: 2026
+    version: 1.0.0
+    license: MIT
