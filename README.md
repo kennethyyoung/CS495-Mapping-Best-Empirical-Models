@@ -1,4 +1,4 @@
-# 📌 CS495-Nebulous-Future (TBD)
+# 📌 Mapping Best Empirical Models: A Meta-Analysis of Winning ML Solutions
 
 ## 📖 Project Description
 *To be determined.*
