@@ -8,15 +8,17 @@
 
 ### Description
 
-A systematic meta-analysis of first-place solutions across Kaggle tabular competitions, focused on identifying the preprocessing and feature engineering decisions that separate winning solutions from the rest. The study collects structured data from winning notebooks and writeups, encodes key pipeline decisions into a dataset, and synthesizes findings into an empirically-grounded decision flowchart for tabular ML pipelines.
+A systematic meta-analysis of top-finishing solutions across Kaggle tabular competitions, focused on identifying the preprocessing and feature engineering decisions that separate winning solutions from the rest. The study collects structured data from winning notebooks and writeups, encodes key pipeline decisions into a dataset, and synthesizes findings into an empirically-grounded decision flowchart for tabular ML pipelines.
 
-The analysis is scoped to tabular competitions where tree-based models (XGBoost, LightGBM, CatBoost) are the primary or dominant model family. Competitions are sourced from both monetized (Featured) and non-monetized (Playground Series) categories on Kaggle, with `is_monetized` tracked as a covariate so both pools can be analyzed separately or together.
+The unit of analysis is one solution per competition: whichever of the top-3 finishers has the most complete writeup (`writeup_detail` score). `finish_rank` (1/2/3) is tracked as a covariate. This reduces selection bias from writeup availability without increasing data collection workload.
+
+The analysis is scoped to Playground Series seasons 3–5 (Jan 2023–present) and Featured competitions from 2022 onward, where tree-based models (XGBoost, LightGBM, CatBoost) are the primary or dominant model family. Competitions are sourced from both monetized (Featured) and non-monetized (Playground Series) categories on Kaggle, with `is_monetized` tracked as a covariate so both pools can be analyzed separately or together. `n_teams` (number of competing teams) is tracked as a covariate to account for differences in competitive intensity.
 
 ### Objectives
 
-- Build a structured dataset of winning competition solutions with ~30+ entries
-- Identify which preprocessing and feature engineering decisions (encoding strategy, missing data handling, outlier treatment, etc.) are most consistently associated with winning
-- Produce a decision flowchart that maps dataset characteristics → recommended pipeline decisions, backed by empirical evidence
+- Build a structured dataset of top-finishing competition solutions with ~30+ entries (one per competition, best-documented of top-3)
+- Identify which preprocessing and feature engineering decisions (encoding strategy, missing data handling, outlier treatment, etc.) are most consistently associated with winning, using frequency tables and conditional cross-tabulations
+- Produce a decision flowchart covering 2–3 key decision nodes (encoding strategy, CV strategy, missing data handling) that maps dataset characteristics → recommended pipeline decisions, backed by empirical evidence
 - Validate the flowchart by replicating it on a held-out competition and measuring performance
 
 ---
@@ -98,7 +100,7 @@ kaggle-meta-analysis/
 
 **`kaggle_meta_analysis.xlsx`** — The core dataset. Three sheets: `Competition Data` (entry form), `Codebook` (allowed values), `Example (s5e12)` (reference row). Each row is one competition, each column is a schema variable.
 
-**`03_flowchart_logic.ipynb`** — Reads the completed dataset and derives decision rules. Likely implemented as a Decision Tree classifier where the target is encoding strategy or FE technique, and the features are dataset characteristics.
+**`03_flowchart_logic.ipynb`** — Reads the completed dataset and derives decision rules via conditional frequency tables and cross-tabulations (e.g., encoding choice grouped by cardinality + target type). Flowchart rules are extracted by inspection of these distributions, not by fitting a model on the dataset.
 
 ---
 
@@ -109,11 +111,12 @@ kaggle-meta-analysis/
 - [x] Build Kaggle API scraper to pre-filter tabular competitions
 - [x] Create Excel data collection template with codebook
 - [x] Establish inclusion/exclusion criteria (tree-based primary model, no time series)
-- [ ] Finalize variable list (confirm `distribution_shift`, `feature_type_dominant`, `rare_class_handling`)
-- [ ] Decide on cross-sectional only vs. mixed scope
+- [ ] Finalize variable list (confirm `distribution_shift`, `feature_type_dominant`, `rare_class_handling`, `finish_rank`, `n_teams`)
+- [x] Decide on cross-sectional only vs. mixed scope — **cross-sectional only confirmed**
+- [ ] Confirm competition scope: PS3–PS5 + Featured 2022+ (update scraper filter accordingly)
 
 ### Phase 2: Data Collection
-- [ ] Identify 30+ candidate competitions from shortlist
+- [x] Identify 30+ candidate competitions from shortlist — **46 candidates remain after tabular + time series screening**
 - [ ] Prioritize `writeup_detail = 3` entries (GitHub repo linked)
 - [ ] Collect 10 monetized competition entries
 - [ ] Collect 20+ playground series entries
@@ -130,9 +133,9 @@ kaggle-meta-analysis/
 - [ ] Correlation analysis: `writeup_detail` vs. completeness of fields
 
 ### Phase 4: Flowchart Construction
-- [ ] Define decision nodes (dataset characteristics → pipeline choice)
-- [ ] Fit decision tree on dataset to extract empirical rules
-- [ ] Draft flowchart covering: missing data → encoding → FE → CV strategy
+- [ ] Define 2–3 decision nodes (encoding strategy, CV strategy, missing data handling)
+- [ ] Extract rules from conditional frequency tables (e.g., encoding choice given cardinality + target type)
+- [ ] Draft flowchart covering: missing data → encoding → CV strategy
 - [ ] Validate logic against collected entries (does the flowchart match what winners did?)
 - [ ] Export as clean visual (Graphviz or draw.io)
 
@@ -160,9 +163,10 @@ kaggle-meta-analysis/
 - Structured coding schema with controlled vocabularies (see Codebook sheet)
 
 ### Analysis Techniques
-- Frequency and cross-tabulation analysis (pandas)
-- Decision Tree (scikit-learn) to extract empirical flowchart rules from dataset
+- Frequency tables and conditional cross-tabulations (pandas `groupby` / `crosstab`)
+- Chi-square tests where cell counts allow (n ≥ 5 per cell)
 - Sensitivity analysis: does the flowchart change with monetized-only entries?
+- `finish_rank` and `n_teams` as covariates to check whether findings hold across competitive intensity
 
 ### Replication Pipeline (Flowchart Validation)
 Following the empirically-derived flowchart:
@@ -210,9 +214,10 @@ Following the empirically-derived flowchart:
 A competition is included if:
 1. Data type is tabular (not image, audio, NLP, or pure graph)
 2. Time series / forecasting competitions are **excluded**
-3. The winning or top solution uses a tree-based model (XGBoost / LightGBM / CatBoost) as primary or significant ensemble component
-4. Competition ended 2021 or later
-5. At least a partial writeup exists (`writeup_detail ≥ 1`)
+3. Multi-table competitions are **excluded** unless the winning solution joins all tables into a single flat file before modeling
+4. The selected solution (best-documented of top-3 finishers) uses a tree-based model (XGBoost / LightGBM / CatBoost) as primary or significant ensemble component
+5. Competition is Playground Series season 3–5, or a Featured/Research competition that ended 2022 or later
+6. At least a partial writeup exists (`writeup_detail ≥ 1`)
 
 ---
 
@@ -221,7 +226,7 @@ A competition is included if:
 ### Dataset Validity
 - **Codebook compliance:** all categorical fields use only allowed values; script flags violations
 - **Completeness check:** flag any entry with > 40% `not described` fields — deprioritize in analysis
-- **Inter-rater check:** re-code 5 entries independently and compare to catch subjective coding drift
+- **Inter-rater check:** solo project — use Claude as second reviewer for candidate curation; for dataset coding, self-audit a random 20% sample after a 1-week gap to check consistency
 
 ### Flowchart Logic
 - **Coverage test:** does the flowchart produce a recommendation for every entry in the dataset?
