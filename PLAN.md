@@ -111,18 +111,19 @@ kaggle-meta-analysis/
 - [x] Build Kaggle API scraper to pre-filter tabular competitions
 - [x] Create Excel data collection template with codebook
 - [x] Establish inclusion/exclusion criteria (tree-based primary model, no time series)
-- [ ] Finalize variable list (confirm `distribution_shift`, `feature_type_dominant`, `rare_class_handling`, `finish_rank`, `n_teams`)
+- [x] Finalize variable list (confirmed: `distribution_shift`, `feature_type_dominant`, `finish_rank`, `n_teams`, `models_used`, `best_single_model`, `hyperparameter_tuning`, `original_data_usage`)
 - [x] Decide on cross-sectional only vs. mixed scope — **cross-sectional only confirmed**
-- [ ] Confirm competition scope: PS3–PS5 + Featured 2022+ (update scraper filter accordingly)
+- [x] Confirm competition scope: PS3–PS5 + Featured 2022+ (46 candidates after screening)
 
 ### Phase 2: Data Collection
 - [x] Identify 30+ candidate competitions from shortlist — **46 candidates remain after tabular + time series screening**
-- [ ] Prioritize `writeup_detail = 3` entries (GitHub repo linked)
-- [ ] Collect 10 monetized competition entries
-- [ ] Collect 20+ playground series entries
-- [ ] Fill all schema fields per entry; mark `not described` honestly
-- [ ] Score `writeup_detail` (1/2/3) for each entry
-- [ ] Flag entries with `distribution_shift = TRUE`
+- [x] Prioritize `writeup_detail = 3` entries (GitHub repo linked)
+- [ ] Collect 10 monetized competition entries — **1 collected (ICR); Featured comps have sparse writeups; deprioritized**
+- [x] Collect 20+ playground series entries — **33 Playground Series entries collected**
+- [x] Fill all schema fields per entry; mark `not described` honestly — **35 entries coded**
+- [x] Score `writeup_detail` (1/2/3) for each entry
+- [x] Flag entries with `distribution_shift = TRUE`
+- [ ] Code exploration pass: review notebooks for `writeup_detail = 3` entries (~14) to backfill `missing_data_strategy`, `encoding_strategy`, `scaling`, `outlier_treatment`
 
 ### Phase 3: EDA & Analysis
 - [ ] Summary statistics on collected dataset
