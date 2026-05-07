@@ -28,11 +28,9 @@ The analysis is scoped to Playground Series seasons 3–5 (Jan 2023–present) a
 ### Requirements
 
 - Python 3.13
-- Miniforge (conda) for environment management
-- Virtual environment or conda env
+- Poetry for environment and dependency management
 
-
-### Core Dependencies (`requirements.txt`)
+### Core Dependencies (`pyproject.toml`)
 
 ```
 kaggle
@@ -76,8 +74,10 @@ kaggle-meta-analysis/
 │
 ├── scripts/
 │   ├── kaggle_scraper_v2.py        # Competition discovery & pre-filtering
-│   ├── parse_notebook.py           # Extract schema fields from .ipynb files
-│   └── build_dataset.py            # Compile all entries into final dataset
+│   ├── classify_candidates.py      # Adds keep/exclude/verify labels to candidate shortlist
+│   ├── fetch_solutions.py          # Scrapes writeup text & downloads top notebooks into data/raw/
+│   ├── write_entries.py            # Writes hand-coded entries into kaggle_meta_analysis.xlsx
+│   └── build_bar_plots.py          # Generates EDA bar plots from dataset
 │
 ├── notebooks/
 │   ├── 01_eda.ipynb                # Exploratory analysis of collected dataset
@@ -91,7 +91,7 @@ kaggle-meta-analysis/
 │   └── report/                     # Final writeup
 │
 ├── PLAN.md
-├── requirements.txt
+├── pyproject.toml
 └── README.md
 ```
 
@@ -159,9 +159,11 @@ kaggle-meta-analysis/
 ## Methods & Models
 
 ### Data Collection
-- Kaggle API (`kaggle` Python package) for competition metadata
-- Manual extraction from `.ipynb` notebooks and GitHub repos
-- Structured coding schema with controlled vocabularies (see Codebook sheet)
+1. `kaggle_scraper_v2.py` — pulls competition metadata via Kaggle API into `kaggle_candidates_v2.xlsx`
+2. `classify_candidates.py` — labels each candidate keep/exclude/verify based on tabular + time-series screen
+3. `fetch_solutions.py` — scrapes top-voted discussion topics for solution writeups, downloads top notebooks via Kaggle kernels API, saves everything to `data/raw/{competition_ref}/`
+4. Manual review — read downloaded writeups and notebooks; hand-code schema fields
+5. `write_entries.py` — writes completed hand-coded entries into `kaggle_meta_analysis.xlsx`
 
 ### Analysis Techniques
 - Frequency tables and conditional cross-tabulations (pandas `groupby` / `crosstab`)
@@ -174,7 +176,7 @@ Following the empirically-derived flowchart:
 - **Missing data:** strategy determined by `data_type` and `pct_missing`
 - **Encoding:** OHE vs. target encoding vs. embeddings determined by cardinality and `feature_type_dominant`
 - **Rare class handling:** frequency threshold (e.g., < 200 observations → `rare_class`)
-- **Scaling:** rank transform for tree-based models, standard for linear
+- **Scaling:** rank transform for tree-based models, StandardScaler for linear
 - **CV strategy:** stratified k-fold baseline; post-cutoff if distribution shift detected
 - **Primary model:** LightGBM or XGBoost baseline; CatBoost if high-cardinality categoricals
 - **Ensemble:** hill climbing → stacking (Ridge or Logistic Regression on OOF)
@@ -216,7 +218,7 @@ A competition is included if:
 1. Data type is tabular (not image, audio, NLP, or pure graph)
 2. Time series / forecasting competitions are **excluded**
 3. Multi-table competitions are **excluded** unless the winning solution joins all tables into a single flat file before modeling
-4. The selected solution (best-documented of top-3 finishers) uses a tree-based model (XGBoost / LightGBM / CatBoost) as primary or significant ensemble component
+4. The selected solution (best-documented of top-3 finishers) uses a tree-based model (XGBoost / LightGBM / CatBoost) as primary or significant ensemble component, OR uses a neural network as primary model — NN-winning solutions are in scope because model selection (tree vs. NN vs. ensemble) is itself a flowchart decision node
 5. Competition is Playground Series season 3–5, or a Featured/Research competition that ended 2022 or later
 6. At least a partial writeup exists (`writeup_detail ≥ 1`)
 
