@@ -7,7 +7,7 @@ api.authenticate()
 BASE = Path(r"C:\Users\Nebi\Documents\capstone\CS495-Mapping-Best-Empirical-Models\data\writeups")
 
 notebooks = [
-    ("kirill0212/ps6e4-ensemble-cv-0-98155", BASE / "playground-series-s6e4"),
+    ("room722/icr-adv-model", BASE / "icr-identify-age-related-conditions"),
 ]
 
 for ref, out in notebooks:
