@@ -1,0 +1,818 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification with a Software Defects Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e23>
+      o
+
+        #2 Solution | 8 Models Ensemble
+
+        <https://www.kaggle.com/competitions/playground-series-s3e23/
+        writeups/oscar-aguilar-2-solution-8-models-ensemble>
+      o
+
+        Regression with a Wild Blueberry Yield Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e14>
+      o
+
+        [PS S3E14, 2023] First place winning solution
+
+        <https://www.kaggle.com/code/sergiosaharovskiy/ps-s3e14-2023-
+        first-place-winning-solution>
+      o
+
+        1# Winning solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e14/
+        writeups/sergey-saharovskiy-1-winning-solution>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+#2 Solution | 8 Models Ensemble — Binary Classification with a Software
+Defects Dataset
+
+
+  #2 Solution | 8 Models Ensemble
+
+Binary Classification with a Software Defects Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e23>
+
+Solution Writeup · 2nd place
+
+First of all, I would like to start with a big thank you to Kaggle for
+running this episode of the playground series. In this post, I will
+briefly explain my approach, which most of it can be found in my
+notebook <https://www.kaggle.com/code/oscarm524/ps-s3-ep23-eda-modeling-
+submission>.
+
+
+    Pre-processing
+
+Initially, I modeled the data without any transformation, which produce
+a descent CV and LB score (about 0.793 CV score and 0.790 LB score).
+Then, I |log-transform| all of the input features as suggested by
+@ambrosm <https://www.kaggle.com/ambrosm> in this post <https://
+www.kaggle.com/competitions/playground-series-s3e23/discussion/445015>.
+The surprising factor here was that there was a small improvement in
+model performance in most of the tree-based and boosted-tree models that
+I considered after the inputs were |log-transformed|.
+
+
+    Models & Ensemble
+
+In my notebook <https://www.kaggle.com/code/oscarm524/ps-s3-ep23-eda-
+modeling-submission>, I trained the following models:
+
+  * Random Forest
+  * Extra Trees
+  * HistGradientBoosting
+  * LightGBM
+  * XGBoost
+  * CatBoost
+
+I ensemble those six models with hill climbing ensemble <https://
+www.kaggle.com/competitions/playground-series-s3e23/discussion/444784>,
+which gave me a 0.7907 LB score as shown below.
+
+Then, in order to increase the diversity of the ensemble, I ensemble the
+hill climbing ensemble (of the six tree-based models) with the |Nyström
+LogisticRegression| model presented in this notebook <https://
+www.kaggle.com/code/ambrosm/pss3e23-eda-which-makes-sense#A-few-models>.
+This boost my LB score from 0.7907 to 0.79099 as shown below.
+
+Finally, I decided to include neural network model to the ensemble,
+which was inspired this notebook <https://www.kaggle.com/code/
+sauravpandey11/simple-ann-based-solution> from @sauravpandey11 <https://
+www.kaggle.com/sauravpandey11>. This boost my LB score from 0.79099 to
+0.79101 as shown below.
+
+Unfortunately, I did not select the above submission. I decided to
+select another another ensemble that had a slightly higher LB score.
+
+
+    What did not work
+
+I tried a few different things:
+
+  *
+
+    Initially I tried |PCA| as a way to reduce the number of input
+    features to help reduce the model building time. In my notebook, I
+    highlighted that 10 components explain more than 99% of the
+    variability of the data. However, using |PCA| instead of the |log-
+    tranform| features did not help with model performance.
+
+  *
+
+    I also tried |t-SNE| to see if there was a way to separate the two
+    classes but it did not help.
+
+  *
+
+    I also tried clustering as presented in my notebook. But it failed.
+    I even tried target encoding with the clusters but there no
+    improvement in model performance.
+
+
+    Conclusion
+
+In this comp, ensemble and model diversity were the key to victory!
+
+Author
+
+<https://www.kaggle.com/oscarm524>
+Oscar Aguilar <https://www.kaggle.com/oscarm524>
+
+oscarm524
+
+arrow_drop_up
+
+95
+
+Share
+
+more_horiz
+
+thankYou3
+add_reaction
+
+comment
+
+
+    42 Comments
+
+8 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s3e23/writeups/oscar-aguilar-2-solution-8-models-
+ensemble#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/mateiia>
+
+
+      iMatei
+
+<https://www.kaggle.com/mateiia>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations and thanks for sharing the insights!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/savemay>
+
+
+      SaverioMaggese
+
+<https://www.kaggle.com/savemay>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/priyavarshinigr>
+
+
+      Priyavarshini G R
+
+<https://www.kaggle.com/priyavarshinigr>
+
+Posted 3 years ago
+
+· 1692nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/davidadelg>
+
+
+      DavidAdelG
+
+<https://www.kaggle.com/davidadelg>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/armiinjp>
+
+
+      ArmiinJP
+
+<https://www.kaggle.com/armiinjp>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations and thank you for sharing your insight
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/utkarshchaudharycse>
+
+
+      Utkarsh Chaudhary
+
+<https://www.kaggle.com/utkarshchaudharycse>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on your achievement. Great work Oscar
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pranavk27>
+
+
+      ML_Magic
+
+<https://www.kaggle.com/pranavk27>
+
+Posted 3 years ago
+
+· 558th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congreatulations
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samuelcortinhas>
+
+
+      Samuel Cortinhas
+
+<https://www.kaggle.com/samuelcortinhas>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations Oscar, nice job!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tazibahmed>
+
+
+      tazib ahmed
+
+<https://www.kaggle.com/tazibahmed>
+
+Posted 3 years ago
+
+· 1226th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations and thank you for sharing your insight
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gizachewalemu>
+
+
+      Gizachew Alemu
+
+<https://www.kaggle.com/gizachewalemu>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulation on your position and thank you for sharing.
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/ucas0v0zhuoqunli>
+
+
+      Zhuoqun Li
+
+<https://www.kaggle.com/ucas0v0zhuoqunli>
+
+Posted 3 years ago
+
+· 264th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great Job!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mpwolke>
+
+
+      Marília Prata
+
+<https://www.kaggle.com/mpwolke>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+A huge congratulations Aguilar for your 2nd position on this competition!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/felipegonzalezurrego>
+
+
+      Felipe Gonzalez Urrego
+
+<https://www.kaggle.com/felipegonzalezurrego>
+
+Posted 3 years ago
+
+· 623rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulation and thanks, I forgot to log-transform the data.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ericexason>
+
+
+      Eric Exason
+
+<https://www.kaggle.com/ericexason>
+
+Posted 3 years ago
+
+· 257th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very well done, thank you for sharing and congratulation! Nice and clean.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/vensunmode>
+
+
+      Modekurthy Venkata Surya Sunil
+
+<https://www.kaggle.com/vensunmode>
+
+Posted 3 years ago
+
+· 627th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats @oscarm524 <https://www.kaggle.com/oscarm524>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sun9sun9>
+
+
+      sun9sun9
+
+<https://www.kaggle.com/sun9sun9>
+
+Posted 3 years ago
+
+· 314th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Thank you for sharing your solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/edmondkirsch>
+
+
+      Edmond Kirsch
+
+<https://www.kaggle.com/edmondkirsch>
+
+Posted 3 years ago
+
+· 80th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you for sharing solution with us. Keep it up
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+
+Posted 3 years ago
+
+· 161st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @oscarm524 <https://www.kaggle.com/oscarm524> !
+
+I regret not having tried Hill Climbing until two days ago.
+
+Your public notebook was a very good starter, and your final result is
+fantastic !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/xpehutta>
+
+
+      Nikolay Abramov
+
+<https://www.kaggle.com/xpehutta>
+
+Posted 3 years ago
+
+· 574th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Well done!!! I will scrutinize your work - it is drop-dead gorgeous
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/georgecheng97>
+
+
+      GeorgeCheng97
+
+<https://www.kaggle.com/georgecheng97>
+
+Posted 3 years ago
+
+· 31st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, I am reading your shared notebook and that’s insightful!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kerrysun>
+
+
+      kerry sun
+
+<https://www.kaggle.com/kerrysun>
+
+Posted 3 years ago
+
+· 87th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, i learn a lot of skill from your notebook and
+discussion Include「Sometimes more is better」. Big thanks
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bwandowando>
+
+
+      BwandoWando
+
+<https://www.kaggle.com/bwandowando>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Oh wow! Congratulations for placing very high and performing amazingly
+well @oscarm524 <https://www.kaggle.com/oscarm524> !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/luistalavera>
+
+
+      Luis Talavera
+
+<https://www.kaggle.com/luistalavera>
+
+Posted 3 years ago
+
+· 785th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations. Thanks for sharing your findings :D
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/robikiso>
+
+
+      Kaggler
+
+<https://www.kaggle.com/robikiso>
+
+Posted 2 years ago
+
+· 1602nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulation and thank you for your share. I learnt a lot from you.
+You lead me to new vision to machine learning.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/alpimarc>
+
+
+      alpimarc
+
+<https://www.kaggle.com/alpimarc>
+
+Posted 3 years ago
+
+· 1316th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulation and thank you for your share and explanations. I tried
+your Hill climbing implementation with the s3e24 and it gives me good
+results :)
+
+replyReply
+add_reactionReact
+

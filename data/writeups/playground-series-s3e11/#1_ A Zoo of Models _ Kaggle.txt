@@ -1,0 +1,815 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Regression with a Tabular Media Campaign Cost Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e11>
+      o
+
+        #1: A Zoo of Models
+
+        <https://www.kaggle.com/competitions/playground-series-s3e11/
+        writeups/ambrosm-1-a-zoo-of-models>
+      o
+
+        Binary Classification with a Tabular Kidney Stone Prediction Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e12>
+      o
+
+        Regression with a Crab Age Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e16>
+      o
+
+        PlaygroundS3E16|EDA|Baseline
+
+        <https://www.kaggle.com/code/ravi20076/playgrounds3e16-eda-baseline>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+#1: A Zoo of Models — Regression with a Tabular Media Campaign Cost Dataset
+
+
+  #1: A Zoo of Models
+
+Regression with a Tabular Media Campaign Cost Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e11>
+
+Solution Writeup · 1st place
+
+My solution is based on the following observations:
+
+ 1. Only a subset of the features is useful, although it's not
+    completely clear which features belong to the subset. Being in doubt
+    which subset is the right one, we can make models for different
+    feature subsets and blend them.
+ 2. After feature selection, there are lots of duplicates in the
+    training data. We can reduce training time by grouping these
+    duplicates. Training with 3000 groups rather than 360'000 samples
+    speeds up the development cycle massively.
+ 3. If we add the original data to the training dataset, the score improves.
+ 4. |store_sqft|, which has only twenty unique values, looks like a
+    numerical feature, but it is categorical.
+ 5. As most regression algorithms in the library have been developed to
+    optimize rmse, we should make all models predict the transformed
+    target |log1p(cost)| and submit |expm1(pred)|.
+ 6. A "zoo of models", i.e. a diverse ensemble, averages out the
+    prediction errors of the models.
+ 7. Training and test data adhere to the same distribution so that we
+    may trust the cv scores completely.
+
+Point 4 is illustrated by the following diagram. The partial dependency
+plot for |store_sqft| doesn't look like a typical regression curve - it
+looks like a categorical feature which has been mistaken for a
+continuous one. This observation suggests that we might one-hot encode
+or target-encode the feature.
+
+dependence
+
+The diversity of the model zoo can be analyzed with a dendrogram. The
+dendrogram represents a hierachical clustering of the models where
+similar models end up in the same cluster. We can easily identify four
+clusters:
+
+ 1. four models which were trained with the additional |unit_sales| or |
+    store_sales| feature
+ 2. all random forests and extra-trees models
+ 3. the neural network
+ 4. all gradient-boosting models
+
+dendrogram
+
+The bar chart shows the cv scores and training times of all models and
+ensembles. The final submission is a weighted blend of all 18 models
+with the weights determined by ridge regression.
+
+bar chart
+
+More details can be found in the source code <https://www.kaggle.com/
+code/ambrosm/pss3e11-zoo-of-models>.
+
+Author
+
+<https://www.kaggle.com/ambrosm>
+AmbrosM <https://www.kaggle.com/ambrosm>
+
+ambrosm
+
+arrow_drop_up
+
+90
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    24 Comments
+
+4 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s3e11/writeups/ambrosm-1-a-zoo-of-models#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+
+      SSS
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+Posted 3 years ago
+
+· 14th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+@ambrosm <https://www.kaggle.com/ambrosm> well done, at very end I was
+convinced you used ET, so I did, though I again screwed the final pick
+up. Warm_start ET was given the boost:
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/janmpia>
+
+
+      JEANMPIA
+
+<https://www.kaggle.com/janmpia>
+
+Posted 3 years ago
+
+· 17th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+hey @sergiosaharovskiy <https://www.kaggle.com/sergiosaharovskiy>, you
+beat us again !
+you mind explaining briefly what ET is ?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+
+      SSS
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+Posted 3 years ago
+
+· 14th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@janmpia <https://www.kaggle.com/janmpia> I beat myself again, answering
+your question ExtraTreesRegressor <https://scikit-learn.org/stable/
+modules/generated/sklearn.ensemble.ExtraTreesRegressor.html>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ambrosm>
+
+
+      AmbrosM
+
+<https://www.kaggle.com/ambrosm>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+@sergiosaharovskiy <https://www.kaggle.com/sergiosaharovskiy> Yes, I
+know that feeling after having selected the wrong submissions. Your
+record submission count of 71 in 14 days suggests that the public
+leaderboard might have distracted you from optimizing the cross-
+validation scores…
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+
+      SSS
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+Posted 3 years ago
+
+· 14th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+@ambrosm <https://www.kaggle.com/ambrosm> that’s true, I contaminated
+the overall thing. My cv was really good and approach was really solid,
+we are talking about .00002 in the end of the day ;)
+
+replyReply
+add_reactionReact
+
+4 more repliesarrow_drop_down
+
+Profile picture for Lucy
+Profile picture for ‎ Srihari
+Profile picture for A Legacy Grandmaster!
+
+<https://www.kaggle.com/mhogervo>
+
+
+      Matthijs Hogervorst
+
+<https://www.kaggle.com/mhogervo>
+
+Posted 3 years ago
+
+· 431st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Did you average over the predicted log1p(cost) of the different models,
+or over the exponentiated values?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ambrosm>
+
+
+      AmbrosM
+
+<https://www.kaggle.com/ambrosm>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+@mhogervo <https://www.kaggle.com/mhogervo> I averaged over the logs and
+exponentiated afterwards. See these lines at the end of https://
+www.kaggle.com/code/ambrosm/pss3e11-zoo-of-models <https://
+www.kaggle.com/code/ambrosm/pss3e11-zoo-of-models> :
+
+|def submit(test_preds, path):
+    ...
+    submission = pd.Series(np.expm1(test_preds), index=test.index, name='cost')
+    ...
+
+test_preds = optimum_blend.predict(test_preds)
+submit(test_preds, 'submission_weighted.csv')
+
+|
+content_copy
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cjywish>
+
+
+      ML_wishforall
+
+<https://www.kaggle.com/cjywish>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+That's a surprising piece of data. Thank you for comparing various
+combinations of ensemble. .. and Congratulation on winning #1
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tuckerlovell>
+
+
+      Tucker Lovell
+
+<https://www.kaggle.com/tuckerlovell>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing, congrats on your win!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mpwolke>
+
+
+      Marília Prata
+
+<https://www.kaggle.com/mpwolke>
+
+Posted 3 years ago
+
+· 182nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+That's a position (1st) that makes sense for you AmbrosM.
+Now, I'm updated with yours Zoo code.
+Congratulations for your first place!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/byelram>
+
+
+      Bob Yelram
+
+<https://www.kaggle.com/byelram>
+
+Posted 3 years ago
+
+· 270th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you for sharing this clean model comparison and clustering ! 🙏
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shoabahamed>
+
+
+      shoab ahamed
+
+<https://www.kaggle.com/shoabahamed>
+
+Posted 3 years ago
+
+· 45th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing I learned a lot of new things. Congratulation on winning
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jcaliz>
+
+
+      Jose Cáliz
+
+<https://www.kaggle.com/jcaliz>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Excellent post @ambrosm <https://www.kaggle.com/ambrosm>, thanks for all
+your inputs and congratulations on excelling another competition.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jeshuacn>
+
+
+      Jeshua Céspedes
+
+<https://www.kaggle.com/jeshuacn>
+
+Posted 3 years ago
+
+· 242nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you for sharing! This competition was enjoyable. I got to learn a
+lot!! Congrats! and keep up the good work!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/qiaoningchen>
+
+
+      Lucy
+
+<https://www.kaggle.com/qiaoningchen>
+
+Posted 3 years ago
+
+· 141st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@ambrosm <https://www.kaggle.com/ambrosm> Bravo! Wow, it is a very
+thorough work! Well deserved as always! I used the TargetEncode in the
+end which helped improve the model a bit. Thank you for your mentorship!
+Congratulations again!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/chaserendall>
+
+
+      Chase Rendall
+
+<https://www.kaggle.com/chaserendall>
+
+Posted 3 years ago
+
+· 18th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing! Congratulations on a well-deserved win.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ab2nour>
+
+
+      Abdenour Madani
+
+<https://www.kaggle.com/ab2nour>
+
+Posted 3 years ago
+
+· 318th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you very much for sharing your knowledge and solution!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/janmpia>
+
+
+      JEANMPIA
+
+<https://www.kaggle.com/janmpia>
+
+Posted 3 years ago
+
+· 17th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Always very interesting to know what you did !
+I was sure you used many models again, and you were able to do it thx to
+the duplicates removal, thats impressive.
+Learned something new again here !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ericka42>
+
+
+      Ericka42
+
+<https://www.kaggle.com/ericka42>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks for sharing I learned a lot of new things. Congratulation on winning!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tanvirliban>
+
+
+      Tanvir Ahmed
+
+<https://www.kaggle.com/tanvirliban>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+nice work!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jaggerstephens>
+
+
+      Jagger Stephens
+
+<https://www.kaggle.com/jaggerstephens>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you for this awesome write-up, and congrats on the win!!!
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+
+
+    Appreciation (4)
+
+<https://www.kaggle.com/haisei>
+
+
+      haisei
+
+<https://www.kaggle.com/haisei>
+
+Posted 3 years ago
+
+· 151st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing 😄
+
+<https://www.kaggle.com/arifhossain00>
+
+
+      Arif Hossain
+
+<https://www.kaggle.com/arifhossain00>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks for the sharing ….
+
+<https://www.kaggle.com/pragyanandsaho>
+
+
+      Pragyanand Sahoo
+
+<https://www.kaggle.com/pragyanandsaho>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks for the sharing ….
+
+<https://www.kaggle.com/tyrologist>
+
+
+      tyro logist
+
+<https://www.kaggle.com/tyrologist>
+
+Posted 3 years ago
+
+· 778th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you for sharing.
+

@@ -1,0 +1,1931 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Prediction of Poisonous Mushrooms
+
+        <https://www.kaggle.com/competitions/playground-series-s4e8>
+      o
+
+        [1st Place Solution AutoML Grand Prix] AutoML Grandmasters:
+        AutoGluon Distributed + Post-Hoc Ensembling
+
+        <https://www.kaggle.com/competitions/playground-series-s4e8/
+        writeups/automl-grandmasters-1st-place-solution-automl-gran>
+      o
+
+        1st Place Solution: 72 OOFs, a whole lotta Autogluon, and 31
+        scores of 0.98512 or above (on the private LB)
+
+        <https://www.kaggle.com/competitions/playground-series-s4e8/
+        writeups/optimistix-1st-place-solution-72-oofs-a-whole-lott>
+      o
+
+        Predicting the Beats-per-Minute of Songs
+
+        <https://www.kaggle.com/competitions/playground-series-s5e9>
+      o
+
+        Regression with an Abalone Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+[1st Place Solution AutoML Grand Prix] AutoML Grandmasters: AutoGluon
+Distributed + Post-Hoc Ensembling — Binary Prediction of Poisonous Mushrooms
+
+
+  [1st Place Solution AutoML Grand Prix] AutoML Grandmasters: AutoGluon
+  Distributed + Post-Hoc Ensembling
+
+Binary Prediction of Poisonous Mushrooms
+
+<https://www.kaggle.com/competitions/playground-series-s4e8>
+
+Solution Writeup · 3rd place · Aug 5, 2024
+
+Heyho everyone!
+
+Another exciting 24 hours of automatically fitting machine learning
+models! Kudos to all the competitors, and a shoutout to Team AGA, who
+gave us a run for our money with an early |0.98533| score that we spent
+the next 12 hours trying to beat. In the end, the winner was decided by
+a difference in score so small that Kaggle’s leaderboard doesn’t even
+visualize it, so we consider ourselves pretty lucky to have eeked it
+out. We detail our approach to the fourth Grand Prix in the following.
+
+But first, we would like to highlight that *the International Conference
+on Automated Machine Learning 2024 is is taking place in Paris from
+September 09. to 12.* (see https://2024.automl.cc/)
+<https://2024.automl.cc/)>! We are going to be at the conference and
+would be happy to meet other (Auto)ML enthusiasts from Kaggle at the
+conference :)
+
+------------------------------------------------------------------------
+
+
+    Overview Figure
+
+SolutionOverview
+
+------------------------------------------------------------------------
+
+
+    Summary
+
+We used AutoGluon <https://auto.gluon.ai/> as our AutoML system,
+installing via source on the latest mainline with tweaks to enable
+distributed computation (see below). With it, our approach to this
+competition can be summarized as follows:
+
+
+      Preprocessing
+
+ 1. We replaced noisy observations in the data. Nothing else improved
+    our offline cross-validation (CV) score.
+
+
+      Model Fitting
+
+We ran a default version of AutoGluon for one hour and a custom version
+of AutoGluon for four hours. For the custom version, we used the
+following settings:
+
+ 1. We used log loss as an early stopping metric while optimizing/
+    picking based on the target metric MCC. We are unsure if this
+    helped, but it improved our offline CV score.
+ 2. We used 16-fold cross-validation and AutoGluon’s multi-layer
+    stacking <https://auto.gluon.ai/dev/tutorials/tabular/how-it-
+    works.html> implementation.
+ 3. We trained a customized portfolio of models, meta-learned from
+    TabRepo <https://github.com/autogluon/tabrepo> (i.e., zero-shot HPO)
+ 4. We used 100 iterations (instead of the default 25) for /post hoc/
+    ensembling <https://arxiv.org/abs/2307.08364>.
+
+
+      Kaggle Tricks
+
+ 1. AutoGluon rounds to the first 6 decimals of the score when
+    determining tiebreakers during the final weighted ensemble. It turns
+    out that is too few for the deltas we were looking for, so we upped
+    it to 8 at the very end to eke out an epsilon improvement.
+ 2. We manually created a /post hoc/ ensembling logic for this
+    competition in an effort to go from |0.98531| to |0.98533|. We
+    cached all pred probas from all models on all experiments and then
+    ran the /post hoc/ ensembling for the final solution. This allowed
+    us to just barely leapfrog Team AGA!
+
+
+      Compute
+
+After the last competition, we felt the need to expand our computing
+power for these (very) large data competitions. Therefore, in addition
+to using an individual AWS compute instance, we put much effort into
+using AutoGluon distributed across compute nodes.
+
+ 1. We used a prototype of a distributed version of AutoGluon to
+    parallelize AutoGluon across compute resources.
+ 2. We used an in-house SLURM cluster (from the University of Freiburg)
+    together with Ray <https://docs.ray.io/en/latest/index.html> to
+    distribute AutoGluon’s model training across 1000 CPUs.
+
+------------------------------------------------------------------------
+
+
+    Code
+
+The supplementary code repository for this write-up can be found here:
+https://github.com/AutoML-Grandmasters/Fourth-AutoML-Grand-Prix/tree/
+main <https://github.com/AutoML-Grandmasters/Fourth-AutoML-Grand-Prix/
+tree/main>
+
+Our copy-able settings for the custom run of AutoGluon can be found in
+this file <https://github.com/AutoML-Grandmasters/Fourth-AutoML-Grand-
+Prix/blob/main/main.py>.
+
+
+      Preprocessing
+
+We used the following code to clean noisy observations that do not exist
+in the test predictions by setting them to nan.
+
+|import numpy as np
+import pandas as pd
+
+train_data = pd.read_csv("./train.csv")
+test_data = pd.read_csv("./test.csv")
+
+weird_columns = [
+    "cap-shape",
+    "cap-surface",
+    "cap-color",
+    "gill-attachment",
+    "gill-spacing",
+    "gill-color",
+    "veil-type",
+    "veil-color",
+    "has-ring",
+    "ring-type",
+    "spore-print-color",
+    "habitat",
+    "does-bruise-or-bleed",
+    "stem-root",
+    "stem-surface",
+    "stem-color",
+]
+
+for col in weird_columns:
+    allowed_vals = test_data[col].unique()
+    train_data.loc[~train_data[col].isin(allowed_vals), col] = np.nan
+    test_data.loc[~test_data[col].isin(allowed_vals), col] = np.nan
+
+|
+content_copy
+
+
+      Early Stopping Metric
+
+To early stop on |log_loss|, pass the following to AutoGluon’s fit call:
+|ag_args_fit={"stopping_metric": "log_loss"}|. This can sometimes help
+as early stopping on threshold-based metrics such as MCC can be too early.
+
+
+      Distributed AutoGluon & Compute
+
+Here is the current version of distributed AutoGluon: https://
+github.com/LennartPurucker/autogluon/tree/distributed_autogluon
+<https://github.com/LennartPurucker/autogluon/tree/distributed_autogluon>
+An example script with more details on how to use it can be found here:
+https://github.com/AutoML-Grandmasters/Fourth-AutoML-Grand-Prix/blob/
+main/autogluon_distributed_example.py <https://github.com/AutoML-
+Grandmasters/Fourth-AutoML-Grand-Prix/blob/main/
+autogluon_distributed_example.py>
+
+In our experience with it, it is mostly stable but has a few GPU-related
+problems that we hope to fix for the prototype. We plan to integrate a
+more mature version of this into mainline AutoGluon in the future (and
+are already working on it).
+
+We used 1000 CPUs spread across nodes with 20 or 32 Intel(R) Xeon(R)
+Gold 6242 CPUs @ 2.80GHz, each node with around 150 GB of RAM. The
+cluster is managed with SLURM <https://slurm.schedmd.com/
+documentation.html>, and we used Ray <https://docs.ray.io/en/latest/
+index.html> to create a sub-cluster that AutoGluon can (natively) use to
+fit models. To run AutoGluon distributed, only a Ray cluster is needed,
+which can be created on local compute, SLURM clusters, or cloud resources.
+
+Additionally, we used an AWS m7i.48xlarge EC2 instance with 192 vCPUs to
+run default AutoGluon.
+
+
+      Customized Portfolio
+
+To obtain a better portfolio than currently existing in AutoGluon, we
+re-ran the work of the TabRepo paper <https://arxiv.org/pdf/2311.02971>
+(to be presented at the AutoML conference), but use a portfolio of size
+200 instead of the 100 size portfolio used by AutoGluon’s best_quality
+setting. We also included more model families: Linear models and KNN,
+although some of those models we ended up disabling those since they
+weren’t helping and, at times, took a long time to infer.
+
+We additionally added configurations with larger |max_bin| values for
+LightGBM, XGBoost, and CatBoost. Moreover, we removed a set of
+configurations that we found to take too long to predict for large
+datasets. You can find the final portfolio in this file <https://
+github.com/AutoML-Grandmasters/Fourth-AutoML-Grand-Prix/blob/main/
+tabrepo_2024_custom.py>. We filtered the portfolio to models that were
+working well (see here <https://github.com/AutoML-Grandmasters/Fourth-
+AutoML-Grand-Prix/blob/main/main.py#L69-L84>).
+
+
+      More Iterations for Post Hoc Ensembling
+
+We wanted to find a better final post hoc ensemble by giving the greedy
+ensemble selection <https://dl.acm.org/doi/10.1145/1015330.1015432> in
+AutoGluon more iterations. Sadly, so far, there is no easy interface to
+increase this number. Thus, we simply monkey patched our local install
+of AutoGluon. To do so, one needs to set the value in this line
+<https://github.com/autogluon/autogluon/blob/master/core/src/autogluon/
+core/models/greedy_ensemble/greedy_weighted_ensemble_model.py#L22> to 100.
+
+
+      Kaggle Tricks
+
+  * To adjust the number of decimals for rounding, set the |
+    round_decimals| variable in
+    |
+    autogluon.core.models.greedy_ensemble.ensemble_selection.EnsembleSelection| Line 112 to |8| (see here <https://github.com/autogluon/autogluon/blob/f5c7b7400596e1449fad2b4107fde55809a09bac/core/src/autogluon/core/models/greedy_ensemble/ensemble_selection.py#L112> on GitHub).
+  * Our manual post hoc ensembling logic can be found in this file
+    <https://github.com/AutoML-Grandmasters/Fourth-AutoML-Grand-Prix/
+    blob/main/ag_post_hoc_ensembler.py>. It assumes that you have a
+    finished run of AutoGluon on disk (in our cases we used the default
+    one-hour run for this) and the following artfiacts from another run
+    of AutoGluon: a) the prediction probabilities <https://
+    auto.gluon.ai/stable/api/
+    autogluon.tabular.TabularPredictor.predict_proba.html> on test data,
+    b) the out-of-fold prediction probabilities <https://auto.gluon.ai/
+    stable/api/autogluon.tabular.TabularPredictor.predict_proba.html> on
+    training data, and c) predictions <https://auto.gluon.ai/stable/api/
+    autogluon.tabular.TabularPredictor.predict.html> on test data.
+
+------------------------------------------------------------------------
+
+Best regards,
+Lennart, Nick (@innixma), and Arjun (@neonkraft), on behalf of the
+"AutoML Grandmasters"
+
+Prior Grand Prix Competition Write-ups: First AutoML Grand Prix
+Competition <https://www.kaggle.com/competitions/playground-series-s4e5/
+discussion/500783>, Second AutoML Grand Prix Competition <https://
+www.kaggle.com/competitions/playground-series-s4e6/discussion/509631>,
+Third AutoML Grand Prix Competition <https://www.kaggle.com/
+competitions/playground-series-s4e7/discussion/516265>
+
+Authors
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Lennart Purucker <https://www.kaggle.com/lennartpuruckerisg>
+
+lennartpuruckerisg
+
+<https://www.kaggle.com/innixma>
+Nick Erickson <https://www.kaggle.com/innixma>
+
+innixma
+
+<https://www.kaggle.com/neonkraft>
+Arjun Krishnakumar <https://www.kaggle.com/neonkraft>
+
+neonkraft
+
+arrow_drop_up
+
+74
+
+Share
+
+more_horiz
+
+yay3love11
+add_reaction
+
+comment
+
+
+    46 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s4e8/writeups/automl-grandmasters-1st-place-solution-automl-
+gran#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/roberthatch>
+
+
+      Robert Hatch
+
+<https://www.kaggle.com/roberthatch>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+8
+
+more_vert
+
+Congrats, well done on first, and officially locking in a place in the
+top 5!
+
+I'll see your 1000 CPUs and raise you… Umm, Kaggle? A little help here?! 😆
+
+I thought I was handicapped with only 30 hours of GPU for a 24 hour
+competition but I guess I wasn't thinking big enough. ;)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thomasmeiner>
+
+
+      Thomas Meißner
+
+<https://www.kaggle.com/thomasmeiner>
+
+Posted 2 years ago
+
+· 1352nd in this Competition
+
+arrow_drop_up
+
+6
+
+more_vert
+
+For the next iteration Kaggle could set hard bounderies like:
+
+  * one submission only
+  * Kaggle Kernel allowed only
+    etc
+
+Or use smaller datasets such that the competition is less resource
+demanding.
+
+In a way this competition was unnecessarly big given the small original
+dataset size.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Agree!
+
+IMO, the dataset needs to be smaller as well to reduce the compute
+requirements for these competitions with AutoML.
+But only the training data! The synthetic test data could still be very
+large for the sake of good evaluation.
+
+Then, anyone could still quickly find a good model for the training data
+and we would not need to worry about random noise or lottery tickets for
+the test data. Assuming there is sufficient data such that transductive
+learning is not helpful.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/roberthatch>
+
+
+      Robert Hatch
+
+<https://www.kaggle.com/roberthatch>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Test data size has a semi-big impact too. Especially lightgbm, neural
+nets, and… AutoGluon. But 500k rows would probably be fine. They could
+have 100k test datasets with less variance than 2 million rows if they
+just avoid accuracy etc.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Probably the sweet spot is enough test data to not overfit using normal
+techniques, but not so much that public notebook blending doesn't
+overfit, since public notebook blending (by blindly weighting and
+probing public leaderboard) is something that should have a downside
+IMO, otherwise it can lead to overly messy solutions. Probably test data
+in the 100k - 1M range makes sense.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/anirudhdagar>
+
+
+      Anirudh Dagar
+
+<https://www.kaggle.com/anirudhdagar>
+
+Posted 2 years ago
+
+· 23rd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Congrats team AutoML Grandmasters! Indeed a lot of effort clearly to eek
+out the last bit of improvement, amazing!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Thank you! I look forward to your write-up on how you achieved this high
+performance without the post hoc ensembling tricks!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+This one was wild. We got a good score early on, but to get just a small
+improvement required 10x+ effort and some luck.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/roberthatch>
+
+
+      Robert Hatch
+
+<https://www.kaggle.com/roberthatch>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+8
+
+more_vert
+
+I officially hate accuracy and all such binary prediction metrics, lol.
+So painful to know that your advanced Frankenstein model ensemble can
+easily tell which mushrooms are 99% safe and which are 99.99% safe… and
+the world will never recognize your genius, lol. Unless the number
+happens to spit out higher because of the 0.01% borderline rows go your
+way.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Absolutely! ROC_AUC and log_loss are far better. I've read so many
+papers that use metrics like accuracy and f1 that lead to very
+confusing / misleading results. There are cases in business where a
+specific decision threshold matters a lot, but for research and general
+evaluation, metrics like ROC_AUC and log_loss should be the priority,
+since doing well in these metrics translates to a superior result in
+many other metrics while being less noisy.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/roberthatch>
+
+
+      Robert Hatch
+
+<https://www.kaggle.com/roberthatch>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+If anything, I could see doing something like an arctangent wave as a
+way of doing accuracy without doing accuracy. In other words, rewarding
+going from 49.9% to 50.1% more than any other incremental reward, but
+still having incremental reward across the board. But thresholds and
+predictions don't mix well.
+
+Data scientist: I've proven beyond a shadow of a doubt that with this
+data that we don't know whether this mushroom is poisonous.
+Accuracy metric: great! Let's score you on THAT one! Call it in the air,
+edible or poisonous?
+
+(Disclaimer: Except unfortunately arc tangent wave doesn't have the
+properties that auc and logloss have, of not requiring meta adjustments
+to your true prediction. Arc tan would probably just lead to 1s and 0s
+anyways if used as a comp metric. It's decent as a gauge only when used
+in good faith in non competitive arena. So not really recommending it)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/roberthatch>
+
+
+      Robert Hatch
+
+<https://www.kaggle.com/roberthatch>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+I suppose there exists or could exist a weighted version of ROC that
+works like that arctangent wave though. In other words, rank them as a
+number from 0 to 1, then apply arctan wave scoring to those numbers
+based on true labels. With relative values you can't gamify it.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/karamel03>
+
+
+      Melisa Kara
+
+<https://www.kaggle.com/karamel03>
+
+Posted 2 years ago
+
+· 566th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations 🎉 Detailed explanations like this are very helpful
+beginners like me, thank you🌸
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shariq20220>
+
+
+      ShariQ
+
+<https://www.kaggle.com/shariq20220>
+
+Posted 2 years ago
+
+· 976th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations 🎉. A very intuitive approach indeed.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/akmalmir>
+
+
+      Akmal Azzam o'g'li
+
+<https://www.kaggle.com/akmalmir>
+
+Posted 2 years ago
+
+· 422nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+@lennartpuruckerisg <https://www.kaggle.com/lennartpuruckerisg> i think
+preprocessing code needs correction:
+
+    |for col in weird_columns:
+        **allowed_vals** = test_data[col].unique()
+        train_data.loc[~train_data[col].isin(**allowed_vals**), col] = np.nan
+        test_data.loc[~test_data[col].isin(**allowed_vals**), col] = np.nan
+
+    |
+    content_copy
+
+    >
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+It does! Thank you for pointing this out. Fixed it.
+
+Copy-paster error at 3 am in the morning😅
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jamesking76>
+
+
+      James King
+
+<https://www.kaggle.com/jamesking76>
+
+Posted 2 years ago
+
+· 421st in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+I found counting the number of these human input errors in each column
+or at least setting a flag if the entry had a human input error was
+helpful. Although I also restricted it to the actual valid inputs.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Cool idea as well!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/itasps>
+
+
+      turtle
+
+<https://www.kaggle.com/itasps>
+
+Posted 2 years ago
+
+· 232nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thomasmeiner>
+
+
+      Thomas Meißner
+
+<https://www.kaggle.com/thomasmeiner>
+
+Posted 2 years ago
+
+· 1352nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sethpointaverage>
+
+
+      sethpointaverage
+
+<https://www.kaggle.com/sethpointaverage>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Any chance you could provide your performance on more comprehensive
+metrics like ROC-AUC and F1 score? Not a part of the competition but
+working on something with my local reading group and wanted to benchmark
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Here are a few validation scores for our second-to-last submission
+without the Kaggle tricks, which had a public LB score of |0.98531|:
+
+  * Matthews Correlation Coefficient (*Target Metric*): |0.9850930506045819|
+  * ROC AUC: |0.9957310456562743|
+  * Log Loss (*Early Stopping Metric*): |0.07358660841538525|
+  * Balanced Accuracy: |0.9926470731809423|
+  * F1 Score: |0.9932400229147786|
+
+The optimal threshold after threshold calibration <https://
+auto.gluon.ai/stable/api/
+autogluon.tabular.TabularPredictor.calibrate_decision_threshold.html> is
+|0.5|.
+
+Note: these are 16-fold cross-validation scores that are slightly biased
+due to the weighted ensemble training on validation data and early
+stopping using the validation data. Also, everything but the target
+metric is not representative of AutoGluon's true performance.
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/roberthatch>
+
+
+      Robert Hatch
+
+<https://www.kaggle.com/roberthatch>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+AutoGluon question:
+Since perpetually people will publish public notebooks and save models
+but not out of fold predictions, I was wondering whether this code
+(manually added on top of this notebook <https://www.kaggle.com/code/
+motono0223/automl-baseline-inference>) is expected to work or not:
+
+|for m_name in [None, 'LightGBMXT', 'NeuralNetFastAI', 'LightGBMLarge', 'LightGBM', 'XGBoost', 'RandomForestEntr', 'RandomForestGini']:
+    try:
+        oof = predictor.get_oof_pred_proba(model=m_name, as_multiclass=False, train_data=train_data)
+    except:
+        print(f'failed to get oof for {m_name}')
+
+|
+content_copy
+
+Is there ANY way to get oof preds except from a live sesson?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Easier to do predictor.predict_proba_multi() which gets all model oofs.
+You would need a live session unless they cache the oofs or the predictor.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/roberthatch>
+
+
+      Robert Hatch
+
+<https://www.kaggle.com/roberthatch>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+I don't see anything in the rules (other than what happens if teammates
+submit separately before joining), I suppose teams are allowed to add
+teammates at any time? Or were you always registered as 3 (or more) people?
+
+The team name and registering format made me mentally assume teams were
+locked but don't see that written… 🤷🏻‍♂️
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Good question!
+
+We registered at the start with Arjun, along with others. I don't think
+there is anything in the rules that all members need to be visible on
+the leaderboard team on Kaggle. And also, you can only have 3 people on
+a Kaggle team but there wasn't a limit to my understanding for sizes of
+teams in the Grand Prix.
+
+I think a solution for future Grand Prix is if team members were public,
+but maybe there are good reasons for them being private I haven't
+considered.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/roberthatch>
+
+
+      Robert Hatch
+
+<https://www.kaggle.com/roberthatch>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+So you have been working as a team of more than 3 on every competition,
+and only having two bother to be connected and submitting live on
+kaggle? I see
+
+Yeah, not publishing team members is just one of the weird little
+artifacts of this being a second class competition. (I'm coining that
+term to define any Kaggle prize competition or competition track that
+doesn't have an automatic standard Kaggle leaderboard. )
+
+I've been thinking through a few areas I'd love to see improvements.
+Maybe I'll have time to make a post
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+It has generally been Lennart and myself working on the competitions in
+a Discord call. The other members had expressed interest, which is why
+we included them in the team at the time we submitted the team at the
+start of the Grand Prix to be inclusive to future contributions. They
+have provided some feedback and ideas throughout, and Arjun helped to
+create EDA tooling so we can highlight promising directions to focus on
+in the competitions early on.
+
+We also created the team with its members under the assumption that team
+members would be public 🤷‍♂️
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/roberthatch>
+
+
+      Robert Hatch
+
+<https://www.kaggle.com/roberthatch>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thanks for clarifying! It doesn't really matter, but I do find it
+interesting. And, yeah, I was sure you had been aboveboard on this, but
+I'll admit seeing a third team member was pretty much the cherry on top
+of the 1000 CPU cluster, lol.
+
+In fact, on the CPU clusters, and back to semi- on topic, I really hope/
+wish that the TPU 20 hours, or a third weekly quota category of 20-40
+hours/week was able to be created on Kaggle for something exactly like a
+single one of those SLURM clusters. 20 CPUs, 100GB RAM (or slightly more
+of each). Would be a huge help in many competitions (AND would help
+prevent this rare but present need to misuse TPU resources just for the
+RAM. Or for the RAM and the CPUs.)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/noir1112>
+
+
+      Subashanan Nair
+
+<https://www.kaggle.com/noir1112>
+
+Posted 2 years ago
+
+· 159th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+This is a brilliant approach and I was using a MacBook Pro with 32 GB
+and this shows the processing power required to achieve the point
+decimal difference. Mind-blowing
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/dropdead072>
+
+
+      Dropdead072
+
+<https://www.kaggle.com/dropdead072>
+
+Posted 2 years ago
+
+· 1074th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Extremely nice reading! Congratulations on such a high score!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/seijihirano>
+
+
+      Seiji Hirano
+
+<https://www.kaggle.com/seijihirano>
+
+Posted 2 years ago
+
+· 553rd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations!!
+
+I have a question. I believe that using the test data during the
+preprocessing phase leads to data leakage. You found unique values in
+the test set and labeled NaN for any values in the training set that did
+not exist in the test set. Is this also considered data leakage? Is this
+something that is observed often in competitoins (to improve the score)
+but not in the real world? I am still learning data science and I feel
+like I lack a clear understanding of what data leakage is, so your input
+will be greatly appreciated!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+    I believe that using the test data during the preprocessing phase
+    leads to data leakage.
+
+It is data leakage but in a "good" intended way, in this case.
+
+Here, we are leaking information from the test data to our training. But
+as we know the test data, we do not need to worry about overfitting
+(i.e., we do not want to generalize to unseen test data). Thus, this
+leak is tolerated and often beneficial as we can optimize our model and
+data for the provided test data.
+
+More formally, this can be understood as transducivte learning <https://
+en.wikipedia.org/wiki/Transduction_(machine_learning)> or test-time
+feature engineering <https://arxiv.org/abs/2407.02112>.
+
+This is, AFAIK, not a typical machine learning problem but is very
+common in Kaggle competitions. In research and real-world applications,
+we often want to generalize to unseen data points. In Kaggle
+competitions, we want to generalize to a known test dataset.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/seijihirano>
+
+
+      Seiji Hirano
+
+<https://www.kaggle.com/seijihirano>
+
+Posted 2 years ago
+
+· 553rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I see…thank you very much for your detailed explanation!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mtinglof>
+
+
+      Michael Tinglof
+
+<https://www.kaggle.com/mtinglof>
+
+Posted 2 years ago
+
+· 1485th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you for the results and explanation!
+
+Such a simple preprocessing solution. Sometimes the simplest idea is the
+best.
+
+Cheers on your success
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/davinascimento>
+
+
+      Davi N.
+
+<https://www.kaggle.com/davinascimento>
+
+Posted 2 years ago
+
+· 1729th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Very good approach! Congratulations 🎉 @lennartpuruckerisg <https://
+www.kaggle.com/lennartpuruckerisg>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sojibbhattacharjee>
+
+
+      Sajib Bhattacharjee
+
+<https://www.kaggle.com/sojibbhattacharjee>
+
+Posted 2 years ago
+
+· 1201st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations 🎉. And thanks for this detailed approach.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nihalthomas15>
+
+
+      Nihal Thomas
+
+<https://www.kaggle.com/nihalthomas15>
+
+Posted 2 years ago
+
+· 464th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats Team!💯
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hoon0303>
+
+
+      hoon0303
+
+<https://www.kaggle.com/hoon0303>
+
+Posted 2 years ago
+
+· 230th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations. Thank you for sharing such an excellent solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaluodaa>
+
+
+      Ada Luo daa
+
+<https://www.kaggle.com/adaluodaa>
+
+Posted 2 years ago
+
+· 318th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+    We used 100 iterations (instead of the default 25) for post hoc
+    ensembling.
+
+Why your post-hoc assembly find only the *positive coefficients*?
+
+scipy.optimize.minimize find the negative coefficients as well.
+
+
+Example:
+Coefficients:
+[ *-0.29965439*
+0.07401918
+0.69944183
+*-0.18976061*
+0.09105342
+*-0.04374369*
+0.1343587
+0.24898998
+0.16412422
+0.21495517]
+Ensembling score: *0.992 266 7868698358*
+
+
+
+Model 1- Model 10 OOF scores:
+0.992 001 7837979175
+0.992 102 8442914457
+0.992 189 4675716126
+0.989 854 1681037041
+0.990 472 4016625254
+0.991 721 0602047839
+0.991 641 1742908521
+0.991 7611 635752315
+0.991 702 7730678597
+0.991 681 5984882633
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+We use an algorithm that, by design, only finds positive coefficients.
+This has many positive effects, but mainly to avoid overfitting.
+
+The algorithm is described here <https://dl.acm.org/
+doi/10.1145/1015330.1015432>, and you can find some pointers as to why
+only positive coefficients are important in one of my works here
+<https://arxiv.org/abs/2307.00286>.
+
+replyReply
+thankYou1love1
+add_reaction
+
+<https://www.kaggle.com/adaluodaa>
+
+
+      Ada Luo daa
+
+<https://www.kaggle.com/adaluodaa>
+
+Posted 2 years ago
+
+· 318th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I like to compare your algorithm with scipy.optimize.minimize.
+If I share
+dataset with: models OOF
+and submissions_OOF
+
+Can you calculate your algorithm summission.csv
+
+I will calculate scipy.optimize.minimize summission.csv
+
+And we compare scipy.optimize.minimize and your algorithm by 2 metrics:
+1.LB private score and
+2.LB public score.
+
+Ok?
+
+replyReply
+add_reactionReact
+
+3 more repliesarrow_drop_down
+
+Profile picture for Lennart Purucker
+Profile picture for Mark C. Elliott
+
+<https://www.kaggle.com/hyelijeon>
+
+
+      HyeLi Jeon
+
+<https://www.kaggle.com/hyelijeon>
+
+Posted 2 years ago
+
+· 50th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you for your amazing insights! Congratulations!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/muhammadn1sar>
+
+
+      Muhammad N1sar
+
+<https://www.kaggle.com/muhammadn1sar>
+
+Posted 2 years ago
+
+· 483rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations 🎉
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/markcelliott>
+
+
+      Mark C. Elliott
+
+<https://www.kaggle.com/markcelliott>
+
+Posted 2 years ago
+
+· 1112th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hi
+
+How many models did you build at the first level of AutoGluon?
+
+Count 5 folds as one model.
+
+How many models did you build at the second level, where predictions are
+passed from the first level?
+
+Is AutoGluon adds predictions of first-level model and it look like one
+model prediction, as one column?
+
+If you have 50 first-level model
+you vil have 19 train columns+ 50 prediction columns at second-level model?
+
+AutoGluon 0.98523 has 2 levels of model and 3d level is blending?
+
+How AloGluon finds the width of each model in blend, give please github
+link on blend source code?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+    How many models did you build at the first level of AutoGluon?
+    How many models did you build at the second level, where predictions
+    are passed from the first level?
+
+In both cases, up to a total of ~200, the entire portfolio we shared in
+our GitHub, which we linked in the post above.
+This depends on how many models were trained successfully. I do not have
+the exact number.
+
+    Is AutoGluon adds predictions of first-level model and it look like
+    one model prediction, as one column?
+
+If AutoGluon uses the out-of-fold prediction probabilities of a first-
+level model, they will be represented as one column for binary
+classification tasks.
+
+In addition, AutoGluon filters the number of models used for stacking to
+the best N models (where N can be, for example, 25 but depends on the
+dataset). This logic can be controlled in AutoGluon via |
+ag_args_ensemble| at fit and its |max_base_models_per_type| and |
+max_base_models| parameters.
+
+So, we would have 19+N columns if we had 50 first-level models.
+
+    AutoGluon 0.98523 has 2 levels of model and 3d level is blending?
+
+Yes.
+
+    How AloGluon finds the width of each model in blend, give please
+    github link on blend source code?
+
+The blending code is greedy ensemble selection <https://dl.acm.org/
+doi/10.1145/1015330.1015432> and the code is here <https://github.com/
+autogluon/autogluon/blob/master/core/src/autogluon/core/models/
+greedy_ensemble/ensemble_selection.py>.
+
+I am unsure what you mean by width.
+
+replyReply
+kaggle1
+add_reaction
+
+<https://www.kaggle.com/markcelliott>
+
+
+      Mark C. Elliott
+
+<https://www.kaggle.com/markcelliott>
+
+Posted 2 years ago
+
+· 1112th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+    max_base_models_per_type
+
+Could you show the different model types that are available in Autogluon?
+Which model type are on your roadmap for adding them to AutoGluon?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+You can find the current list here: https://auto.gluon.ai/stable/api/
+autogluon.tabular.models.html <https://auto.gluon.ai/stable/api/
+autogluon.tabular.models.html>
+
+We would add any model (or general method) that performs well in our
+empirical benchmarks.
+
+We usually test new algorithms/models that are published. However, the
+published results (e.g., in papers) rarely transition to actual
+performance in our benchmarks. There are multiple reasons for this
+(e.g., engineering, robustness, maintainability, difference in
+benchmarking quality, ensembling, …).
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/markcelliott>
+
+
+      Mark C. Elliott
+
+<https://www.kaggle.com/markcelliott>
+
+Posted 2 years ago
+
+· 1112th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Can AutoGluon process video and audio?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/markcelliott>
+
+
+      Mark C. Elliott
+
+<https://www.kaggle.com/markcelliott>
+
+Posted 2 years ago
+
+· 1112th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+How to modify the AutoGluon code on GitHub so that it doesn't build
+models but creates an ensemble of the models I give it? (Where and in
+what form should I provide the models?)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+By default, AutoGluon always builds an ensemble.
+
+If you want to build a post hoc ensemble with models from AutoGluon, you
+can use this https://github.com/AutoML-Grandmasters/Fourth-AutoML-Grand-
+Prix/blob/main/ag_post_hoc_ensembler.py <https://github.com/AutoML-
+Grandmasters/Fourth-AutoML-Grand-Prix/blob/main/ag_post_hoc_ensembler.py>
+
+replyReply
+thankYou1yay1love1surprise1
+add_reaction
+

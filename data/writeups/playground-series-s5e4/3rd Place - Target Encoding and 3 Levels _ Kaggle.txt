@@ -1,0 +1,763 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predict Podcast Listening Time
+
+        <https://www.kaggle.com/competitions/playground-series-s5e4>
+      o
+
+        3rd Place - Target Encoding and 3 Levels
+
+        <https://www.kaggle.com/competitions/playground-series-s5e4/
+        writeups/johannes-heller-3rd-place-target-encoding-and-3-le>
+      o
+
+        2nd Place | Single LightGBM and Target Encoding
+
+        <https://www.kaggle.com/competitions/playground-series-s5e4/
+        writeups/farukcan-saglam-2nd-place-single-lightgbm-and-targ>
+      o
+
+        1st Place - RAPIDS cuML Stack - 3 Levels!
+
+        <https://www.kaggle.com/competitions/playground-series-s5e4/
+        writeups/chris-deotte-1st-place-rapids-cuml-stack-3-levels>
+      o
+
+        Binary Classification with a Bank Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s5e8>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd Place - Target Encoding and 3 Levels — Predict Podcast Listening Time
+
+
+  3rd Place - Target Encoding and 3 Levels
+
+Predict Podcast Listening Time
+
+<https://www.kaggle.com/competitions/playground-series-s5e4>
+
+Solution Writeup · 3rd place · May 2, 2025
+
+Thanks for a fun and interesting competition - the dataset was large
+enough for meaningful CV but still small enough to work comfortably on
+standard local hardware. Congrats to @cdeotte <https://www.kaggle.com/
+cdeotte> for yet another exceptional performance, and to @greysky
+<https://www.kaggle.com/greysky> for an impressive second place with a
+single (!!!) LGBM model!
+
+My approach relied heavily on Target Encoding and a large ensemble of
+models with diverse features and hyperparameters.
+
+During most of the competition, I used weighted averaging via Nelder-
+Mead or Hill Climbing. As a last-minute experiment, I tried stacking -
+something that’s never worked for me in a Kaggle competition - which got
+me an immediate boost from 11.66 to 11.62 CV on the very first and only
+try. I should have explored and optimized it earlier. I suspect stacking
+worked better here because of the high percentage of missing values in
+the single most important feature.
+
+In the end, I blended my stacking ensemble (80%) with my best scoring
+Hill Climbing ensemble (20%), effectively turning this into a three-
+level approach.
+
+All models were trained with 5-fold CV (simple KFold). I believe going
+for 7 or 10 folds could have slightly improved the score, but the
+tradeoff in runtime didn’t seem worth it for me.
+
+I did some quick hyperparameter tuning with Optuna, but interestingly,
+the final ensemble benefitted from including some older, non-optimized
+models. Diversity seems to have worked especially well in this competition.
+
+*Model Overview*
+Level 1:
+
+  * 10 × LGBM (various features and params)
+  * 5 × XGB
+  * 4 × CatBoost
+  * 2 × RandomForest
+  * 1 × ExtraTrees
+  * 4 × HistGradientBoostingRegressor
+
+Level 2:
+
+  * Hill Climbing
+  * LGBM
+
+Level 3:
+
+  * Weighted Averaging
+
+Interestingly, HistGradientBoostingRegressor consistently received
+negative weights (-0.08 to -0.21) during Hill Climbing but were never
+discarded. Does anyone have an explanation for this? Other models
+(linear models) were rejected in Hill Climbing.
+
+*Best Single Model CV Scores:*
+
+  * LGBM: 11.79
+  * XGB: 11.81
+  * CatBoost: 11.93
+  * ExtraTrees: 11.96
+  * HistGB: 11.99
+  * RandomForest: 12.05
+
+*What Worked Well*
+
+  * Target Encoding: This was the backbone of most of my feature
+    engineering. I experimented with median, min, max, nunique but mean
+    TE scored best.
+      o I concatenated 2- to 7-grams, converting all columns to string
+        before.
+      o I dropped TE features with a very high or very low cardinality.
+      o To speed things up, I saved TE features as parquets per fold.
+        This forced me to use the same KFold settings the whole
+        competitions to avoid leaks.
+      o My top model used about 270 TE features.
+      o I used a custom TE implementation (no smoothing, no fillna),
+        though using the Scikit-learn version would likely have yielded
+        similar results.
+  * Fixing extreme outliers for Number_of_Ads and Episode_Length_minutes
+    helped, see https://www.kaggle.com/code/stopwhispering/podcast-eda
+    <https://www.kaggle.com/code/stopwhispering/podcast-eda>
+  * Adding number of decimal digits of string-formatted
+    Episode_Length_minutes as a feature. Thanks @AngelosMar <https://
+    www.kaggle.com/AngelosMar> for that interesting finding. Adding as a
+    feature worked slightly better than manually correcting predictions
+    with high number of decimal digits.
+  * Some Divide/Minus/Plus/Combine interaction features
+  * Original Dataset: For the original dataset I went for the
+    concatenation approach this time, just adding original data to the
+    train dataset. For CV scoring I ignored the original dataset
+    records. I also added a flag 'is_original'.
+
+*What Didn’t Work*
+
+  * Predicting ratio (Target / Episode_Length_minutes) instead of target
+    with a separate model for Episode_Length_minutes being NaN
+  * Any kind of linear model or NN
+  * Imputation
+  * Binning, Clustering
+  * Label encoding of categorical variables
+
+*Feature Selection*
+For feature selection (that is mostly Target Encoding this time) I used
+a very greedy variant of Sequential Feature Selection using an LGBM with
+high learning_reate and low n_estimtors: After scoring all candidates, I
+selected the best scoring ~10-20 and started again - far from optimal
+but my local hardware didn't allow for more sophisticated selection. I
+tried some Recursive Feature Elimination afterwards, but that simply
+took too long and didn't yield good results. I did, however, remove
+features with extremely high correlation to other features.
+
+Updates: added some details on TE, original dataset, and feature selection.
+
+Author
+
+<https://www.kaggle.com/stopwhispering>
+Johannes Heller <https://www.kaggle.com/stopwhispering>
+
+stopwhispering
+
+arrow_drop_up
+
+28
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    14 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s5e4/writeups/johannes-heller-3rd-place-target-encoding-and-3-
+le#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted a year ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! Inspired move to try out stacking towards the end - almost
+like lunging at the tape in a photo-finish 😀
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/paperxd>
+
+
+      paperxd
+
+<https://www.kaggle.com/paperxd>
+
+Posted a year ago
+
+· 340th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+This is my first time, can you explain what it means to have a multi-
+level model? Does it mean you use the predictions from the level one
+models and feed into another model to predict a new set of predictions?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Yes. Every model uses the same KFold. Then we train level 2 on the OOF
+and Test PREDs from level 1. And train level 3 on 2.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/paperxd>
+
+
+      paperxd
+
+<https://www.kaggle.com/paperxd>
+
+Posted a year ago
+
+· 340th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Why does it matter to keep random_state the same?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations on 3rd place solo finish! I think if you discovered
+stacking's performance in this comp earlier you would have finished even
+higher!
+
+    As a last-minute experiment, I tried stacking - something that’s
+    never worked for me in a Kaggle competition - which got me an
+    immediate boost from 11.66 to 11.62 CV on the very first and only try.
+
+Same here! I basically never stack, it just never seems to work for me.
+I always just use hill climbing ensemble. But then one day in the first
+week I tried it (by training XGB on all my experiments' OOF) and it
+improved my CV score and LB score a lot.
+
+    I suspect stacking worked better here because of the high percentage
+    of missing values in the single most important feature.
+
+I like your explanation about why it worked so well. I think this is the
+main reason.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/stopwhispering>
+
+
+      Johannes Heller
+
+<https://www.kaggle.com/stopwhispering>
+Topic Author
+
+Posted a year ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks @cdeotte <https://www.kaggle.com/cdeotte>. Honestly, I'm still
+surprised with Stacking giving such a boost here. Stacking, unlike
+simple averaging, is able to catch more complex patterns - like (1) SVR
+works best for rows with feature combination A-B-C and (2) NN works best
+for rows with feature combination E-F-G. But my models are mostly GBDTs.
+Even with diversity in hyperparams and feature sets I'd expect them to
+perform pretty similar. Maybe it's really the episode length NaN rows
+which are predicted better by some models.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Yes this dataset is mysterious. There are many things about this dataset
+that are weird (and I have never seen before). For example why does |
+max_depth=19| work so well? I have never used trees this deep! (i.e.
+d=19 is the best public single model). This dataset must have incredible
+feature interaction (maybe due to ELM nan or something else). I think
+stacks excel at extracting feature interaction.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/abishpius>
+
+
+      Abish Pius
+
+<https://www.kaggle.com/abishpius>
+
+Posted a year ago
+
+· 1022nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Just a curiosity question, how did you decide to include the various
+number of models in level 1? Like why the 10 LGBMs but 5 XGBs and then 4
+Catboosts, etc.?
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/alihaiderahmad>
+
+
+      Ali_Haider_Ahmad
+
+<https://www.kaggle.com/alihaiderahmad>
+
+Posted a year ago
+
+· 19th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I believe he used 10 LGBMs because they are generally faster than XGBs,
+and I've also noticed LGBMs perform better in my tests.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/stopwhispering>
+
+
+      Johannes Heller
+
+<https://www.kaggle.com/stopwhispering>
+Topic Author
+
+Posted a year ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Yes, definitely. I would have experimented more with CatBoost but each
+CatBoost model took ages to train.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/stopwhispering>
+
+
+      Johannes Heller
+
+<https://www.kaggle.com/stopwhispering>
+Topic Author
+
+Posted a year ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+All in all, I trained around 100 models. From the beginning, I saved
+every single OOF and test preds as parquet files. My Hill Climbing
+script reads the OOFs and computes roughly optimal blending weights
+(both positive and negative). Every now and then, I ran the Hill Climber
+and removed those OOFs and test predictions that weren’t assigned any
+weights to speed up hill climbing. Unexpectedly, even some very early
+OOFs from before I added TE were still assigned some weight. The numbers
+given in the description above are what remained, i.e. what Hill
+Climbing still considered relevant.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/romanahmed2024>
+
+
+      Roman@Ahmed
+
+<https://www.kaggle.com/romanahmed2024>
+
+Posted a year ago
+
+· 1696th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Detailed explanations and clear thought process are truly enlightening.
+Thank you for sharing your Solutions
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/paperxd>
+
+
+      paperxd
+
+<https://www.kaggle.com/paperxd>
+
+Posted a year ago
+
+· 340th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+When doing hill climbing do you use optuna to find the best weights or
+do you write your own code?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/stopwhispering>
+
+
+      Johannes Heller
+
+<https://www.kaggle.com/stopwhispering>
+Topic Author
+
+Posted a year ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I wrote my own implementation of Hill Climbing but there's nothing
+special about it - every implementation would do. I don't know if
+Optuna's probabilistic approach would be a suitable choice here. A good
+(and super simple to use) alternative would be Scipy's Nelder-Mead
+optimization.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/paperxd>
+
+
+      paperxd
+
+<https://www.kaggle.com/paperxd>
+
+Posted a year ago
+
+· 340th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Oh ok thanks. I will try your recommendation!
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/alihaiderahmad>
+
+
+      Ali_Haider_Ahmad
+
+<https://www.kaggle.com/alihaiderahmad>
+
+Posted a year ago
+
+· 19th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great, congratulations!
+I think you had a great chance of progressing if you had used a neural
+network.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/stopwhispering>
+
+
+      Johannes Heller
+
+<https://www.kaggle.com/stopwhispering>
+Topic Author
+
+Posted a year ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks! I think you're right. Diversity was key in this competition.
+@cdeotte <https://www.kaggle.com/cdeotte> won with a super-diverse
+ensemble, both in terms of architecture and features/targets.
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (1)
+
+<https://www.kaggle.com/eugensedlar>
+
+
+      Eugen Sedlar
+
+<https://www.kaggle.com/eugensedlar>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations！
+

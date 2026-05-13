@@ -1,0 +1,1038 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Multi-Class Prediction of Cirrhosis Outcomes
+
+        <https://www.kaggle.com/competitions/playground-series-s3e26>
+      o
+
+        2nd Place: with help from NNs.
+
+        <https://www.kaggle.com/competitions/playground-series-s3e26/
+        writeups/hardy-xu-2nd-place-with-help-from-nns>
+      o
+
+        Binary Classification with a Software Defects Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e23>
+      o
+
+        PS-S3-Ep23 | EDA 📊 | Modeling + Submission 🚀
+
+        <https://www.kaggle.com/code/oscarm524/ps-s3-ep23-eda-modeling-
+        submission>
+      o
+
+        #2 Solution | 8 Models Ensemble
+
+        <https://www.kaggle.com/competitions/playground-series-s3e23/
+        writeups/oscar-aguilar-2-solution-8-models-ensemble>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd Place: with help from NNs. — Multi-Class Prediction of Cirrhosis
+Outcomes
+
+
+  2nd Place: with help from NNs.
+
+Multi-Class Prediction of Cirrhosis Outcomes
+
+<https://www.kaggle.com/competitions/playground-series-s3e26>
+
+Solution Writeup · 2nd place · Jan 1, 2024
+
+With this competition I set out to improve my knowledge of neural
+networks. I had trouble getting good results with them in past
+competitions, often finding they performed worse in the private
+leaderboard, even when added to ensembles of GBDTs. However, this time I
+think they were the secret sauce that helped me get 2nd place.
+
+My solution is pretty straightforward. Just a combination of XGBoost,
+LightGBM, and neural network predictions, with another neural network
+used to stack them together. The XGBoost and LightGBM predictions were
+nothing special, just an average of predictions from 10 different sets
+of hyperparameters found by Optuna.
+
+For the initial neural network predictions, after reading through a
+bunch of papers and iterating on the techniques described within, I
+found that the piecewise linear encoding (PLE) technique described in
+this paper <https://arxiv.org/pdf/2203.05556.pdf> greatly improved my
+score.
+
+I applied PLE to each continuous feature, an embedding layer for the
+edema and stage features, and fed in the remaining binary features as is
+(after converting to 0/1). The structure looks sort of like this:
+asdf
+The actual network included some additional layers after each PLE input,
+before they were concatenated together, but to keep the diagram simple I
+did not include them. With this neural network alone I was able to get a
+score around .401 on the private LB, good enough for top 10%. Despite
+its solid individual performance, its addition to the stack only added
+around a .001 boost to the score, but I'm just glad it improved the
+stack at all.
+
+For the stacking neural network, I started with the idea of getting the
+network to learn a weighted average of input predictions, which looked
+something like this:
+
+Through some more experimentation, I found that the network achieved
+better scores by
+
+ 1. Giving each class probability within a prediction its own weight,
+    rather than computing a single weight and applying it to each class
+    probability, and
+ 2. Calculating each prediction's weights using all 3 predictions,
+    rather than only itself.
+    With these changes the network looked more like this:
+
+    Again, for the sake of simplicity, there are some additional layers
+    not included here. This stacking architecture gave a boost of .004
+    compared to taking a simple average.
+
+Overall, I had a lot of fun working on this competition. The 2nd place
+was a nice bonus, but I'm more grateful from the knowledge acquired in
+the process of researching and trying out neural networks. For anyone
+else interested in recent tabular neural network innovations, I would
+recommend taking a look at https://sebastianraschka.com/blog/2022/deep-
+learning-for-tabular-data.html <https://sebastianraschka.com/blog/2022/
+deep-learning-for-tabular-data.html>. There are plenty of ideas using
+neural networks that I either wasn't able to try or wasn't able to get
+working for this competition, but definitely look forward to trying
+these ideas and more in future competitions.
+
+Happy new year!
+
+Author
+
+<https://www.kaggle.com/hardyxu52>
+Hardy Xu <https://www.kaggle.com/hardyxu52>
+
+hardyxu52
+
+arrow_drop_up
+
+71
+
+Share
+
+more_horiz
+
+yay2
+add_reaction
+
+comment
+
+
+    36 Comments
+
+2 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s3e26/writeups/hardy-xu-2nd-place-with-help-from-nns#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/ducnguyenvan>
+
+
+      Benz Nguyen
+
+<https://www.kaggle.com/ducnguyenvan>
+
+Posted 2 years ago
+
+· 154th in this Competition
+
+arrow_drop_up
+
+9
+
+more_vert
+
+Thanks for sharing, that's helpful knowledge! I have a question, why did
+you only use XGBoost and LightGBM as input for NNs?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+8
+
+more_vert
+
+If you're talking about the stacking neural network, that used XGBoost,
+LightGBM, and Neural Network predictions. If you're asking why I didn't
+use the data features or predictions from other models like Random
+Forest or Logistic Regression in the stacking neural network, I tried
+all of those things and they did not improve my CV score.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ducnguyenvan>
+
+
+      Benz Nguyen
+
+<https://www.kaggle.com/ducnguyenvan>
+
+Posted 2 years ago
+
+· 154th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+I got it, thank you so much :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/byteliberator>
+
+
+      lazy_panda
+
+<https://www.kaggle.com/byteliberator>
+
+Posted 2 years ago
+
+· 22nd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Very impressive solution! I haven't tried NN in this competition but
+good to see it works. Any chance you can share a notebook to your
+solution? Congratulations and Thank you 🎉
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you! No notebook unfortunately, all my work was done locally.
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+
+<https://www.kaggle.com/mrsimple07>
+
+
+      MrSimple
+
+<https://www.kaggle.com/mrsimple07>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations! I really like the solution! Good job!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pranavk27>
+
+
+      ML_Magic
+
+<https://www.kaggle.com/pranavk27>
+
+Posted 2 years ago
+
+· 703rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations.. wish you a happy new year
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jonathankao>
+
+
+      Jonathan Kao
+
+<https://www.kaggle.com/jonathankao>
+
+Posted 2 years ago
+
+· 19th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thank you for the interesting solution overview and the links! The
+diagrams and explanations combined with the log-loss improvement numbers
+were very helpful in understanding your approach.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thank you, I'm glad you found them helpful!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jonathankao>
+
+
+      Jonathan Kao
+
+<https://www.kaggle.com/jonathankao>
+
+Posted 2 years ago
+
+· 19th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Actually I did have one question if you don't mind, how much feature
+engineering did you use in your solution and how helpful was it to your
+score if you did use it?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+For the gbt models I rounded the values of some features, which seemed
+to help a small amount. Nothing else I tried for feature engineering
+seemed to help.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kjihwan>
+
+
+      cattie
+
+<https://www.kaggle.com/kjihwan>
+
+Posted 2 years ago
+
+· 335th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congratulations, @hardyxu52 <https://www.kaggle.com/hardyxu52>! I was
+really impressed by your work. I have one question though: I'm
+struggling to understand the first Neural Network Architecture. How can
+the input shape be 302, 288, 44, 150, etc.?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thank you! Each of those inputs are from PLE applied to one continuous
+feature. In the paper the authors kept the number of bins for the PLE
+constant but for this competition, I found it more effective to use more
+bins for features with more unique values.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shum14>
+
+
+      Shum14
+
+<https://www.kaggle.com/shum14>
+
+Posted 2 years ago
+
+· 733rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Thank you for your sharing the knowledge and helpful
+explanation.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/malabhbakshi>
+
+
+      Malabh Bakshi
+
+<https://www.kaggle.com/malabhbakshi>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Good Solution!!! @hardyxu52 <https://www.kaggle.com/hardyxu52>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thehawkgriffith>
+
+
+      Shahbaz Khan
+
+<https://www.kaggle.com/thehawkgriffith>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, @hardyxu52 <https://www.kaggle.com/hardyxu52>! Quite
+impressive, I got to learn about On Embeddings through your post! Thanks
+for sharing the paper link, seems like an interesting read.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tcashion>
+
+
+      tcashion
+
+<https://www.kaggle.com/tcashion>
+
+Posted 2 years ago
+
+· 356th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very cool! Thanks for sharing your solution including the diagrams to
+see how it all fits together.
+
+Congratulations on the 🥈
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hjimbean>
+
+
+      H.JIMBEAN
+
+<https://www.kaggle.com/hjimbean>
+
+Posted 2 years ago
+
+· 251st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Brilliant! Congrats! Thank for sharing.
+I want to know if there is anything wrong with my understanding.
+
+ 1. You use two neural networks, the first one predicts the task, and
+    the second one stacking the prediction results?
+ 2. I feel a little confuse about the label of the stacking network, is
+    that use the label of the training data?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/luficergfree>
+
+
+      Luficer G
+
+<https://www.kaggle.com/luficergfree>
+
+Posted 2 years ago
+
+· 39th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+bro I just missed to use NN , but instead used CatBoost in my final
+model, great to see so similar yet far, Great work @hardyxu52 <https://
+www.kaggle.com/hardyxu52> , btw which Kaggle merchandize , u want now 😜😜
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/aaryansingh729>
+
+
+      AaryanSingh729
+
+<https://www.kaggle.com/aaryansingh729>
+
+Posted 2 years ago
+
+· 314th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations on the placement!! I have a very basic understanding on
+neural networks and ensemble models with them, I could understand the
+diagrams you shared slightly. Could you recommend me some sources
+thorough which I can start learning neural networks on tabular data.
+Thanks a lot and congrats again.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yantxx>
+
+
+      Yan Teixeira
+
+<https://www.kaggle.com/yantxx>
+
+Posted 2 years ago
+
+· 20th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Very nice wrap up. Congrats! May I ask asking what program you used to
+build these diagrams?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thanks! The diagrams are made using keras's plot_model <https://
+keras.io/api/utils/model_plotting_utils/>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/terolig>
+
+
+      Terolig
+
+<https://www.kaggle.com/terolig>
+
+Posted 2 years ago
+
+· 904th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Awesome work, thanks for sharing! And thanks for the link to Sebastian
+Raschka's blog post!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hridaym25>
+
+
+      Hriday
+
+<https://www.kaggle.com/hridaym25>
+
+Posted 2 years ago
+
+· 321st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thanks for the solution. It was really interesting to read, and more
+importantly- Congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/neolivion>
+
+
+      neolivion
+
+<https://www.kaggle.com/neolivion>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations , great code!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lukmanaliyuj>
+
+
+      Lukman Aliyu
+
+<https://www.kaggle.com/lukmanaliyuj>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Awesome. Thank you for sharing. Really helpful.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gaojianwei123>
+
+
+      Jianwei Gao
+
+<https://www.kaggle.com/gaojianwei123>
+
+Posted 2 years ago
+
+· 233rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! Can you provide a more detailed description of “an
+embedding layer for the edema and stage features”，what are the specific
+results after “embedding” and “flatten”？Thank you very much。
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/amadoudjouldebarry>
+
+
+      Amadou Djoulde Barry
+
+<https://www.kaggle.com/amadoudjouldebarry>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I know it's seems easy here for some, but is it possible to see the code
+implementations ?
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/anubhavmaverick>
+
+
+      AnubhavMaverick
+
+<https://www.kaggle.com/anubhavmaverick>
+
+Posted 2 years ago
+
+· 617th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Wow, thanks for sharing this architecture
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/xxxzayh>
+
+
+      xxxZayH
+
+<https://www.kaggle.com/xxxzayh>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+`class StackingModel(nn.Module):
+def *init*(self, input_size, output_size):
+super(StackingModel, self).*init*()
+self.input_size = input_size
+self.output_size = output_size
+
+|    self.batch_norm = nn.BatchNorm1d(self.input_size)
+    self.dense = nn.Linear(self.input_size*3, self.output_size)
+    self.activation = nn.ReLU()
+
+def forward(self, X1, X2, X3):
+    # BN
+    x1 = self.batch_norm(X1)
+    x2 = self.batch_norm(X2)
+    x3 = self.batch_norm(X3)
+
+    # concatenate
+    x = torch.cat((x1, x2, x3), dim=1)
+
+    #dense, BN, activation
+    x1 = self.activation(self.batch_norm(self.dense(x)))
+    x2 = self.activation(self.batch_norm(self.dense(x)))
+    x3 = self.activation(self.batch_norm(self.dense(x)))
+
+    #multiply
+    x1 = torch.mul(x1, X1)
+    x2 = torch.mul(x2, X2)
+    x3 = torch.mul(x3, X3)
+
+    # add
+    out = x1 + x2 + x3
+
+    return out`
+
+|
+content_copy
+
+I'm not sure if this code understands the meaning of your stacking
+model. If you could take a look, I would greatly appreciate it
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kamalbudhathoki>
+
+
+      Kamal Budhathoki
+
+<https://www.kaggle.com/kamalbudhathoki>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/dtanoob>
+
+
+      Kari
+
+<https://www.kaggle.com/dtanoob>
+
+Posted 2 years ago
+
+· 54th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats on the second place! Learned a lot from your solution. I'll
+definitely have to try PLE in the future.
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+

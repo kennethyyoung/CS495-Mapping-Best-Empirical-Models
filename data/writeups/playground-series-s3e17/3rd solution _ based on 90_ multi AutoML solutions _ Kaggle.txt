@@ -1,0 +1,421 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification of Machine Failures
+
+        <https://www.kaggle.com/competitions/playground-series-s3e17>
+      o
+
+        3rd solution | based on 90% multi AutoML solutions
+
+        <https://www.kaggle.com/competitions/playground-series-s3e17/
+        writeups/isoft-3rd-solution-based-on-90-multi-automl-soluti>
+      o
+
+        Predict Health Outcomes of Horses
+
+        <https://www.kaggle.com/competitions/playground-series-s3e22>
+      o
+
+        Predict Health EDA
+
+        <https://www.kaggle.com/code/jrsuri/predict-health-eda>
+      o
+
+        Regression with an Abalone Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd solution | based on 90% multi AutoML solutions — Binary
+Classification of Machine Failures
+
+
+  3rd solution | based on 90% multi AutoML solutions
+
+Binary Classification of Machine Failures
+
+<https://www.kaggle.com/competitions/playground-series-s3e17>
+
+Solution Writeup · 3rd place
+
+Many thanks to Kaggle for this Season 3, Episode 17 Playground Series
+competition.
+A big thank you to the people who contributed on forum and notebooks and
+share with us good insights.
+
+*Overview*
+I used several AutoML approaches and used a meta model based on them
+
+  * Light AutoML
+  * Statmining AutoML (ISoft private solution)
+  * H2O AutoML
+  * Lazy Classifier
+  * FLAML
+    => the first 3 solutions are those that contribute the most to the
+    final model.
+    => the 10% of the model comes from the 2 best public submissions
+
+*Execution Time*
+The execution time of the solution on a machine with 4 cores and 8Go RAM
+is about 6h. I limit each automl solution to 1 hour max execution time.
+
+*LB Scores*
+Public LB Score: 0.97921
+Private LB Score: 0.98541
+The chosen solutions are almost the best obtained the public leaderboard
+and the private leaderboard
+
+Note that a solution including pseudo labeling performed slightly better.
+
+Author
+
+<https://www.kaggle.com/mathurinache>
+Mathurin Ache <https://www.kaggle.com/mathurinache>
+
+mathurinache
+
+arrow_drop_up
+
+31
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    9 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/yeoyunsianggeremie>
+
+
+      Geremie Yeo
+
+<https://www.kaggle.com/yeoyunsianggeremie>
+
+Posted 3 years ago
+
+· 16th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats for 3rd place @mathurinache <https://www.kaggle.com/
+mathurinache> ! Ensembling the top public notebooks into the model
+predictions really worked for this one. Also experienced the same
+outcome! in both public and private LB (it jumped ~100 spots for our
+team's submission)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thiagomantuani>
+
+
+      Thiago Mantuani
+
+<https://www.kaggle.com/thiagomantuani>
+
+Posted 3 years ago
+
+· 148th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Did you consider using or did you use autoGluon in this competition?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mathurinache>
+
+
+      Mathurin Ache
+
+<https://www.kaggle.com/mathurinache>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+not this time, next time probably.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gyoukchu>
+
+
+      GyoukChu
+
+<https://www.kaggle.com/gyoukchu>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I tried Autogloun Tablularpredictor and I got Private Score 0.97590! I
+hope this helps :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/waalbannyantudre>
+
+
+      Alban NYANTUDRE
+
+<https://www.kaggle.com/waalbannyantudre>
+
+Posted 3 years ago
+
+· 80th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations for the 3rd place and thanks for sharing your approach
+@mathurinache <https://www.kaggle.com/mathurinache> !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shady4real>
+
+
+      SHADMAN
+
+<https://www.kaggle.com/shady4real>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I appreciate your work @mathurinache <https://www.kaggle.com/
+mathurinache> , but I prefer making a custom ML pipeline so that you get
+to learn new things along the way , also it's like a hack using an
+AutoML because if its the case even the best programmers at codeforces
+would seem like average , just in my opinion 👍
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/prajeshsanghvi>
+
+
+      Prajesh Sanghvi
+
+<https://www.kaggle.com/prajeshsanghvi>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations on the 3rd place!, and thank you so much for sharing!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kimdove>
+
+
+      Dove. J. Kim
+
+<https://www.kaggle.com/kimdove>
+
+Posted 3 years ago
+
+· 1083rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations for 3rd place!
+Through this competition, I felt that I should study harder.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hiroshisakiyama>
+
+
+      Hiroshi Sakiyama
+
+<https://www.kaggle.com/hiroshisakiyama>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations!
+
+replyReply
+add_reactionReact
+

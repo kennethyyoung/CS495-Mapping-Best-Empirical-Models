@@ -1,0 +1,1404 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predict Podcast Listening Time
+
+        <https://www.kaggle.com/competitions/playground-series-s5e4>
+      o
+
+        2nd Place | Single LightGBM and Target Encoding
+
+        <https://www.kaggle.com/competitions/playground-series-s5e4/
+        writeups/farukcan-saglam-2nd-place-single-lightgbm-and-targ>
+      o
+
+        1st Place - RAPIDS cuML Stack - 3 Levels!
+
+        <https://www.kaggle.com/competitions/playground-series-s5e4/
+        writeups/chris-deotte-1st-place-rapids-cuml-stack-3-levels>
+      o
+
+        Binary Classification with a Bank Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s5e8>
+      o
+
+        3rd Place Solution — OOF Stacking + AutoGluon
+
+        <https://www.kaggle.com/competitions/playground-series-s5e8/
+        writeups/3rd-place-solution-oof-stacking-autogluon>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd Place | Single LightGBM and Target Encoding — Predict Podcast
+Listening Time
+
+
+  2nd Place | Single LightGBM and Target Encoding
+
+Predict Podcast Listening Time
+
+<https://www.kaggle.com/competitions/playground-series-s5e4>
+
+Solution Writeup · 2nd place
+
+My solution consists of a single LightGBM model and target encoding of
+features. I've already shared 90% of the work publicly.
+
+I've never been great at writing up solutions, so I just shared the data
+generation notebook <https://www.kaggle.com/code/greysky/podcast-
+dataset-generator>.
+
+The final processed training dataset contains 1552 features and 794868
+rows. Fortunately, with careful data type casting and avoiding
+unnecessary copy operations, I was able to train the model on Kaggle
+CPUs. Training takes about 4 hours. I trained on all the data using 5
+different seeds.
+
+
+     LightGBM Hyperparameters
+
+  * objective = 'l2'
+  * metric = 'rmse'
+  * n_iter = 12000
+  * max_depth = 15
+  * learning_rate = 0.008
+  * num_leaves = 480
+  * colsample_bytree = 0.25
+
+
+    New Features
+
+  * Mul_Hpp_Elm = Host_Popularity_percentage * round(Episode_Length_minutes)
+  * Mul_Gpp_Elm = Guest_Popularity_percentage *
+    round(Episode_Length_minutes)
+  * Rounded_Episode_Length_minutes = round(Episode_Length_minutes) // 2
+  * Rounded_Host_Popularity_percentage =
+    round(Host_Popularity_percentage) // 2
+  * Rounded_Guest_Popularity_percentage =
+    round(Guest_Popularity_percentage) // 2
+
+
+     Target Encoded Features | pair_size = [1, 2, 3, 4, 5, 6]
+
+  * Podcast_Name
+  * Episode_Length_minutes
+  * Episode_Num
+  * Episode_Sentiment
+  * Host_Popularity_percentage
+  * Guest_Popularity_percentage
+  * Number_of_Ads
+  * Publication_Day
+  * Publication_Time
+  * Rounded_Episode_Length_minutes
+  * Rounded_Host_Popularity_percentage
+  * Rounded_Guest_Popularity_percentage
+
+
+     Descriptive Statistics on Target Encodings (Column-wise)
+
+  * Mean, standard deviation, min, max (aggregated globally)
+  * Mean, standard deviation, min, max (aggregated by pair_size)
+  * Mean, standard deviation, min, max (aggregated by source column)
+
+Author
+
+<https://www.kaggle.com/greysky>
+Farukcan Saglam <https://www.kaggle.com/greysky>
+
+greysky
+
+arrow_drop_up
+
+78
+
+Share
+
+more_horiz
+
+thankYou16
+add_reaction
+
+comment
+
+
+    38 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s5e4/writeups/farukcan-saglam-2nd-place-single-lightgbm-and-
+targ#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+9
+
+more_vert
+
+Absolutely Amazing @greysky <https://www.kaggle.com/greysky> ! I did not
+think it was possible to build such a high performance single model. I
+am very impressed. And the fact that you trained on Kaggle jupyter
+notebooks is even more impressive!
+
+Congratulations on your 2nd place solo finish. Thank you for sharing
+your solution code. I plan to study all your feature engineering
+techniques. And thank you for all your sharing during the competition.
+It was very helpful, I reviewed and studied all your code during the
+competition and incorporated ideas into my final solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thank you for your kind words, @cdeotte <https://www.kaggle.com/
+cdeotte>. Thanks to your answers in the discussions, I used cuDF and
+cuML for the first time for data manipulation. If I hadn't used those
+libraries, I wouldn't have been able to conduct enough experiments to
+achieve 2nd place. The rounded features were responsible for my
+leaderboard jump in the final weeks.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/a00000100>
+
+
+      Srijan004
+
+<https://www.kaggle.com/a00000100>
+
+Posted a year ago
+
+· 361st in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Congrats! @greysky <https://www.kaggle.com/greysky>.
+I have a doubt that why do LightGBM performs so much better than most of
+the other algorithms? For example, even a single LGBM with no feature
+engineering at all scores ~12.57 LB, which is like already in top 25%.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+In most scenarios, I get better scores with LightGBM, but I'm not sure
+if it's because I'm more experienced with that framework or if it's
+really that good.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted a year ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+To add to what @greysky <https://www.kaggle.com/greysky> said - in many
+playground competitions, one of the "Big 3" GBDTs (XGB, LGBM, CATB)
+seems to do better than the others, for reasons that may not always be
+clear. Nonetheless, all 3 are reliably strong performers on tabular
+data, and in-depth knowledge of any one will usually help you squeeze
+more out of it than others.
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted a year ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Enough for what?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/rockiecao>
+
+
+      LuminousC
+
+<https://www.kaggle.com/rockiecao>
+
+Posted a year ago
+
+· 56th in this Competition
+
+arrow_drop_up
+
+6
+
+more_vert
+
+Such a cool solution with a single model plus careful feature
+engineering work. Congratulations. Hope to see you in further competitions.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mgoksu>
+
+
+      MGöksu
+
+<https://www.kaggle.com/mgoksu>
+
+Posted a year ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congrats and thanks for sharing!
+
+How do you decide which model hyperparameters to go with? Do you search
+for new ones every time you add a new feature? I mean, do you have a
+systematic approach for selecting them?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+7
+
+more_vert
+
+Thank you! There are a huge number of features with strong predictive
+power. Because of that, I set a low colsample_bytree and high max_depth
+and num_leaves values for this problem. I didn’t change the
+hyperparameters much and didn’t perform hyperparameter tuning due to the
+long training time. When I add new features, I run the feature
+engineering pipeline from the beginning and measure the CV score on just
+one fold using same hyperparameters.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/marcyyl>
+
+
+      Marcel
+
+<https://www.kaggle.com/marcyyl>
+
+Posted a year ago
+
+· 473rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hey Farukcan, quick follow‑up:
+
+When you batch new features and test them on one fold with your usual
+params, what happens as your feature count approaches ~1.5 K—do you
+still run the full ~3 000 boosting rounds on all ~700 K rows each time?
+Doesn’t that take hours per experiment? At what point do you throttle
+things down (fewer rounds, smaller sample, etc.) to keep iteration time
+reasonable, or do you just accept the longer waits as the cost of
+validating new features?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+This is where Kaggle’s parallel computing quota comes in. I usually run
+up to 5 different ideas (feature engineering, hyperparameters, etc.) in
+parallel using Kaggle notebooks. Once they’re done, I launch another 5,
+and so on. With around 1.5K features, each experiment takes
+approximately 1 hour. This approach lets me run dozens of experiments in
+a short time. I use the same technique when ensembling random seeds for
+submission too.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/paperxd>
+
+
+      paperxd
+
+<https://www.kaggle.com/paperxd>
+
+Posted a year ago
+
+· 340th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Does running more notebooks at a time slow how fast each notebook can run?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+I'm sharing the training notebook with seed=42 (each model uses its
+respective target encoding seed):
+https://www.kaggle.com/code/greysky/podcast-model-training <https://
+www.kaggle.com/code/greysky/podcast-model-training>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gecong>
+
+
+      Ge Cong
+
+<https://www.kaggle.com/gecong>
+
+Posted a year ago
+
+· 44th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congrats! Your solution reminds us the possibilities Kaggle CPU instance
+could offer!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted a year ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congrats! Super cool to place 2nd with a solo model, and using only
+Kaggle CPUs.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/stopwhispering>
+
+
+      Johannes Heller
+
+<https://www.kaggle.com/stopwhispering>
+
+Posted a year ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on an amazing 2nd place! My best single models were
+LGBM, too, with Target Encoding being the most important features, by
+far. But my best single models are far away from your model!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations to you as well, Johannes. If you had a little more time,
+you could have passed me in the LB. I didn't think the stacking method
+would improve the score that much.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/stopwhispering>
+
+
+      Johannes Heller
+
+<https://www.kaggle.com/stopwhispering>
+
+Posted a year ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I really like the statistics (mean, std, min, max) you computed on the
+TE features. I haven't seen that used elsewhere. For such an extremely
+TE-heavy approach (mine was, too), this might have provided a
+significant boost. Did you keep track of whether it actually did?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I implemented those statistics in the middle stage of the competition.
+Each aggregation level (global, by pair size, and by source column)
+improved the score by around 0.02 (in total ~0.05). If they still have
+the same importance in the final version of the dataset, I could argue
+that I would’ve ended up in 4th place without these features.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/delai50>
+
+
+      delai50
+
+<https://www.kaggle.com/delai50>
+
+Posted a year ago
+
+· 36th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations for such amazing result with just one model! 🙌
+
+You used 12k estimators in your final model but did you keep that value
+during all the experimentation as well? Or you use early stopping or
+something? I used early stopping and noticed that the optimal number of
+rounds highly depends on the feature set I was experimenting with.
+
+Thanks for sharing!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thank you! I use (n_iter=3000, lr=0.1) for my experiments. If I see a
+good improvement on the validation set, I switch to (n_iter=12000,
+lr=0.08) for submission. In general, I don't recommend using early
+stopping. It tends to underfit or overfit depending on the data.
+
+It was really hard to overfit in this competition. For a short period, I
+used (n_iter=40000, lr=0.06) for my submissions, but later I had to
+reduce it due to the runtime limit
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/delai50>
+
+
+      delai50
+
+<https://www.kaggle.com/delai50>
+
+Posted a year ago
+
+· 36th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Very Interesting! If I understand correctly, you considered n_iter =
+3000 to be a sufficiently high number of iterations to capture the
+usefulness of a new feature. My main concern was engineering a useful
+new feature that demonstrates its effectiveness only after a large
+number of iterations (does this actually happen in practice?). If n_iter
+is set too low, it might not be detected and for that reason I thought
+setting a very high n_iter along with early stopping would be a good
+practice.
+
+replyReply
+add_reactionReact
+
+3 more repliesarrow_drop_down
+
+Profile picture for Farukcan Saglam
+Profile picture for delai50
+
+<https://www.kaggle.com/romanahmed2024>
+
+
+      Roman@Ahmed
+
+<https://www.kaggle.com/romanahmed2024>
+
+Posted a year ago
+
+· 1696th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Your solution in the Kaggle competition was truly impressive and very
+helpful 🎉. I learned a lot from it. Thank you for sharing such a
+valuable approach..🎉
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shahnawaj9>
+
+
+      Shah Nawaj
+
+<https://www.kaggle.com/shahnawaj9>
+
+Posted a year ago
+
+· 856th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Amazing work @greysky <https://www.kaggle.com/greysky>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/paperxd>
+
+
+      paperxd
+
+<https://www.kaggle.com/paperxd>
+
+Posted a year ago
+
+· 340th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I tried doing this, but constantly faced memory issues. How did you
+optimize memory usage?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+I cast all the float64 types to float32. I use the CPU instead of the
+GPU (otherwise, it crashes due to memory issues). While splitting X and
+y from the DataFrame, I use drop with the inplace argument to avoid
+unnecessary copying. Lastly, I use LightGBM, which doesn't consume much
+memory. But even after all these steps, it barely fits in memory. Memory
+usage reaches as high as 29/30 GB during LightGBM initialization and
+then drops.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/paperxd>
+
+
+      paperxd
+
+<https://www.kaggle.com/paperxd>
+
+Posted a year ago
+
+· 340th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+This is slightly different from what I experienced. I noticed even
+though you get 30 GB of RAM on the cpu and 15 GB of VRAM on the T4 GPU,
+if you utilize cuDF the memory is handled more efficiently. For example,
+my code would crash on the CPU but runs on the GPU with cuDF. Also, for
+my code, float64 doesn’t seem to reduce memory usage by a significant
+amount that much by float32. I think this might be because I am using
+XGBoost instead of LightGBM, but I am not sure.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hamedabedi>
+
+
+      Hamed Abedi
+
+<https://www.kaggle.com/hamedabedi>
+
+Posted a year ago
+
+· 425th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing your insights! It's interesting you could manage to
+use kaggle kernels with that many features ! I personally failed to go
+beyond 500 features !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mightyjiraiya>
+
+
+      Ishan Raj
+
+<https://www.kaggle.com/mightyjiraiya>
+
+Posted a year ago
+
+· 52nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Amazing work, I tried using LightGBM model, but now I can see where my
+solution lacked. Thanks for sharing the notebook as well.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/paperxd>
+
+
+      paperxd
+
+<https://www.kaggle.com/paperxd>
+
+Posted a year ago
+
+· 340th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+For these features - |Mul_Hpp_Elm = Host_Popularity_percentage *
+round(Episode_Length_minutes) Mul_Gpp_Elm = Guest_Popularity_percentage
+* round(Episode_Length_minutes) Rounded_Episode_Length_minutes =
+round(Episode_Length_minutes) // 2 Rounded_Host_Popularity_percentage =
+round(Host_Popularity_percentage) // 2
+Rounded_Guest_Popularity_percentage =
+round(Guest_Popularity_percentage) // 2| - what is the point of rounding
+Episode_Length_minutes and rounding the popularity column floor divided
+by 2? These seem pretty specific.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/aaminim>
+
+
+      Amin
+
+<https://www.kaggle.com/aaminim>
+
+Posted a year ago
+
+· 1384th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations for such an intresting solo model trained on kaggle
+notebook.
+same question: how did you get to *rounding* ELM, HPP and GPP features
+*dividing by 2*. comes from exprience knowledge or did they have meaning
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+You can think of the rounding operation as binning with bin_width = 1. I
+started with 1, and when I saw that this method brought significant
+improvement, I also tried 0.5, 2.0, and 3.0. The most successful one was
+2.0. But this was during the last week of the competition. If I had more
+time, I would have tried quantile binning and floor() as well @paperxd
+<https://www.kaggle.com/paperxd>, @aaminim <https://www.kaggle.com/aaminim>
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/cyrilbourgeois>
+
+
+      Cyril Bourgeois
+
+<https://www.kaggle.com/cyrilbourgeois>
+
+Posted a year ago
+
+· 20th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Well done ! The best mono model of this competition !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pushpendrasinghhada>
+
+
+      OldStatMagic
+
+<https://www.kaggle.com/pushpendrasinghhada>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations @greysky <https://www.kaggle.com/greysky> and thanks for
+sharing your approach!
+
+I had a quick question regarding your LightGBM configuration—how did you
+settle on such a high num_leaves (480) and max_depth (15) without
+overfitting, especially with such a large feature set? Did you rely on
+cross-validation trends or some other heuristics to guide these choices?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/towhid121>
+
+
+      Towhidul Islam
+
+<https://www.kaggle.com/towhid121>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Amazing! Congratulations.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/romanahmed2024>
+
+
+      Roman@Ahmed
+
+<https://www.kaggle.com/romanahmed2024>
+
+Posted a year ago
+
+· 1696th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks, @greysky <https://www.kaggle.com/greysky> . Your solution was
+articulated in a way that made it very easy to comprehend.
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/palakpaneer>
+
+
+      palakpaneer
+
+<https://www.kaggle.com/palakpaneer>
+
+Posted a year ago
+
+· 51st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I'm learning a lot here, thank you for sharing.
+To improve my performance in the next competition, I’d appreciate it if
+I could ask you a few questions.
+
+Regarding the Descriptive Statistics on Target Encodings (Column-wise),
+I believe the aggregated globally values (mean, standard deviation, min,
+max) would be the same across all rows. Therefore, they wouldn’t carry
+meaningful information for Lightgbm. So, can I ask why you made this
+feature and use it in your sophisticated model? I guess you use that
+data to ensure there is no data leakage.
+Also, I have the same question for the "aggregated by pair_size".
+
+Thank you for taking your time to read this.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/greysky>
+
+
+      Farukcan Saglam
+
+<https://www.kaggle.com/greysky>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I might have confused the terms "row-wise" and "column-wise" in the
+write-up. The operation performed on each row separately (axis=1).
+
+|agg_list = ['mean', 'std', 'min', 'max']
+
+for agg in agg_list:
+    select_columns = encoded_columns
+    df_train[f'mean_{agg}'] = df_train[select_columns].agg(agg, axis=1)
+    df_test[f'mean_{agg}'] = df_test[select_columns].agg(agg, axis=1)
+
+|
+content_copy
+
+The same logic applies to the pair_size features. If we had used
+(axis=0), the result would have been the same for every row, making it
+useless for the model.
+
+|agg_list = ['mean', 'std', 'min', 'max']
+r_list = [1, 2, 3, 4, 5, 6]
+
+for r in tqdm(r_list):
+    select_columns = encoded_columns[encoded_columns.str.contains(f'_{r}')]
+    for agg in agg_list:
+        df_train[f'mean_{agg}_{r}'] = df_train[select_columns].agg(agg, axis=1)
+        df_test[f'mean_{agg}_{r}'] = df_test[select_columns].agg(agg, axis=1)
+
+|
+content_copy
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/palakpaneer>
+
+
+      palakpaneer
+
+<https://www.kaggle.com/palakpaneer>
+
+Posted a year ago
+
+· 51st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you for your clarification. This method is the first time I've
+seen it. So, I didn't have this idea.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shakhauat>
+
+
+      shakhauat hassain⚡
+
+<https://www.kaggle.com/shakhauat>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Awesome, this is a dream for me.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/alimdauletbek>
+
+
+      Alim Dauletbek
+
+<https://www.kaggle.com/alimdauletbek>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Good work there for the feature selection
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/raydowns>
+
+
+      raydowns
+
+<https://www.kaggle.com/raydowns>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+it was funny but great!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cemdusenkalkan>
+
+
+      Cem Düşenkalkan
+
+<https://www.kaggle.com/cemdusenkalkan>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+congrats, cool solution
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/alihaiderahmad>
+
+
+      Ali_Haider_Ahmad
+
+<https://www.kaggle.com/alihaiderahmad>
+
+Posted a year ago
+
+· 19th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+The long training time was one of the most annoying and limiting factors
+for my ideas! It's amazing how you were able to train the models in such
+a relatively short time!
+
+Congratulations!
+
+replyReply
+add_reactionReact
+

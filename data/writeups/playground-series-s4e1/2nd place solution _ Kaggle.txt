@@ -1,0 +1,1036 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification with a Bank Churn Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e1>
+      o
+
+        2nd place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s4e1/
+        writeups/lukaszl-2nd-place-solution>
+      o
+
+        Predicting Loan Payback
+
+        <https://www.kaggle.com/competitions/playground-series-s5e11>
+      o
+
+        2nd Place Solution - 7 models, but 1 was also enough
+
+        <https://www.kaggle.com/competitions/playground-series-s5e11/
+        writeups/2nd-place-solution-7-models-but-1-was-also-enou>
+      o
+
+        1st place - A lot of features, a lot of models, and a little bit
+        of luck
+
+        <https://www.kaggle.com/competitions/playground-series-s5e11/
+        writeups/1st-place-a-lot-of-features-a-lot-of-models-an>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd place solution — Binary Classification with a Bank Churn Dataset
+
+
+  2nd place solution
+
+Binary Classification with a Bank Churn Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s4e1>
+
+Solution Writeup · 2nd place
+
+Hello everyone. My solution may be a ray of hope for those who don't
+always have time for many experiments ;)
+
+
+    The Idea
+
+The main idea (or if you prefer, the only one ;)) behind my solution is
+to use the 'syntheticity of the dataset' and mostly ignore the topic of
+the competition.
+
+The first step was to automatically generate all 1,2,3…10 element
+subsets from the set: ['CreditScore', 'Geography', 'Gender', 'Age',
+'Tenure', 'NumOfProducts', 'HasCrCard', 'IsActiveMember'
+','EstimatedSalary','Balance'].
+
+Then, for each such subset, checking whether it appears unchanged in the
+original dataset.
+If so, the feature received a value of 1, if not 0.
+
+Example (pseudocode):
+
+|subset = ['CreditScore', 'Geography', 'Balance']
+x1 = 1 if subset in original_dataset else 0
+
+|
+content_copy
+
+
+    Why ?
+
+why so? I noticed that the target distribution on the features
+constructed in this way is completely different than the basic 0.21 for
+the entire dataset. Using the above feature as an example:
+
+|df_train.groupby('x1').Exited.mean() gives the result:
+False 0.171026
+True 0.269552
+
+or for ['CreditScore', 'Gender', 'NumOfProducts']:
+False 0.203034
+True 0.707857
+
+|
+content_copy
+
+I also added subset [CustomerId, Surname] to this set of ~1000 features.
+
+There was actually nothing else that needed to be done :)
+
+
+    Models
+
+The first model was:
+
+*lgbm*: 50 selected features (including basic features), without
+excessive hyperparameters tuning, on private leaderboard it got 0.90203
+
+*autogluon*: all features included, presets='best_quality',
+time_limit=14400, on private leaderboard it got 0.90378
+
+*simple ensamble*: (lgbm+autogluon)/2, on private leaderboard it got my
+final - 0.90462
+
+In the latest submission some of the publicly available features were
+included, but they didn't change much.
+
+Of course, I also added the @paddykb <https://www.kaggle.com/paddykb>
+"Feeling lucky trick" :), in my case it's +0.01 to the result, a little
+bit less then 0.02, this is probably due to the features that partially
+explained this 'strange' behavior of the dataset.
+
+and that's it :)
+
+Thank you everyone who has participated in this competition and
+remember, if you are asked to predict churn in real life, do not ask the
+client for the original dataset from which yours was generated :)
+
+Author
+
+<https://www.kaggle.com/lukaszl>
+lukaszl <https://www.kaggle.com/lukaszl>
+
+lukaszl
+
+arrow_drop_up
+
+82
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    40 Comments
+
+6 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s4e1/writeups/lukaszl-2nd-place-solution#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+11
+
+more_vert
+
+Congrats on the solution!
+
+As the lead developer of AutoGluon, I'm really happy to see it being
+used so widely in this competition and to such great success!
+
+Cheers!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lukaszl>
+
+
+      lukaszl
+
+<https://www.kaggle.com/lukaszl>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I've only scratched the surface of your library, but I must say that
+from what I've seen.. great job :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/iqbalsyahakbar>
+
+
+      Iqbal Syah Akbar
+
+<https://www.kaggle.com/iqbalsyahakbar>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Thanks for sharing! So from what I understand here, the trick is
+basically a (somewhat) generalization of leakage trick into all subsets
+of features instead of just one full set of features.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lukaszl>
+
+
+      lukaszl
+
+<https://www.kaggle.com/lukaszl>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+I think it's a bit like that. When I thought about it, I treated it as a
+'problem' in the work of the algorithm generating the synthetic dataset.
+It could not maintain the same target distribution across so many levels
+of feature combinations. It seems to me that this approach may turn out
+to be very generic and in the case of access to the original dataset in
+future competitions, it may also give very good results with a
+relatively low effort :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/craigmthomas>
+
+
+      Craig Thomas
+
+<https://www.kaggle.com/craigmthomas>
+
+Posted 2 years ago
+
+· 252nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+@lukaszl <https://www.kaggle.com/lukaszl> nice!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/harshitstark>
+
+
+      Harshit Sharma
+
+<https://www.kaggle.com/harshitstark>
+
+Posted 2 years ago
+
+· 305th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Your innovative approach is greatly appreciated. Congratulations on your
+remarkable achievement @lukaszl <https://www.kaggle.com/lukaszl> !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thermostatic>
+
+
+      Irving Ernesto
+
+<https://www.kaggle.com/thermostatic>
+
+Posted 2 years ago
+
+· 2841st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Funny but good solution haha :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hikmee>
+
+
+      Hikmat Ullah
+
+<https://www.kaggle.com/hikmee>
+
+Posted 2 years ago
+
+· 3301st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+*Thank You!* @lukaszl <https://www.kaggle.com/lukaszl> for your tricky
+solution.
+but sorry to say, I haven't got your point here "Remember, if you are
+asked to predict churn in real life, do not ask the client for the
+original dataset from which yours was generated" means why so that?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lukaszl>
+
+
+      lukaszl
+
+<https://www.kaggle.com/lukaszl>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+it's a joke :) my solution is based on the availability of the original
+dataset and the fact that the training and test datasets are synthetic.
+In real life, you simply cannot use this solution, because there will be
+no 'original dataset'.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hikmee>
+
+
+      Hikmat Ullah
+
+<https://www.kaggle.com/hikmee>
+
+Posted 2 years ago
+
+· 3301st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+ok, Thanks!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/llorenzok>
+
+
+      llorenzo
+
+<https://www.kaggle.com/llorenzok>
+
+Posted 2 years ago
+
+· 233rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing this brilliant idea.
+
+I wonder how you select ~50 features from the potential ~1024
+combinations of features.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lukaszl>
+
+
+      lukaszl
+
+<https://www.kaggle.com/lukaszl>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Good question. For LGBM I wrote a simple genetic algorithm and let it
+run for a few hours and it chose them for me :)
+
+In the autogluon part I put everything inside and the autogluon decided
+what was important.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jordirosell>
+
+
+      Jordi Rosell
+
+<https://www.kaggle.com/jordirosell>
+
+Posted 2 years ago
+
+· 287th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+"if you are asked to predict churn in real life, do not ask the client
+for the original dataset from which yours was generated"
+Thanks!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kailai>
+
+
+      kailai
+
+<https://www.kaggle.com/kailai>
+
+Posted 2 years ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Brilliant! Thanks and congratulation!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lukaszl>
+
+
+      lukaszl
+
+<https://www.kaggle.com/lukaszl>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Big thank You :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jiyuebo>
+
+
+      jiyuebo
+
+<https://www.kaggle.com/jiyuebo>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks for sharing! But I can not get your point. I'm confused, What is
+"original dataset."? And the "subset" is just the List like data
+structure like: subset = ['CreditScore', 'Geography', 'Balance']?
+I hope to get your guidance!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/muhdsheikh>
+
+
+      muhd sheikh
+
+<https://www.kaggle.com/muhdsheikh>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+wow great job
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jordirosell>
+
+
+      Jordi Rosell
+
+<https://www.kaggle.com/jordirosell>
+
+Posted 2 years ago
+
+· 287th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Please, can you share what parameters have you used to tune your lgbm model?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/viktor7>
+
+
+      Viktor
+
+<https://www.kaggle.com/viktor7>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+it was helpful
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/orpheuswalker>
+
+
+      Kyle Walker
+
+<https://www.kaggle.com/orpheuswalker>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks for sharing your idea and congrats on your winning!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sainin>
+
+
+      nasan
+
+<https://www.kaggle.com/sainin>
+
+Posted 2 years ago
+
+· 2742nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+This is a innovative solution, congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/afsar701>
+
+
+      afsar701
+
+<https://www.kaggle.com/afsar701>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+sorry to say, but didnt get it at all will any body please explain me
+what lukaszl is trying to convey?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ksrajavel>
+
+
+      Rajavel KS
+
+<https://www.kaggle.com/ksrajavel>
+
+Posted 2 years ago
+
+· 3407th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+That easy. Wow.
+This is an example where wisdom trumps intelligence.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/haraldbrinck>
+
+
+      Harald Brinck
+
+<https://www.kaggle.com/haraldbrinck>
+
+Posted 2 years ago
+
+· 1067th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations, I could have worked on this competition for the rest of
+my life and had never thought of a solution like this.
+I hope I will understand why it works within my lifetime though. 🤪
+
+So you have some knowledge on how the “synthetic data generator” works?
+It only uses field values from the original dataset? Then shuffles them
+to create new rows?
+Ok, but then what, it can't use random values for “Exited”. 🤔
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jarkofmr>
+
+
+      Jarko (Manuel)
+
+<https://www.kaggle.com/jarkofmr>
+
+Posted 2 years ago
+
+· 3543rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Amazing, congratulations
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nevrohelios>
+
+
+      nevroHelios
+
+<https://www.kaggle.com/nevrohelios>
+
+Posted 2 years ago
+
+· 1877th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks…
+This helped in a lot in understanding the process…
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nepalsingh>
+
+
+      Nepal Singh
+
+<https://www.kaggle.com/nepalsingh>
+
+Posted 2 years ago
+
+· 3506th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulation @lukaszl <https://www.kaggle.com/lukaszl> for securing
+the top stop, very encouraging
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/chayanonc>
+
+
+      Chagin
+
+<https://www.kaggle.com/chayanonc>
+
+Posted 2 years ago
+
+· 241st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! Very interesting way to handle the problem, Thank you.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tdoh86>
+
+
+      tdoh86
+
+<https://www.kaggle.com/tdoh86>
+
+Posted 2 years ago
+
+· 12th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Clever feature engineering idea, appreciated.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bobojamson>
+
+
+      Bobo Jamson
+
+<https://www.kaggle.com/bobojamson>
+
+Posted 2 years ago
+
+· 1129th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great work and clever solution! Congrats on the result and thanks for
+sharing.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/rockiecao>
+
+
+      LuminousC
+
+<https://www.kaggle.com/rockiecao>
+
+Posted 2 years ago
+
+· 79th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations and thanks for sharing the innovation in the solution 👍
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thiagomantuani>
+
+
+      Thiago Mantuani
+
+<https://www.kaggle.com/thiagomantuani>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations, about autogluon, did you use all the models or did you
+exclude any from the list?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lukaszl>
+
+
+      lukaszl
+
+<https://www.kaggle.com/lukaszl>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I haven't excluded anything
+
+replyReply
+add_reactionReact
+

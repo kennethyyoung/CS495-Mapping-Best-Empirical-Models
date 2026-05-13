@@ -1,0 +1,1511 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predicting Optimal Fertilizers
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6>
+      o
+
+        1st Place - Fast GPU Experimentation with RAPIDS cuDF cuML
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6/
+        writeups/chris-deotte-1st-place-fast-gpu-experimentation-wi>
+      o
+
+        Classification with an Academic Success Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e6>
+      o
+
+        Exploring Mental Health Data
+
+        <https://www.kaggle.com/competitions/playground-series-s4e11>
+      o
+
+        Mental Health Prediction | 1st Place Solution
+
+        <https://www.kaggle.com/code/ravaghi/mental-health-
+        prediction-1st-place-solution>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+1st Place - Fast GPU Experimentation with RAPIDS cuDF cuML — Predicting
+Optimal Fertilizers
+
+
+  1st Place - Fast GPU Experimentation with RAPIDS cuDF cuML
+
+Predicting Optimal Fertilizers
+
+<https://www.kaggle.com/competitions/playground-series-s5e6>
+
+Solution Writeup · 1st place · Jul 1, 2025
+
+Thanks Kaggle for another fun playground competition! My *June
+playground* "Predicting Optimal Fertilizers" solution uses techniques
+from my previous 6 months of playground solutions. Below are links to
+old solutions with more info. And I will describe the techniques again
+briefly below.
+
+
+    Techniques from Previous Playground Comps using GPU Acceleration!
+
+Date 	Name 	Metric 	Technique(s) 	Solution Link 	Rank
+Dec 2024 	Insurance Comp 	RMSLE 	*RAPIDS cuDF
+Feature Engineering* 	link <https://www.kaggle.com/competitions/
+playground-series-s4e12/discussion/554328> 	1st
+Jan 2025 	Forecasting Comp 	MAPE 	*Boosting* over Residuals 	link
+<https://www.kaggle.com/competitions/playground-series-s5e1/
+discussion/560549> 	2nd
+Feb 2025 	Backpack Comp 	RMSE 	Use *Original Data* 	link <https://
+www.kaggle.com/competitions/playground-series-s5e2/discussion/565539> 	1st
+Mar 2025 	Rainfall Comp 	AUC 	*RAPIDS cuML* 	link <https://
+www.kaggle.com/competitions/playground-series-s5e3/discussion/571176> 	2nd
+Apr 2025 	Podcast Comp 	RMSE 	cuML *Stacking* 	link <https://
+www.kaggle.com/competitions/playground-series-s5e4/discussion/575784> 	1st
+May 2025 	Calorie Comp 	RMSLE 	*GPU HillClimbing* 	link <https://
+www.kaggle.com/competitions/playground-series-s5e5/discussion/582611> 	1st
+
+
+    RAPIDS cuDF Feature Engineering
+
+The secret sauce in this competition is |cuDF feature engineering|,
+specifically *Target Encoding*. The competition data has 8 features
+which can each be treated as categorical.
+
+First we make all pairs which is 28 new columns. Then we make all
+triples which is 56 new columns. Then we make all quadruples which is 70
+new columns. From these |162 = 8+28+56+70| columns, we use |cuML Target
+Encoder| to encode the 7 binary targets, |y==0?, y==1?, ..., y==6?|.
+This produces 1134 new columns. Then we target encode using the original
+dataset to produce another 1134 new columns. We then train an XGBoost
+using all these 2268 columns!
+
+
+    Use Original Data
+
+Using relevant external data helps in all Kaggle competitions. This
+technique is especially important in Kaggle's playground competitions
+because every competition is synthetic data generated from an original
+dataset. Therefore we want to utilize the original data.
+
+There are two ways to use external data like the original dataset. We
+can add the data as *new rows*. Or we can add the data as *new columns*.
+Most public notebooks in this competition used the former technique. But
+no public notebook used the latter. (In our final hill climbing ensemble
+we need models trained with former and models trained with later).
+
+To use the later, we first create a categorical column (by using
+original column or combination of original columns). Once we have a
+categorical column, we target encoding it using the original data.
+
+|TE = original_data.groupby(CAT_COL)[TARGET].agg("mean")
+TE.name = f"TE_{CAT_COL}_orig"
+train = train.merge(TE, on=CAT_COL, how='left')
+
+|
+content_copy
+
+
+    Stacking (with cuML)
+
+Stacking is especially beneficial for the MAP@3 metric which likes
+calibrated probabilities. We train an *NN level 2* stacking model with
+categorical cross entropy loss and it doesn't matter if stage 1 models
+are calibrated or not.
+
+For stage 1 models, we don't even need multi-class. We can train
+individual models to predict single binary classification, |Is the
+target y=0?|, |Is the target y=1?| etc etc. We predict OOF probabilities
+using XGBoost, CatBoost, NN, cuML Linear Regression. Then we train a
+level 2 NN stacking model using categorical cross entropy loss to
+predict multi-class probabilities. This uses all the knowledge of stage
+1 models and produces calibrated multi-class stage 2 predictions!
+
+We also build an *GBDT level 2* stacking model using XGBoost and |
+objective='multi:softprob'|. The average of *NN level 2* and *GBDT level
+2* is better than each stage 2 model individually!
+
+
+    Repeated KFold
+
+Bizen250 published a beautiful public notebook here <https://
+www.kaggle.com/code/bizen250/xgboost-repeatedstratifiedkfold>, which
+illustrates an important concept about MAP@3 metric. This metric is very
+sensitive to the randomness of training (and predicted probabilities).
+Therefore an easy way to boost MAP@3 metric is to train the same model
+again with different seed and average the predicted probabilities before
+selecting top3 for MAP@3.
+
+For example, I train all my NNs 100 times and average the probabilities
+before selecting top 3 fertilizers. And I train all my GBDT dozens of
+times using 100% data and average the probabilities before selecting the
+top 3.
+
+In the plot below, we see that each fold of each 5-Fold XGB has average
+MAP@3=0.376 but when we average the probabilities from 100 5-Fold XGB
+and then compute MAP@3, we achieve 0.380!
+
+
+    Hill Climbing (with cuML)
+
+The effectiveness of hill climbing comes from creating a diverse set of
+models. Then when we combine them with weighted average, the result is
+better than any of the individual models. The key ingredients to tabular
+data hill climbing is building diverse GBDT, NN, and ML models. The
+fastest way to produce ML models is using RAPIDS cuML.
+
+
+    Boosting over Residuals
+
+Note that we can give XGBoost starting predictions. First we train a
+cuML Linear Regression model. Then we use XGBoost's |
+dtrain.set_base_margin(LINEAR_REGRESSION_LOGITS)| to begin the boosting
+from the predictions of the linear regression model. This is an
+overlooked XGBoost trick!
+
+
+    Pseudo Labeling
+
+A helpful trick in all competitions in the final days is to add test
+data labeled with your best ensemble. For classification, NN naturally
+handle the soft target probabilities (with their default cross entropy
+losses). For XGB, we write a custom objective to train multi-class with
+soft targets.
+
+
+    Re-Train with 100% Train
+
+Another helpful trick in all competitions in the final days is to
+retrain all the most important models in your final ensemble using 100%
+train data. For XGBoost when going from 5-Fold to 100% we use fixed
+number of iterations equal to 25% more than average fixed during early
+stopping. And for NN, we just create a fixed step learning schedule from
+the average reduce on plateau of early stopping from 5-Fold.
+
+
+    Trust Your CV
+
+For my final submission, I chose my best CV ensemble which was also my
+best LB score. My CV ensemble described below has CV MAP@3 = 0.386! Wow!
+
+
+    Final Submission - CV 0.386
+
+My final submission is an ensemble of *9 models* where each is trained
+*many times* with different seeds. The CV score is 0.386 and Private LB
+is 0.38652 and public LB is 0.38450!
+
+  * XGBoost *cuDF FE* - use original *data as columns* w/ tree *depth =
+    4*. (And train 10 models with 100% data)
+  * XGBoost *cuDF FE* - use original *data as columns* w/ tree *depth =
+    10*. (And train 10 models with 100% data)
+  * *Stacking NN* with many stage 1 models (And train 25 models)
+  * XGBoost *RepeatedStratifiedKFold* - use original *data as rows* -
+    Public notebook by @bizen250 <https://www.kaggle.com/bizen250> here
+    <https://www.kaggle.com/code/bizen250/xgboost-
+    repeatedstratifiedkfold> (Trains 50 XGB)
+  * *Stacking XGB* over LGBM - Public notebook by @ayushchandramaurya
+    <https://www.kaggle.com/ayushchandramaurya> here <https://
+    www.kaggle.com/code/ayushchandramaurya/predicting-fertilizer-name-
+    stacking-ensemble> (And train multiple versions different seeds)
+  * XGBoost - use original *data as rows* w/ tree *depth = 18* - Public
+    notebook by @elainedazzio <https://www.kaggle.com/elainedazzio> here
+    <https://www.kaggle.com/code/elainedazzio/20250618-pg6-xgb?
+    scriptVersionId=246053236> (And train multiple versions different seeds)
+  * *NN* - Public notebook by @ricopue <https://www.kaggle.com/ricopue>
+    here <https://www.kaggle.com/code/ricopue/s5e6-fertilizers-nn-keras-
+    all-embedding> (And train 100 NNs)
+  * *Stacking XGB* with many stage 1 models and with *pseudo label
+    COLUMNS* (i.e KNN features).
+  * *NN* with *pseudo label ROWS* (And train 25 NNs)
+
+So we use *9 models* and train each *many times* with different seeds.
+Therefore our final ensemble is approximately combining *300 sets of
+predictions*! Weights (for the 9 models) are determined by *GPU Hill
+Climbing* !
+
+
+    Enjoy!
+
+Consider using all these techniques in Kaggle's July playground competition!
+
+Author
+
+<https://www.kaggle.com/cdeotte>
+Chris Deotte <https://www.kaggle.com/cdeotte>
+
+cdeotte
+
+arrow_drop_up
+
+188
+
+Share
+
+more_horiz
+
+thankYou41funny1surprise6
+add_reaction
+
+comment
+
+
+    99 Comments
+
+12 appreciation comments <https://www.kaggle.com/competitions/
+playground-series-s5e6/writeups/chris-deotte-1st-place-fast-gpu-
+experimentation-wi#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/hijabzahra8>
+
+
+      HijabZahra
+
+<https://www.kaggle.com/hijabzahra8>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+U shared this I found it very useful thanks @cdeotte <https://
+www.kaggle.com/cdeotte>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/vigneshbalachander>
+
+
+      Vignesh BalaChander
+
+<https://www.kaggle.com/vigneshbalachander>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Yes, I often use SHAP or feature importance to prune features early — it
+helps reduce overfitting and speeds up training.
+Training binary classifiers per class usually gives more decorrelated
+predictions, which improves the meta-learner’s performance. It forces
+base models to specialize more.
+Glad you’re enjoying the competition and happy to discuss more!Yes, I
+often use SHAP or feature importance to prune features early — it helps
+reduce overfitting and speeds up training.
+Training binary classifiers per class usually gives more decorrelated
+predictions, which improves the meta-learner’s performance. It forces
+base models to specialize more.
+Glad you’re enjoying the competition and happy to discuss more!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/harukikakinuma>
+
+
+      Haruki Kakinuma
+
+<https://www.kaggle.com/harukikakinuma>
+
+Posted 10 months ago
+
+· 7th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations!
+I’ll use your work as a reference in future competitions—thank you!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+Posted 10 months ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congrats on another win! How many has it been already :V. i also thought
+of using TE features but I could only do 2-way combinations (the feature
+count exploded after that).
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 10 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations @mahoganybuttstrings <https://www.kaggle.com/
+mahoganybuttstrings> on solo 3rd place finish!
+
+Thankfully, I have access to some A100 GPU 80GB VRAM. When creating all
+pairs, triples, quadruples and then TE the 7 binary targets using both
+train.csv and original.csv. Produces around 3000 features. Train data
+has 7.5 e5 rows. When training I think it used about 50GB VRAM. Having
+large GPU helped train this monster model !!
+
+This diverse monster model boosted an ensemble of public notebooks from
+CV 0.384 to 0.386. So this diverse model was probably the secret sauce!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+Posted 10 months ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I'm curious, what was the CV score for that model?
+
+replyReply
+add_reactionReact
+
+5 more repliesarrow_drop_down
+
+Profile picture for Chris Deotte
+Profile picture for Mahog
+Profile picture for davidlowryduda
+
+<https://www.kaggle.com/masayakawamata>
+
+
+      Masaya Kawamata
+
+<https://www.kaggle.com/masayakawamata>
+
+Posted 10 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Hi Chris, Congratulations on another dominant and well-deserved 1st
+place! It was truly impressive to watch.
+
+I was particularly astonished by the speed of your score improvement.
+Your first submission appeared only about 10 days before the deadline,
+and you climbed the leaderboard at an incredible pace. I was simply left
+in awe.
+
+This leads me to a question about your methodology, if you're open to
+sharing. Do you typically formulate a comprehensive strategy beforehand—
+based on deep EDA and reviewing discussions, much like solving a math
+problem—before you start modeling? Or is your process more iterative,
+where you continuously experiment with ideas as they arise?
+
+I'm very curious about your general approach. Thank you for sharing your
+work with the community!
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 10 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Thanks @masayakawamata <https://www.kaggle.com/masayakawamata> .
+Congrats on solo 2nd place victory!
+
+My process is very iterative. Model OOF and EDA, CV scores, and
+submission scores inform how I proceed. In this competition, before I
+entered I read a discussion post saying that the original dataset (that
+Kaggle used to create the synthetic data) was random targets, so I
+immediately knew what strategy was needed here.
+
+This competition is exactly like Feb 2025 Backpack comp (which also had
+original data random targets). I immediately knew that the most
+important model would be to merge the original data as new columns. This
+allows models to "reverse engineer" the Kaggle synthetic data generation
+process.
+
+In every Kaggle playground comp, we are learning two signals. The
+original dataset signal (i.e. whatever patterns exist in the original
+dataset) and the Kaggle synthetic data generation signal. When the
+original dataset targets are random numbers, we need only focus on the
+Kaggle synthetic data signal.
+
+So the first model I built was making new columns from combinations of
+existing columns and merging original data targets. (This is how we
+"reverse engineer" the Kaggle synthetic data process). This diverse
+model combined with public notebooks boosted me to 1st place. (Note when
+the original dataset has strong signal, then this technique isn't very
+helpful).
+
+The next important observation was the metric. Our models predict
+probabilities but the metric is ranked MAP@3. I noticed early that
+training the same model with different seed and ensemble with itself
+improved MAP@3. So every model in my ensemble I trained with 100% data
+and train multiple times multiple seeds.
+
+I think these two things secured my 1st place win.
+
+replyReply
+thankYou2
+add_reaction
+
+<https://www.kaggle.com/masayakawamata>
+
+
+      Masaya Kawamata
+
+<https://www.kaggle.com/masayakawamata>
+
+Posted 10 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you so much for your detailed reply! I'm always amazed by how
+incredibly clear and insightful your explanations are.
+
+Your strategic thinking is exactly what I aspire to. I'm excited to
+enjoy the journey and will work hard to hopefully catch up to, and one
+day even surpass, your level!
+
+Seriously, thank you again for being such an inspiration!
+
+replyReply
+add_reactionReact
+
+3 more repliesarrow_drop_down
+
+Profile picture for yunsuxiaozi
+Profile picture for Chris Deotte
+Profile picture for Pablo Prieri
+
+<https://www.kaggle.com/adrielomalley>
+
+
+      Adriel O'Malley
+
+<https://www.kaggle.com/adrielomalley>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Fantastic explanation!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/chrisjm80>
+
+
+      Chris J Mears
+
+<https://www.kaggle.com/chrisjm80>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @cdeotte <https://www.kaggle.com/cdeotte> ! Thanks for
+the great write-up and tips!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/victorialitan>
+
+
+      Victoria Li Tan
+
+<https://www.kaggle.com/victorialitan>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+RAPIDS cuDF is such a powerful tool. Have you tried alternatives to
+RAPIDS cuDF, such as AutoInt architectures or Feature Tools?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/khushikyad001>
+
+
+      Khushi Yadav
+
+<https://www.kaggle.com/khushikyad001>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing this fantastic approach.✨
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bakhtawarshabbir>
+
+
+      bakhtawar shabbir
+
+<https://www.kaggle.com/bakhtawarshabbir>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Brilliant engineering—GPU stacking and feature tricks shine!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/saraharshadbcs>
+
+
+      Sarah Arshad
+
+<https://www.kaggle.com/saraharshadbcs>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing your approach! I find it really useful….
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/vigneshbalachander>
+
+
+      Vignesh BalaChander
+
+<https://www.kaggle.com/vigneshbalachander>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Yes, I often use SHAP or feature importance to prune features early — it
+helps reduce overfitting and speeds up training.
+Training binary classifiers per class usually gives more decorrelated
+predictions, which improves the meta-learner’s performance. It forces
+base models to specialize more.
+Glad you’re enjoying the competition and happy to discuss more!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shuvojitdas>
+
+
+      Shuvojit Das
+
+<https://www.kaggle.com/shuvojitdas>
+
+Posted 10 months ago
+
+· 642nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Hey @cdeotte <https://www.kaggle.com/cdeotte> ,
+
+Absolutely phenomenal work your approach was a masterclass in structured
+experimentation and ensemble strategy. Big congratulations on the top
+spot well deserved! Learned a ton from your solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/notyoursanshuman>
+
+
+      Anshuman Bhoi
+
+<https://www.kaggle.com/notyoursanshuman>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Just wondering
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/olejakobrosenvold>
+
+
+      Ole-Jakob
+
+<https://www.kaggle.com/olejakobrosenvold>
+
+Posted 10 months ago
+
+· 10th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats on the crushing victory, @cdeotte <https://www.kaggle.com/cdeotte>!
+
+A bit late to the party, but I just finished going through your write-up
+and your many insightful answers—really impressive work. I picked up
+several new gems like /boosting over residuals/, /100% retrain/, /
+pseudo-labeling/, and your brilliant method of turning the original data
+directly into features. I’ll definitely be incorporating these ideas in
+future Playground Series competitions even if I'm worried about the
+complexity of the workflow.
+
+I had a couple of follow-up questions:
+
+ 1.
+
+    In some of your earlier write-ups involving target encoding (TE),
+    you included stats like |std|, |min|, |max|, and |skew|, especially
+    for 2- and 3-feature combinations. Was there a specific reason you
+    chose to stick with just the |mean| in this competition?
+
+ 2.
+
+    I noticed you didn’t seem to use TE /between/ features—such as
+    between numeric values and soil type or crop type. Since everything
+    is treated as categorical, is there a theoretical reason not to
+    apply TE across all feature pairs?
+
+Thanks again for the inspiration—learned a lot from your work!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 10 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Hi. Thanks. Congratulations on achieving 10th place!
+
+1) Since the metric is multi-class, when we pick a single statistic
+(like mean), we need to TE every feature 7 times (once for each binary
+target (i.e. Is y==0 mean, y==1 mean, y==2 mean, etc). In this comp, I
+only used |mean| and that already produced 3000 features. If I used std,
+min, max, skew. Then I would have 15,000 features. That is too many :-)
+I did try a few of these but the improvement was not enough to justify
+so many new features.
+
+Also note, that many of these stats are un-informative for
+classification problems. The target (of y==0, y==1, etc) is 0 or 1. So
+the statistic |min| always equals 0 and |max| always equals 1. And some
+of the others don't have much info either.
+
+2) I don't understand your question. I did create feature pairs. There
+are 8 original features. I treat them all as categorical and make all
+pairs which is |8_choose_2 = 28|. And I make all triples |8_choose_3 =
+56|. And I make all quadruples which is |8_choose_4 = 70|. What other
+combinations are you talking about?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/olejakobrosenvold>
+
+
+      Ole-Jakob
+
+<https://www.kaggle.com/olejakobrosenvold>
+
+Posted 10 months ago
+
+· 10th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Hi !
+I completely forgot that each feature needs to be target encoded seven
+times—that makes perfect sense now. Please feel free to disregard my
+second (slightly clumsy) question :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/btsarmy17>
+
+
+      nunsongi
+
+<https://www.kaggle.com/btsarmy17>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Huge congrats! I'm still a beginner, but seeing your progress really
+inspires me — I hope I can reach that level one day!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ayushchandramaurya>
+
+
+      Ayush chandra Maurya
+
+<https://www.kaggle.com/ayushchandramaurya>
+
+Posted 10 months ago
+
+· 80th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @cdeotte <https://www.kaggle.com/cdeotte>, great work!
+Thanks for sharing your approach, I got to learn many things from you in
+last 3 months. Constantly improving my skill and in next competition I
+will try to be in top.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 10 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Awesome. Congratuations @ayushchandramaurya <https://www.kaggle.com/
+ayushchandramaurya> I used your stacking public notebooks in my final
+solution. They were diverse and strong models. Nice work designing them!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ayushchandramaurya>
+
+
+      Ayush chandra Maurya
+
+<https://www.kaggle.com/ayushchandramaurya>
+
+Posted 10 months ago
+
+· 80th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thank you @cdeotte <https://www.kaggle.com/cdeotte>, I am glad it was
+helpful !
+The mistake I have made is that I have not tried to blend more diverse
+model.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ayushchandramaurya>
+
+
+      Ayush chandra Maurya
+
+<https://www.kaggle.com/ayushchandramaurya>
+
+Posted 10 months ago
+
+· 80th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Can you please share your code in which you have done (9 models and
+train each many times with different seeds. Therefore our final ensemble
+is approximately combining 300 sets of predictions! Weights (for the 9
+models) are determined by GPU Hill Climbing !)
+It would be really helpful.
+Thanks
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/siamagma>
+
+
+      sakshi
+
+<https://www.kaggle.com/siamagma>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Respected Chris Deotte,
+
+I hope you're doing well.
+
+First of all, I would like to congratulate you on your recent win.
+
+I am a first-year undergraduate student at IIT, and I am deeply
+interested in Artificial Intelligence and Machine Learning. I have
+recently started learning Python and some basic mathematics such as
+Linear Algebra, Statistics, and Probability.
+
+However, I have many questions and confusions about AI and ML-like how
+to begin, where to learn from, and which books to study. I don’t yet
+have a clear roadmap. I spend a lot of time using ChatGPT to ask
+questions about AI and ML- day and night -but sometimes I feel like I’m
+progressing slowly.
+
+Since the field of computer science is still new to me, I used to feel
+overwhelmed by tools like Git, GitHub, Kaggle, VS Code, and so many
+Python libraries. But now, I’m getting used to them and even enjoying
+the process.
+
+I’m reaching out to you for some guidance on how to move forward in AI
+and ML. Any advice or suggestions from you would be incredibly valuable
+to me.
+
+Thank you so much for your time.
+Have a great day!
+
+Warm regards,
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 10 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Hi @siamagma <https://www.kaggle.com/siamagma> Welcome to the Kaggle
+community. Like all learning endeavors, my suggestion is to make
+learning fun. Always strive to learn more (each day) and pick activities
+and topics that are interesting and fun to you. Also don't be
+intimidated by everything that is out there. Just keep learning
+something new each day while having fun!
+
+A suggested progression of learning new topics could be below. But feel
+free to jump around and follow what makes you excited:
+
+  * Statistics (means, std etc. How to make predictions simply from
+    computations)
+  * ML models (like logistic regression, SVM, random forest, KNN, etc)
+  * KFold cross validation (what is it? how to use it)
+  * MLP simple NN models (fully connected NN nothing fancy)
+  * GBDT (like XGBoost, CatBoost, LGBM for regression and classification)
+  * CNN (basic *computer vision* models like EfficientNet etc)
+  * Transformers (Encoder LLM like DeBerta for *text* regression and
+    classification)
+  * Advanced topics like LLM text generation (i.e. Llama etc) and fancy
+    NN like timeseries WaveNet (CNN), GRU/LSTM (RNN), Time Transformers.
+    And transformer image models (ViT) image object detection (YOLO) and
+    image segmentation (UNET). And GBDT ranking. And AutoML
+
+This is sort of the progression that I took. And during that journey you
+will learn about topics needed like data augmentation, learning
+schedules, cross validation, hill climbing, stacking, pseudo labeling,
+hyperparameter tuning, etc etc.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/siamagma>
+
+
+      sakshi
+
+<https://www.kaggle.com/siamagma>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you very much for your valuable guidance and kind advice. I truly
+appreciate it and will certainly follow your suggestions. Once again,
+thank you for your support.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/albinachimidova>
+
+
+      Albina Chimidova
+
+<https://www.kaggle.com/albinachimidova>
+
+Posted 10 months ago
+
+· 665th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!
+Thank you for sharing your solution. It is very important for me to
+learn from best practices as a beginner in data science.
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/mehwish004>
+
+
+      Mehwish
+
+<https://www.kaggle.com/mehwish004>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats…
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/xjoannax88>
+
+
+      J.
+
+<https://www.kaggle.com/xjoannax88>
+
+Posted 10 months ago
+
+· 863rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing your approach! I find it really useful as I’m working
+on improving at competitions. :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/oleksandrvyshnevskyi>
+
+
+      Oleksandr Vyshnevskyi
+
+<https://www.kaggle.com/oleksandrvyshnevskyi>
+
+Posted 10 months ago
+
+· 800th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Wow great aproach interesting practice
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/karishmabattina>
+
+
+      Karishma Battina
+
+<https://www.kaggle.com/karishmabattina>
+
+Posted 10 months ago
+
+· 626th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations Chris, thanks for sharing your approach.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 10 months ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats once again! One of the early ideas I had was to simply
+repurpose your solution from Feb - should probably have done it.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 10 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Hi Optimistix. Congratulations achieving 5th place.
+
+Yes, this competition is just like February playground with the
+difference being the metric (because both comps have zero signal in the
+original dataset. And both comps require us to "reverse engineer" the
+synthetic data generation process).
+
+What surprised me is why an ensemble was needed here. In Februrary, I
+won with a single model. I thought I could build another single model
+here. But a single model was never strong enough here.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 10 months ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Yes, the zero signal in the original dataset was exactly why I thought
+of adapting your solution from February. Interestingly, this month we
+seem to have gone from zero signal to zero original data 😀
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 10 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+haha, yup this month looks like small data comp. There isn't much to do
+in small data playground comps. I suggest techniques from March Rainfall
+playground comp. Minimal to no feature engineering and equal weight
+ensemble of a few diverse models. And use original data in simple
+diverse ways.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 10 months ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks! Shall do something along those lines. Also good in a way, since
+I have some other important stuff lined up this month. Have a great July!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mohamedasak>
+
+
+      Mohamed Adel
+
+<https://www.kaggle.com/mohamedasak>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Impressive work! I appreciate you sharing it here.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mirazul687>
+
+
+      statify
+
+<https://www.kaggle.com/mirazul687>
+
+Posted 10 months ago
+
+· 58th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@cdeotte <https://www.kaggle.com/cdeotte> really appreciated how clearly
+you explained.
+
+replyReply
+add_reactionReact
+

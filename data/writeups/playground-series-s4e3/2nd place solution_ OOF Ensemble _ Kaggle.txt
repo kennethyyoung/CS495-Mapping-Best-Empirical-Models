@@ -1,0 +1,842 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Steel Plate Defect Prediction
+
+        <https://www.kaggle.com/competitions/playground-series-s4e3>
+      o
+
+        2nd place solution: OOF Ensemble
+
+        <https://www.kaggle.com/competitions/playground-series-s4e3/
+        writeups/moonlit-2nd-place-solution-oof-ensemble>
+      o
+
+        Binary Classification of Insurance Cross Selling
+
+        <https://www.kaggle.com/competitions/playground-series-s4e7>
+      o
+
+        PlaygroundS4E07|EDA|Baseline|V1
+
+        <https://www.kaggle.com/code/ravi20076/playgrounds4e07-eda-
+        baseline-v1>
+      o
+
+        2nd Place Solution (One model is all you need) - Team Ujjwal Pandey
+
+        <https://www.kaggle.com/competitions/playground-series-s4e7/
+        writeups/ujjwal-pandey-2nd-place-solution-one-model-is-all->
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd place solution: OOF Ensemble — Steel Plate Defect Prediction
+
+
+  2nd place solution: OOF Ensemble
+
+Steel Plate Defect Prediction
+
+<https://www.kaggle.com/competitions/playground-series-s4e3>
+
+Solution Writeup · 2nd place · Apr 1, 2024
+
+Hello everyone,
+
+It never comes to me that I would be sharing my solution here. As a
+student, this is my first time fully participating in a Kaggle competition.
+
+*Context:*
+Steel Plate Defect Prediction Competition (Playground Series - Season 4,
+Episode 3)
+
+Business Context: https://www.kaggle.com/competitions/playground-series-
+s4e3 <https://www.kaggle.com/competitions/playground-series-s4e3>
+Data Description: https://www.kaggle.com/competitions/playground-series-
+s4e3/data <https://www.kaggle.com/competitions/playground-series-s4e3/data>
+
+*My Solution Code Link:* https://www.kaggle.com/code/yunqicao/2nd-place-
+solution-steel-plate-defect-prediction <https://www.kaggle.com/code/
+yunqicao/2nd-place-solution-steel-plate-defect-prediction>
+
+Here is my solution:
+
+*1. Data*
+
+I combine the provided data with the original dataset and exclude rows
+with multiple labels, as they constitute only a small portion.
+
+*2. Feature Engineering*
+
+I create three features and remove some features. My decisions on
+feature selection are primarily guided by cross-validation scores,
+feature importance, and pairwise correlation.
+
+|def feature_engineering(data):
+
+    data['Ratio_Length_Thickness'] = data['Length_of_Conveyer'] / data['Steel_Plate_Thickness']
+    data['Normalized_Steel_Thickness'] = (data['Steel_Plate_Thickness'] -data['Steel_Plate_Thickness'].min()) / (data['Steel_Plate_Thickness'].max() - data['Steel_Plate_Thickness'].min())
+    data['X_Range*Pixels_Areas'] = (data['X_Maximum'] - data['X_Minimum']) * data['Pixels_Areas']
+
+    return data
+
+features_to_drop = ['Y_Minimum', 'Steel_Plate_Thickness', 'Sum_of_Luminosity', 'Edges_X_Index', 'SigmoidOfAreas', 'Luminosity_Index', 'TypeOfSteel_A300']
+
+|
+content_copy
+
+Thanks to:
+
+https://www.kaggle.com/code/thomasmeiner/ps4e3-eda-feature-engineering-
+model <https://www.kaggle.com/code/thomasmeiner/ps4e3-eda-feature-
+engineering-model>
+
+https://www.kaggle.com/competitions/playground-series-s4e3/
+discussion/482401 <https://www.kaggle.com/competitions/playground-
+series-s4e3/discussion/482401>
+
+*3. Cross Validation and Tuning Parameters*
+
+I choose four multi-class models(xgb, lgbm, cat, hgbc), implement a 10-
+fold cross-validation and tune hyperparameters using Optuna. For the
+final predictions, I calculate the average of the predictions across the
+10 folds.
+
+Thanks to:
+
+https://www.kaggle.com/code/ankurgarg04/steel-plate-defect-detection-
+technique-exploration <https://www.kaggle.com/code/ankurgarg04/steel-
+plate-defect-detection-technique-exploration>
+
+*4. Out-of-Fold Ensemble*
+
+I create an ensemble of three models by utilizing out-of-fold (OOF)
+files. To ensure consistency, I replicate or adapt their publicly shared
+notebooks to generate OOF files with an identical train-validation
+split. The weights for the ensemble are optimized for cross-validation
+score using Nelder-Mead optimization.
+
+Model 1: My model
+
+Model 2: Replicated from https://www.kaggle.com/code/
+noepinefrin/0-89534-clustered-feature-lgbm-xgb-cat <https://
+www.kaggle.com/code/noepinefrin/0-89534-clustered-feature-lgbm-xgb-cat>
+
+Model 3: Adapted from https://www.kaggle.com/code/arunklenin/ps4e3-
+steel-plate-fault-prediction-multilabel <https://www.kaggle.com/code/
+arunklenin/ps4e3-steel-plate-fault-prediction-multilabel>
+
+Thanks to:
+
+https://www.kaggle.com/code/lucamassaron/steel-plate-eda-xgboost-is-all-
+you-need <https://www.kaggle.com/code/lucamassaron/steel-plate-eda-
+xgboost-is-all-you-need>
+
+https://www.kaggle.com/competitions/siim-isic-melanoma-classification/
+discussion/175614 <https://www.kaggle.com/competitions/siim-isic-
+melanoma-classification/discussion/175614>
+
+*5. Simple Ensemble*
+
+At the final step, I combine my submission with outstanding public
+submissions. In addition to the notebooks previously referenced, I also
+incorporate output from https://www.kaggle.com/code/cyrilbourgeois/
+playground-s4e03-xgboost-ensembler <https://www.kaggle.com/code/
+cyrilbourgeois/playground-s4e03-xgboost-ensembler>. I had limited
+opportunities to submit in the final step, so I assigned weights based
+on intuition. As it turned out, using average weights is effective.
+
+*6. Other Thoughts*
+
+*Other approches I tried but not work:*
+
+ 1.
+
+    Pseudo labeling;
+
+ 2.
+
+    Stacking approach with XGB as the meta model;
+
+ 3.
+
+    Change eval_metric to 'roc_auc'
+
+Thanks to:
+
+https://www.kaggle.com/code/arnogils/basic-xgb-for-steel-plate-
+defects-0-8948 <https://www.kaggle.com/code/arnogils/basic-xgb-for-
+steel-plate-defects-0-8948>
+
+https://www.kaggle.com/competitions/playground-series-s3e26/
+discussion/464863 <https://www.kaggle.com/competitions/playground-
+series-s3e26/discussion/464863>
+
+*7. Code*
+
+*My Solution Code Link:* https://www.kaggle.com/code/yunqicao/2nd-place-
+solution-steel-plate-defect-prediction <https://www.kaggle.com/code/
+yunqicao/2nd-place-solution-steel-plate-defect-prediction>
+
+By the way, simply ensembling the outputs from the public notebooks I
+mentioned with equal weights can get an excellent result. This approach
+achieves a public leaderboard score of 0.89684 and a private leaderboard
+score of 0.88923, marking my highest score on the public leaderboard.
+Although I choose not to use this version as my final submission, it
+shows that these public notebooks are distinguished.
+
+*Many Thanks to Everyone!*
+
+Thank you for reviewing my solution. I'm grateful for all the public
+notebooks and discussions. They are really valuable. I look forward to
+sharing my insights during the next competition.
+
+Author
+
+<https://www.kaggle.com/yunqicao>
+Moonlit <https://www.kaggle.com/yunqicao>
+
+yunqicao
+
+arrow_drop_up
+
+56
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    21 Comments
+
+3 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s4e3/writeups/moonlit-2nd-place-solution-oof-ensemble#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/elanderos>
+
+
+      e_landeros
+
+<https://www.kaggle.com/elanderos>
+
+Posted 2 years ago
+
+· 1228th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+awesome! thanks for sharing. also very cool you shared all the notebooks.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yosefibrahim>
+
+
+      Yousif Hajajj
+
+<https://www.kaggle.com/yosefibrahim>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations on achieving 2nd place
+
+replyReply
+love2
+add_reaction
+
+<https://www.kaggle.com/stanciuraresstefan>
+
+
+      Stanciu Rares Stefan
+
+<https://www.kaggle.com/stanciuraresstefan>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! I really liked the explanation to your solution, thank you!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yhimanshu22>
+
+
+      Himanshu Yadav
+
+<https://www.kaggle.com/yhimanshu22>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+congratulations on your achievement.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/marianoye>
+
+
+      MarianoYe
+
+<https://www.kaggle.com/marianoye>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+congratulation
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kerrysun>
+
+
+      kerry sun
+
+<https://www.kaggle.com/kerrysun>
+
+Posted 2 years ago
+
+· 48th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/danielhoyosospina>
+
+
+      Daniel Hoyos Ospina
+
+<https://www.kaggle.com/danielhoyosospina>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Nice work!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/aidenneal>
+
+
+      Aiden Neal
+
+<https://www.kaggle.com/aidenneal>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+This is some really cool stuff!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 6th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations, and thanks for sharing your approach, and notebook.
+Public notebooks and discussions really provide a wealth of knowledge
+and insights.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adityakishor1>
+
+
+      Aditya kishor
+
+<https://www.kaggle.com/adityakishor1>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! Thank you for that tip.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/matthewsfarmer>
+
+
+      Matthew S Farmer
+
+<https://www.kaggle.com/matthewsfarmer>
+
+Posted 2 years ago
+
+· 928th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+great work. thanks for sharing your insights.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samvelkoch>
+
+
+      Samvel Kocharyan
+
+<https://www.kaggle.com/samvelkoch>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats @yunqicao <https://www.kaggle.com/yunqicao>! Well done! You can
+make this topic as your solution marked at the leaderboard. To do it -
+just copy topic URL to the "Share your solution" under your Team tab.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yunqicao>
+
+
+      Moonlit
+
+<https://www.kaggle.com/yunqicao>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Thank you for that tip. Really helpful. By the way, do
+you know how to get the kaggle merchandise?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samvelkoch>
+
+
+      Samvel Kocharyan
+
+<https://www.kaggle.com/samvelkoch>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+This is also my 1st Kaggle Swag prize competition. But as I know the
+leaderboard should be finalized in 1-2 days and after that Kaggle team
+will send to your email a personal link to the virtual treasury where
+you'll choose your swag item(s). Everything will be mailed to the postal
+address.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yunqicao>
+
+
+      Moonlit
+
+<https://www.kaggle.com/yunqicao>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Got it! Thank you and congrats again.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thiagomantuani>
+
+
+      Thiago Mantuani
+
+<https://www.kaggle.com/thiagomantuani>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+very good, good approach.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kerrysun>
+
+
+      kerry sun
+
+<https://www.kaggle.com/kerrysun>
+
+Posted 2 years ago
+
+· 48th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! Nice approach!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ankurgarg04>
+
+
+      ankur garg
+
+<https://www.kaggle.com/ankurgarg04>
+
+Posted 2 years ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations on 2nd place @yunqicao <https://www.kaggle.com/
+yunqicao> ! Great work!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arunklenin>
+
+
+      Minato Namikaze
+
+<https://www.kaggle.com/arunklenin>
+
+Posted 2 years ago
+
+· 8th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! Great Approach @yunqicao <https://www.kaggle.com/yunqicao>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yunqicao>
+
+
+      Moonlit
+
+<https://www.kaggle.com/yunqicao>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you! Your notebook and approch are quite enlightening. I just got
+lucky this time when choosing the final submission version :)
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (3)
+
+<https://www.kaggle.com/huzhonglei>
+
+
+      huzhonglei
+
+<https://www.kaggle.com/huzhonglei>
+
+Posted 2 years ago
+
+· 7th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats! Thank you!!!
+
+<https://www.kaggle.com/yeshuat>
+
+
+      Yeshua T
+
+<https://www.kaggle.com/yeshuat>
+
+Posted 2 years ago
+
+· 29th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+great work. thanks for sharing
+
+<https://www.kaggle.com/atrbyg24>
+
+
+      atrbyg24
+
+<https://www.kaggle.com/atrbyg24>
+
+Posted 2 years ago
+
+· 2075th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks for sharing. Congrats!
+

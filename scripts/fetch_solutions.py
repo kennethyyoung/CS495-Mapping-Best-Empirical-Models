@@ -4,7 +4,7 @@ Raw solution data collector.
 For each competition in data/kaggle_candidates_v2.xlsx:
   1. Fetches discussion topic list and identifies solution writeups by title
   2. Scrapes the HTML body of each solution topic (GitHub links, model mentions)
-  3. Downloads the top-voted notebooks via the Kaggle kernels API
+  3. Fetches the leaderboard top 3 finishers and downloads their public notebooks
   4. Saves everything to data/raw/{competition_ref}/
   5. Writes data/solution_summary.csv with model mention flags per competition
 
@@ -13,12 +13,12 @@ Run after kaggle_scraper_v2.py.
 
 import json
 import re
+import shutil
 import time
 from pathlib import Path
 
 import pandas as pd
 import requests
-from bs4 import BeautifulSoup
 from kaggle import KaggleApi
 
 ROOT = Path(__file__).parent.parent
@@ -64,41 +64,82 @@ def _solution_topics(topics: list[dict]) -> list[dict]:
     return [t for t in topics if SOLUTION_KEYWORDS.search(t.get("title", ""))]
 
 
-def _scrape_topic_body(topic_url: str, session: requests.Session) -> str:
-    """Scrape body text from a Kaggle discussion page."""
+def _fetch_topic_body(slug: str, topic_id: int, auth: tuple) -> str:
+    """Fetch topic body text via Kaggle API."""
+    url = f"https://www.kaggle.com/api/v1/competitions/{slug}/topics/{topic_id}"
     try:
-        resp = session.get(topic_url, timeout=20)
+        resp = requests.get(url, auth=auth, timeout=15)
         if not resp.ok:
             return ""
-        soup = BeautifulSoup(resp.text, "html.parser")
-        # Discussion bodies live in <div class="markdown-converter__text--rendered">
-        bodies = soup.find_all("div", class_=re.compile(r"markdown"))
-        return "\n\n".join(b.get_text(separator="\n") for b in bodies)
+        data = resp.json()
+        # Try known field names for body content
+        body = (
+            data.get("firstMessage", {}).get("message", "")
+            or data.get("body", "")
+            or data.get("message", "")
+        )
+        return body
     except Exception:
         return ""
 
 
-def _download_kernels(api: KaggleApi, slug: str, out_dir: Path, top_n: int = 5) -> list[str]:
-    """Download top-voted competition kernels. Returns list of saved paths."""
-    saved = []
+def _get_leaderboard_top(api: KaggleApi, slug: str, top_n: int = 3) -> list[dict]:
+    """Return top_n leaderboard entries as dicts with rank and teamName."""
+    entries = []
     try:
-        kernels = api.kernels_list(
-            competition=slug,
-            sort_by="voteCount",
-            page_size=top_n,
-        )
-        for k in kernels:
-            kernel_ref = k.ref  # e.g. "username/kernel-slug"
-            kernel_dir = out_dir / "notebooks" / kernel_ref.replace("/", "__")
-            kernel_dir.mkdir(parents=True, exist_ok=True)
-            try:
-                api.kernels_pull(kernel_ref, path=str(kernel_dir), metadata=False)
-                saved.append(str(kernel_dir))
-                time.sleep(0.5)
-            except Exception:
-                pass
+        board = api.competition_leaderboard_view(slug, page_size=top_n)
+        for rank, entry in enumerate(board[:top_n], start=1):
+            # SDK returns objects; field may be teamName or team_name depending on version
+            name = (
+                getattr(entry, "teamName", None)
+                or getattr(entry, "team_name", None)
+                or ""
+            )
+            score = getattr(entry, "score", None)
+            entries.append({"rank": rank, "teamName": name, "score": str(score)})
     except Exception:
         pass
+    return entries
+
+
+def _download_winner_kernels(
+    api: KaggleApi,
+    slug: str,
+    out_dir: Path,
+    leaderboard: list[dict],
+) -> list[str]:
+    """Download public notebooks for each top finisher. Returns list of saved paths."""
+    nb_dir = out_dir / "notebooks"
+    if nb_dir.exists():
+        shutil.rmtree(nb_dir)
+    nb_dir.mkdir(parents=True, exist_ok=True)
+
+    saved = []
+    for entry in leaderboard:
+        username = entry["teamName"]
+        if not username:
+            continue
+        try:
+            kernels = api.kernels_list(
+                competition=slug,
+                user=username,
+                sort_by="voteCount",
+                page_size=5,
+            )
+            for k in kernels:
+                kernel_ref = k.ref
+                kernel_dir = nb_dir / kernel_ref.replace("/", "__")
+                kernel_dir.mkdir(parents=True, exist_ok=True)
+                try:
+                    api.kernels_pull(kernel_ref, path=str(kernel_dir), metadata=False)
+                    saved.append(str(kernel_dir))
+                    time.sleep(0.5)
+                    break  # one notebook per winner is enough
+                except Exception:
+                    pass
+        except Exception:
+            pass
+        time.sleep(0.5)
     return saved
 
 
@@ -143,11 +184,10 @@ def process_competition(
     github_urls: list[str] = []
 
     for topic in sol_topics[:5]:  # cap at 5 to respect rate limits
-        url = topic.get("topicUrl", "")
-        if not url:
+        topic_id = topic.get("id")
+        if not topic_id:
             continue
-        full_url = f"https://www.kaggle.com{url}" if url.startswith("/") else url
-        body = _scrape_topic_body(full_url, session)
+        body = _fetch_topic_body(slug, topic_id, auth)
         if body:
             all_text += f"\n\n--- {topic['title']} ---\n{body}"
             github_urls.extend(GITHUB_RE.findall(body))
@@ -155,10 +195,13 @@ def process_competition(
 
     (comp_dir / "solution_text.txt").write_text(all_text, encoding="utf-8")
 
-    # 4. Download top notebooks
-    notebook_paths = _download_kernels(api, slug, comp_dir)
+    # 4. Fetch leaderboard and download winner notebooks
+    leaderboard = _get_leaderboard_top(api, slug, top_n=3)
+    (comp_dir / "leaderboard.json").write_text(json.dumps(leaderboard, indent=2))
 
-    # Also scan notebook files for model mentions
+    notebook_paths = _download_winner_kernels(api, slug, comp_dir, leaderboard)
+
+    # Scan downloaded notebooks for model mentions
     for nb_path in notebook_paths:
         for f in Path(nb_path).rglob("*.ipynb"):
             try:
@@ -170,9 +213,13 @@ def process_competition(
     mentions = _extract_model_mentions(all_text)
     primary = _primary_model(mentions, all_text)
     unique_github = sorted(set(github_urls))
+    winner_names = [e["teamName"] for e in leaderboard]
 
     return {
         "competition_ref": slug,
+        "winner_1st": winner_names[0] if len(winner_names) > 0 else "",
+        "winner_2nd": winner_names[1] if len(winner_names) > 1 else "",
+        "winner_3rd": winner_names[2] if len(winner_names) > 2 else "",
         "n_solution_topics": len(sol_topics),
         "github_urls": "; ".join(unique_github),
         "has_github_link": bool(unique_github),
@@ -196,6 +243,8 @@ def main(only_with_solution_topic: bool = True) -> None:
         )
 
     df = pd.read_excel(candidates_path)
+    if "recommended_action" in df.columns:
+        df = df[df["recommended_action"] == "keep"].reset_index(drop=True)
     if only_with_solution_topic and "has_solution_topic" in df.columns:
         df = df[df["has_solution_topic"] == True].reset_index(drop=True)
 
@@ -227,6 +276,8 @@ def main(only_with_solution_topic: bool = True) -> None:
     out = DATA_DIR / "solution_summary.csv"
     summary.to_csv(out, index=False)
     print(f"\nSaved summary → {out}")
+    print(f"  competitions with winner notebooks: {(summary['n_notebooks_downloaded'] > 0).sum()}/{len(summary)}")
+    print(f"  total winner notebooks downloaded:  {summary['n_notebooks_downloaded'].sum()}")
     print(f"  has github link:  {summary['has_github_link'].sum()}/{len(summary)}")
     print(f"  primary_model breakdown:")
     print(summary["primary_model"].value_counts().to_string())

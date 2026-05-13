@@ -1,0 +1,171 @@
+---
+title: "How to detect pulsars with GAM (1st place)"
+output:
+  html_document:
+    highlight: pygments
+    toc: TRUE
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+) 
+```
+
+My solution is the GAM model with two additional features created with XGB and LASSO. In the LASSO, I added two simple transformations of the output variables, to mimic the Jarque-Bera test for normality. But frankly, I don't think they are useful.
+
+I transformed some of the features by logarithmizing. Although GAM is able to adjust the distribution of the variables, but when it is heavily skewed, transformations usually help.
+
+# Data
+
+```{r}
+library("tidyverse")
+library("tidymodels")
+library("mgcv")
+library("doParallel")
+
+all_cores <- parallel::detectCores(logical = FALSE)
+cl <- makePSOCKcluster(all_cores)
+registerDoParallel(cl)
+
+pulsar <- read_csv("/kaggle/input/playground-series-s3e10/train.csv") %>% 
+  mutate(Class = as.factor(Class))
+
+make_data <- function(data) {
+  data <- data %>% 
+    rename(Mean = "Mean_Integrated", Skewness = "EK", EK = "Skewness",
+      Mean_curve = "Mean_DMSNR_Curve", SD_curve = "SD_DMSNR_Curve",
+      Skewness_curve = "EK_DMSNR_Curve", EK_curve = "Skewness_DMSNR_Curve") %>% 
+    mutate(
+      Skewness = log(Skewness + 3),
+      EK = log(EK + 2),
+      Mean_curve = log(log(Mean_curve + 2)),
+      Skewness_curve = log(Skewness_curve + 4),
+      EK_curve = log(EK_curve + 8)
+    ) %>%
+    mutate(
+      JB_test = log(Skewness^2 + 1/4*EK^2),
+      JB_test_curve = log(Skewness_curve^2 + 1/4*EK_curve^2)
+    )
+  return(data)
+}
+pulsar <- make_data(pulsar)
+```
+
+# CV
+
+Since I'm adding features created by other models, it's better to use crossvalidation (I don't want these features to overfit the data).
+
+```{r}
+set.seed(42)
+folds_stack <- vfold_cv(pulsar, v = 10, strata = Class)
+
+get_resamples <- function(resamples) {
+  resamples %>%
+    collect_predictions() %>%
+    arrange(.row) %>% 
+    pull(.pred_1)
+}
+```
+
+# LASSO
+
+I add squares and interactions. This makes the number of features larger, on top of which they are highly correlated, so some regularization is useful (LASSO).
+
+```{r}
+formula_glm <- as.formula(Class ~ Mean + SD + Skewness + EK +
+    Mean_curve + SD_curve + Skewness_curve + EK_curve + JB_test + JB_test_curve)
+glm_model <- logistic_reg(mixture = 1, penalty = 0.0000418) %>%
+  set_mode("classification") %>% 
+  set_engine("glmnet")
+glm_recipe <- recipe(formula_glm, pulsar) %>% 
+  step_poly(all_numeric_predictors(), degree = 2) %>% 
+  step_interact(~ all_numeric_predictors()^2)
+glm_wflow <- workflow() %>%
+  add_recipe(glm_recipe) %>% 
+  add_model(glm_model)
+glm_fit <- glm_wflow %>%
+  fit(pulsar)
+glm_resamples <- glm_wflow %>% fit_resamples(
+  resamples = folds_stack,
+  metrics = metric_set(mn_log_loss),
+  control = control_resamples(save_pred = TRUE)
+)
+```
+
+# XGB
+
+I tuned the parameters using bayesian optimization.
+
+```{r}
+formula_xgb <- as.formula(Class ~ Mean + SD + Skewness + EK +
+    Mean_curve + SD_curve + Skewness_curve + EK_curve)
+xgb_model <- boost_tree(min_n = 14, mtry = 4, trees = 1570, sample_size = 0.697,
+  tree_depth = 6, loss_reduction = 0.174, learn_rate = 0.0141) %>%
+  set_mode("classification") %>%
+  set_engine("xgboost")
+xgb_recipe <- recipe(formula_xgb, pulsar)
+xgb_wflow <- workflow() %>%
+  add_model(xgb_model) %>%
+  add_recipe(xgb_recipe)
+xgb_fit <- xgb_wflow %>%
+  fit(pulsar)
+xgb_resamples <- xgb_wflow %>% fit_resamples(
+  resamples = folds_stack,
+  metrics = metric_set(mn_log_loss),
+  control = control_resamples(save_pred = TRUE)
+)
+```
+
+# GAM
+
+The `ti()` terms are responsible for interactions. I select them using CV. I similarly tested various `gamma` parameters and basis functions in `s()`. I changed the number of nodes (parameter `k` in `s()`). The parameter `discrete = TRUE` speeds up the model fitting a lot, but I was afraid that it was suboptimal, so I tested that --- and it does not matter. In addition, I tested various methods of parameter estimation (`method`), but they also had no practical effect.
+
+At some point I overdid these tests and, in my opinion, did overfitting on the entire training set (even though I used crossvalidation!). Therefore, in the end, even though I was getting better results for `gamma = 0.8` and *cubic regression splines* as basis functions (parameter `bs = "cs"` in `s()`), in most cases I stayed with the default values.
+
+```{r}
+pulsar <- pulsar %>% 
+  mutate(
+    prob_xgb = get_resamples(xgb_resamples),
+    prob_glm = get_resamples(glm_resamples)
+  )
+
+formula_gam <- as.formula(Class ~ s(Mean) + s(SD) + s(EK) + s(Skewness) +
+  s(Mean_curve) + s(SD_curve) + s(EK_curve) + s(Skewness_curve) +
+  ti(SD, EK) + ti(Skewness, EK) + ti(Skewness, Mean_curve) +
+  ti(Mean_curve, SD_curve) + ti(SD_curve, Skewness_curve) +
+  s(prob_xgb) + s(prob_glm))
+
+gam_fit <- bam(formula_gam, data = pulsar, family = "binomial", 
+  gamma = 1, discrete = TRUE)
+```
+
+# Prediction
+
+```{r}
+pulsar_test <- read_csv("/kaggle/input/playground-series-s3e10/test.csv")
+pulsar_test <- make_data(pulsar_test)
+pulsar_test <- pulsar_test %>% 
+  mutate(
+    prob_glm = predict(glm_fit, pulsar_test, type = "prob") %>% pull(.pred_1),
+    prob_xgb = predict(xgb_fit, pulsar_test, type = "prob") %>% pull(.pred_1)
+  )
+
+submission <- read_csv(
+  "/kaggle/input/playground-series-s3e10/sample_submission.csv")
+submission <- submission %>% 
+  mutate(Class = predict(gam_fit, pulsar_test, type = "response"))
+write_csv(submission, "/kaggle/working/submission.csv")
+```
+
+# Discussion
+
+GAM was actually the first model I built for this data, and I haven't changed it much since the competition began. And I chose this model for a few reasons:
+
+* We have very few variables that are already high-level features. Feature engineering is basically impossible, it's just a matter of finding the right relationship.
+
+* Boosting is based on trees, which, in my opinion, are not able to find "real" relationships. Because real world relationships are rather continuous in nature --- and decision trees only approximate it. Of course, they are great and you can approximate almost anything (e.g., very high-level interactions), but the world does not work in that way.
+
+* GAM has built-in regularization; it selects parameters by performing internal crossvalidation. This makes it very convenient, and I could freely add interactions and features created from the XGB and LASSO model.

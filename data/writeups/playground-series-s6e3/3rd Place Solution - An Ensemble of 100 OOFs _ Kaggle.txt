@@ -1,0 +1,775 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predict Customer Churn
+
+        <https://www.kaggle.com/competitions/playground-series-s6e3>
+      o
+
+        3rd Place Solution - An Ensemble of 100 OOFs
+
+        <https://www.kaggle.com/competitions/playground-series-s6e3/
+        writeups/3rd-place-solution-an-ensemble-of-100-oofs>
+      o
+
+        1st Place - GPT5.4, Gemini3.1, ClaudeOpus4.6 - KGMON Playbook!
+
+        <https://www.kaggle.com/competitions/playground-series-s6e3/
+        writeups/1st-place-gpt5-4-gemini3-1-claudeopus4-6-kgm>
+      o
+
+        Predicting Irrigation Need
+
+        <https://www.kaggle.com/competitions/playground-series-s6e4>
+      o
+
+        Predicting Heart Disease
+
+        <https://www.kaggle.com/competitions/playground-series-s6e2>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd Place Solution - An Ensemble of 100 OOFs — Predict Customer Churn
+
+
+  3rd Place Solution - An Ensemble of 100 OOFs
+
+Predict Customer Churn
+
+<https://www.kaggle.com/competitions/playground-series-s6e3>
+
+Solution Writeup · 3rd place · Apr 1, 2026
+
+I'm super excited to get a 3rd place finish this month!
+This month, unlike others, I really focused on ensembling, rather than
+one strong model.
+Every day I would write down a list of new ideas to try and run models
+both locally and via Kaggle notebooks.
+
+I didn't have as much time this month so I used a combination of
+Generative AI/my own work/editing public kernels.
+
+In the end I used 100 OOF files - a mix of my own models and models
+derived from public kernels (see references below).
+
+
+    Models and Ensembling
+
+Ensemble pipeline
+
+
+      XGB
+
+I started this month with an XGB notebook (https://www.kaggle.com/code/
+include4eto/single-xgb-cudf-pseudo-labels-cv-0-91789 <https://
+www.kaggle.com/code/include4eto/single-xgb-cudf-pseudo-labels-
+cv-0-91789>) with some blanket feature engineering from last month's
+competition.
+
+This wasn't the best model by far, but a good starting point and
+skeleton for writing other models.
+
+I wrote many variations of this model with different feature
+combinations and tree parameters.
+This is definitely a good way to add variety to your ensemble.
+
+
+      Local Notebooks
+
+The "local" notebooks references below were models run on my machine.
+
+A very interesting model (due to its simplicity) is discussed here
+(https://www.kaggle.com/competitions/playground-series-s6e3/
+discussion/679983) <https://www.kaggle.com/competitions/playground-
+series-s6e3/discussion/679983)>.
+A simple model of |depth=2| and all features as categorical mixed well
+with the rest of my ensemble (|025_md_v2|).
+
+Other than that I experimented locally with:
+
+  * Lightautoml (LAMA) - I also share some public notebooks below.
+  * Xlearn FFM
+  * ResNet/RealMLP/DCN-V/DNET - various deep tabular algorithms - for
+    this I used LLMs to write the code and run locally on my machine.
+  * Lots of feature engineering variations for all of these models.
+  * Tab Transformer - my public kernel below.
+
+
+      AutoML
+
+I tried several variations of AutoML:
+
+  * Autogluon (different presets + feature engineering) - see for a few
+    notebooks below
+  * LightautoML (LAMA) - same as autogluon + feature engineering +
+    changing presets/fitted models
+
+Overall I underused these last few months and they definitely added a
+lot of diversity to my ensemble.
+
+
+      Public Kernels
+
+I used a lot of Kaggle notebooks this month in a couple of ways:
+
+  * Running notebooks that my GPU (a mobile RTX 4060) can't run - see my
+    notebooks below.
+  * Using others' feature engineering with my models and others' models
+    with my features.
+
+I publish some of my models as notebooks and reference them below.
+
+
+      Ensembling
+
+I tried:
+
+  * Hill climbing - thanks to @cdeotte <https://www.kaggle.com/cdeotte>
+    for https://www.kaggle.com/code/cdeotte/gnn-starter-cv-0-9155-with-
+    hill-climbing-demo <https://www.kaggle.com/code/cdeotte/gnn-starter-
+    cv-0-9155-with-hill-climbing-demo>
+  * |LinearRegression| - both rank-based and not rank-based
+  * |Ridge| with various alphas
+
+In the end a simple |LinearRegression| was the best in both Public and
+Private LB score.
+
+The recipe given |10| submissions per day was simple:
+
+    Collect OOF/test predictions from models
+    Add *one model at a time* and observe CV-LB scores.
+    Be careful when CV scores go up too much but LB scores stay the same
+    and vice-versa.
+
+In the end hill-climbing chose too few models and wasn't as good as |
+LinearRegression|.
+
+final ensemble
+
+
+      Miscellaneous
+
+Due to time constrains this month I did a few things that I wouldn't
+recommend.
+I'll list them here for full transparency:
+
+  * I used models with different # of folds and seeds - due to my simple
+    ensembling (|LinearRegression|) at the end this didn't seem to be
+    much of an issue, but it /can absolutely be/. I do believe it lead
+    to my CV-LB gap being bigger (see https://www.kaggle.com/
+    competitions/playground-series-s6e3/discussion/679436) <https://
+    www.kaggle.com/competitions/playground-series-s6e3/discussion/679436)>.
+  * I used ensembles as models for |LinearRegression|. This isn't
+    necessarily "bad" and I think it helped because the small 1-2 model
+    ensembles optimize for ROC-AUC directly, whilst |LinearRegression|
+    doesn't.
+
+
+      Thank You
+
+A big thank you to all Kagglers below whose kernels I used as a starting
+point, for features, or for models.
+
+Special thanks to @yekenot <https://www.kaggle.com/yekenot> for RealMLP
+( https://www.kaggle.com/code/yekenot/ps-s6-e3-realmlp-pytabkit
+<https://www.kaggle.com/code/yekenot/ps-s6-e3-realmlp-pytabkit> ) as
+well as @yunsuxiaozi <https://www.kaggle.com/yunsuxiaozi> for RealMLP
+from scratch (https://www.kaggle.com/code/yunsuxiaozi/realmlp-from-
+scratchcv-0-91908 <https://www.kaggle.com/code/yunsuxiaozi/realmlp-from-
+scratchcv-0-91908> ).
+
+With a few edits (I publish my edits here - https://www.kaggle.com/code/
+include4eto/ps-s6-e3-realmlp-pytabkit-drop-non-te-cats <https://
+www.kaggle.com/code/include4eto/ps-s6-e3-realmlp-pytabkit-drop-non-te-
+cats>) and here (
+https://www.kaggle.com/code/include4eto/realmlp-from-scratch-feature-
+engineering <https://www.kaggle.com/code/include4eto/realmlp-from-
+scratch-feature-engineering>) these were some of the best single models
+I used this month!
+
+
+    References
+
+
+      External Kaggle Notebooks (by author)
+
+*@cdeotte (Chris Deotte)*
+
+  * chatgpt-vibe-coding-3xgpu-models-cv-0-9178 <https://www.kaggle.com/
+    code/cdeotte/chatgpt-vibe-coding-3xgpu-models-cv-0-9178>
+  * gnn-starter-cv-0-9155-with-hill-climbing-demo <https://
+    www.kaggle.com/code/cdeotte/gnn-starter-cv-0-9155-with-hill-
+    climbing-demo>
+
+*@lightningv08*
+
+  * s6e3-cv-0-91849-xgb-kfold-fe-pl <https://www.kaggle.com/code/
+    lightningv08/s6e3-cv-0-91849-xgb-kfold-fe-pl>
+  * ps-s6-e3-realmlp-pytabkit <https://www.kaggle.com/code/lightningv08/
+    ps-s6-e3-realmlp-pytabkit>
+  * ps-s6-e3-trompt-pytorch-frame <https://www.kaggle.com/code/
+    lightningv08/ps-s6-e3-trompt-pytorch-frame>
+
+*@badalkrsharma (Badal)*
+
+  * xgb-lgb-cv-0-91631 <https://www.kaggle.com/code/badalkrsharma/xgb-
+    lgb-cv-0-91631>
+
+*@mikhailnaumov (Mikhail Naumov)*
+
+  * customer-churn-ensemble <https://www.kaggle.com/code/mikhailnaumov/
+    customer-churn-ensemble>
+
+*@blamer / @blamerx <https://www.kaggle.com/blamerx>*
+
+  * auc-0-91925-xgboost-bi-tri-target-encoding <https://www.kaggle.com/
+    code/blamerx/auc-0-91925-xgboost-bi-tri-target-encoding>
+  * s6e3-0-91902-optimized-catboost <https://www.kaggle.com/code/
+    blamerx/s6e3-0-91902-optimized-catboost>
+  * s6e3-ridge-xgb-n-gram-0-91927-cv <https://www.kaggle.com/code/
+    blamerx/s6e3-ridge-xgb-n-gram-0-91927-cv>
+
+*@sdeograde*
+
+  * customer-churn-cat-realmlp <https://www.kaggle.com/code/sdeograde/
+    customer-churn-cat-realmlp>
+
+*@dmahajanbe23*
+
+  * customer-churn-histgradient-boosting-0-91367 <https://
+    www.kaggle.com/code/dmahajanbe23/customer-churn-histgradient-
+    boosting-0-91367>
+
+*@thomaswesthead*
+
+  * vibe-coded-5xgpu-models-cv-0-9182 <https://www.kaggle.com/code/
+    thomaswesthead/vibe-coded-5xgpu-models-cv-0-9182>
+
+*@liufengkai*
+
+  * model-with-more-features <https://www.kaggle.com/code/liufengkai/
+    model-with-more-features>
+
+*@varadvaste*
+
+  * realmlp-basic-auc-0-91406 <https://www.kaggle.com/code/varadvaste/
+    realmlp-basic-auc-0-91406>
+
+*@yunsuxiaozi*
+
+  * realmlp-from-scratch <https://www.kaggle.com/code/yunsuxiaozi/
+    realmlp-from-scratchcv-0-91908>
+
+*@ashishsinghrawat*
+
+  * s6e3-single-realmlp <https://www.kaggle.com/code/ashishsinghrawat/
+    s6e3-single-realmlp>
+
+*@eric (fork of cdeotte)*
+
+  * Fork of cdeotte's vibe-coded 3xGPU models
+
+
+      My Kaggle Notebooks (@include4eto)
+
+  * See notebooks below. I left them as "copied from" to show
+    attribution from previous competitions (and this one).
+
+Update: Final notebook and dataset added - https://www.kaggle.com/code/
+include4eto/3rd-place-solution-linearregression-stack <https://
+www.kaggle.com/code/include4eto/3rd-place-solution-linearregression-
+stack> and https://www.kaggle.com/datasets/include4eto/ps6e3-all-oofs
+<https://www.kaggle.com/datasets/include4eto/ps6e3-all-oofs>.
+
+Author
+
+<https://www.kaggle.com/include4eto>
+Traiko Dinev <https://www.kaggle.com/include4eto>
+
+include4eto
+
+arrow_drop_up
+
+37
+
+Share
+
+more_horiz
+
+
+    Project Links
+
+RealMLP from scratch + Feature Engineering
+
+a month ago · 2 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+Public
+
+<https://kaggle.com/code/include4eto/realmlp-from-scratch-feature-
+engineering>
+AutoGluon + Features (N-gram) | Predicting Churn
+
+2 months ago · 2 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+Public
+
+<https://kaggle.com/code/include4eto/autogluon-features-n-gram-
+predicting-churn>
+LightAutoML (LAMA) + FE
+
+2 months ago · 0 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+Public
+
+<https://kaggle.com/code/include4eto/lightautoml-lama-fe>
+RealMLP - Feature Engineering
+
+2 months ago · 11 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://kaggle.com/code/include4eto/realmlp-feature-engineering>
+Single XGB, cuDF + Pseudo Labels -> Optuna Tune
+
+2 months ago · 0 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+Public
+
+<https://kaggle.com/code/include4eto/single-xgb-cudf-pseudo-labels-
+optuna-tune>
+TabM + Pseudo Labels
+
+2 months ago · 6 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+Public
+
+<https://kaggle.com/code/include4eto/tabm-pseudo-labels>
+AutoGluon|Predicting Churn
+
+2 months ago · 0 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+Public
+
+<https://kaggle.com/code/include4eto/autogluon-predicting-churn>
+TabTransfomer: ChatGPT Vibe-Coding
+
+2 months ago · 36 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+silver medal
+
+Public
+
+<https://kaggle.com/code/include4eto/tabtransfomer-chatgpt-vibe-coding>
+Bi/Tri-gram TE + Resnet / ChatGPT Vibe Coding
+
+2 months ago · 0 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+Public
+
+<https://kaggle.com/code/include4eto/bi-tri-gram-te-resnet-chatgpt-vibe-
+coding>
+xLearn FFM
+
+2 months ago · 0 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+Public
+
+<https://kaggle.com/code/include4eto/xlearn-ffm>
+Single XGB, cuDF + Pseudo Labels, CV: 0.91789
+
+2 months ago · 61 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+silver medal
+
+Public
+
+<https://kaggle.com/code/include4eto/single-xgb-cudf-pseudo-labels-
+cv-0-91789>
+PS6E3 - All OOFs
+
+a month ago · Usability 3.5
+
+table_chart
+
+Kaggle Dataset
+
+Public
+
+<https://kaggle.com/datasets/include4eto/ps6e3-all-oofs>
+3rd Place Solution - LinearRegression stack
+
+a month ago · 16 upvotes
+
+code
+ <https://www.kaggle.com/include4eto>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://kaggle.com/code/include4eto/3rd-place-solution-
+linearregression-stack>
+thankYou1yay2
+add_reaction
+
+comment
+
+
+    8 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+
+Posted a month ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congratulations @include4eto <https://www.kaggle.com/include4eto>
+winning 3rd place! Great solution! I also found that Ridge and LogReg
+worked better than Hill Climbing this month. Did you use any selection
+process to pick 100 from a larger N, or was 100 all your OOF?
+
+You and @optimistix <https://www.kaggle.com/optimistix> kept climbing on
+LB in the last few days, so I couldn't rest at all. I worked around the
+clock the last few days to stay ahead of you guys and thought I may wake
+up one morning and see one of you jump above me :-)
+
+Thanks for sharing all your public notebooks. I used all your public
+models in my final solution: RealMLP, TabM, and TabTran. They all helped.
+
+If you have time, it would be interesting to combine your OOF and my OOF
+and train a larger model. I published 154 of my OOF to Kaggle dataset
+here <https://www.kaggle.com/datasets/cdeotte/s6e3-oof-and-test-pred-
+v2>. I'm curious if our scores can get better or if we were near the
+ceiling. (You could add my OOF to your stacker and/or you could try
+adding your OOF to my final solution published notebook).
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+Posted a month ago
+
+· 7th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I would also like to contribute my oofs :D, they are here <https://
+www.kaggle.com/datasets/mahoganybuttstrings/pg-s6e3-oofs/data>!
+
+replyReply
+add_reactionReact
+
+3 more repliesarrow_drop_down
+
+Profile picture for Traiko Dinev
+Profile picture for Mahog
+
+<https://www.kaggle.com/navneetbende>
+
+
+      Navneet
+
+<https://www.kaggle.com/navneetbende>
+
+Posted a month ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Bravo @include4eto <https://www.kaggle.com/include4eto> for 3rd place
+finish!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted a month ago
+
+· 31st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great job! You've been up there consistently, and glad you will get your
+t-shirt if that didn't happen already.
+
+Also appreciate all the notebooks you shared. I am tempted to download
+your OOFs and run them through the non-linear ensemblers as I have tough
+time believing that linear regression does the best job, but probably
+will talk myself out of it.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/include4eto>
+
+
+      Traiko Dinev
+
+<https://www.kaggle.com/include4eto>
+Topic Author
+
+Posted a month ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you, I did get some swag, yeah!
+
+I appreciate your discussion about stacking methods for AUC competitions.
+
+Upon reflection if I had had more free time this month I would've
+definitely spent it making sure all models shared the same CV scheme and
+all features were done inside the CV loop to avoid any subtle leakage.
+
+It's hard to do that sometimes with the pressure of the leaderboard and
+limited free time (excuses excuses :D).
+
+If you end up giving it a shot, I'll be curious what you get with the
+nonlinear ensemble.
+The problem I see is that there's no good way to do early stopping or CV
+splitting with those as the folds are different between models.
+This is why I stuck with a linear stacker, as it's solved analytically
+and I don't have to do early stopping or any validation.
+It's still way too optimistic in its AUC score, so definitely can be
+done better on my end.
+
+replyReply
+add_reactionReact
+

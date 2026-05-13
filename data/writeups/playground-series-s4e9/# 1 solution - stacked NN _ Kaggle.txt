@@ -1,0 +1,1051 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Regression of Used Car Prices
+
+        <https://www.kaggle.com/competitions/playground-series-s4e9>
+      o
+
+        # 1 solution - stacked NN
+
+        <https://www.kaggle.com/competitions/playground-series-s4e9/
+        writeups/mart-preusse-1-solution-stacked-nn>
+      o
+
+        Predict Podcast Listening Time
+
+        <https://www.kaggle.com/competitions/playground-series-s5e4>
+      o
+
+        3rd Place - Target Encoding and 3 Levels
+
+        <https://www.kaggle.com/competitions/playground-series-s5e4/
+        writeups/johannes-heller-3rd-place-target-encoding-and-3-le>
+      o
+
+        2nd Place | Single LightGBM and Target Encoding
+
+        <https://www.kaggle.com/competitions/playground-series-s5e4/
+        writeups/farukcan-saglam-2nd-place-single-lightgbm-and-targ>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+# 1 solution - stacked NN — Regression of Used Car Prices
+
+
+  # 1 solution - stacked NN
+
+Regression of Used Car Prices
+
+<https://www.kaggle.com/competitions/playground-series-s4e9>
+
+Solution Writeup · 1st place · Oct 9, 2024
+
+Did I really made it to the top? I am still surprised and excited.
+
+*Way to the solution:* I spent the first two weeks with reading the
+discussions, playing around with catboost and publishing an ensemble.
+The plan was to collect diverse models and ensemble them with Ridge,
+with the same pipeline I used in this notebook <https://www.kaggle.com/
+code/martinapreusse/ps4e9-cat-svr-lgbm-nn-py>. The final ensemble, which
+I chose as my first final submission, would have landed me on the second
+place and differed from the notebook in the following points:
+
+  * I used 20 cv folds
+  * I included original data in some of the models (even two times in LGBM)
+  * I did compute a SVR with a rbf kernel as suggested by broccoli beef
+    <https://www.kaggle.com/siukeitin> in this discussion post <https://
+    www.kaggle.com/competitions/playground-series-s4e9/
+    discussion/532997> instead of the linear SVR.
+  * I included all categorical features additionally as target encoded
+    to catboost, but I used the median, not the mean for target
+    encoding. I did this leakfree, meaning that I recomputed the
+    targetencoded columns in each fold. Moreover, I used Catboost as
+    classifier, not as regressor. Catboost predicted the outlier prices
+    (see function |bin_price|). The hyperparameters were found by
+    optuna. The oof predictions were not used in the ensemble. They were
+    used as an additional feature in a LGBM (or the NN for my second
+    final submission).
+
+|def bin_price(data):
+    df = data.copy()
+    # Calculate Q1 (25th percentile) and Q3 (75th percentile)
+    Q1 = np.percentile(df['price'], 25)
+    Q3 = np.percentile(df['price'], 75)
+    IQR = Q3 - Q1
+
+    # Define the lower and upper bounds for outliers
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+
+    # Identify outliers
+    outliers = df[(df['price'] > upper_bound)]
+    df['price_bin'] = (df['price'] < upper_bound).astype(int)
+
+    return df
+
+cat_params2 = {
+    'early_stopping_rounds':25,
+    'use_best_model': True,
+    "verbose": False ,
+    'cat_features': cat_cols,
+    'min_data_in_leaf': 16, 
+    'learning_rate': 0.03355311405703999, 
+    'random_strength': 11.663619399375248, 
+    'l2_leaf_reg': 17.703146378123996, 
+    'max_depth': 10, 
+    'subsample': 0.9479174100256215, 
+     'border_count': 130, 
+    'bagging_temperature': 24.032067560148384
+}
+
+|
+content_copy
+
+  * I included the catboost oof predictions as an additional feature for
+    LGBM
+  * I used a second LGBM (LGBM5), where I label encoded all categorical
+    data (rare categories summarized in a category "rare" as done with
+    the NN in the notebook) and raised max_bin.
+
+|lgb_params = {
+    'verbose' : -1,
+    'early_stopping_rounds':25,
+    'loss_function':"RMSE",
+    'n_estimators': 2000, 
+    'max_bin': 30000,
+}
+
+|
+content_copy
+
+  * I included fastai computations from Autogluon (with a nested cv over
+    20 folds to be 100% leakfree)
+
+| predictor = TabularPredictor(label='price',
+                             eval_metric='rmse',
+                             problem_type="regression").fit(X_train,
+                                                       pseudo_data = data_original, 
+                                                       num_bag_folds = 10,
+                                                       num_bag_sets = 2,
+                                                       time_limit=1800,
+                                                       included_model_types = ['FASTAI'], 
+                                                       keep_only_best = True,
+                                                       presets="best_quality",
+                                                      )
+
+|
+content_copy
+
+I ended up with a crossvalidation score of 72300 and the following
+models (_st means that the catboost oofs are included):
+
+The crossvalidation scores of the individual models were:
+
+*First place solution*: I needed a second final submission and I decided
+spontanously on the last day to submit a forked notebook <https://
+www.kaggle.com/code/yekenot/ps-s4-e9-deeptables-nn-starter> from
+Vladimir Demidov <https://www.kaggle.com/yekenot>. I noticed that his NN
+is robust to changes, so I added four numerical features: the SVR oof
+predictions, the LGBM5 oof predictions, the CatboostClassifier oof
+predictions and XGB predictions (derived from publicy available
+hyperparameters, unfortunatly I forgot the source). The NN ensemble had
+a crossvalidation score of 72468, but in the end was better than the
+Ridge ensemble.
+
+My thanks obviously go to @yekenot <https://www.kaggle.com/yekenot> ,
+@siukeitin <https://www.kaggle.com/siukeitin> , @noodl35 <https://
+www.kaggle.com/noodl35> (LGBM hyperparameters), who directly provided
+parts of the code I used. I also provited strongly from the discussions,
+especially the AutoML solution threads and the posts from @tilii7
+<https://www.kaggle.com/tilii7> and @roberthatch <https://
+www.kaggle.com/roberthatch> where I got the idea for outlier
+classification and @cdeotte <https://www.kaggle.com/cdeotte> who made
+the entrance to NNs simple for me. I am also very grateful to all who
+are participating lively in the discussions so that learning is a
+fulfilling experience.
+
+*What did not work:* I experimented with a lot of models, but most of
+them did not help me to get a better cross-validation score. Especially
+XGB did not work for me and although it is accidently included in my
+final submission I do not think that it was a crucial part of the ensemble.
+Feature engineering was at least partly working, but all the amazing
+features introduced by Chris Deotte in this post <https://
+www.kaggle.com/competitions/playground-series-s4e9/discussion/533961>
+did not work for me.
+
+The corresponding crossvalidation - leaderboard scores in a scatterplot:
+
+*Edit:* I included the CatBoostClassifier, LGBM1_st and LGBM5_st in my
+notebook <https://www.kaggle.com/code/martinapreusse/ps4e9-cat-svr-lgbm-
+nn-py>. This notebook has a private score of 62957.83525 and would have
+reached a place within the top three.
+
+*Edit 2:* Autogluon, when using |TabularPredictor.fit()|, is not using
+the original data. To use the original data, one has to call |
+TabularPredictor.fit_pseudolabel()|. So my Fastai - AutoGluon
+predictions were not using the original data. For a nice reference of
+how to use AutoGluon with original data and with a predefined
+stratification see this great notebook <https://www.kaggle.com/code/
+ravaghi/s04e10-loan-approval-prediction-autogluon/comments#3010042> of
+Mahdi Ravaghi <https://www.kaggle.com/ravaghi> for the next playground
+competition.
+
+Author
+
+<https://www.kaggle.com/martinapreusse>
+Mart Preusse <https://www.kaggle.com/martinapreusse>
+
+martinapreusse
+
+arrow_drop_up
+
+95
+
+Share
+
+more_horiz
+
+thankYou18yay24love2
+add_reaction
+
+comment
+
+
+    83 Comments
+
+4 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s4e9/writeups/mart-preusse-1-solution-stacked-nn#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+
+Posted 2 years ago
+
+· 81st in this Competition
+
+arrow_drop_up
+
+9
+
+more_vert
+
+Congratulations. Great write up. Good explanations and pictures.
+
+Your solution is great. You approached the competition perfectly making
+a diverse set of models and carefully producing OOF and exploring
+ensemble methods. Your use of median with target encoding and building a
+stack over classification predictions was creative and effective.
+
+I enjoyed all your contributions during the competition. Great job!
+
+replyReply
+thankYou3
+add_reaction
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+6
+
+more_vert
+
+Thank you Chris for your feedback, this means a lot for me!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/zshashz>
+
+
+      shash
+
+<https://www.kaggle.com/zshashz>
+
+Posted 2 years ago
+
+· 193rd in this Competition
+
+arrow_drop_up
+
+6
+
+more_vert
+
+Wow great insights, any particular reason you were able to infer as to
+why xgb did not work in this case?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I have no idea.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yekenot>
+
+
+      Vladimir Demidov
+
+<https://www.kaggle.com/yekenot>
+
+Posted 2 years ago
+
+· 229th in this Competition
+
+arrow_drop_up
+
+6
+
+more_vert
+
+Congrats and thanks for your work. I've waited for someone who can
+improve a DeepTables performance. Now we know how it's good with oof
+predictions as a feature added.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+I am really grateful that you shared your notebook, as it seems that
+deep tables is easy to work with and robust. I will definitely explore
+the possibilities in more details. This is also not the only great
+notebook you published, I read two more in the last week which are very
+interesting.
+
+replyReply
+thankYou2
+add_reaction
+
+<https://www.kaggle.com/jyotirmoycse>
+
+
+      Jyotirmoy Das
+
+<https://www.kaggle.com/jyotirmoycse>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats Brother
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+A big congrats to you! Really glad to see you at no. 1 after all your
+contributions in the playground series this year. Neat solution(s), too!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thanks, I am really happy, even more because I did not see this coming.
+I learned a lot this year and I love the community here. Nice pic, by
+the way. Matches your name.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Danke schön!
+
+replyReply
+funny1
+add_reaction
+
+<https://www.kaggle.com/rianaazad>
+
+
+      Riana Azad
+
+<https://www.kaggle.com/rianaazad>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Such a great insights!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tanaa85>
+
+
+      Tanaa85
+
+<https://www.kaggle.com/tanaa85>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+My congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/taimour>
+
+
+      Taimour Nazar
+
+<https://www.kaggle.com/taimour>
+
+Posted 2 years ago
+
+· 302nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Good, congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/matheusbonjour>
+
+
+      Matheus Bonjour Laviola da Silva
+
+<https://www.kaggle.com/matheusbonjour>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congrats for ranking 1st
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ibrahimdenisfofanah>
+
+
+      Ibrahim Denis Fofanah
+
+<https://www.kaggle.com/ibrahimdenisfofanah>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congratulations for ranking 1st
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shepherdmahadzva>
+
+
+      Shepherd Mahadzva
+
+<https://www.kaggle.com/shepherdmahadzva>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations for ranking first!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bhanux18>
+
+
+      BHANUPRAKASH
+
+<https://www.kaggle.com/bhanux18>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations ! For ranking 1st position..
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yarzawynn>
+
+
+      Yarza Wynn
+
+<https://www.kaggle.com/yarzawynn>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+congrats and thanks for taking the time to write up your thought process!
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/zeel0725>
+
+
+      Zeel
+
+<https://www.kaggle.com/zeel0725>
+
+Posted 2 years ago
+
+· 1213th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+amazing work!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nathfavour>
+
+
+      nathfavour
+
+<https://www.kaggle.com/nathfavour>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+impressed!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gggggungun>
+
+
+      GgggGunGun
+
+<https://www.kaggle.com/gggggungun>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+good job for catboost😃
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/vanpatangan>
+
+
+      Van Patangan
+
+<https://www.kaggle.com/vanpatangan>
+
+Posted 2 years ago
+
+· 1735th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! I learned so much from this write up, incredibly helpful.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/sharmasatyam22>
+
+
+      Satyam Kumar
+
+<https://www.kaggle.com/sharmasatyam22>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+looks interesting
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/vishudverma>
+
+
+      Vishud Verma
+
+<https://www.kaggle.com/vishudverma>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Good Job mate.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kartikgupta14>
+
+
+      Kartik Gupta
+
+<https://www.kaggle.com/kartikgupta14>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations Mate
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mrsimple07>
+
+
+      MrSimple
+
+<https://www.kaggle.com/mrsimple07>
+
+Posted 2 years ago
+
+· 46th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+good job man
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ironwolf404>
+
+
+      dfdSdv
+
+<https://www.kaggle.com/ironwolf404>
+
+Posted 2 years ago
+
+· 2837th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+good job man
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pranaydeepkorada>
+
+
+      Pranay Deep Korada
+
+<https://www.kaggle.com/pranaydeepkorada>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Nice Work, This contribution is great.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/jameervali>
+
+
+      Jameer Vali
+
+<https://www.kaggle.com/jameervali>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+DUDE ,Sea is blue but it is his Red SEA
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/darwinberrio>
+
+
+      Darwin Berrio
+
+<https://www.kaggle.com/darwinberrio>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+This contribution is great, but the graphs have a biased representation
+because it seems that Ensemble is much lower, when in fact the
+difference between the other models is minimal
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I am not sure if I understand your comment correctly, but I think you
+refer to the cutoff of the x-axis.
+I did this because I wanted to show the differences in scores. We
+compete for small differences. In this competition there is a difference
+of less than 40 between the first and the second place solution, so a
+difference of over 140 is important.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/monarhovich>
+
+
+      Monarhovich Ilya
+
+<https://www.kaggle.com/monarhovich>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! On Winning the competition
+
+replyReply
+thankYou1
+add_reaction
+

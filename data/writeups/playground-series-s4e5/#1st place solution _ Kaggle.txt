@@ -1,0 +1,1228 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Regression with a Flood Prediction Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e5>
+      o
+
+        #1st place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s4e5/
+        writeups/aldparis-1st-place-solution>
+      o
+
+        Regression of Used Car Prices
+
+        <https://www.kaggle.com/competitions/playground-series-s4e9>
+      o
+
+        PS4E9: Cat + SVR + LGBM + NN| Py
+
+        <https://www.kaggle.com/code/martinapreusse/ps4e9-cat-svr-lgbm-
+        nn-py>
+      o
+
+        # 1 solution - stacked NN
+
+        <https://www.kaggle.com/competitions/playground-series-s4e9/
+        writeups/mart-preusse-1-solution-stacked-nn>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+#1st place solution — Regression with a Flood Prediction Dataset
+
+
+  #1st place solution
+
+Regression with a Flood Prediction Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s4e5>
+
+Solution Writeup · 1st place · May 31, 2024
+
+Thank's to Kaggle for organizing tabular competitions like this one. I
+learned a lot from those competitions. I learned a lot also from public
+notebooks and discussions, thank you everyone for sharing so much.
+
+Because this dataset contains a sum of Poisson <https://
+en.wikipedia.org/wiki/Sim%C3%A9on_Denis_Poisson> distributions, the
+winner of this competition had to be from France. Thank you M. Simeon
+Denis Poisson for giving us such a tool, and thank you for giving me a
+extra motivation during this competition.
+
+Thank you to all competitors, you are really challenging, playing with
+you is a pleasure. Congrat's to @mdoroch <https://www.kaggle.com/
+mdoroch> (I will contact you, you were very impressive), @lashfire
+<https://www.kaggle.com/lashfire>, @mattop <https://www.kaggle.com/
+mattop> , @tilii7 <https://www.kaggle.com/tilii7> : your submissions
+during last days stressed me so much !
+
+My solution is :
+
+  * an ensemble ajusted with a ridge regression |positive = False,
+    fit_intercept = False|.
+  * and ajusted with 3 repeated oof predictions of a variety of models
+    produced with catboost, xgboost, lightgbm and 2 public notebooks
+      o *Auto Gluon Starter* by @mfmfmf3 <https://www.kaggle.com/
+        mfmfmf3> available https://www.kaggle.com/code/mfmfmf3/
+        autogluon-starter <https://www.kaggle.com/code/mfmfmf3/
+        autogluon-starter>
+      o *Flood Prediction LGBM* by @igorvolianiuk <https://
+        www.kaggle.com/igorvolianiuk> https://www.kaggle.com/code/
+        igorvolianiuk/flood-prediction-lgbm <https://www.kaggle.com/
+        code/igorvolianiuk/flood-prediction-lgbm>
+
+*EDA* helped me to understand that original dataset was completly
+different from train dataset. EDA helped me to understand that the sum
+of 16 of 17 orginal features was still a Poisson distribution in train
+dataset, but sum of 18, 19, and 20 original features was not (neither in
+test dataset). And EDA helped me to find interesting features,
+correlated to target (thank you @ambrosm <https://www.kaggle.com/
+ambrosm> for the most important feature)
+
+I took care for my own GBMs to *feature selection* :
+
+  *
+
+    usefull features : sum of each lign, std of each lign, max of each
+    lign, sorted original features (thank you @siukeitin <https://
+    www.kaggle.com/siukeitin> for Sorting along the feature axis as
+    "feature engineering" <https://www.kaggle.com/competitions/
+    playground-series-s4e5/discussion/499579>'s discussion, number of
+    variables which have a value higher than 6, or than 7, or than 8
+    (count features) :
+
+  *
+
+    useless features : original features, skewness of each lign,
+    kurtosis of each lign, redondant features. I dropped them.
+
+  *
+
+    magic feature : because target could be seen as a discrete variable,
+    I used a *target encoder*, and |train.groupby("sum")
+    ["FloodProbability"].std()| was an interesting feature (where |
+    train["sum"] = train[test.columns].sum(axis=1)|)
+
+  *
+
+    I used *permutation feature importance* technique explained in
+    scikit-learn <https://scikit-learn.org/stable/modules/
+    permutation_importance.html> or in Kaggle <https://www.kaggle.com/
+    code/dansbecker/permutation-importance> to detect useless features.
+    I used *backward* technique too.
+
+*Variety of models*
+I trained more than 30 GBM's, with various sets of features : sometimes
+with sorted original features, or sometimes with count features
+|"nb_inf4", "nb_inf3", "nb_inf2", "nb_sup6", "nb_sup7", "nb_sup8"|,
+sometimes with target encoder, sometimes without.
+I used also a *target transformation* sometimes : there was a strong
+signal (sum), and a noisy signal (deviance from sum). My transformed
+target was :
+|train["target_transf"] = train["FloodProbability"] -
+df[original_features].mean(axis=1) * 0.1|
+or |train["target_transf"] = (train["FloodProbability"]*400 -
+train[original_features].mean(axis=1) * 40).astype(np.int16)|
+Thank's to @act18l <https://www.kaggle.com/act18l> for https://
+www.kaggle.com/competitions/playground-series-s4e5/
+discussion/499263#2787165 <https://www.kaggle.com/competitions/
+playground-series-s4e5/discussion/499263#2787165>
+
+During the first 10 days, I used only default parameters (with early
+stopming) and didn't optimize any GBM, concentrated on my features and
+my ensemble loop.
+After, hyperparameters were optimized with optuna by using only my
+kaggle quota of GPU. I optimized only the following hyper parameters
+(with max timeout = 5400 seconds, it's a lot) :
+
+  * depth for catboost and xgboost,
+  * num_leaves for lightgbm,
+  * alpha, lambda, min_child_weight or min_child_samples for xgboost and
+    ligntgbm
+  * bagging_temperature, random_strength for catboost
+  * subsample, colsample_by_node for xgboost and lightgbm
+
+I used default *grow_policy* of each GBM method (xgboost, catboost and
+lightgbm have each a different default grow_policy value, it gives
+variety of predictions), I used default learning_rate or .1, I used
+early_stopping (od_wait in catboost) to fit n_iterations.
+
+*Ensemble*
+During the first two weeks, I trained my ensemble with
+*LinearRegression* and positive = True and fit_intercept = False. Until
+I tried *Ridge* and positive = False (still fit_intercept = False) which
+gave me a little improvement. To have a robust ensemble, I trained all
+my models on 3 repeated kfold, and select by CV the features for my
+ensemble.
+
+At the end of week 2, I made a submssion with a blind blend using
+https://www.kaggle.com/code/mfmfmf3/autogluon-starter <https://
+www.kaggle.com/code/mfmfmf3/autogluon-starter> output. I had a .86939
+public score better than .96934 my previous one. Few days later, I had a
+first complete oofs file from AutoGluon. Then I fitted carefully a new
+ensemble, and get .86941 score at the end of week 3.
+
+Then I decided to get 3 oofs AutoGluon files and to fit AutoGluon with
+some other features (3 more oofs). I trained in parallel autogluon here
+<https://www.kaggle.com/code/adaubas/pss4e05-copy-autogluon-starter> to
+get 6 oofs files. And then I fitted my final ensemble which score .86943
+on public LB.
+
+In conclusion, I have success by combining :
+
+  * EDA
+  * feature engineering
+  * variety of GBM
+  * AutoGluon
+  * a strong CV for my Ridge ensemble
+
+I'm proud to have made only 2 submissions between the 18th of may and
+the end, to win on public and private LB. My CV was highly reliable to
+public LB since the first day, I trusted my CV and didn't need to submit.
+
+My final ensemble is available here https://www.kaggle.com/code/adaubas/
+pss4e05-ensemble-with-ridge <https://www.kaggle.com/code/adaubas/
+pss4e05-ensemble-with-ridge>.
+
+I'm so happy ! Waouh
+
+Author
+
+<https://www.kaggle.com/adaubas>
+aldparis <https://www.kaggle.com/adaubas>
+
+adaubas
+
+arrow_drop_up
+
+106
+
+Share
+
+more_horiz
+
+yay47love6kaggle4surprise1
+add_reaction
+
+comment
+
+
+    56 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s4e5/writeups/aldparis-1st-place-solution#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/vikram12301>
+
+
+      Vikram12301
+
+<https://www.kaggle.com/vikram12301>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Hey, Can you explain how finding sum of the features as a single poisson
+distribution help you?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jickymen>
+
+
+      Krens
+
+<https://www.kaggle.com/jickymen>
+
+Posted 2 years ago
+
+· 247th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations on your 1st place win! Your detailed explanation and
+transparency about the process are incredibly valuable for the community.
+
+Your approach of using an ensemble adjusted with ridge regression, and
+combining models from CatBoost, XGBoost, LightGBM, and public notebooks,
+clearly highlights the power of diverse methodologies. The feature
+engineering techniques, especially understanding the Poisson
+distribution characteristics of the dataset, are impressive.
+
+I found your insights into the EDA particularly useful. Identifying that
+the sum of certain features maintained a Poisson distribution while
+others did not, and leveraging that for feature selection and
+engineering, is a brilliant strategy. The use of permutation feature
+importance and backward techniques for feature selection is also a great
+takeaway.
+
+Your strategy of focusing on features and ensemble loop during the
+initial days, and only later optimizing hyperparameters using Optuna,
+showcases a disciplined and effective approach to problem-solving.
+
+The final ensemble strategy, incorporating multiple OOF files and a
+strong CV approach, is clearly a winning formula. It's amazing to see
+how trusting your CV paid off, allowing you to make minimal submissions
+and still secure the top spot.
+
+replyReply
+thankYou2
+add_reaction
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+· 9th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congrats @adaubas <https://www.kaggle.com/adaubas> on the win, and
+welcome to the AutoGluon Hall of Fame <https://github.com/autogluon/
+autogluon/blob/master/AWESOME.md#competition-solutions-using-autogluon>!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Hi @innixma <https://www.kaggle.com/innixma>,
+
+Thank you for the link ! and the citation : it's you of course ? 😀
+
+Even if AutoGluon kept me busy the last 2 weeks (how to get oof
+predictions ?), and even if I admit that I am changing my mind about
+automl after having experimented with AutoGluon in this competition, I'd
+rather to say that's a mix of good models which made me win : final
+parsimonious ridge regression, many GBM, and AutoGluon (close to the top) :
+
+I was opportunistic by using a copy of a @mfmfmf3 <https://
+www.kaggle.com/mfmfmf3> 's notebook (my copy is available here <https://
+www.kaggle.com/code/adaubas/pss4e05-copy-autogluon-starter>).
+
+@mfmfmf3 <https://www.kaggle.com/mfmfmf3> was *the real promoter of
+AutoGluon in this competition.*
+
+replyReply
+thankYou3
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Great job and thank you for a detailed explanation.
+
+I don't think it was Ridge or |positive=True| that were particularly
+important here. We are talking about miniscule differences on the 5th
+decimal place. I think you likely had a couple of better individual
+models, and that was it.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thank you @tilii7 <https://www.kaggle.com/tilii7>,
+
+I really got CV improvement by using Ridge instead of LinearRegression,
+by using positive = False instead of positive = True, in this
+competition for this dataset. I can't explain why, that's my CV which
+told me that.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+
+      SSS
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+Posted 2 years ago
+
+· 149th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+That's a lot of sweat, literally squeezed atoms.
+Fact check: the man from France predicts floods 0.00007 (actually fits
+R2) more accurate than anybody else. :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kartikeybartwal>
+
+
+      kartikey bartwal
+
+<https://www.kaggle.com/kartikeybartwal>
+
+Posted 2 years ago
+
+· 1201st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+You're amazing too!!!
+The best part is this healthy competition on Kaggle. The competition is
+tight (everyone competing to increase R2 by 0.002) but everyone is
+regardless are so heartwarming and collaborative.
+Best wishes to you :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+thank you @kartikeybartwal <https://www.kaggle.com/kartikeybartwal> ,
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thank you @sergiosaharovskiy <https://www.kaggle.com/sergiosaharovskiy> ,
+
+you are right ! about sweat and sqeezed atoms,
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ivanrad17>
+
+
+      Ivan Radko
+
+<https://www.kaggle.com/ivanrad17>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Hi, thank you very much for this post! I want to ask about Poisson
+distribution. How did you detect that sum of features have Poisson
+distribution? I used the Kolmogorov-Smirnov test and p-value <<0.05 and
+this rejects the hypothesis that distribution is Poissonian , but more
+of features have mean ~ std^2 this may indirectly indicate that the
+distribution is indeed Poissonian…
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hi @ivanrad17 <https://www.kaggle.com/ivanrad17> ,
+
+It was admitted since the beginning of the competition that columns
+looked like Poisson : https://www.kaggle.com/competitions/playground-
+series-s4e5/discussion/499244 <https://www.kaggle.com/competitions/
+playground-series-s4e5/discussion/499244>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/rabinandan>
+
+
+      Pran
+
+<https://www.kaggle.com/rabinandan>
+
+Posted 2 years ago
+
+· 910th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/engrmazeem>
+
+
+      Muhammad Azeem
+
+<https://www.kaggle.com/engrmazeem>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on your win @adaubas <https://www.kaggle.com/adaubas>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/fatimaazfarziya>
+
+
+      Fatima Azfar Ziya
+
+<https://www.kaggle.com/fatimaazfarziya>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! This writeup was very insightful and helpful.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/abdulazizergashev>
+
+
+      Abdulaziz Ergashev
+
+<https://www.kaggle.com/abdulazizergashev>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats on your win @adaubas <https://www.kaggle.com/adaubas>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/engrmazeem>
+
+
+      Muhammad Azeem
+
+<https://www.kaggle.com/engrmazeem>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on your 1st place win! Your detailed breakdown of the
+process is incredibly insightful.
+
+Your strategy of using an ensemble adjusted with ridge regression, and
+combining models from CatBoost, XGBoost, LightGBM, and public notebooks,
+showcases the power of diverse methodologies. The way you identified and
+leveraged the Poisson distribution characteristics of the dataset for
+feature selection is particularly impressive.
+
+Your disciplined approach to focusing on feature engineering and
+ensemble loop before hyperparameter optimization with Optuna clearly
+paid off. The final ensemble strategy, incorporating multiple OOF files
+and a strong CV approach, is a testament to your skill and meticulousness.
+
+Well done on a well-deserved victory!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/siheblu>
+
+
+      sihe blu
+
+<https://www.kaggle.com/siheblu>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! 🎉🎉
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mscgeorges>
+
+
+      George Papachristou
+
+<https://www.kaggle.com/mscgeorges>
+
+Posted 2 years ago
+
+· 13th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations🎉🏆 @adaubas <https://www.kaggle.com/adaubas>!! Nice
+explaination!! I have a question about the following |Few days later, I
+had a first complete oofs file from AutoGluon. Then I fitted carefully a
+new ensemble, and get .86941 score at the end of week 3.|. Can you
+elaborate how you create the oofs file with AutoGluon and what do you
+mean with |fitted carefully a new ensemble|? Did you fitted in the oof
+files?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hi @mscgeorges <https://www.kaggle.com/mscgeorges>
+I made public my autogluon notebook, I hope everything is explained
+inside :
+
+https://www.kaggle.com/code/adaubas/pss4e05-copy-autogluon-starter
+<https://www.kaggle.com/code/adaubas/pss4e05-copy-autogluon-starter>
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/swilly0906>
+
+
+      Willy Wang
+
+<https://www.kaggle.com/swilly0906>
+
+Posted 2 years ago
+
+· 399th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I first learned about permutation feature importance. Thanks for sharing~~
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/divu2001>
+
+
+      Light_Shot
+
+<https://www.kaggle.com/divu2001>
+
+Posted 2 years ago
+
+· 2073rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very nice. Congratulations. It requires lots of efforts.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mubashirsidiki>
+
+
+      Mubashir Ahmed Siddiqui
+
+<https://www.kaggle.com/mubashirsidiki>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sun9sun9>
+
+
+      sun9sun9
+
+<https://www.kaggle.com/sun9sun9>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Thank you for sharing your solution. I believe your
+effort is enough to take first place.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/paulorobinson>
+
+
+      Paulo Robinson Giaciani (pt-BR)
+
+<https://www.kaggle.com/paulorobinson>
+
+Posted 2 years ago
+
+· 205th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! 👏🏻👏🏻👏🏻👏🏻
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/muhammedtausif>
+
+
+      Muhammed Tausif
+
+<https://www.kaggle.com/muhammedtausif>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations indeed. @adaubas <https://www.kaggle.com/adaubas>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yantxx>
+
+
+      Yan Teixeira
+
+<https://www.kaggle.com/yantxx>
+
+Posted 2 years ago
+
+· 74th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, my friend! You were very strong throughout the
+competition. Thank you for the amazing wrap-up.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks @yantxx <https://www.kaggle.com/yantxx> for the compliment,
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+
+Posted 2 years ago
+
+· 12th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing your solution in such detail, @adaubas <https://
+www.kaggle.com/adaubas> . The victory is well earned.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bhaskarkumar11>
+
+
+      bhaskar9221
+
+<https://www.kaggle.com/bhaskarkumar11>
+
+Posted 2 years ago
+
+· 1390th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratuations for the win :) !
+I am currently a newbie in ML, and after participation in this
+competition was really helpful for me. I learned a lot from people like
+you sharing and discussing and all. btw my score was 0.85806
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/itasps>
+
+
+      turtle
+
+<https://www.kaggle.com/itasps>
+
+Posted 2 years ago
+
+· 161st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@adaubas <https://www.kaggle.com/adaubas> Congratulations for securing
+1st! Thanks for sharing your solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cristhianccalah>
+
+
+      Cristhian Ccala H.
+
+<https://www.kaggle.com/cristhianccalah>
+
+Posted 2 years ago
+
+· 1200th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on your victory! Your dedication and focus on EDA and
+feature engineering are truly inspiring. Thank you for sharing your
+process; it will be very helpful to the community. Enjoy your success!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Thank you @cristhianccalah <https://www.kaggle.com/cristhianccalah> ,
+happy that my words are inspiring, i'm really convinced,
+
+I'd rather spend my time on EDA and feature engineering and CV than
+waste time to try many several blind blends on public LB ! (even if I
+submit one very important 2 weeks ago)
+
+And pandas, numpy, scipy, mathplotlib / seaborn, scikit are so powerfull
+tools to do EDA and to understand data !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lashfire>
+
+
+      lash_fire
+
+<https://www.kaggle.com/lashfire>
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Firstly,Congratulations🥇!
+Thanks for this detailed and comprehensive solution.
+I particularly love exploring the EDA and Feature Engineering parts;
+they were truly fascinating. I wish I had spent more time on feature
+engineering and EDA.
+It was a pleasure competing against you! 😄
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+thank you @lashfire <https://www.kaggle.com/lashfire>
+
+it was a pleasure too to compete against you, you and @mdoroch <https://
+www.kaggle.com/mdoroch> were really challenging !
+
+I hesitated to contact @mdoroch <https://www.kaggle.com/mdoroch> when he
+was looking for a teammate ! You two were a great team ! Congratulations !
+
+replyReply
+love1
+add_reaction
+

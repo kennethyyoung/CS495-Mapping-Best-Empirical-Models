@@ -1,0 +1,514 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification with a Tabular Employee Attrition Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e3>
+      o
+
+        1st place. That was unexpected...
+
+        <https://www.kaggle.com/competitions/playground-series-s3e3/
+        writeups/bill-cruise-1st-place-that-was-unexpected>
+      o
+
+        Binary Classification with a Tabular Reservation Cancellation
+        Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e7>
+      o
+
+        Play S3E7 - EDA + Models
+
+        <https://www.kaggle.com/code/craigmthomas/play-s3e7-eda-models>
+      o
+
+        PS S03E07: A Complete EDA ⭐️
+
+        <https://www.kaggle.com/code/jcaliz/ps-s03e07-a-complete-eda>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+1st place. That was unexpected... — Binary Classification with a Tabular
+Employee Attrition Dataset
+
+
+  1st place. That was unexpected...
+
+Binary Classification with a Tabular Employee Attrition Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e3>
+
+Solution Writeup · 1st place · Jan 24, 2023
+
+I hadn't even selected any submissions because I wasn't expecting to do
+well as I watched my public LB score slip. 😄
+
+Many thanks to Khawaja Abaid <https://www.kaggle.com/khawajaabaidullah>,
+whose notebook Starting Strong - XGBoost + LightGBM + CatBoost <https://
+www.kaggle.com/code/khawajaabaidullah/starting-strong-xgboost-lightgbm-
+catboost> was the basis of my own <https://www.kaggle.com/code/bcruise/
+starting-strong-xgboost-lightgbm-catboost?scriptVersionId=116642571>.
+Please go upvote Khawaja's notebook if you haven't already. My only big
+change was to add some feature engineering before training the same
+models. I had discussed it previously in Adding Risk Factors <https://
+www.kaggle.com/competitions/playground-series-s3e3/discussion/378994>,
+but here's the final FE code from the winning version:
+
+|df['MonthlyIncome/Age'] = df['MonthlyIncome'] / df['Age']
+
+df["Age_risk"] = (df["Age"] < 34).astype(int)
+df["HourlyRate_risk"] = (df["HourlyRate"] < 60).astype(int)
+df["Distance_risk"] = (df["DistanceFromHome"] >= 20).astype(int)
+df["YearsAtCo_risk"] = (df["YearsAtCompany"] < 4).astype(int)
+
+df['NumCompaniesWorked'] = df['NumCompaniesWorked'].replace(0, 1)
+df['AverageTenure'] = df["TotalWorkingYears"] / df["NumCompaniesWorked"]
+# df['YearsAboveAvgTenure'] = df['YearsAtCompany'] - df['AverageTenure']
+
+df['JobHopper'] = ((df["NumCompaniesWorked"] > 2) & (df["AverageTenure"] < 2.0)).astype(int)
+
+df["AttritionRisk"] = df["Age_risk"] + df["HourlyRate_risk"] + df["Distance_risk"] + df["YearsAtCo_risk"] + df['JobHopper']
+
+|
+content_copy
+
+Author
+
+<https://www.kaggle.com/bcruise>
+Bill Cruise <https://www.kaggle.com/bcruise>
+
+bcruise
+
+arrow_drop_up
+
+36
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    14 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/khawajaabaidullah>
+
+
+      Khawaja Abaid
+
+<https://www.kaggle.com/khawajaabaidullah>
+
+Posted 3 years ago
+
+· 50th in this Competition
+
+arrow_drop_up
+
+10
+
+more_vert
+
+HAHAHAHA OMG NO WAYYYYY!! Many many congratulations, @bcruise <https://
+www.kaggle.com/bcruise>, you totally deserve it. ❤️
+And it's all you for coming up with these genius FE ideas, my notebook
+does nothing but combines three simple models. 😅
+ngl, I can't stop laughing 😂😂😂 and i'm feeling so honored to be
+mentioned in a competition winner's post!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations Bill. Well done!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/macroponix>
+
+
+      Pavel Smirnov
+
+<https://www.kaggle.com/macroponix>
+
+Posted 3 years ago
+
+· 394th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+genius in simplicity 👍
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kirkdco>
+
+
+      KirkDCO
+
+<https://www.kaggle.com/kirkdco>
+
+Posted 3 years ago
+
+· 8th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @bcruise <https://www.kaggle.com/bcruise> !! It seems
+that simplicity is key in the Playground these days.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bcruise>
+
+
+      Bill Cruise
+
+<https://www.kaggle.com/bcruise>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you. It does look like simpler models (and a little bit of luck)
+give an advantage in this series so far. I think that's a good thing
+when the competition only lasts a week.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mkr9395>
+
+
+      Mohit Kumar
+
+<https://www.kaggle.com/mkr9395>
+
+Posted 3 years ago
+
+· 215th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+congrats @bcruise <https://www.kaggle.com/bcruise>. Your methods used
+are simply great. Well deserved win!💪
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mattop>
+
+
+      Matt OP
+
+<https://www.kaggle.com/mattop>
+
+Posted 3 years ago
+
+· 14th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Haha, I felt the same way as I watched my public LB score slip.
+Sometimes it's pretty difficult to ignore the public LB. Congratulations
+on 1st place @bcruise <https://www.kaggle.com/bcruise> and nice work on
+the feature engineering!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jenifar>
+
+
+      Jenifar
+
+<https://www.kaggle.com/jenifar>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Really, wonderful….
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ilgrad>
+
+
+      Ilia Gradina
+
+<https://www.kaggle.com/ilgrad>
+
+Posted 3 years ago
+
+· 537th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/aravilliatchutaram>
+
+
+      Ram Aravilli
+
+<https://www.kaggle.com/aravilliatchutaram>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations Bill. Well done!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pdbailey>
+
+
+      Paul Bailey
+
+<https://www.kaggle.com/pdbailey>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Very well done!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/priyankapalshetkar>
+
+
+      Priyanka Palshetkar
+
+<https://www.kaggle.com/priyankapalshetkar>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Wow! Many congratulations Bill :D
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/saegusa21424>
+
+
+      saeusa
+
+<https://www.kaggle.com/saegusa21424>
+
+Posted 3 years ago
+
+· 53rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great feature engineering!
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+

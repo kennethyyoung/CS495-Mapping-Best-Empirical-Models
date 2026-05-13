@@ -1,0 +1,1229 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Prediction with a Rainfall Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s5e3>
+      o
+
+        2nd Place - GBDT + NN + SVR + Original Data
+
+        <https://www.kaggle.com/competitions/playground-series-s5e3/
+        writeups/chris-deotte-2nd-place-gbdt-nn-svr-original-data>
+      o
+
+        RAPIDS SVC w/ Feature Engineering - [LB 0.856]
+
+        <https://www.kaggle.com/code/cdeotte/rapids-svc-w-feature-
+        engineering-lb-0-856>
+      o
+
+        RAPIDS KNN Starter Ensemble - [LB 0.961] - Wow!
+
+        <https://www.kaggle.com/code/cdeotte/rapids-knn-starter-
+        ensemble-lb-0-961-wow>
+      o
+
+        Binary Classification of Insurance Cross Selling
+
+        <https://www.kaggle.com/competitions/playground-series-s4e7>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd Place - GBDT + NN + SVR + Original Data — Binary Prediction with a
+Rainfall Dataset
+
+
+  2nd Place - GBDT + NN + SVR + Original Data
+
+Binary Prediction with a Rainfall Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s5e3>
+
+Solution Writeup · 2nd place · Apr 3, 2025
+
+Wow, what a shakeup! I was afraid of a shakeup from day one, so I kept
+my solution simple.
+
+
+    Tabular Data
+
+In general with tabular data, I like to blend GBDT and NN. Then I try
+adding a few ML models like SVR, LR, KNN, etc. Furthermore in Kaggle
+playground competitions, we must decide how to use the original dataset
+that synthetic data was created from.
+
+
+    Feature Engineering
+
+When train data is small (few rows) I do little or no feature
+engineering because it is easy to overfit train data. When data is large
+(many rows like December and February playground comps), I do lots of
+feature engineering.
+
+In this competition, I chose to do no feature engineering. My solution
+is just an equal average of multiple models where each model trains on
+the data "as is" without feature engineering. So in this competition, I
+spent my time training different diverse models (using original data in
+different ways). And evaluating local ensemble OOF CV scores using Group
+K Fold. (And each ensemble uses equal weight averaging to avoid ensemble
+overfit).
+
+
+    Group K Fold
+
+In this competition, I used Group K Fold with 6 folds. I split the train
+data into 6 years and put each year in its own fold using Group K Fold.
+Because the test data is two new years of data
+
+|train['group'] = train['id']//365
+
+|
+content_copy
+
+
+    Original Data as New Rows
+
+The train.csv data is 6 years and 2190 rows. The original dataset is 1
+year and 366 rows. One way to add the original data is |pd.concat()| and
+add *new rows*. (It then becomes |group=7| for training and is ignored
+in the validation score calculation).
+
+|train = pd.concat([train,orig],axis=1)
+
+|
+content_copy
+
+
+      => XGBoost - CV 0.893, Public LB 0.848, Private LB 0.90317
+
+Single model uses |max_depth=3|, |colsample_bytree=0.9|, |subsample=0.9|
+like version 1 of my XGB starter notebook here <https://www.kaggle.com/
+code/cdeotte/xgboost-starter-ensemble-lb-0-935-wow>. We use data "as is"
+without feature engineering. (Uses train data with orig as new rows).
+
+
+      => TabPFN - CV 0.894, Public LB 0.867, Private LB 0.90193
+
+Single model uses data "as is" without feature engineering. (Uses train
+data with orig as new rows).
+
+
+      => [Two Model Blend] - CV 0.897, Public 0.859, Private LB 0.90474
+      - [11th Place]
+
+This equal weight ensemble of two models above achieves 11th Place!
+
+
+    Original Data as New Columns
+
+The train.csv data has 11 feature columns. The original data as 11
+feature columns. One way to add the original data is |pd.merge()| and
+add *new columns*. (We shared this idea last playground comp here
+<https://www.kaggle.com/competitions/playground-series-s5e2/
+discussion/565539>)
+
+|m = train.rainfall.mean()
+for c in COLS:
+    n = f"{c}2"
+    train[n] = train[c].map( orig.groupby(c).rainfall.mean() )
+    train[n] = train[n].fillna(m)
+
+|
+content_copy
+
+
+      => RAPIDS SVC - CV 0.896, Public 0.852, Private 0.90610 - [2nd Place]
+
+Single model uses RAPIDS SVC with |C=0.1|, |kernel='poly'|, |degree=1|
+similar to my starter notebook here <https://www.kaggle.com/code/
+cdeotte/rapids-svc-w-feature-engineering-lb-0-856>. We use data "as is"
+without feature engineering. (Uses train data with orig as new columns).
+This single model achieves 2nd Place!
+
+
+      => [Three Model Blend] - CV 0.898, Public 0.855, Private LB
+      0.90728 - [1st Place]
+
+This equal weight ensemble of three models above achieves 1st Place!
+
+
+    My Final 2 Submissions
+
+For my final 2 submissions, I trained a few other models (CatBoost,
+LogisticRegression, XGBoost, SVR) and submitted two different 6 model
+equal weight blends. The three models above are the strongest. The
+additional models boosted ensemble CV score to |0.900| and |0.901| but
+did not boost private LB score beyond |0.906|. My final 2 submission 6
+model ensembles were:
+
+
+      => [Six Model Blends] - [2nd Place]
+
+  * CV = 0.900, Public LB = 0.857, Private = 0.90604
+  * CV = 0.901, Public LB = 0.867, Private = 0.90599
+
+Author
+
+<https://www.kaggle.com/cdeotte>
+Chris Deotte <https://www.kaggle.com/cdeotte>
+
+cdeotte
+
+arrow_drop_up
+
+157
+
+Share
+
+more_horiz
+
+thankYou29yay13love16
+add_reaction
+
+comment
+
+
+    73 Comments
+
+10 appreciation comments <https://www.kaggle.com/competitions/
+playground-series-s5e3/writeups/chris-deotte-2nd-place-gbdt-nn-svr-
+original-data#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/druanli>
+
+
+      Dang Nguyen Le
+
+<https://www.kaggle.com/druanli>
+
+Posted a year ago
+
+· 895th in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+What a great accomplishment—truly inspiring!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/zeyuli17>
+
+
+      Zeyuuu17
+
+<https://www.kaggle.com/zeyuli17>
+
+Posted a year ago
+
+· 796th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing！！Idea is really inspiring and I lean a lot~
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nabinkoirala452>
+
+
+      Nabin Koirala452
+
+<https://www.kaggle.com/nabinkoirala452>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Wow nice work!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/debisree>
+
+
+      Debisree Ray
+
+<https://www.kaggle.com/debisree>
+
+Posted a year ago
+
+· 2308th in this Competition
+
+arrow_drop_up
+
+6
+
+more_vert
+
+@cdeotte <https://www.kaggle.com/cdeotte> Thank you. Regarding the
+feature engineering point, could you please clarify what you mean by
+small versus large data? Also, is there a way to subjectively determine
+when feature engineering might lead to overfitting versus when it is
+truly beneficial?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+11
+
+more_vert
+
+Hi. Small and large refer to the number of rows in train data. Assessing
+whether data is small or large is complicated in Kaggle playground
+competitions. Because in this competition, train data has 2190 rows
+which usually can support a few features however it isn't a real 2190
+rows because it was created from an original dataset with only 366.
+
+This train data is more like 366 real rows, then apply data augmentation
+to get 2190 rows. So it is still only signal from 366 rows which is very
+small data. (i.e. you cannot pretend that small data is large data by
+just apply data augmentation to make more data).
+
+========
+
+People have "rules of thumb" regarding how many columns we should make
+per row. It is something like 10, 25 or 50. So basically with 366 rows,
+we already have 11 columns which is saturated.
+
+If our train data has too many columns per row, then the model will find
+fake patterns and improve CV score fake because of the "curse of
+dimensionality" - a math concept that says with enough columns we can
+perfectly classify any dataset regardless of whether the columns have
+real signal or are just random numbers.
+
+replyReply
+thankYou7love8
+add_reaction
+
+<https://www.kaggle.com/mohameddrabo>
+
+
+      Mohamed Drabo
+
+<https://www.kaggle.com/mohameddrabo>
+
+Posted a year ago
+
+· 176th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+How to perform classification with too many classes?
+
+I don’t know much about the subject, but I'm working on a project where
+I need to predict a large number of classes—around 2000. I want to
+predict the appropriate drugs for patients, but it seems impossible due
+to the high memory usage. Is there another solution to handle this?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/muhammadqasimshabbir>
+
+
+      Muhammad Qasim Shabbir
+
+<https://www.kaggle.com/muhammadqasimshabbir>
+
+Posted a year ago
+
+· 572nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Use less data – Remove extra patient info to make the model faster.
+Use a simple model – Try XGBoost or LightGBM, which work well with big data.
+Predict step by step – Don’t pick from 2000 at once—narrow it down in
+stages.
+or you can use deep learning model for classificaiton and keep batch
+size small.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hamedabedi>
+
+
+      Hamed Abedi
+
+<https://www.kaggle.com/hamedabedi>
+
+Posted a year ago
+
+· 1174th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Hi Chris, I think everyone loved your decision to participate in play
+series. This helps us to learn from you. Thanks again !
+
+Just one question:
+earlier in this competition, you were the first one to quickly reach
+perfect 1.0 score on public LB. Can we know how you did it that fast ?
+because it took several days for the others to achieve that !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+7
+
+more_vert
+
+When public LB is a small number of rows (like 146) and we know which
+rows are public LB, then we can just download public code submissions. I
+downloaded a hundred public notebook submission.csv files (download from
+all versions of each public notebook). Each notebook has an LB score.
+Then it is a simple optimization problem. Find the public LB true
+targets such that the downloaded hundred public notebook achieve the LB
+score that they say they achieve.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/demonsheriff>
+
+
+      Demon Sheriff
+
+<https://www.kaggle.com/demonsheriff>
+
+Posted a year ago
+
+· 1580th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+but isn't this leaderboard probing ? 😅
+
+replyReply
+add_reactionReact
+
+3 more repliesarrow_drop_down
+
+Profile picture for Roman@Ahmed
+Profile picture for Hamed Abedi
+Profile picture for Eka Buyung Lienadi
+
+<https://www.kaggle.com/demonsheriff>
+
+
+      Demon Sheriff
+
+<https://www.kaggle.com/demonsheriff>
+
+Posted a year ago
+
+· 1580th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+I was trying to engineer features based on the days column to check for
+seasonality in rainfall, but it only made my model worse. I noticed that
+you trained the model "as is" without feature engineering and still
+achieved a top score. Is this a common trend for small datasets or does
+it depend on specific nuances of the dataset?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/seshurajup>
+
+
+      SeshuRaju 🧘‍♂️
+
+<https://www.kaggle.com/seshurajup>
+
+Posted a year ago
+
+arrow_drop_up
+
+4
+
+more_vert
+
+@cdeotte <https://www.kaggle.com/cdeotte> Thanks for your insights! Do
+you have any LB probing or submission tricks to better understand the
+private LB and minimize shakeup?
+
+    is plans to share the source code for learning purposes?, as i want
+    to play with late submissions.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Shakeup in Kaggle tabular data playground competitions is about how many
+rows are in train and test data. When number of rows is small, we need
+to be careful not to do too much stuff because it is easy to overfit
+train data. We also need to mostly ignore public LB. In this situation
+it is best to build different models without feature engineering and
+make an equal weight ensemble.
+
+When data is large, then we don't need to worry about overfitting. We
+can feature engineer and make more complicated ensembles and/or stacks.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/alexandervega>
+
+
+      TooNovice
+
+<https://www.kaggle.com/alexandervega>
+
+Posted a year ago
+
+arrow_drop_up
+
+4
+
+more_vert
+
+@cdeotte <https://www.kaggle.com/cdeotte> thank you!. I have a question
+regarding the CV strategy. I understand you have 6 folds because you
+divide your training base into 6 years. My question is, what would each
+fold look like? It would be something like:
+
+Example of the first fold:
+• Training: years 1, 2, 3, 4, 5
+• Test (validation): year 6
+
+Second fold:
+• Training: years 1, 2, 3, 4, 6
+• Test: year 5
+…………….
+Sixth fold:
+• Training: years 2, 3, 4, 5, 6
+• Test: year 1
+
+If so, I would understand that this strategy doesn't require the
+training years to be prior to the validation year, meaning it wouldn't
+maintain temporal consistency, right? Why wouldn't it be necessary to
+maintain temporal consistency in this problem?. In general, what CV
+strategy would you recommend in a binary raining prediction?
+Thank you!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Hi. Your example is correct. I do not think this is real time series
+data. The original dataset is only 1 year. I believe that Kaggle just
+ran their synthetic data generator 8 times to generate 6 years of train
+data and 2 years of test data. So afterward, we have 8 years of data but
+there is no order to this data. We cannot say one year comes before
+another year. They are just equally created years.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+But note even if this was real time series data, sometimes people use a
+Group K Fold yearly scheme like this. It depends if different years have
+"cause and effect relationship" or "correlation relationship". If
+different years are only correlated but not cause-related, then we can
+use Group K Fold with years as groups and ignore the order of the years.
+
+(For example if we train a model with pairs of years, can the model
+learn to predict which year comes before which year. If no, then using
+Group K Fold with years is fine).
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/alexandervega>
+
+
+      TooNovice
+
+<https://www.kaggle.com/alexandervega>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+thanks, I see. How could one check effect relationship in a binary rain
+prediction? My impression is that the rainfall of one year may be
+correlated with that of another, but I don't see how there could be an
+effect relationship.
+
+replyReply
+add_reactionReact
+
+5 more repliesarrow_drop_down
+
+Profile picture for Chris Deotte
+Profile picture for TooNovice
+
+<https://www.kaggle.com/agmbennett>
+
+
+      agmbennett
+
+<https://www.kaggle.com/agmbennett>
+
+Posted a year ago
+
+· 2001st in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Hey Chris, thanks for this. I always tend to look for more feature
+enhancements to boost the score. However, in many of your notebooks I
+see you often keep original features. How do you make this decision, and
+how do you find iterative improvements by tuning models / model
+selection? I seem to hit a wall when tuning or adding more models to an
+ensemble.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Hi. The first thing we always do is create a local validation scheme (to
+evaluate experiments). Next we need to assess how easy or hard it is to
+overfit the train data (and artificially improve our CV score). Lastly
+we need to understand what things we can do when there is a risk of
+overfitting and what things we can do when there is no risk of overfitting.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/agmbennett>
+
+
+      agmbennett
+
+<https://www.kaggle.com/agmbennett>
+
+Posted a year ago
+
+· 2001st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Ok, when you validate locally how are you determining how easy / hard it
+is to overfit the data? CV only seems to give so much info.
+
+replyReply
+add_reactionReact
+
+8 more repliesarrow_drop_down
+
+Profile picture for Chris Deotte
+Profile picture for agmbennett
+Profile picture for Jordi Rosell
+
+<https://www.kaggle.com/mahm0udelbahy>
+
+
+      mahmoudelbahy_
+
+<https://www.kaggle.com/mahm0udelbahy>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+The results are great
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/noppalitp>
+
+
+      TonSonKrubb
+
+<https://www.kaggle.com/noppalitp>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Nice work for this task
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/romanahmed2024>
+
+
+      Roman@Ahmed
+
+<https://www.kaggle.com/romanahmed2024>
+
+Posted a year ago
+
+· 2133rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great jobs
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/zahraalipour>
+
+
+      Zahra Alipour
+
+<https://www.kaggle.com/zahraalipour>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+The results are fantastic:)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/backstab>
+
+
+      FLust3R
+
+<https://www.kaggle.com/backstab>
+
+Posted a year ago
+
+· 4219th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Nice!! good work
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ben10sharma>
+
+
+      Yash_Lalit_Sharma
+
+<https://www.kaggle.com/ben10sharma>
+
+Posted a year ago
+
+· 2072nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank You Sir, I learned some new tips .I will implement it in next
+competetion !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/aminulislamarnob>
+
+
+      Aminul Islam Arnob
+
+<https://www.kaggle.com/aminulislamarnob>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great approach !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arie07>
+
+
+      Arindam Singh
+
+<https://www.kaggle.com/arie07>
+
+Posted a year ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thanks for sharing your rule of thumb for feature engineering. I had
+been exploring a few methods, yours seems better, will try on different
+datasets to check.
+Btw Really liked your approach of skipping feature engineering for
+smaller data, just realised it was 366 rows originally, augmented to 2190.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/swetakumari117>
+
+
+      sashAI
+
+<https://www.kaggle.com/swetakumari117>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Nice work indeed!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/aslawant>
+
+
+      Beto
+
+<https://www.kaggle.com/aslawant>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Super clean strategy and really well explained! Love how you kept it
+simple and still landed 2nd, those no feature engineering ensembles are
+underrated
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/inesner>
+
+
+      ines ner
+
+<https://www.kaggle.com/inesner>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+………………..
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/romanahmed2024>
+
+
+      Roman@Ahmed
+
+<https://www.kaggle.com/romanahmed2024>
+
+Posted a year ago
+
+· 2133rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Topper share knowledge what are apply this competition where we will
+learn many steps
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/muhammadqasimshabbir>
+
+
+      Muhammad Qasim Shabbir
+
+<https://www.kaggle.com/muhammadqasimshabbir>
+
+Posted a year ago
+
+· 572nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+https://www.kaggle.com/code/cdeotte/rapids-svc-w-feature-engineering-
+lb-0-856 <https://www.kaggle.com/code/cdeotte/rapids-svc-w-feature-
+engineering-lb-0-856> I think this notebook in above disscusion starter
+notebook at the start of discsusion
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/versempra>
+
+
+      Versempra
+
+<https://www.kaggle.com/versempra>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Excellent work!! what an interesting approach that I could learn from!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mustimusik>
+
+
+      Musti Musik
+
+<https://www.kaggle.com/mustimusik>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+nice!! good work
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gaspardobert>
+
+
+      Gaspard Obert
+
+<https://www.kaggle.com/gaspardobert>
+
+Posted a year ago
+
+· 1619th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Amazing work !! Thanks a lot for sharing your approach !
+
+replyReply
+add_reactionReact
+

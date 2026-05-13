@@ -1,0 +1,519 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Regression with a Tabular Gemstone Price Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e8>
+      o
+
+        3rd Place Solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e8/
+        writeups/tevfik-erkut-3rd-place-solution>
+      o
+
+        2nd Place Solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e8/
+        writeups/craig-thomas-2nd-place-solution>
+      o
+
+        Binary Classification with a Tabular Pulsar Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e10>
+      o
+
+        How to detect pulsars with GAM (1st place)
+
+        <https://www.kaggle.com/code/seascape/how-to-detect-pulsars-
+        with-gam-1st-place>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd Place Solution — Regression with a Tabular Gemstone Price Dataset
+
+
+  3rd Place Solution
+
+Regression with a Tabular Gemstone Price Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e8>
+
+Solution Writeup · 3rd place · Mar 6, 2023
+
+Hey everyone! Thanks to all the competitors and organizers at Kaggle for
+this exciting competition!
+
+Before sharing my solution, I want to mention that I have experienced
+several challenging shake-ups in the past 🙃, and as a result, my
+primary goal in this competition was to survive any shake-ups that might
+occur. Although we didn't experience any major shake-ups, my solution
+performed well thanks to my precious random seeds.
+
+I must give credit to these amazing notebooks, so shoutout to their authors:
+
+@sergiosaharovskiy <https://www.kaggle.com/sergiosaharovskiy>'s EDA and
+submission notebook: https://www.kaggle.com/code/sergiosaharovskiy/ps-
+s3e8-2023-eda-and-submission <https://www.kaggle.com/code/
+sergiosaharovskiy/ps-s3e8-2023-eda-and-submission>
+@tetsutani <https://www.kaggle.com/tetsutani>'s XGB+LGBM+CAT ensemble
+baseline notebook: https://www.kaggle.com/code/tetsutani/ps3e8-xgb-lgbm-
+cat-ensemble-baseline <https://www.kaggle.com/code/tetsutani/ps3e8-xgb-
+lgbm-cat-ensemble-baseline>
+@eamonntweedy <https://www.kaggle.com/eamonntweedy>'s XGB+LGB+CB
+ensemble notebook: https://www.kaggle.com/code/eamonntweedy/playground-
+s3-e8-gemstones-xgb-lgb-cb-ensemble <https://www.kaggle.com/code/
+eamonntweedy/playground-s3-e8-gemstones-xgb-lgb-cb-ensemble>
+
+My Strategy:
+
+Basically, I tried to use as many features / feature combinations as
+possible. Then I prepared a custom script, and inside of this script a
+LGBM model runs n-1 columns iteratively, given n equals to length of X.
+The goal was to determine which features are useful and vice versa. If
+dropping a feature decreases my model's success, I dropped this feature
+for good. While doing this, usage of many seeds was crucial therefore
+I've used different seeds, and took the average for scores. But a small
+improvement in RMSE can be tricky and it can cause damage to your model
+if std of folds is higher than default one. ( fully trained one with n
+columns )
+
+So I made few different datasets based on my above approach. Like at
+first, I tried to decrease my RMSE, without even looking at std numbers.
+Then once I checked the std's, I prepared another 2 more datasets. In my
+second attempt, I tried to decrease both the standard deviation and
+RMSEs simultaneously and at third attempt I tried to decrease only STD
+of scores. ( 0.015 was my tolerance threshold for RMSE's, so if dropping
+a feature cause +0.015 RMSE and -0.01 STD, I accepted it. ) Once I saw
+my std_avg decreased from 4.5'ish to 3.8'ish, I stopped the process.
+(
+
+At modeling part, I used optuna to tune parameters with a default value
+of n_iterations = 1000 / learning_rate = 0.1. After tuning the
+parameters, I increased n_iterations to 10000 and decreased learning
+rate to 0.01. ( ESR = 300) My final solution includes XGBoost + LightGBM
++ CatBoost predictions which are coming from these different datasets.
+( like xgb1, xgb2, xgb3, lgb1, lgb2, lgb3 .. )
+
+(btw i also used different seed combinations in parameter
+tuning&modelling too! At my latest sub, my predictions were coming from
+a train-predict loop which has 10 different seeds. That's why I named it
+as 'thats_the_code', I guess :P)
+
+Author
+
+<https://www.kaggle.com/peridon>
+Tevfik Erkut <https://www.kaggle.com/peridon>
+
+peridon
+
+arrow_drop_up
+
+26
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    8 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/samuelcortinhas>
+
+
+      Samuel Cortinhas
+
+<https://www.kaggle.com/samuelcortinhas>
+
+Posted 3 years ago
+
+· 30th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! Nice idea about using the different datasets to train separate
+models and then ensemble
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/peridon>
+
+
+      Tevfik Erkut
+
+<https://www.kaggle.com/peridon>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks @samuelcortinhas <https://www.kaggle.com/samuelcortinhas>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yannbarthelemy>
+
+
+      yann barthelemy
+
+<https://www.kaggle.com/yannbarthelemy>
+
+Posted 3 years ago
+
+· 120th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you for sharing your work! Congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/louisbunuel>
+
+
+      Adrian Muresan
+
+<https://www.kaggle.com/louisbunuel>
+
+Posted 3 years ago
+
+· 328th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Excellent approach and good write-up! Thank you for sharing.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shionmatsuoka>
+
+
+      ShionMatsuoka
+
+<https://www.kaggle.com/shionmatsuoka>
+
+Posted 3 years ago
+
+· 32nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank TEVFIK ERKUT for sharing the code. If you don't mind, I would like
+to know why my code shakes down.
+https://www.kaggle.com/code/shionmatsuoka/new-features-and-outlier-
+improvement <https://www.kaggle.com/code/shionmatsuoka/new-features-and-
+outlier-improvement>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/peridon>
+
+
+      Tevfik Erkut
+
+<https://www.kaggle.com/peridon>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I will check it mate, thanks for your kind words! @shionmatsuoka
+<https://www.kaggle.com/shionmatsuoka>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shionmatsuoka>
+
+
+      ShionMatsuoka
+
+<https://www.kaggle.com/shionmatsuoka>
+
+Posted 3 years ago
+
+· 32nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you !Please check when you have time.
+@peridon <https://www.kaggle.com/peridon> !!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/iqbalsyahakbar>
+
+
+      Iqbal Syah Akbar
+
+<https://www.kaggle.com/iqbalsyahakbar>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations for reaching 3rd place!
+
+I have a question about the part where you used a lot of different
+seeds. I thought that seed only matters to make sure we have the same
+initialization state? Does random seed actually affect the accuracy of
+your model?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/peridon>
+
+
+      Tevfik Erkut
+
+<https://www.kaggle.com/peridon>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks a lot @iqbalsyahakbar <https://www.kaggle.com/iqbalsyahakbar> .
+You are right about the initialization state, and that usage helps us to
+make our processes more deterministic. And for your question, yes it
+indirectly affects our model's accuracy. Let me give you an example:
+
+|kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)|. this
+random_state = 42 affects the ordering of the rows. Therefore it affects
+our train and test rows too! If you use same specific random state in
+all of your CV process, then your train rows will always see the same
+ordering. Therefore, it is important to use many different random seeds
+when training a model in order to obtain a more accurate estimate of the
+model's performance.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/iqbalsyahakbar>
+
+
+      Iqbal Syah Akbar
+
+<https://www.kaggle.com/iqbalsyahakbar>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Ah, I did not know that row order actually affect our models too. Thank
+you for the answer!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/peridon>
+
+
+      Tevfik Erkut
+
+<https://www.kaggle.com/peridon>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+By saying orders, I've meant the rows distribution. If you use this kf
+variable for your cv process, you'll get same fold distribution again
+and again. Your train rows distribution over 5 folds won't be changed
+unless you change the random_state parameter.
+
+replyReply
+add_reactionReact
+

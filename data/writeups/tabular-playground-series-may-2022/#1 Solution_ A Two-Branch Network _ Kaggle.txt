@@ -1,0 +1,722 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Tabular Playground Series - May 2022
+
+        <https://www.kaggle.com/competitions/tabular-playground-series-
+        may-2022>
+      o
+
+        #1 Solution: A Two-Branch Network
+
+        <https://www.kaggle.com/competitions/tabular-playground-series-
+        may-2022/writeups/the-team-1-solution-a-two-branch-network>
+      o
+
+        Tabular Playground Series - Apr 2022
+
+        <https://www.kaggle.com/competitions/tabular-playground-series-
+        apr-2022>
+      o
+
+        #3 Solution
+
+        <https://www.kaggle.com/competitions/tabular-playground-series-
+        apr-2022/writeups/vd-brothers-3-solution>
+      o
+
+        2nd Place Solution
+
+        <https://www.kaggle.com/competitions/tabular-playground-series-
+        apr-2022/writeups/azzam-radman-2nd-place-solution>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+#1 Solution: A Two-Branch Network — Tabular Playground Series - May 2022
+
+
+  #1 Solution: A Two-Branch Network
+
+Tabular Playground Series - May 2022
+
+<https://www.kaggle.com/competitions/tabular-playground-series-may-2022>
+
+Solution Writeup · 1st place
+
+Our solution is a blend of some variants of the following two-branch
+network:
+
+network
+
+How did we arrive at this solution? The introductory text of the
+competition gives a hint: /… includes a number of different feature
+interactions. This competition is an opportunity to explore various
+methods for identifying and exploiting these feature interactions./ Few
+people knew what to do with this hint. Fortunately, @sudalairajkumar
+<https://www.kaggle.com/sudalairajkumar> showed us how to identify the
+feature interactions with Xgbfir <https://github.com/limexp/xgbfir>. He
+even produced a dataset <https://www.kaggle.com/datasets/
+sudalairajkumar/tps-may22-xgboost-feature-interactions> listing all
+interactions found by the tool.
+
+On the back of an envelope, I constructed a graph of these interactions.
+The graph had two connected components:
+
+graph
+
+The key idea then was that we needed a network which restricted feature
+interactions to the connected components of the graph (other
+interactions produce noise). The two-branch network implements this
+idea. The left branch learns the interactions among |['f_00', 'f_01',
+'f_02', 'f_03', 'f_04', 'f_05', 'f_06', 'f_19', 'f_20', 'f_21', 'f_22',
+'f_23', 'f_24', 'f_25', 'f_26', 'f_28', 'f_30', 'ch7']|, the right
+branch processes |['f_07', 'f_08', 'f_09', 'f_10', 'f_11', 'f_12',
+'f_13', 'f_14', 'f_15', 'f_16', 'f_17', 'f_18', 'f_29', 'ch0', 'ch1',
+'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch8', 'ch9', 'unique_characters',
+'i_02_21', 'i_05_22', 'i_00_01_26']|. Except for the two-branch
+architecture, our final implementation doesn't differ from the Advanced
+Keras notebook <https://www.kaggle.com/code/ambrosm/tpsmay22-advanced-
+keras>.
+
+We worked on a decision tree model as well. Restricting the feature
+interactions with the hyperparameter |
+interaction_constraints=[features_left, features_right]| helped LightGBM
+reach an lb score of 0.99778, but this was not enough to be included in
+the blend.
+
+Special thanks go to @cabaxiom <https://www.kaggle.com/cabaxiom> for
+introducing the unique_characters feature, to @wti200 <https://
+www.kaggle.com/wti200> for showing how to analyze feature interactions,
+to @sudalairajkumar <https://www.kaggle.com/sudalairajkumar> for
+publishing the Xgbfir output, and of course to @pourchot <https://
+www.kaggle.com/pourchot> who with great persistence optimized our
+network architecture.
+
+Authors
+
+<https://www.kaggle.com/ambrosm>
+AmbrosM <https://www.kaggle.com/ambrosm>
+
+ambrosm
+
+<https://www.kaggle.com/pourchot>
+Laurent Pourchot <https://www.kaggle.com/pourchot>
+
+pourchot
+
+arrow_drop_up
+
+53
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    20 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/pourchot>
+
+
+      Laurent Pourchot
+
+<https://www.kaggle.com/pourchot>
+
+Posted 4 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+9
+
+more_vert
+
+Hi @ambrosm <https://www.kaggle.com/ambrosm> , it was a fruitful
+collaboration, you gave the best ideas and I tuned it.
+I have just published the solution here : https://www.kaggle.com/code/
+pourchot/tpsmay22-keras-test-tuned <https://www.kaggle.com/code/
+pourchot/tpsmay22-keras-test-tuned>
+The solution was blended in the last days to reach the highest score.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/casati8>
+
+
+      casati8
+
+<https://www.kaggle.com/casati8>
+
+Posted 4 years ago
+
+· 175th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hallo Laurent,
+
+thank you for sharing your solution. I have a question for you: The
+values of the predicted targets for the submission are greater than 1. I
+don't understand why and did you modified these values before the
+submitted your predictions?
+My solution produces predicted target values between 0 and 1 and in the
+description of this competition they say: ".. to predict whether the
+machine is in state 0 or state 1". My assume that the predicted target
+values must be in the interval [0..1].
+
+Regards Egbert
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pourchot>
+
+
+      Laurent Pourchot
+
+<https://www.kaggle.com/pourchot>
+
+Posted 4 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hello @casati8 <https://www.kaggle.com/casati8> , the AUC metric is
+sensitive to the ranking. I would recommend to read :https://
+www.analyticsvidhya.com/blog/2020/06/auc-roc-curve-machine-learning/
+<https://www.analyticsvidhya.com/blog/2020/06/auc-roc-curve-machine-
+learning/>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sudalairajkumar>
+
+
+      SRK
+
+<https://www.kaggle.com/sudalairajkumar>
+
+Posted 4 years ago
+
+· 123rd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Congratulations @ambrosm <https://www.kaggle.com/ambrosm> on the first
+place finish. Glad that the xgbfir dataset helped.
+
+Also, thanks to all your notebooks and discussion posts in this
+competition. They are very helpful for all of us.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cid007>
+
+
+      Chirag Desai
+
+<https://www.kaggle.com/cid007>
+
+Posted 4 years ago
+
+· 399th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulation @ambrosm <https://www.kaggle.com/ambrosm> for getting
+first place and thanks for explaining the solution. It seems I am very
+far away from what you guys are doing and capable of 😃.. log way to
+catch up ..
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/raviista>
+
+
+      Ravi Shukla
+
+<https://www.kaggle.com/raviista>
+
+Posted 4 years ago
+
+· 238th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @pourchot <https://www.kaggle.com/pourchot> and @ambrosm
+<https://www.kaggle.com/ambrosm> for winning this competetion. You
+people truly deserved it. Thanks for providing your winning approach!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pourchot>
+
+
+      Laurent Pourchot
+
+<https://www.kaggle.com/pourchot>
+
+Posted 4 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hi @raviista <https://www.kaggle.com/raviista> , you re welcome !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/onedatareader>
+
+
+      Chayan Shrang Raj
+
+<https://www.kaggle.com/onedatareader>
+
+Posted 4 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Awesome solution! Very creative! Thanks for sharing! @ambrosm <https://
+www.kaggle.com/ambrosm>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adamwurdits>
+
+
+      Adam Wurdits
+
+<https://www.kaggle.com/adamwurdits>
+
+Posted 4 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations to both of you and thanks for sharing this mind-boggling
+solution!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/anandparthiban>
+
+
+      Anand Parthiban
+
+<https://www.kaggle.com/anandparthiban>
+
+Posted 4 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! I liked how this solution is presented, and especially
+like the picture of drawn graph on the envelope. It feels like it gives
+some insight into your thoughts and problem-solving.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/maxdiazbattan>
+
+
+      Maximiliano Diaz Battan
+
+<https://www.kaggle.com/maxdiazbattan>
+
+Posted 4 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Ambros and Pourchot together, hard to beat that team. Thank you very
+much for being so generous to share your solution, it's quite ingenious.
+Cogratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pourchot>
+
+
+      Laurent Pourchot
+
+<https://www.kaggle.com/pourchot>
+
+Posted 4 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Hi @maxdiazbattan <https://www.kaggle.com/maxdiazbattan> , muchas
+gracias ! 😉 this month was very interesting with lesson on the
+interaction we all learned.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/deepernet>
+
+
+      DeeperNet
+
+<https://www.kaggle.com/deepernet>
+
+Posted 4 years ago
+
+· 9th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! I have learned so much from you! Thanks.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arturra>
+
+
+      ArturRa
+
+<https://www.kaggle.com/arturra>
+
+Posted 4 years ago
+
+· 114th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Brilliant idea, nice solution, laconic report. Congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samuelcortinhas>
+
+
+      Samuel Cortinhas
+
+<https://www.kaggle.com/samuelcortinhas>
+
+Posted 4 years ago
+
+· 187th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats both. It's a very creative solution!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pourchot>
+
+
+      Laurent Pourchot
+
+<https://www.kaggle.com/pourchot>
+
+Posted 4 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hi @samuelcortinhas <https://www.kaggle.com/samuelcortinhas> , thank you
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+
+Posted 4 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations to you both !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pourchot>
+
+
+      Laurent Pourchot
+
+<https://www.kaggle.com/pourchot>
+
+Posted 4 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@adaubas <https://www.kaggle.com/adaubas> , merci pour nous 😊
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/manfau>
+
+
+      man fau
+
+<https://www.kaggle.com/manfau>
+
+Posted 4 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+big congratulations. Kudos!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/roczy1>
+
+
+      Uche
+
+<https://www.kaggle.com/roczy1>
+
+Posted 4 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+👏🏽 Congratulations
+
+replyReply
+add_reactionReact
+
