@@ -1,0 +1,529 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predicting Optimal Fertilizers
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6>
+      o
+
+        3rd place - Ridge and CV are all you need
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6/
+        writeups/mahog-3rd-place-ridge-and-cv-are-all-you-need>
+      o
+
+        2nd Place Solution - L3 Ensemble of 100+ OOFs
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6/
+        writeups/masaya-kawamata-2nd-place-solution-l3-ensemble-of->
+      o
+
+        1st Place - Fast GPU Experimentation with RAPIDS cuDF cuML
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6/
+        writeups/chris-deotte-1st-place-fast-gpu-experimentation-wi>
+      o
+
+        Classification with an Academic Success Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e6>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd place - Ridge and CV are all you need — Predicting Optimal Fertilizers
+
+
+  3rd place - Ridge and CV are all you need
+
+Predicting Optimal Fertilizers
+
+<https://www.kaggle.com/competitions/playground-series-s5e6>
+
+Solution Writeup · 3rd place · Jul 1, 2025
+
+TLDR:
+
+  * Slowly built an ensemble of 60+ models over the month
+  * Searched for a good ensembler in the first 2 weeks
+  * Relied on the various XGB hyperparameters in public notebooks
+  * Trust CV
+
+This month I focused on having a wide variety of different models (like
+XGB vs NN) instead of the same model with different FE (there is still
+some FE in here though). Here are some of the tricks I used:
+
+
+    Ridge as ensembler
+
+At the beginning of the comp, I used HC as the ensembler. But it had an
+issue: adding a model often decreased the CV score. Then I tried genetic
+algorithms (GA). It worked pretty well up to about 20 models, but it had
+the same issue as HC after going beyond that. After searching for a
+while, I settled on Ridge. It was very fast (about 1 minute for my 60
+OOFs) and adding a model almost always improved the CV score, so I used
+it to the end.
+
+Some notes on using Ridge:
+
+  * The oofs were stacked in the shape of (n_samples, n_models * 7)
+  * One-hot encode the target and use multi-target regression
+
+
+    Turn classification into regression
+
+I trained a few XGBs and NNs using multi-target regression with MSE loss
+by one-hot encoding the target. I would have trained more regression
+models like this but ran out of time.
+
+
+    XGB with product features, label encoded
+
+Late into the competition, I decided to use product features to add
+diversity, but I accidentally label encoded the new features. It worked
+surprisingly well and boosted CV by 0.0001.
+
+
+    Diverse libraries
+
+During my quest for the most amount of unique models, I found some
+pretty cool libraries:
+
+  * pytabkit
+  * pytorch-tabular
+  * rtdl_num_embeddings
+
+Without these libraries I would probably not be in top 10
+
+
+    Conclusion
+
+I first want to thank all the people who have helped me reach this far,
+including but not limited to: @cdeotte <https://www.kaggle.com/cdeotte>,
+@optimistix <https://www.kaggle.com/optimistix>, @siukeitin <https://
+www.kaggle.com/siukeitin>, @ravi20076 <https://www.kaggle.com/
+ravi20076>, @masayakawamata <https://www.kaggle.com/masayakawamata>,
+@omidbaghchehsaraei <https://www.kaggle.com/omidbaghchehsaraei>,
+@ravaghi <https://www.kaggle.com/ravaghi>, @yekenot <https://
+www.kaggle.com/yekenot> (I probably missed a lot of people). Through
+these past 3 months, I have managed to get 3 top 10 finishes, some
+Kaggle Swag, and an important learning: "CV and Ridge is all you need".
+
+
+    Additional notes
+
+My final list of models:
+
+  * 3 "all-embedding" NNs based on here <https://www.kaggle.com/code/
+    ricopue/s5e6-fertilizers-nn-keras-all-embedding>
+  * 1 Autogluon
+  * 5 Catboosts
+  * 1 Gandalf NN from pytorch-tabular
+  * 2 GRNs based on here <https://www.kaggle.com/code/masayakawamata/
+    s5e5-grn?scriptVersionId=239654151>
+  * Some LAMA NNs
+  * 5 LGBMs
+  * 1 LNN based on here <https://www.kaggle.com/code/nikitamanaenkov/
+    predict-calorie-lnn>
+  * 3 Logistic Regression models based on here <https://www.kaggle.com/
+    competitions/playground-series-s5e6/discussion/585144>
+  * 1 normal NN from here <https://www.kaggle.com/code/
+    omidbaghchehsaraei/neural-network-achieving-0-35620-cv-map-3>
+  * OOFs from here <https://www.kaggle.com/code/ravaghi/s05e06-
+    fertilizer-optimization-ensemble>
+  * 1 RealMLP from pytabkit
+  * 3 Pytorch NNs with rtdl_num_embeddings
+  * 1 SAINT model
+  * 1 TabTransformer model from here <https://www.kaggle.com/code/
+    omidbaghchehsaraei/tabtransformer-cv-0-35327-lb-0-36542>
+  * 3 TabMs from pytabkit
+  * 20 XGBs
+  * 1 ExtraTrees model
+  * 1 GradientBoostedTreesLearner from ydf
+
+I had also managed to select my 2 best submissions on the private LB,
+and funnily enough, my best CV was the second best on private LB, and my
+best public LB was my best private. Never seen that happen before.
+
+Author
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Mahog <https://www.kaggle.com/mahoganybuttstrings>
+
+mahoganybuttstrings
+
+arrow_drop_up
+
+19
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    8 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/olejakobrosenvold>
+
+
+      Ole-Jakob
+
+<https://www.kaggle.com/olejakobrosenvold>
+
+Posted 10 months ago
+
+· 10th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats on 3rd place, @mahoganybuttstrings <https://www.kaggle.com/
+mahoganybuttstrings> !
+
+Impressive work—such a diverse and extensive set of models, and a well-
+deserved top finish.
+Thanks also for introducing some fresh libraries. It’s always inspiring
+to explore new tools and avoid getting stuck in the same old /modus
+operandi/ that's been around forever.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/romanahmed2024>
+
+
+      Roman@Ahmed
+
+<https://www.kaggle.com/romanahmed2024>
+
+Posted 10 months ago
+
+· 1317th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Huge shoutout to winner
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/neupane9sujal>
+
+
+      Sujal Neupane
+
+<https://www.kaggle.com/neupane9sujal>
+
+Posted 10 months ago
+
+· 23rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations!!!
+Ridge worked the best for me as well..
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/harukikakinuma>
+
+
+      Haruki Kakinuma
+
+<https://www.kaggle.com/harukikakinuma>
+
+Posted 10 months ago
+
+· 7th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations!!
+You're truly embodying trustCV — I really admire you!
+Thank you so much for all your advice throughout this competition!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted 10 months ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks! Congrats to you too!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 10 months ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats! This is the way 😀
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted 10 months ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks! Congrats to you too! It's insane how consistent you are.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 10 months ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks! It's getting harder, since you and a few others have joined our
+group of assiduous ensemblers 😀
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted 10 months ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Fair point :D
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/taylorsamarel>
+
+
+      Taylor S. Amarel
+
+<https://www.kaggle.com/taylorsamarel>
+
+Posted 10 months ago
+
+· 1002nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great write up! Really appreciate you walking us through the thought
+process.
+
+replyReply
+add_reactionReact
+

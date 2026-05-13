@@ -1,0 +1,1047 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Loan Approval Prediction
+
+        <https://www.kaggle.com/competitions/playground-series-s4e10>
+      o
+
+        1st Place Solution - CatBoost All The Way Down
+
+        <https://www.kaggle.com/competitions/playground-series-s4e10/
+        writeups/hardy-xu-1st-place-solution-catboost-all-the-way-d>
+      o
+
+        Predicting Road Accident Risk
+
+        <https://www.kaggle.com/competitions/playground-series-s5e10>
+      o
+
+        S5E10 | TabM tuned further
+
+        <https://www.kaggle.com/code/tilii7/s5e10-tabm-tuned-further>
+      o
+
+        S5E10 Genetic Programming Features
+
+        <https://www.kaggle.com/code/tilii7/s5e10-genetic-programming-
+        features>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+1st Place Solution - CatBoost All The Way Down — Loan Approval Prediction
+
+
+  1st Place Solution - CatBoost All The Way Down
+
+Loan Approval Prediction
+
+<https://www.kaggle.com/competitions/playground-series-s4e10>
+
+Solution Writeup · 1st place · Oct 31, 2024
+
+Hey Kagglers! I used to be pretty active in these playground
+competitions, but after the December 2023 competition I took a break
+from Kaggle. On a whim I decided to start working on this one about 10
+days ago, and it's been as much of a thrill as it ever was. Getting 1st
+place was a surprise, to be sure, but a welcome one!
+
+*Cross-Validation*
+I'm sure you've heard this before, but setting up a robust cross-
+validation scheme for evaluating the performance of your predictions is
+*VERY* important to doing well in these competitions. I see lots of
+questions from folks on what kind of feature engineering to do, or how
+to best ensemble models, impute data, engineer features, etc. For a vast
+majority of these questions, there's no single answer that is
+universally true for any dataset. The only way to find out what works
+for a particular dataset is to try various options and see what performs
+the best, and that's where cross-validation comes in. In these
+playground competitions, the data is usually split 60-40 between train
+and test set, and 20% of the test set is used for the public
+leaderboard. That means that a CV score measures your performance on
+*60%* of the entire dataset, whereas the public leaderboard measures
+your performance on only *8%*, making cross-validation performance a
+much more reliable indicator of progress than public leaderboard
+performance. All of the decisions made below were based on optimizing my
+cross-validation performance.
+
+*Data Preprocessing*
+Shoutout to various member of the community for the tip to treat the
+numerical features as categorical. What I found most effective was to
+maintain both the numeric feature and a categorical copy of it. I didn't
+do any other feature engineering, as my experience from past playground
+competitions has usually been that feature engineering is of little use.
+I did include the original dataset.
+
+*Modelling*
+
+My general approach here is the same as the one I used last competition.
+For each of XGBoost, LightGBM, and CatBoost, I used Optuna to find 10
+different sets of 'optimal hyperparameters' and averaged their
+predictions to get an overall prediction for each. Shoutout to
+@omidbaghchehsaraei <https://www.kaggle.com/omidbaghchehsaraei>'s post
+here <https://www.kaggle.com/competitions/playground-series-s4e10/
+discussion/539963> for the tip to use large max_bin values. I also added
+a Neural Network that was heavily inspired from @paddykb <https://
+www.kaggle.com/paddykb>'s notebook here <https://www.kaggle.com/code/
+paddykb/ps-s4e10-no-keras-no-loan-cv-0-963>. The performance of each of
+these models is as follows:
+
+Model 	CV Score 	Public LB 	Private LB
+LightGBM 	.96811 	.97005 	.96637
+XGBoost 	.96767 	.96989 	.96540
+CatBoost 	.96972 	.97299 	.96865
+NN 	.96678 	.97088 	.96577
+
+
+
+What I think might have been my secret sauce was that for each of these
+model predictions, I trained a CatBoost model using the initial model
+predictions as a baseline. An example of how to do this can be found
+here <https://catboost.ai/en/docs/concepts/python-usages-
+examples#baseline>. I'm not sure exactly what inspired me to do this,
+perhaps it was from seeing how amazingly well CatBoost performed on this
+data, but to my surprise CatBoost was able to significantly improve the
+performance of each of these model predictions, even the ones that were
+originally generated using CatBoost. The performance of these CatBoost-
+improved models are as follows:
+
+Initial Model 	CV Score 	Public LB 	Private LB
+LightGBM 	.96856 	.97048 	.96713
+XGBoost 	.96815 	.97024 	.96611
+CatBoost 	.96997 	.97334 	.96903
+NN 	.96732 	.97117 	.96667
+
+
+
+I find it impressive that the CatBoost model that used CatBoost
+predictions as a baseline would have been enough for 3rd place. CatBoost
+was the king for this comp! The final step was a Neural Network to stack
+these 4 predictions together. This squeezed out the extra last bit of
+performance needed to bring the solution to the top.
+
+CV Score 	Public LB 	Private LB
+.97059 	.97344 	.96938
+
+Author
+
+<https://www.kaggle.com/hardyxu52>
+Hardy Xu <https://www.kaggle.com/hardyxu52>
+
+hardyxu52
+
+arrow_drop_up
+
+172
+
+Share
+
+more_horiz
+
+thankYou104yay14love21kaggle9funny2
+add_reaction
+
+comment
+
+
+    95 Comments
+
+17 appreciation comments <https://www.kaggle.com/competitions/
+playground-series-s4e10/writeups/hardy-xu-1st-place-solution-catboost-
+all-the-way-d#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 299th in this Competition
+
+arrow_drop_up
+
+19
+
+more_vert
+
+Congratulations! Very neat solution. I'd thought of using the 10 best
+models produced by Optuna and averaging, but only for CatBoost. I'd
+never seen the option of using a pre-trained model as a baseline for
+CatBoost until now - thanks for introducing me to this new and cool
+idea, shall be sure to give it a try in the future.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thomasmeiner>
+
+
+      Thomas Meißner
+
+<https://www.kaggle.com/thomasmeiner>
+
+Posted 2 years ago
+
+· 789th in this Competition
+
+arrow_drop_up
+
+9
+
+more_vert
+
+I have never seen this before as well. That is what makes Kaggle so
+special. There is always someone who discovers a brilliant new idea or
+technique.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Thank you! I must confess when I saw you at the top of the public
+leaderboard, I checked your profile and saw your placements in the past
+few playground competitions. This result may not have been your best
+one, but it's incredible how you've been consistently placing in the top
+10 throughout the year!
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 299th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thanks! It's been a good run for the most part, and I've learned a lot
+and had great fun. We hadn't seen each other since you took a break this
+year & I started after that, but it's great to see you, looking forward
+to more cool solutions from you.
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Interesting solution! Congratulations on winning and thanks for sharing
+the details. I do not fully get how you used the Catboost predictions as
+baseline. Did you use the oof predictions trained on the full training
+data and inserted them as baseline or did you make a split as suggested
+in the link? When you made a split, did you use 50-50? And did you then
+train the baseline predictions on the 50% split and predict the other
+50%? Or did you used predictions based on nested crossvalidation?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thank you! Yes, for the baseline I did use oof predictions.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/geraldschwartz>
+
+
+      Gerald Schwartz
+
+<https://www.kaggle.com/geraldschwartz>
+
+Posted 2 years ago
+
+· 284th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+As stated in the link, did you use the predicted values rather than
+predict_proba values or did you round them to integer?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+The baseline needs to consist of 'raw values', which in the context of
+binary classification means the logits. For XGBoost, LGBM, and CatBoost
+I don't think there's a prediction function that natively returns
+logits, so I converted the predicted probabilities into logits for the
+baseline.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/toddgardiner>
+
+
+      Todd Gardiner
+
+<https://www.kaggle.com/toddgardiner>
+
+Posted 2 years ago
+
+· 205th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations on the win @hardyxu52 <https://www.kaggle.com/hardyxu52>!
+
+Classy move sharing the catboost method many of us hadn't seen before.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hanifimaduddin02>
+
+
+      Hanif Imaduddin
+
+<https://www.kaggle.com/hanifimaduddin02>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Wow, great!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thomasmeiner>
+
+
+      Thomas Meißner
+
+<https://www.kaggle.com/thomasmeiner>
+
+Posted 2 years ago
+
+· 789th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Very cool solution, congrats!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yagmurdedekoc>
+
+
+      Yağmur Dedekoç
+
+<https://www.kaggle.com/yagmurdedekoc>
+
+Posted 2 years ago
+
+· 421st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! This first-place finish is truly well-deserved. From
+your robust cross-validation strategy to the creative use of CatBoost,
+every step reflects your commitment to winning this competition. Your
+approach of enhancing other models with CatBoost, and the final touch of
+combining everything with a neural network, is especially impressive!
+Your attention to detail and meticulous modeling process proved that
+winning here takes not only technical skill but also strategic
+foresight. Reaching the top spot in such a competitive field is an
+achievement worth celebrating. May this victory be a source of
+inspiration for your future projects. Congratulations again, and enjoy
+this well-earned success! @hardyxu52 <https://www.kaggle.com/hardyxu52>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bengreenwalt>
+
+
+      Ben Greenwalt
+
+<https://www.kaggle.com/bengreenwalt>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! I appreciate the thorough explanation of your methods.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yousefayman00>
+
+
+      Yousef_Ayman
+
+<https://www.kaggle.com/yousefayman00>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congratulations,you deserve 1est place👏
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/joelballesteros>
+
+
+      Joel B.
+
+<https://www.kaggle.com/joelballesteros>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! You inspire me.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tariqbinbashar>
+
+
+      Tariq Bin Bashar
+
+<https://www.kaggle.com/tariqbinbashar>
+
+Posted 2 years ago
+
+· 2027th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congrats bro
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cyrilbourgeois>
+
+
+      Cyril Bourgeois
+
+<https://www.kaggle.com/cyrilbourgeois>
+
+Posted 2 years ago
+
+· 129th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Well Done. Beautiful combination of specific model typologies from
+various data interpretation into a catboost L2 pivot ^^
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahayasaadiputra>
+
+
+      mahayasa adiputra
+
+<https://www.kaggle.com/mahayasaadiputra>
+
+Posted 2 years ago
+
+· 2555th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congratulations, what a great work very inspiring
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/bassetkerouche>
+
+
+      abdelbasset Basto
+
+<https://www.kaggle.com/bassetkerouche>
+
+Posted 2 years ago
+
+· 102nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congratulation sir you deserve 1est place
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/saimnasir>
+
+
+      Saim Nasir
+
+<https://www.kaggle.com/saimnasir>
+
+Posted 2 years ago
+
+· 2983rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I think I should start taking these competitions more seriously, like
+this is such a inspiring post that i might as well try to perform these
+steps on my own on the same dataset.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I'm glad to hear that! Reading these sorts of solutions posts are great
+for getting ideas, but the best way to learn and get better is to try to
+apply those ideas to your own work.
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/humayrakhanomrime>
+
+
+      Humayra Khanom Rime
+
+<https://www.kaggle.com/humayrakhanomrime>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! @hardyxu52 <https://www.kaggle.com/hardyxu52>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/prashantkumaryt>
+
+
+      Prashant Kumar
+
+<https://www.kaggle.com/prashantkumaryt>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Appreciate the clear and thorough solution, @hardyxu52 <https://
+www.kaggle.com/hardyxu52>, and huge congrats on earning first place!
+This is really well-executed—congratulations on the win! 🏆
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/oscarm524>
+
+
+      Oscar Aguilar
+
+<https://www.kaggle.com/oscarm524>
+
+Posted 2 years ago
+
+· 242nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats @hardyxu52 <https://www.kaggle.com/hardyxu52>!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/dacxj0>
+
+
+      David Blandón
+
+<https://www.kaggle.com/dacxj0>
+
+Posted 2 years ago
+
+· 646th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I have learned so much from this solution, thanks for sharing @hardyxu52
+<https://www.kaggle.com/hardyxu52>, and congratulations for the first
+place 🎉!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yuhengjia>
+
+
+      Justin
+
+<https://www.kaggle.com/yuhengjia>
+
+Posted 2 years ago
+
+· 77th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+This post is very detailed and clear, thank you so much and of course,
+congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nil2012>
+
+
+      Niladri Sarkar
+
+<https://www.kaggle.com/nil2012>
+
+Posted 2 years ago
+
+· 1936th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very elegantly done! Congrats on the win 🏆
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/geraldwambui>
+
+
+      Gerald Programmer
+
+<https://www.kaggle.com/geraldwambui>
+
+Posted 2 years ago
+
+· 35th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congratulations🥳 …I can't seem to find the notebook have you publicly
+shared it
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I do all my work locally on my machine, so no notebook unfortunately.
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/fuatyavas>
+
+
+      Fuat Yavaş
+
+<https://www.kaggle.com/fuatyavas>
+
+Posted 2 years ago
+
+· 63rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Excellent solution . Congratulations on winning the competition 👏🎉 🎊
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kushvinthmadhavan>
+
+
+      Kushvinth Madhavan
+
+<https://www.kaggle.com/kushvinthmadhavan>
+
+Posted 2 years ago
+
+· 1891st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+very nice method
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/olejakobrosenvold>
+
+
+      Ole-Jakob
+
+<https://www.kaggle.com/olejakobrosenvold>
+
+Posted 2 years ago
+
+· 496th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats, well done. Thank you for the explanation and insight into pre-
+trained CatBoost model.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shedracka>
+
+
+      Shedrack Eneojo Okute
+
+<https://www.kaggle.com/shedracka>
+
+Posted 2 years ago
+
+· 438th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations 🎊. This is awesome.
+
+replyReply
+add_reactionReact
+

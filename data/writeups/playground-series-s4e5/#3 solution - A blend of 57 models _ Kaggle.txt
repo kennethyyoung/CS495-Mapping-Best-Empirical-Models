@@ -1,0 +1,863 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Regression with a Flood Prediction Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e5>
+      o
+
+        #3 solution - A blend of 57 models
+
+        <https://www.kaggle.com/competitions/playground-series-s4e5/
+        writeups/tilii-3-solution-a-blend-of-57-models>
+      o
+
+        #2nd Place Solution(Team Peaky Blenders): Blends Of Blends.
+
+        <https://www.kaggle.com/competitions/playground-series-s4e5/
+        writeups/peaky-blenders-2nd-place-solution-team-peaky-blend>
+      o
+
+        #1st place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s4e5/
+        writeups/aldparis-1st-place-solution>
+      o
+
+        Regression of Used Car Prices
+
+        <https://www.kaggle.com/competitions/playground-series-s4e9>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+#3 solution - A blend of 57 models — Regression with a Flood Prediction
+Dataset
+
+
+  #3 solution - A blend of 57 models
+
+Regression with a Flood Prediction Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s4e5>
+
+Solution Writeup · 3rd place · May 31, 2024
+
+My solution was a Lasso blend of 57 models, some of which were AutoGluon
+ensembles. See model coefficients below.
+
+After about 5 models there were really no changes except on the 5th or
+6th decimal place. The two best individual method models (LigtGBM and
+CatBoost) were at private LB score 0.86890, while the best AutoML
+ensemble was created by AutoGluon (private score 0.86893). The master
+ensemble is barely better at private LB score 0.86902. But hey, we are
+competing here.
+
+Good correlation between CV scores and public/private LBs.
+
+Lasso coefficients
+
+Author
+
+<https://www.kaggle.com/tilii7>
+Tilii <https://www.kaggle.com/tilii7>
+
+tilii7
+
+arrow_drop_up
+
+26
+
+Share
+
+more_horiz
+
+yay1kaggle2
+add_reaction
+
+comment
+
+
+    22 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/jickymen>
+
+
+      Krens
+
+<https://www.kaggle.com/jickymen>
+
+Posted 2 years ago
+
+· 247th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations on securing the #3 spot with your impressive solution!
+Your approach of blending 57 models using Lasso regression demonstrates
+the power of ensemble methods.
+
+The visualization of model coefficients is particularly insightful. It
+clearly shows the contributions of each model in your ensemble,
+highlighting the importance of models like LightGBM and CatBoost, as
+well as the effectiveness of the AutoGluon ensemble.
+
+It's interesting to see that after about 5 models, further additions
+only made marginal differences. This emphasizes the importance of a
+strong core set of models in an ensemble. Your private leaderboard score
+of 0.86900, slightly above the individual best models, showcases the
+precision and fine-tuning of your approach.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mscgeorges>
+
+
+      George Papachristou
+
+<https://www.kaggle.com/mscgeorges>
+
+Posted 2 years ago
+
+· 13th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats @tilii7 <https://www.kaggle.com/tilii7> 🎉!!! Thanks for
+sharing, its more important to me to learn from the forum rather than
+the final position and I really appreciate solution insights!! For my
+end, I have two questions, as I'm new in this "Kaggle style ensembling",
+because in real-life it's not applicable this kind of modeling:
+
+  * Did you include also the models with negative coefficients in your
+    final ensemble?
+  * What were the difference between AutoGluon ensembles? Did you mean
+    you train different AutoGluon models for different folds?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+    Did you include also the models with negative coefficients in your
+    final ensemble?
+
+Yes. If you look through the graph at the top of this page, about 40% of
+models were given negative coefficients.
+
+    What were the difference between AutoGluon ensembles?
+
+The main difference in AugoGluon ensembles was the starting dataset. I
+explained that in detail *here* <https://www.kaggle.com/competitions/
+playground-series-s4e5/discussion/509042#2855510>.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mscgeorges>
+
+
+      George Papachristou
+
+<https://www.kaggle.com/mscgeorges>
+
+Posted 2 years ago
+
+· 13th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+@tilii7 <https://www.kaggle.com/tilii7> Thanks for the explaination!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lashfire>
+
+
+      lash_fire
+
+<https://www.kaggle.com/lashfire>
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! 🎉,It was a close competition.
+I guess their was very slightly difference in our scores.
+Thank you for providing the solution, we too had similar number of models!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Well done in the last week to make leaderboard jumps. Glad to hear that
+you managed to navigate through many models.
+
+replyReply
+yay1
+add_reaction
+
+<https://www.kaggle.com/chayanonc>
+
+
+      Chagin
+
+<https://www.kaggle.com/chayanonc>
+
+Posted 2 years ago
+
+· 170th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Oh god…57!!
+I stopped at 5 😂.
+
+Congratulations! 😁 @tilii7 <https://www.kaggle.com/tilii7>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Computers do all the ensembling work, whether it is 5 of 50 models. I
+was running another blend in parallel with 26 models that scored
+0.86900. One can easily argue that it wasn't worth adding ~30 models to
+get a 0.00002 improvement, but on the private LB that meant going from
+somewhere between positions 8-12 to #3.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/chayanonc>
+
+
+      Chagin
+
+<https://www.kaggle.com/chayanonc>
+
+Posted 2 years ago
+
+· 170th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+    it wasn't worth adding ~30 models to get a 0.00002 improvement
+
+I think it's worth it, consider the gap between higher ranks and lower
+ones are pretty small in this competition.
+
+    Computers do all the ensembling work, whether it is 5 of 50 models.
+
+I do get what you mean, probably I do the ensembling part poorer than
+you. I always do fine-tuning for each model first before doing ensemble.
+I often run out of idea at around 5 models, lol. Ensemble is like the
+final thing i throw in after that.
+
+Mind giving hint how you get all those 57 models @tilii7 <https://
+www.kaggle.com/tilii7> ????
+
+replyReply
+add_reactionReact
+
+3 more repliesarrow_drop_down
+
+Profile picture for Tilii
+Profile picture for Chagin
+
+<https://www.kaggle.com/zgrdenizelik>
+
+
+      Özgür Deniz Çelik
+
+<https://www.kaggle.com/zgrdenizelik>
+
+Posted 2 years ago
+
+· 385th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!! I'm quite a beginner in Kaggle and ML too. I have to
+ask: how does blending so many models improve performance further?
+Doesn't it take more time?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Adding more models didn't improve the final score by much. The master
+blend had a better score by 0.00012 compared to best individual models.
+It would never be worth the effort in real life to make so many models
+for such a small gain. But we had a month to go, so why not?
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/meloncc>
+
+
+      melon-cc
+
+<https://www.kaggle.com/meloncc>
+
+Posted 2 years ago
+
+· 29th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, very impressive! It seems this competition was indeed
+very tough, and the differences between everyone were minimal.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+The scores were close indeed. Having never worked with AutoML packages
+before, I learned in this competition that they work well on this type
+of data.
+
+Nice move up on the LB!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mattop>
+
+
+      Matt OP
+
+<https://www.kaggle.com/mattop>
+
+Posted 2 years ago
+
+· 4th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Nice work on 3rd place @tilii7 <https://www.kaggle.com/tilii7>, this
+competition eventually ended up just being "Will It Blend? That is the
+question."
+
+https://www.youtube.com/watch?v=lAl28d6tbko <https://www.youtube.com/
+watch?v=lAl28d6tbko>
+
+replyReply
+funny1
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Yes, ensembling was the key. Too bad neural network solutions weren't
+more helpful. I had several of them in my final ensemble, but they
+didn't make much of a difference. NN models also had better LB scores
+than CV, which was unusual compared to others.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+
+      SSS
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+Posted 2 years ago
+
+· 149th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+ahahahahahahha 57
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Is something funny about the number 57 or that I put so much effort into it?
+
+The models were so uniform that almost no individual model made a
+difference. I say almost, because there was a feature that added a small
+improvement, but I will write about that separately.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+
+      SSS
+
+<https://www.kaggle.com/sergiosaharovskiy>
+
+Posted 2 years ago
+
+· 149th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+It is an unconventional weapon
+code number 57, I mean 🤣, is it even legal?!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/christianbarreto07>
+
+
+      Christian Barreto
+
+<https://www.kaggle.com/christianbarreto07>
+
+Posted 2 years ago
+
+· 391st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+
+Posted 2 years ago
+
+· 12th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+congratulations @tilii7 <https://www.kaggle.com/tilii7> !
+|After about 5 models there were really no changes except on the 5th or
+6th decimal place.|
+That is what I observed to. I ended up with only 9 models and could find
+no model for further improvement. The funny thing is: not even my
+carefully and amazingly tuned Catboost predictions were in the ensemble,
+I ended with only autogluon and lgbm and one xgb.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Nice move upward on private LB!
+
+replyReply
+funny1
+add_reaction
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations @tilii7 <https://www.kaggle.com/tilii7> and thank you
+for having shared your lasso solution.
+
+I tried Lasso too but without success, got -66 R2 with Lasso, I should
+have made an error ! I will try in another competition…
+
+Your discussions were very challenging !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+It doesn't matter in the end what type of blending one used as long as
+something worked. There were many good discussions, and I learn
+something new in each competition.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/muhammedtausif>
+
+
+      Muhammed Tausif
+
+<https://www.kaggle.com/muhammedtausif>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations, thanks for sharing. It is very helpful.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mubashirsidiki>
+
+
+      Mubashir Ahmed Siddiqui
+
+<https://www.kaggle.com/mubashirsidiki>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+57 models, wow! That's some serious dedication. Nice work! 😁
+
+replyReply
+add_reactionReact
+

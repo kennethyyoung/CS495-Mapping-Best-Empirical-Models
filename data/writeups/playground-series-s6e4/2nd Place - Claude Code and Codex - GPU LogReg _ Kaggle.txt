@@ -1,0 +1,654 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predicting Irrigation Need
+
+        <https://www.kaggle.com/competitions/playground-series-s6e4>
+      o
+
+        2nd Place - Claude Code and Codex - GPU LogReg
+
+        <https://www.kaggle.com/competitions/playground-series-s6e4/
+        writeups/2nd-place-claude-code-and-codex-gpu-logreg>
+      o
+
+        1st place: One vs Rest approach
+
+        <https://www.kaggle.com/competitions/playground-series-s6e4/
+        writeups/1st-place-one-vs-rest-approach>
+      o
+
+        Predict Customer Churn
+
+        <https://www.kaggle.com/competitions/playground-series-s6e3>
+      o
+
+        3rd Place Solution - An Ensemble of 100 OOFs
+
+        <https://www.kaggle.com/competitions/playground-series-s6e3/
+        writeups/3rd-place-solution-an-ensemble-of-100-oofs>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd Place - Claude Code and Codex - GPU LogReg — Predicting Irrigation Need
+
+
+  2nd Place - Claude Code and Codex - GPU LogReg
+
+Predicting Irrigation Need
+
+<https://www.kaggle.com/competitions/playground-series-s6e4>
+
+Solution Writeup · 2nd place · May 1, 2026
+
+Congratulations to all the winners and everyone who pushed hard.
+Kaggle's April Playground (predicting irrigation) competition was
+similar to Kaggle's March Playground (predicting churn) competiton here
+<https://www.kaggle.com/competitions/playground-series-s6e3>.
+
+April was 3-class multi-class classification and March was binary
+classification, so both were classification. The data was similar. Both
+competitions came from original data with minimal feature interactions
+(i.e. xgb optimal max depth on orginal data was max_depth=1 in both).
+Both comps had original data roughly 10k rows. And both comps had
+similar number of features with no NAN and some numeric and some
+categorical with similar cardinalities.
+
+
+    Convert March Solution to April Solution
+
+On the first day of the competition, I asked Claude Code cli to read all
+my local March solution Python scripts and convert them to April
+competition. Claude rewrote the 150 model scripts that I used and
+converted March to April. I ran the 150 scripts on GPU over the weekend
+and ensembled them. On the third day of the competition I had a private
+LB first place solution with |private LB 0.98160, public LB 0.98182, cv
+0.98130|. The LLM Agent was so fast, there wasn't anything else to do
+for the remaining 27 days!
+
+
+    Final Solution
+
+After Claude Code cli converted my March solution to April and obtained
+|private LB 0.98160, public LB 0.98182|, there wasn't anything to do for
+27 days. I didn't think I could improve because my March solution was
+already the result of LLMs working for 30 days and writing 600,000 lines
+of code. I also believed that the April and March comps were so similar
+that there wasn't any new signal to be found. None-the-less I built some
+more models and tried various things. Specifically I had Codex cli
+convert my March solution to April also.
+
+My final submission was Claude Code's conversion ensemble blended with
+Codex's conversation ensemble! This solution achieved |private LB
+0.98151, public LB 0.98195, cv 0.98170|. Unfortunately working for more
+days past day 3 improved CV score but decreased private LB by about 1e-4 :-(
+
+
+    GPU Logistic Regression Stacker
+
+One important aspect of my final solution is the ensemble technique. In
+this competition, the metric is |balanced accuracy|, so we want the
+stacker to be true multinomial logistic regression with weighted
+classes. We also need it to run fast, so we can repeatedly ensemble
+potentially 100s of models. And do forward or backward feature selection
+if desired. Unfortunately NVIDIA cuML's logistic regression (which we
+used in March comp) isn't multinomial and doesn't support class
+weighting. So Claude wrote me a fast GPU multinomial logistic regression
+using PyTorch
+
+|class PyTorchMultiLogReg(nn.Module):
+    def __init__(self, in_features, out_features=3):
+        super().__init__()
+        self.linear = nn.Linear(in_features, out_features)
+
+    def forward(self, x):
+        return self.linear(x)
+
+|
+content_copy
+
+It is often overlooked but logistic regression is just an NN with input
+going to output (and no middle hidden layers). Additionally to mimic
+logistic regression with L2 regularization we need weight decay on the
+coefficients but not the bias
+
+|    criterion = nn.CrossEntropyLoss(reduction='none')
+    weight_decay_mapped = 1.0 / (C * len(y_tr))
+    optimizer = optim.Adam([
+        {'params': model.linear.weight, 'weight_decay': weight_decay_mapped},
+        {'params': model.linear.bias, 'weight_decay': 0.0}
+    ], lr=0.01)
+
+|
+content_copy
+
+And we want class weights
+
+|    classes = np.unique(y_tr)
+    cw = compute_class_weight('balanced', classes=classes, y=y_tr)
+    dd = dict(zip(classes, cw))
+    sample_weights = np.array([dd[c] for c in y_tr], dtype=np.float32)
+    sw_t    = torch.tensor(sample_weights, dtype=torch.float32, device=device)
+    loss = (criterion(logits, y_tr_t) * sw_t).mean()
+
+|
+content_copy
+
+
+    CV to Private LB Correlation
+
+Unfortunately for me in this competition, the metric and CV to Private
+LB correlation was a little noisy (compared to how close participants
+were clustered on the leaderboard). In the image below, we can see that
+I had many ensembles with similar CV = 0.98175. However those multiple
+submission.csv files had Private LB ranging from 0.98130 to 0.98170. My
+best unselected submission is |CV = 0.98175, Private LB = 0.98172,
+Public LB = 0.98182|.
+
+
+    CV to Public LB Correlation
+
+
+    Solution Code
+
+I will be publishing my final submission code which includes GPU PyTorch
+multinomial logistic regression soon…
+
+Author
+
+<https://www.kaggle.com/cdeotte>
+Chris Deotte <https://www.kaggle.com/cdeotte>
+
+cdeotte
+
+arrow_drop_up
+
+33
+
+Share
+
+more_horiz
+
+thankYou1love1
+add_reaction
+
+comment
+
+
+    12 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s6e4/writeups/2nd-place-claude-code-and-codex-gpu-
+logreg#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/durgakumari12>
+
+
+      Durga Kumari
+
+<https://www.kaggle.com/durgakumari12>
+
+Posted 10 days ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great solution and very clever use of Claude Code and Codex for rapid
+adaptation
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nikita7364777>
+
+
+      r0tor
+
+<https://www.kaggle.com/nikita7364777>
+
+Posted 11 days ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on 2nd place, Chris! Very interesting point about the
+GPU logistic regression stacker.
+
+One small clarification I was curious about: when you say that cuML
+LogisticRegression is not multiclass, do you mean that it does not
+support the exact true multinomial/softmax setup you needed, or was this
+related to a specific RAPIDS version or multi-GPU configuration?
+
+In my experiments, cuML LogisticRegression was able to return 3-class
+probabilities, but I agree that class weighting and full control over
+the loss/regularization are much easier to handle in a custom PyTorch
+implementation.
+
+I really like this part of the solution, especially the detail about
+applying weight decay to coefficients but not to the bias.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 11 days ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Hii r0tor. Congrats achieving 3rd place. NVIDIA cuML is "one versus
+rest" logistic regression (internally it will train 3 log regs not 1 log
+reg). This isn't true multinomial logistic regression. With real
+multinomial logistic regression and class weights (like my GPU PyTorch
+LogReg) we get calibrated probabilities. So I do not use any post
+process or calibration. My GPU PyTorch makes predictions and we submit
+those predictions to Kaggle.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nikita7364777>
+
+
+      r0tor
+
+<https://www.kaggle.com/nikita7364777>
+
+Posted 11 days ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks a lot for the clarification, Chris! That makes sense now.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 11 days ago
+
+· 4th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, and thanks for sharing the discovery and notebook about
+the formula for predicting the original dataset. Did Claude/Codex always
+manage to come up with appropriate version of previous FE, given the
+switch from binary to ternary? Looking at this month's challenge, I
+guess you might be done even earlier 😀
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 11 days ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thanks. Yes Claude/Codex always made a good version. I had a discussion
+with Claude/Codex beforehand so I helped create the map between old
+features to new features and old main feature engineering to new feature
+engineering. So together Claude/Codex and I determined some plans how FE
+should be converted. Once we had a good plan, then Claude/Codex
+converted all 150 python scripts.
+
+I haven't looked at this month's challenge but I think the original
+dataset is real data. This would add something new. We will now need to
+extract real signal from a real dataset (in addition to extracting
+signal from Kaggle's synthetic data generator). So we will need to build
+some new approaches to do this.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/rawashishsin>
+
+
+      AshishSinghRawat
+
+<https://www.kaggle.com/rawashishsin>
+
+Posted 11 days ago
+
+· 72nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congrats on 2nd place.
+question: what you use in the best unselected submission that you
+mention above, is the same log reg stacker or what?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 11 days ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Yes, it is the same log reg stacker. But instead of using all 125 level
+1 models, it used forward selection and picked about 20 of the 125 to
+improve CV to |CV = 0.98175, Private LB = 0.98172, Public LB = 0.98182|
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/abdulsamadgilal>
+
+
+      Abdul Samad Gilal
+
+<https://www.kaggle.com/abdulsamadgilal>
+
+Posted 11 days ago
+
+· 1781st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Amazing Stuff!! congrats @cdeotte <https://www.kaggle.com/cdeotte>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 11 days ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks Abdul !
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/jiweiliu>
+
+
+      Jiwei Liu
+
+<https://www.kaggle.com/jiweiliu>
+
+Posted 12 days ago
+
+· 344th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+    Claude rewrote the 150 model scripts that I used and converted March
+    to April.
+
+Amazing! Thank you for sharing. Do you have to reject/edit some of its
+changes?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 12 days ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+6
+
+more_vert
+
+Nope. It converted everything perfectly and I didn't change anything. If
+any files made an error, it would fix the code and run again.
+
+Part of the reason it did so well is that first I had a 30 minute
+conversation about how the competitions were similar and we did some EDA
+together. Then I asked if it understands how the two competitions are
+similar. It said it understood perfectly and agreed with my assessment
+that we could easily convert one to the other. I then told it to record
+details of our discussion in its CLAUDE.md memory.
+
+We then decided on a plan which included tracker MD files to monitor
+which files were converted and which were not. We created a file naming
+convention to save all the new OOF and Test PREDS. Then later it wrote a
+GPU PyTorch logistic regression stacker and combined all the models and
+displayed feature importance plots.
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (1)
+
+<https://www.kaggle.com/santiagorocca>
+
+
+      Santiago Rocca
+
+<https://www.kaggle.com/santiagorocca>
+
+Posted 11 days ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Good work!
+

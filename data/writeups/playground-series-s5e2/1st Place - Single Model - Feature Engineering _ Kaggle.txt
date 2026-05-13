@@ -1,0 +1,1104 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Backpack Prediction Challenge
+
+        <https://www.kaggle.com/competitions/playground-series-s5e2>
+      o
+
+        1st Place - Single Model - Feature Engineering
+
+        <https://www.kaggle.com/competitions/playground-series-s5e2/
+        writeups/chris-deotte-1st-place-single-model-feature-engine>
+      o
+
+        Multi-Class Prediction of Obesity Risk
+
+        <https://www.kaggle.com/competitions/playground-series-s4e2>
+      o
+
+        PG4.2 EDA and Baseline
+
+        <https://www.kaggle.com/code/tdoh86/pg4-2-eda-and-baseline>
+      o
+
+        Binary Classification with a Bank Churn Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e1>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+1st Place - Single Model - Feature Engineering — Backpack Prediction
+Challenge
+
+
+  1st Place - Single Model - Feature Engineering
+
+Backpack Prediction Challenge
+
+<https://www.kaggle.com/competitions/playground-series-s5e2>
+
+Solution Writeup · 1st place · Mar 10, 2025
+
+
+    Single Model Wins!
+
+My favorite solution in a Kaggle competition is a powerful single model
+versus a large ensemble. I'm excited that a single model with creative
+feature engineering wins this competition! Although this was a weird
+competition with weird data, this was one of my favorite competitions
+because this was a tricky puzzle to solve that required lots of creative
+features!
+
+
+    Weird Competition Data
+
+This competition's data was weird and unnatural as explained here
+<https://www.kaggle.com/competitions/playground-series-s5e2/
+discussion/564056>. The techniques that were successful in this
+competition are not what we would need if we were predicting real
+backpack prices. However it is important to note that every technique
+used here is used in other real world models. So it is beneficial to
+learn these techniques.
+
+
+    Final Solution
+
+My final solution is a single model trained with 500 features using
+1xA100 GPU 80GB. However a single model with only 138 features trained
+with Kaggle's 1xT4 GPU 16GB also wins first place. I publish this simple
+Kaggle T4 GPU solution here <https://www.kaggle.com/code/cdeotte/first-
+place-single-model-lb-38-81>.
+
+
+    Feature Engineering
+
+The key to success in this competition was running as many experiments
+as possible trying as many different feature engineering ideas as
+possible. To perform experiments as fast as possible, I used RAPIDS
+cuDF-Pandas <https://rapids.ai/cudf-pandas/> as shown in my starter
+notebook here <https://www.kaggle.com/code/cdeotte/feature-engineering-
+with-rapids-lb-38-847>. In one month, I trained over 300 XGBoost models
+and tried thousands of different feature engineering ideas! My final
+solution keeps the best ideas. Below I list some of my favorite ideas
+from my final solution.
+
+
+    Groupby(COL1)[COL2].agg(STAT)
+
+Basic groupby stats are explained in my starter discussion here
+<https://www.kaggle.com/competitions/playground-series-s5e2/
+discussion/563743>. We pick a column |COL1|, then pick a column |COL2|,
+then pick a |STAT| like |"mean"|, |"std"|, |"count"|, |"min"|, |"max"|,
+|"nunique"|, |"skew"| etc etc. (If |COL2| is a target column, we use
+nested folds to prevent leakage). Below are more advanced features!
+
+
+    Groupby(COL1)['Price'].agg(HISTOGRAM BINS)
+
+I had fun inventing this technique. I have never seen it being used
+before. When we |groupby(COL1)['Price']| we have a set of number for
+each group.
+
+Below we display histogram for the group |Weight Capacity = 21.067673|.
+We can count the number of elements in each (equally spaced) bucket and
+create a new engineered feature with this bucket count to return to the
+|groupby| operation! Below we display 7 buckets, but we can treat the
+number of buckets as a hyperparameter.
+
+|result = X_train2.groupby("Weight Capacity (kg)")["Price"].apply(make_histogram)
+X_valid2 = X_valid2.merge(result, on="Weight Capacity (kg)", how="left")
+
+|
+content_copy
+
+
+    Groupby(COL1)['Price'].agg(QUANTILES)
+
+After |groupby|, we can compute the quantiles for |QUANTILES =
+[5,10,40,45,55,60,90,95]| and return the 8 values to create 8 new columns.
+
+|for k in QUANTILES:
+    result = X_train2.groupby('Weight Capacity (kg)').\
+        agg({'Price': lambda x: x.quantile(k/100)})
+
+|
+content_copy
+
+
+    All NANs as Single Base-2 Column
+
+We can create a new column from all the NANs over multiple columns. This
+is a powerful column which we can subsequently use for |groupby|
+aggregations or combinations with other columns!
+
+|train["NaNs"] = np.float32(0)
+for i,c in enumerate(CATS):
+    train["NaNs"] += train[c].isna()*2**i
+
+|
+content_copy
+
+
+    Put Numerical Column into Bins
+
+The most powerful column in this competition is |Weight Capacity|. We
+can create more powerful columns based on this column by binning this
+column with rounding!
+
+|for k in range(7,10):
+    n = f"round{k}"
+    train[n] = train["Weight Capacity (kg)"].round(k)
+
+|
+content_copy
+
+
+    Extract Float32 as Digits
+
+The most powerful column in this competition is |Weight Capacity|. We
+can create more powerful columns based on this column by extracting
+digits! This technique seems weird but it is often used in real life to
+extract info from a product ID where individual digits within a product
+ID convey info about a product such as brand, color, etc. (idea from
+@jordanbarker <https://www.kaggle.com/jordanbarker> here <https://
+www.kaggle.com/competitions/playground-series-s5e2/
+discussion/563743#3128871>)
+
+|for k in range(1,10):
+    train[f'digit{k}'] = ((train['Weight Capacity (kg)'] * 10**k) % 10).fillna(-1).astype("int8")
+
+|
+content_copy
+
+
+    Combination of Categorical Columns
+
+There are 8 categorical columns in this dataset (excluding numerical
+column |Weight Capacity|). We can create 28 more categorical columns by
+combining all combinations of categorical columns. First we label encode
+the original categorical column into integers with |-1| being NAN. Then
+we combine the integers:
+
+|for i,c1 in enumerate(CATS[:-1]):
+     for j,c2 in enumerate(CATS[i+1:]):
+        n = f"{c1}_{c2}"
+        m1 = train[c1].max()+1
+        m2 = train[c2].max()+1
+        train[n] = ((train[c1]+1 + (train[c2]+1)/(m2+1))*(m2+1)).astype("int8")
+
+|
+content_copy
+
+
+    Use Original Dataset which Synthetic Data is Created From
+
+The following feature seems weird, but it is based on the idea that a
+product's price is based on |manufacture suggested retail price|. We can
+treat the original dataset that this competition was created from as the
+manufacture suggested retail. And this competition's data as the
+individual stores' price. Therefore we can help predictions by giving
+each row knowledge of the MSRP:
+
+|tmp = orig.groupby("Weight Capacity (kg)").Price.mean()
+tmp.name = "orig_price"
+train = train.merge(tmp, on="Weight Capacity (kg)", how="left")
+
+|
+content_copy
+
+
+    Division Features
+
+After creating new columns with |groupby(COL1)[COL2].agg(STAT)|, we can
+can then combine these new columns to make even more new columns! For
+example
+
+|# COUNT PER NUNIQUE
+X_train['TE1_wc_count_per_nunique'] = X_train['TE1_wc_count']/X_train['TE1_wc_nunique']
+# STD PER COUNT
+X_train['TE1_wc_std_per_count'] = X_train['TE1_wc_std']/X_train['TE1_wc_count']
+
+|
+content_copy
+
+
+    Final Submission Code
+
+I publish a simplified version of my single model code here <https://
+www.kaggle.com/code/cdeotte/first-place-single-model-lb-38-81>!
+
+Author
+
+<https://www.kaggle.com/cdeotte>
+Chris Deotte <https://www.kaggle.com/cdeotte>
+
+cdeotte
+
+arrow_drop_up
+
+184
+
+Share
+
+more_horiz
+
+thankYou26yay28love15kaggle10
+add_reaction
+
+comment
+
+
+    97 Comments
+
+6 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s5e2/writeups/chris-deotte-1st-place-single-model-feature-
+engine#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/adityaakuskar>
+
+
+      Aditya Akuskar
+
+<https://www.kaggle.com/adityaakuskar>
+
+Posted a year ago
+
+· 724th in this Competition
+
+arrow_drop_up
+
+8
+
+more_vert
+
+do you by any chance teach, i would really love to learn this things
+from you and congrats
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted a year ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Congratulations for another first place finish, and thanks for all the
+code and insights you shared along the way! Hope you keep making time
+for this series.
+
+replyReply
+love3surprise1
+add_reaction
+
+<https://www.kaggle.com/payal156>
+
+
+      payal156
+
+<https://www.kaggle.com/payal156>
+
+Posted a year ago
+
+arrow_drop_up
+
+4
+
+more_vert
+
+I learn something new everytime I open and this time it was no
+different! Thankyou for the innovative approach!
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/adityachute>
+
+
+      Aditya Chute
+
+<https://www.kaggle.com/adityachute>
+
+Posted a year ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Massive respect for this achievement! @cdeotte <https://www.kaggle.com/
+cdeotte> Your commitment to excellence and innovation is truly
+inspiring. Keep leading the way!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samir95>
+
+
+      Ahmed Samir
+
+<https://www.kaggle.com/samir95>
+
+Posted a year ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Your ideas never fail to impress me @cdeotte <https://www.kaggle.com/
+cdeotte>
+Congrats!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mickeyo7>
+
+
+      MickeyO
+
+<https://www.kaggle.com/mickeyo7>
+
+Posted a year ago
+
+· 1171st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Hey congrats Chris. Can you explain though why you want to add so many
+new features, like from combining all categorical combinations for
+example? Why does this improve the model if it doesn’t provide any new
+information?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+12
+
+more_vert
+
+Many of these techniques just help the decision tree be able to split
+stuff. Let's imagine that we have two categorical columns and each has
+cardinality 5. The first have values 1,2,3,4,5. And the second have
+values A, B, C, D, E. There are 25 combinations 1-A, 1-B, … 2-A, 2-B,
+…., 5-D, 5-E. If we do not combine and then target encode, how can a
+decision tree send 1-A, 2-C, 2-D, 3-B, 3-E, 5-A to the left split and
+everything else to the right split?
+
+To isolate 2-C, it would first need to send "1" to left and "2,3,4,5" to
+right using first column. Then it would need to send "2" to left and
+"3,4,5" to right. Now it has "2". Then it would need to send "A,B,C" to
+left and "D,E" to right. Then it would need to send "A,B" to left and
+"C" to right. That is 4 splits just to get "2-C". Then we would need 4
+splits to get "1-A" and 4 splits to get "2-D" and 4 splits to get "3-B"
+etc etc. We would need a total of 24 splits to get "1-A, 2-C, 2-D, 3-B,
+3-E, 5-A" and send them all together
+
+When we combine and target encode. Then the values "1-A, 2-C, 2-D, 3-B,
+3-E, 5-A" may all be encoded with 0.3 and all other pairs may be encoded
+with 0.7. Then the model can make 1 split and send all 0.3 to left and
+all 0.7 to right. The model is then able to isolate "1-A, 2-C, 2-D, 3-B,
+3-E, 5-A" with 1 split.
+
+And this is just 2 columns. There are many other columns the GBDT needs
+to juggle at the same time. In conclusion by combining columns and
+assigning target encoding. It organizes the data in such a way that a
+decision tree (and XGBoost) can actually split stuff and find what it is
+look for.
+
+replyReply
+love4
+add_reaction
+
+<https://www.kaggle.com/mickeyo7>
+
+
+      MickeyO
+
+<https://www.kaggle.com/mickeyo7>
+
+Posted a year ago
+
+· 1171st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Makes sense, thank you for the response. If I may ask, how do you get
+really good at this kind of thing? Does it just come down to building a
+really strong background in the theory + throwing yourself at a lot of
+different problems?
+
+replyReply
+add_reactionReact
+
+3 more repliesarrow_drop_down
+
+Profile picture for Chris Deotte
+Profile picture for comments m
+
+<https://www.kaggle.com/jeevanvenkatesh>
+
+
+      Jeevan Venkatesh
+
+<https://www.kaggle.com/jeevanvenkatesh>
+
+Posted a year ago
+
+arrow_drop_up
+
+4
+
+more_vert
+
+This is great, man. I recently started with Kaggle Competitions, and
+learning from this quality of work is too insightful
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samayashar>
+
+
+      Samay Ashar
+
+<https://www.kaggle.com/samayashar>
+
+Posted a year ago
+
+· 1156th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Never thought we can use all the NaN's as a separate column - amazing
+Chris! thanks so much.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bhargavchirumamilla>
+
+
+      Bhargav Chirumamilla
+
+<https://www.kaggle.com/bhargavchirumamilla>
+
+Posted a year ago
+
+· 362nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+This is a fantastic breakdown of a winning Kaggle solution, and it
+highlights some of the key takeaways from the competition. Here are my
+thoughts on the approach and why it worked so well:
+
+Key Strengths of the Approach
+Single Model with Feature Engineering Instead of Large Ensembles
+
+Many Kaggle competitions are won with massive ensemble models, but a
+well-engineered single model can often outperform them due to its
+interpretability and efficiency.
+Training 300+ XGBoost models allowed for extensive experimentation,
+leading to a robust single model.
+Innovative Feature Engineering
+
+The success of this solution came from trying thousands of feature
+engineering techniques and keeping the best ones.
+The Histogram Binning, Quantile Aggregation, and Numerical Column
+Binning approaches are particularly creative and powerful.
+The Base-2 encoding of NaN values is an interesting way to preserve
+missing data patterns.
+Handling "Weird Data"
+
+Recognizing that the competition's data wasn’t natural but still using
+techniques applicable to real-world problems was a great insight.
+Features like Extracting Float Digits seem unconventional but are useful
+in real-world datasets (e.g., product IDs encoding meaningful information).
+Groupby Aggregation and Derived Features
+
+The groupby-based feature engineering using quantiles, mean prices, and
+histogram bins added critical information to the model.
+Using the original dataset’s mean price as a feature was a brilliant
+move, mimicking real-world MSRP pricing influence.
+Combining Categorical Features
+
+Label encoding categorical variables and creating combinations of
+categorical columns expanded the feature space effectively.
+The approach of combining categorical variables with computed ratios
+added valuable interaction terms.
+Derived Features Through Mathematical Transformations
+
+Division features, such as count per unique values or standard deviation
+per count, helped the model capture hidden relationships in the data.
+Lessons for Future Competitions
+Feature Engineering Matters More Than Model Complexity
+Instead of relying on deep ensembles, crafting the right features can
+lead to simpler yet more powerful models.
+
+Experimentation is Key
+Testing thousands of feature combinations and retaining only the best
+ones ensures the model generalizes well.
+
+Understand the Dataset’s Origin
+Using domain knowledge, like incorporating MSRP pricing logic, can give
+a competitive edge.
+
+This approach is a textbook example of how thoughtful feature
+engineering can outperform brute-force ensembling, making it a valuable
+lesson for both Kaggle and real-world machine learning applications. 🚀
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/sefaerkan>
+
+
+      Sefa Erkan
+
+<https://www.kaggle.com/sefaerkan>
+
+Posted a year ago
+
+· 623rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! and Thank you for Sharing.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/chanhee0129>
+
+
+      Chanhee0129
+
+<https://www.kaggle.com/chanhee0129>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+WOW.. Thats amazing~
+
+Single Model Impact
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/losist>
+
+
+      LosiSt
+
+<https://www.kaggle.com/losist>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+That's amazing.Thank you for sharing your notebook.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shahidakhtarkhan>
+
+
+      Shahid Akhtar Khan
+
+<https://www.kaggle.com/shahidakhtarkhan>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you @cdeotte <https://www.kaggle.com/cdeotte> for sharing the
+insights. It's really helpful !!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gizachewalemu>
+
+
+      Gizachew Alemu
+
+<https://www.kaggle.com/gizachewalemu>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! and Thank you for Sharing.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thecatsjfm>
+
+
+      Thecats_Jfm
+
+<https://www.kaggle.com/thecatsjfm>
+
+Posted a year ago
+
+· 432nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you for sharing! Your approach is truly inspiring and gave me a
+lot of new insights. Well deserved win!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tharun0274>
+
+
+      tharun0274
+
+<https://www.kaggle.com/tharun0274>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!!! Thank you for Sharing your notebook.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/abdullahtalyan>
+
+
+      Abdullah TALYAN
+
+<https://www.kaggle.com/abdullahtalyan>
+
+Posted a year ago
+
+· 229th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+As Kaggle begginers, we have learned many different perspectives from
+you. Congrats :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/palvinder2006>
+
+
+      Palvinder
+
+<https://www.kaggle.com/palvinder2006>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulation! Thank you for sharing your code.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hansoofm>
+
+
+      FrostMagic
+
+<https://www.kaggle.com/hansoofm>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks, Chris! Could you explain your feature selection approach after
+feature engineering? With thousands of features generated (e.g.,
+groupby(COL1)[COL2].agg(STAT)), how do you choose the best ones? Do you
+sort by gain importance, add them one by one to the baseline, and keep
+only those improving the metric with t-test/Mann-Whitney? Do you add
+features one by one, in batches, or generate as many as you can and
+select top-n by permutation importance?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+I try each idea one at a time. Each idea will create about a dozen
+features together. Then i add those new dozen features to the model. If
+CV score improves, I keep that dozen, if not I discard them. Then I
+brainstorm for another dozen. I continue this process.
+
+After doing this for a while and successfully finding and adding
+hundreds of features. I will then consider feature elimination using RFE
+or XGB feature importance. I will also consider readjusting my XGBoost
+hyparameters.
+
+Then i continue the search process for new features again.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/ayushsyntax>
+
+
+      Ayush
+
+<https://www.kaggle.com/ayushsyntax>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+"Wow, brilliant work! Your creative feature engineering and single-model
+approach are truly inspiring!"
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/oleksandrvyshnevskyi>
+
+
+      Oleksandr Vyshnevskyi
+
+<https://www.kaggle.com/oleksandrvyshnevskyi>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations. Very usefull ideas. Thank you for sharing
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jtiepo>
+
+
+      Jeferson Fernando Tiepo
+
+<https://www.kaggle.com/jtiepo>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very good solution, I am new to kaggle and also to data science, and I
+have learned a lot by reading the notebooks, thanks for sharing.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/muhammadamirrafiq>
+
+
+      Muhammad Amir Rafiq
+
+<https://www.kaggle.com/muhammadamirrafiq>
+
+Posted a year ago
+
+· 606th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing my friend @cdeotte <https://www.kaggle.com/cdeotte> 😊
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yoyogi009>
+
+
+      Yogesh Maurya
+
+<https://www.kaggle.com/yoyogi009>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Many many Congratulations! So much to learn from Grandmasters like you.
+Thank You.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/semenoval>
+
+
+      SemenovAl
+
+<https://www.kaggle.com/semenoval>
+
+Posted a year ago
+
+· 815th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very impressive. Congrats!
+
+replyReply
+add_reactionReact
+

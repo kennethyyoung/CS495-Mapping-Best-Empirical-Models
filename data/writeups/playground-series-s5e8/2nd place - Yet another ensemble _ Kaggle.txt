@@ -1,0 +1,1000 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification with a Bank Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s5e8>
+      o
+
+        2nd place - Yet another ensemble
+
+        <https://www.kaggle.com/competitions/playground-series-s5e8/
+        writeups/2nd-place-yet-another-ensemble>
+      o
+
+        Backpack Prediction Challenge
+
+        <https://www.kaggle.com/competitions/playground-series-s5e2>
+      o
+
+        3rd Place Solution in Three Words!
+
+        <https://www.kaggle.com/competitions/playground-series-s5e2/
+        writeups/automatylicza-knai-3rd-place-solution-in-three-wor>
+      o
+
+        Rank 2 approach - a century of component feature sets and deep
+        ensemble
+
+        <https://www.kaggle.com/competitions/playground-series-s5e2/
+        writeups/ravi-ramakrishnan-rank-2-approach-a-century-of-com>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd place - Yet another ensemble — Binary Classification with a Bank Dataset
+
+
+  2nd place - Yet another ensemble
+
+Binary Classification with a Bank Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s5e8>
+
+Solution Writeup · 2nd place · Sep 1, 2025
+
+TLDR: My approach for this competition is basically the same as S5E6:
+generate a bunch of diverse oofs (ideally with different models rather
+than same model and different hyperparams/FE) and slowly add them to the
+ensemble.
+
+Firstly I would like to thank the people who shared their code and
+insights, including but not limited to: @cdeotte <https://
+www.kaggle.com/cdeotte>, @omidbaghchehsaraei <https://www.kaggle.com/
+omidbaghchehsaraei>, @yekenot <https://www.kaggle.com/yekenot>, @itasps
+<https://www.kaggle.com/itasps>, @siukeitin <https://www.kaggle.com/
+siukeitin> and @tilii7 <https://www.kaggle.com/tilii7>.
+
+Now onto my solution:
+
+
+    Models
+
+My final submission is an ensemble of 59 models, ensembled with Catboost
+and with scores (of the best model) as following (note: not all models
+were fully optimized/run with the best feature set, so scores can
+probably be improved by a lot):
+
+Model type 	CV 	Public LB 	Private LB
+TabM 	0.976810 	0.97765 	0.97750
+XGBoost 	0.976543 	0.97741 	0.97707
+LightGBM 	0.976013 	0.97693 	0.97660
+RealMLP 	0.975983 	N/A 	N/A
+Catboost 	0.975066 	0.97590 	0.97571
+DeepTables 	0.974459 	0.97579 	0.97559
+TabR 	0.973597 	0.97580 	0.97518
+Gandalf 	0.973107 	0.97438 	0.97410
+Random Forest 	0.972771 	N/A 	N/A
+GRN 	0.972365 	0.97418 	0.97380
+FTTransformer 	0.972252 	0.97439 	0.97398
+CNN 	0.970265 	0.97447 	0.97386
+Bartz 	0.968910 	0.97250 	0.97205
+
+
+    Feature Engineering
+
+My best feature set had the following:
+
+  * TE mean and CE on bigrams (competition targets and orig targets)
+  * Products of bigrams (for numerical features)
+  * Cyclical features from @yekenot <https://www.kaggle.com/yekenot>
+
+
+    Ensembling
+
+I tested a few ensemblers (namely Ridge, LightGBM, Catboost and HC) and
+Catboost was the best one on the Private LB. Their scores are as follows:
+
+Ensembler 	CV 	Public LB 	Private LB
+Ridge 	0.977207 	0.97804 	0.97786
+LightGBM 	0.977408 	0.97816 	0.97796
+Catboost 	0.977432 	0.97817 	0.97796
+HC 	0.97740 	0.97807 	0.97789
+
+After reading a few writeups, it seems ensembling with Autogluon might
+have provided a boost.
+
+
+    Conclusion
+
+From the past 3 episodes (we're obviously excluding S5E7 :V), I can say
+that the formula to getting in the top 3 is a big, diverse ensemble and
+maybe a trick or two. Thanks to everyone who has helped me get this far,
+and happy Kaggling :D!
+
+Author
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Mahog <https://www.kaggle.com/mahoganybuttstrings>
+
+mahoganybuttstrings
+
+arrow_drop_up
+
+46
+
+Share
+
+more_horiz
+
+
+    Project Links
+
+PG S5E8 - TabM - [CV 0.976810 PB 0.97750]
+
+8 months ago · 103 upvotes
+
+code
+ <https://www.kaggle.com/mahoganybuttstrings>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://www.kaggle.com/code/mahoganybuttstrings/pg-s5e8-tabm-
+cv-0-976810-pb-0-97750>
+love6kaggle5
+add_reaction
+
+comment
+
+
+    29 Comments
+
+5 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s5e8/writeups/2nd-place-yet-another-ensemble#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/mohammedkajamaideenj>
+
+
+      Mohammed Kaja maideen j
+
+<https://www.kaggle.com/mohammedkajamaideenj>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Impressive variety of NN models in particular. Using AG
+would have probably made our scores very, very close
+2 months ago
+
+2nd in this Competition
+
+Thanks and congrats on 13th!
+
+replyReply
+love2funny1
+add_reaction
+
+<https://www.kaggle.com/mohammedkajamaideenj>
+
+
+      Mohammed Kaja maideen j
+
+<https://www.kaggle.com/mohammedkajamaideenj>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/swamyni>
+
+
+      surajs
+
+<https://www.kaggle.com/swamyni>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+i am do work
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mariyappank1>
+
+
+      Mariyappan@123
+
+<https://www.kaggle.com/mariyappank1>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Comment and favourite
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shinuabhi1992>
+
+
+      Shinu Abhi
+
+<https://www.kaggle.com/shinuabhi1992>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Impressive variety of NN models in particular. Using AG
+would have probably made our scores very, very close.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/martinkegl>
+
+
+      Martin Kegl
+
+<https://www.kaggle.com/martinkegl>
+
+Posted 8 months ago
+
+· 602nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Great job! Can you give the LGBM hypers that gave you the 0.97693 public
+score?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thiagolimasantos>
+
+
+      Thiago Lima Santos
+
+<https://www.kaggle.com/thiagolimasantos>
+
+Posted 8 months ago
+
+· 10th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations! Great job
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted 8 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thanks! Congrats to you for 10th place!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 8 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations! Impressive variety of NN models in particular. Using AG
+would have probably made our scores very, very close.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted 8 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thank you and congrats on 1st place! I've said this once and I'll say it
+again, you are incredibly consistent!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 8 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thanks! Looks like you're becoming pretty consistent too.
+
+replyReply
+yay1
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 8 months ago
+
+· 15th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Great job @mahoganybuttstrings <https://www.kaggle.com/
+mahoganybuttstrings> and props to you for sharing an inspiring notebook!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted 8 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thanks and congrats on 15th! Your xlearn FFM is so strong, shame I
+didn't get it to work during the comp. I feel like if we team merged
+then we could have probably beaten @optimistix <https://www.kaggle.com/
+optimistix> :D
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 8 months ago
+
+· 15th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+I had high expectations once I got that xLearn model, but somehow it
+didn't mesh well with others. Even though it had similar CV/LB scores
+with the best XGB models (see the overlap below), it is actually quite a
+different model - a KS score > 0.1 means different models. I will
+hopefully figure it out in the near future.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted 8 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Interesting. I would expect it to increase the score a lot when ensembled
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jordirosell>
+
+
+      Jordi Rosell
+
+<https://www.kaggle.com/jordirosell>
+
+Posted 8 months ago
+
+· 246th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congratulations!
+
+For Bartz, do you mean this specific implementation of Bayesian Additive
+Regression Trees (BART) in JAX? https://pypi.org/project/bartz/
+<https://pypi.org/project/bartz/>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted 8 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Thank you! Yep, that's the one
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/weekendt>
+
+
+      simple
+
+<https://www.kaggle.com/weekendt>
+
+Posted 8 months ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations!Could you please open source the notebook with RealMLP,I
+want to learn
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nishuchowdhurybd>
+
+
+      Nishu Chowdhury BD
+
+<https://www.kaggle.com/nishuchowdhurybd>
+
+Posted 8 months ago
+
+· 1695th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+congratulations..it's great
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gauravprafulrathod>
+
+
+      Gaurav praful Rathod
+
+<https://www.kaggle.com/gauravprafulrathod>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+-1
+
+more_vert
+
+Congratulations!Could you please open source the notebook with RealMLP,
+I want to learn
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yunsuxiaozi>
+
+
+      yunsuxiaozi
+
+<https://www.kaggle.com/yunsuxiaozi>
+
+Posted 8 months ago
+
+· 267th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations!Could you please open source the notebook with Tabm,I
+want to learn.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted 8 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thanks and congrats on achieving your goal <https://www.kaggle.com/
+competitions/playground-series-s5e8/discussion/593993>! Here's the
+notebook <https://www.kaggle.com/code/mahoganybuttstrings/pg-s5e8-tabm-
+cv-0-976810-pb-0-97750>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/omidbaghchehsaraei>
+
+
+      OMID BAGHCHEH SARAEI
+
+<https://www.kaggle.com/omidbaghchehsaraei>
+
+Posted 8 months ago
+
+· 13th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations on your second-place finish! Your solution is incredibly
+impressive. I was particularly curious about your models like Gandalf,
+GRN, and Bartz. Would you be open to sharing more details about them?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted 8 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Thanks and congrats on 13th!
+
+    Would you be open to sharing more details about them?
+
+Sure!
+
+  * Gandalf is a model from the pytorch-tabular library
+  * GRN is the NN that @masayakawamata <https://www.kaggle.com/
+    masayakawamata> shared in S5E5, see here <https://www.kaggle.com/
+    competitions/playground-series-s5e5/discussion/582513>
+  * The name 'bartz' is actually the library. The model is BART
+    (Bayesian Additive Regression Trees) and the bartz library
+    implements it in GPU, see the comment below
+
+replyReply
+thankYou3
+add_reaction
+
+<https://www.kaggle.com/mariyappank1>
+
+
+      Mariyappan@123
+
+<https://www.kaggle.com/mariyappank1>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+2nd competition
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yashmatsagar>
+
+
+      Yash Matsagar
+
+<https://www.kaggle.com/yashmatsagar>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+i am work
+i am join my name is yash matsagar
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ranjeetkumar6787>
+
+
+      Ranjeet Kumar
+
+<https://www.kaggle.com/ranjeetkumar6787>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations!Could you please open source the notebook with RealMLP,
+I want to learn
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (5)
+
+<https://www.kaggle.com/yashmatsagar>
+
+
+      Yash Matsagar
+
+<https://www.kaggle.com/yashmatsagar>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+good job 🥰
+
+<https://www.kaggle.com/irakozekelly>
+
+
+      Irakoze Ntawigenga Kelly
+
+<https://www.kaggle.com/irakozekelly>
+
+Posted 8 months ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+I hope to learn more from this, thanks
+
+<https://www.kaggle.com/thiagolimasantos>
+
+
+      Thiago Lima Santos
+
+<https://www.kaggle.com/thiagolimasantos>
+
+Posted 8 months ago
+
+· 10th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Great Job!
+
+<https://www.kaggle.com/asaadwahag>
+
+
+      Asaad Behadilisarray
+
+<https://www.kaggle.com/asaadwahag>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations!
+
+<https://www.kaggle.com/suhailkhan786000>
+
+
+      suhailkhan
+
+<https://www.kaggle.com/suhailkhan786000>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+congratulations
+

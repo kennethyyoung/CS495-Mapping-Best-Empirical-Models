@@ -1,0 +1,574 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Regression with a Tabular Gemstone Price Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e8>
+      o
+
+        2nd Place Solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e8/
+        writeups/craig-thomas-2nd-place-solution>
+      o
+
+        Binary Classification with a Tabular Pulsar Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e10>
+      o
+
+        How to detect pulsars with GAM (1st place)
+
+        <https://www.kaggle.com/code/seascape/how-to-detect-pulsars-
+        with-gam-1st-place>
+      o
+
+        1st place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e10/
+        writeups/piotr-szulc-1st-place-solution>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd Place Solution — Regression with a Tabular Gemstone Price Dataset
+
+
+  2nd Place Solution
+
+Regression with a Tabular Gemstone Price Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e8>
+
+Solution Writeup · 2nd place
+
+
+    Overview
+
+The goal of this competition was to minimize Root Mean Squared Error
+(RMSE) for gemstone price predictions. My solution was a 2-level stacked
+model. The first level of the stack consisted of 60 different models
+utilizing XGBoost, CatBoost, and LightGBM. First level model selection
+was based on a search through model space using RMSE as a guide - I
+started with collections of first level models that had local CV RMSE
+scores of 574 or lower, and stepped this threshold down by increments of
+0.1, building second level Ridge models and searching for the model
+combination that gave the smallest local CV score for the second level.
+The optimal cutoff for selection of first level models was 572.6. All
+models were generated with training data split into 10-folds,
+predictions were made out-of-fold (OOF), and metrics were gathered OOF.
+Feature engineering is discussed in more detail below.
+
+
+    What Worked
+
+  *
+
+    *[High Impact] Feature Engineering*
+
+      o Result: CV lift of about -1.5
+      o Reasoning and context: cut, clarity, and color features, with
+        aspect ratio features was better able to segment the data into
+        various price ranges.
+  *
+
+    *[High Impact] Use of Original Dataset*
+
+      o Result: CV lift of about -1.6
+      o Reasoning and context: additional data provided more samples to
+        learn from.
+
+
+    What Didn't Work
+
+  * *Exploiting Duplicates in the Original Dataset*
+      o Result: public LB lift of about -0.05, but drop in private LB of
+        about +0.1
+      o Reasoning and context: duplicates between the original data and
+        test data existed. Using the price from the original data as
+        predictions for the test duplicates appeared to provide good
+        lift on the public LB, but didn't hold in private LB. See more
+        below in additional context.
+
+
+    Additional Context
+
+For this competition, I generated a total of 1,816 models. There were
+1,709 models that were first level models - a mixture of XGB, CatBoost,
+Ridge, and LightGBM models. The first level models were exploratory -
+they were focused mainly on testing engineered features along with
+hyper-parameter searches. I generated a total of 105 second level models
+using Ridge regression, blending, and neural networks. Most second level
+models were Ridge models that were searching for optimal selection of
+first level models. Second level blended models performed poorly
+compared to Ridge regressions. While second level neural networks
+provided a slightly better CV metric compared to the best Ridge model,
+all my neural net models resulted in a hard rebound on the public LB,
+suggesting bad overfit (which was subsequently confirmed via the private
+LB).
+
+Aside from the model stacks lending stability to the predicted results,
+the two key insights were feature engineering and duplicate handling. In
+terms of duplicates, the previous competition revealed duplicates
+between the training set and the test set, the handling of which turned
+out to be critical for top scoring solutions. In this competition, there
+were 398 rows from the original data that were duplicated in the testing
+data, and 1,440 rows from the training data that were duplicated in the
+testing data. I attempted several ways of overlaying the prices from the
+original dataset and the training dataset onto the testing dataset as a
+post-processing step. Using public LB scores as a guide, it appeared
+that overlaying the 398 rows from the original dataset onto their
+testing counterparts generated lift. However, I remained very skeptical
+of the results, and hedged bets on final submissions, using my best
+Ridge model with and without the exploit applied. In the end, the better
+model was the one without the exploit.
+
+The second insight - feature engineering - was particularly important.
+In my EDA <https://www.kaggle.com/code/craigmthomas/play-s3e8-eda-
+models> I looked at several different engineered features. The first
+insight was that in the real world, the cut, clarity, and color
+categoricals correspond to a numbered scale, and that this scale is used
+to make quality comparisons between diamonds. Simple tests showed that
+considerable lift was possible if we converted the categoricals to a
+numeric scale, and made sure that LightGBM, CatBoost, and XGBoost didn't
+treat those columns as categorical in nature. This was confirmed by
+using different encoding methodologies on the categorical values, and
+comparing their relative scores (see figure below). While the color
+scale feature didn't appear to provide lift in my EDA, it did have a
+small impact when it came to tuned versions of models that used it.
+Another feature engineering insight came with respect to aspect ratio
+and carat value. By dividing up the standardized aspect ratio of the
+gemstone by an exaggerated version of the carat value, we could tease
+apart low value gemstones from higher value ones.
+
+Here is a summary that explained some of the different approaches and
+their results when used to generate untuned LightGBM models. Again, the
+specific details of each model type and what they were exploring is
+explained in more detail in my EDA.
+
+
+    Thanks and Acknowledgements
+
+Once again, thank you to the Kaggle organizers for continuing to deliver
+the Playground series. Again, having access to such a large number of
+competitions in such a short timeframe is so valuable. And again, thank
+you to everyone who competed and took part in the discussions - it's
+always great to learn about the different approaches that everyone is
+using to approach the problem, and hear about what is working and what
+they are learning.
+
+Tagged
+Feature Engineering <https://www.kaggle.com/search?
+q=feature+engineering+tag%3A%22feature+engineering%22>Ensembling
+<https://www.kaggle.com/search?
+q=ensembling+tag%3A%22ensembling%22>Regression <https://www.kaggle.com/
+search?q=regression+tag%3A%22regression%22>
+Author
+
+<https://www.kaggle.com/craigmthomas>
+Craig Thomas <https://www.kaggle.com/craigmthomas>
+
+craigmthomas
+
+arrow_drop_up
+
+27
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    9 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s3e8/writeups/craig-thomas-2nd-place-solution#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/samuelcortinhas>
+
+
+      Samuel Cortinhas
+
+<https://www.kaggle.com/samuelcortinhas>
+
+Posted 3 years ago
+
+· 30th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congrats on the great result again. Btw how did you train almost 2000
+models - did you use some kind of automl?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/craigmthomas>
+
+
+      Craig Thomas
+
+<https://www.kaggle.com/craigmthomas>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+@samuelcortinhas <https://www.kaggle.com/samuelcortinhas> it was a
+custom framework I built - similar to AutoML but different in that it
+leaves the feature exploration and stacking up to me. Basically it
+handles all the details about the mechanics of how to read the datasets
+and build the various models, and lets me focus on transforming features
+(scaling, quantizing, etc), injecting engineered features, or performing
+customized post processing. In addition to that, it does hyper-parameter
+tuning through random parameter space searching (kind of like Optuna,
+but again, custom). The typical workflow is to have it generate 40 or 50
+models of one type (LGB, XGB, CatBoost, Random Forest, etc) using just
+basic features. That's usually enough to give you a sense of what the
+upper and lower performance bounds are going to be. By then I've usually
+done a detailed EDA with clues of what engineered features are useful,
+so then I start generating more models to test those features, again
+performing hyper-parameter searching at the same time. If I find good
+performing models, I can take the best hyper-parameters with those
+engineered features and re-create the models with a reduced learning
+rate that usually dials in better performance. Overall, it takes only a
+few minutes to set up a configuration for a competition, and then a few
+seconds to tweak it and test out feature ideas, post-processing tricks,
+objective functions, etc. I can queue all those experiments up and just
+let it run in the background. Overall it took ~72 hours of running time
+to generate all the models.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samuelcortinhas>
+
+
+      Samuel Cortinhas
+
+<https://www.kaggle.com/samuelcortinhas>
+
+Posted 3 years ago
+
+· 30th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very interesting, thanks for sharing!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gopimali>
+
+
+      Gopi M
+
+<https://www.kaggle.com/gopimali>
+
+Posted 3 years ago
+
+· 644th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I am a beginner . Can I get a copy of your complete code for
+introductory learning. I look forward to your reply
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/craigmthomas>
+
+
+      Craig Thomas
+
+<https://www.kaggle.com/craigmthomas>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@gopimali <https://www.kaggle.com/gopimali> I don't have the code
+available in a notebook to share. For the basics on stacking, see my
+stacking notebook <https://www.kaggle.com/code/craigmthomas/tps-
+mar-2021-stacked-starter> from a previous competition. While the
+competition has different data, the approach is the same.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/rohnsmwangi>
+
+
+      John Ngugi Mwangi
+
+<https://www.kaggle.com/rohnsmwangi>
+
+Posted 3 years ago
+
+· 477th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on creating such an impressive ML model! I'm truly
+grateful that you were willing to share it.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yannbarthelemy>
+
+
+      yann barthelemy
+
+<https://www.kaggle.com/yannbarthelemy>
+
+Posted 3 years ago
+
+· 120th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Thank you for sharing your work!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shionmatsuoka>
+
+
+      ShionMatsuoka
+
+<https://www.kaggle.com/shionmatsuoka>
+
+Posted 3 years ago
+
+· 32nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank CRAIG THOMAS for sharing the code. If you don't mind, I would like
+to know why my code shakes down.
+https://www.kaggle.com/code/shionmatsuoka/new-features-and-outlier-
+improvement <https://www.kaggle.com/code/shionmatsuoka/new-features-and-
+outlier-improvement>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kmkmks>
+
+
+      kmkmks
+
+<https://www.kaggle.com/kmkmks>
+
+Posted 3 years ago
+
+· 31st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! And thanks for sharing!
+
+I have done almost the same experiment. However, I found a big
+difference between 31st and 2nd place. I think this is because I used
+AutoML and skipped modeling…
+That was a very fruitful solution sharing for me! Thanks again!
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (1)
+
+<https://www.kaggle.com/tnghthanh>
+
+
+      Tùngg Tùngg
+
+<https://www.kaggle.com/tnghthanh>
+
+Posted 3 years ago
+
+· 168th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+oh my god this help me a lot. Thanks
+

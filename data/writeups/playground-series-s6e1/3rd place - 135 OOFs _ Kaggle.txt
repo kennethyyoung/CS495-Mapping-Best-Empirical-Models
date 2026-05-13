@@ -1,0 +1,271 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predicting Student Test Scores
+
+        <https://www.kaggle.com/competitions/playground-series-s6e1>
+      o
+
+        3rd place - 135 OOFs
+
+        <https://www.kaggle.com/competitions/playground-series-s6e1/
+        writeups/3rd-place-135-oofs>
+      o
+
+        2nd place - NNs sometimes work better than GBMs
+
+        <https://www.kaggle.com/competitions/playground-series-s6e1/
+        writeups/2nd-place-nns-sometimes-work-better-than-gbms>
+      o
+
+        1st place - (I've ran out of catchy phrases :V)
+
+        <https://www.kaggle.com/competitions/playground-series-s6e1/
+        writeups/1st-place-ive-ran-out-of-catchy-phrases-v>
+      o
+
+        Tabular Playground Series - Nov 2022
+
+        <https://www.kaggle.com/competitions/tabular-playground-series-
+        nov-2022>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd place - 135 OOFs — Predicting Student Test Scores
+
+
+  3rd place - 135 OOFs
+
+i just did some pseudo labeling ¯\_(;-;)_/¯
+
+Predicting Student Test Scores
+
+<https://www.kaggle.com/competitions/playground-series-s6e1>
+
+Solution Writeup · 3rd place · Feb 1, 2026
+
+Congrats to all the winners and special thanks to all the people who
+shared insight and notebooks for this competition: @cdeotte <https://
+www.kaggle.com/cdeotte>, @include4eto <https://www.kaggle.com/
+include4eto>, @siukeitin <https://www.kaggle.com/siukeitin>,
+@mikhailnaumov <https://www.kaggle.com/mikhailnaumov>,
+@omidbaghchehsaraei <https://www.kaggle.com/omidbaghchehsaraei>,
+@mahoganybuttstrings <https://www.kaggle.com/mahoganybuttstrings>,
+@yekenot <https://www.kaggle.com/yekenot>.
+
+My solution is pretty much the same as @tilii7 <https://www.kaggle.com/
+tilii7>'s solution: just add as many diverse models to an ensemble. I
+didn't really bother much with FE (I was kinda too lazy to test
+anything :P).
+
+
+    Models
+
+Here are my models:
+
+Model 	CV 	Private LB
+XGB 	8.59994 	8.59171
+LGBM 	8.62145 	8.62143
+CatBoost 	8.69769 	8.66484
+TabM 	8.58894 	8.58800
+RealMLP 	8.59069 	8.58555
+LNN 	8.61888 	8.61536
+
+My CatBoost is bad cuz I didn't really work on it as much and it ran way
+too slow (maybe I set the hyperparameters wrong or something).
+
+Some other public notebooks:
+
+https://www.kaggle.com/code/mahoganybuttstrings/pg-s6e1-xlearn-ffm-
+cv-8-66086-lb-8-62539 <https://www.kaggle.com/code/mahoganybuttstrings/
+pg-s6e1-xlearn-ffm-cv-8-66086-lb-8-62539>
+
+https://www.kaggle.com/code/mahoganybuttstrings/pg-s6e1-lnn-cv-8-62289-
+lb-8-57507 <https://www.kaggle.com/code/mahoganybuttstrings/pg-s6e1-lnn-
+cv-8-62289-lb-8-57507>
+
+https://www.kaggle.com/code/omidbaghchehsaraei/xgb-predicting-student-
+scores-cv-8-64161 <https://www.kaggle.com/code/omidbaghchehsaraei/xgb-
+predicting-student-scores-cv-8-64161>
+
+https://www.kaggle.com/code/omidbaghchehsaraei/autogluon-predicting-
+student-scores-lb-8-5767 <https://www.kaggle.com/code/
+omidbaghchehsaraei/autogluon-predicting-student-scores-lb-8-5767>
+
+https://www.kaggle.com/code/omidbaghchehsaraei/tabm-predicting-student-
+test-scores-cv-8-61131 <https://www.kaggle.com/code/omidbaghchehsaraei/
+tabm-predicting-student-test-scores-cv-8-61131>
+
+https://www.kaggle.com/code/omidbaghchehsaraei/resnet-predicting-
+student-test-score-cv-8-63409 <https://www.kaggle.com/code/
+omidbaghchehsaraei/resnet-predicting-student-test-score-cv-8-63409>
+
+https://www.kaggle.com/code/omidbaghchehsaraei/ft-transformer-
+predicting-student-score-lb-8-56872 <https://www.kaggle.com/code/
+omidbaghchehsaraei/ft-transformer-predicting-student-score-lb-8-56872>
+
+https://www.kaggle.com/code/yekenot/ps-s6-e1-deeptables-nn <https://
+www.kaggle.com/code/yekenot/ps-s6-e1-deeptables-nn>
+
+My final ensemble (Ridge) has CV 8.57299 and Private 8.57775
+
+Author
+
+<https://www.kaggle.com/funguscakehead>
+Funguscakehead <https://www.kaggle.com/funguscakehead>
+
+funguscakehead
+
+arrow_drop_up
+
+10
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    0 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+

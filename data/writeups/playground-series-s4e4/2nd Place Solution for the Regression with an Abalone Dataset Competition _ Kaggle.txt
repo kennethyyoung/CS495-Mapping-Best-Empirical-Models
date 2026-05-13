@@ -1,0 +1,584 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Regression with an Abalone Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4>
+      o
+
+        2nd Place Solution for the Regression with an Abalone Dataset
+        Competition
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4/
+        writeups/lennart-purucker-2nd-place-solution-for-the-regres>
+      o
+
+        1st Place Solution for the Regression with an Abalone Dataset
+        Competition
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4/
+        writeups/johannes-heller-1st-place-solution-for-the-regress>
+      o
+
+        Predicting Optimal Fertilizers
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6>
+      o
+
+        3rd place - Ridge and CV are all you need
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6/
+        writeups/mahog-3rd-place-ridge-and-cv-are-all-you-need>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd Place Solution for the Regression with an Abalone Dataset
+Competition — Regression with an Abalone Dataset
+
+
+  2nd Place Solution for the Regression with an Abalone Dataset Competition
+
+Regression with an Abalone Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s4e4>
+
+Solution Writeup · 2nd place · May 6, 2024
+
+Heyho everyone, thanks for hosting the competition <https://
+www.kaggle.com/competitions/playground-series-s4e4>, and shoutouts to
+the active community <https://www.kaggle.com/competitions/playground-
+series-s4e4/discussion>!
+
+
+    Context for My Submissions
+
+I entered the competition close to the deadline to test my automated
+machine learning (AutoML) workflow, which I intended to use for the
+AutoML Grand Prix <https://www.kaggle.com/automl-grand-prix> that
+started right after this competition ended.
+
+As it turns out, and to my surprise, my AutoML workflow performed really
+well without adjustments in this competition. In fact, it worked much
+better here than on the actual first Grand Prix Dataset <https://
+www.kaggle.com/competitions/playground-series-s4e5/discussion/499482>
+because this dataset actually benefited from automated feature engineering.
+
+I will write up and share the code for the major parts of my workflow as
+part of my write-up for the Grand Prix. If possible, I will link my
+write-up here or post it as a comment later. *EDIT*: here <https://
+www.kaggle.com/competitions/playground-series-s4e5/discussion/500783> is
+the write-up.
+
+
+    Summary of the AutoML Workflow
+
+ 1. Automated Two-Sample Tests For Training Data
+ 2. Automated Feature Engineering (OpenFE + AutoGluon)
+ 3. Automated Model Selection (Customzied AutoGluon)
+
+
+      1. Automated Two-Sample Tests To Optimize Training Data
+
+Since I am rather new to actively participating in Kaggle competitions,
+I found the concept of having an additional potentially unreliable data
+source quite interesting. Thus, to determine whether I wanted to include
+the original data in my training data, I created several two-sample
+tests for original data, training from the competition, and test data
+from the competition. These tests are supposed to determine if a
+distribution shift exists. If any shift exists, including the original
+data in the training data might be harmful.
+
+I used AutoGluon to predict whether it can detect which dataset a sample
+is from and used a Mann-Whitney U Test to determine significance.
+
+I tested:
+
+  * (Kaggle+Original) Train Data - (Kaggle) Test Data
+  * (Kaggle) Train Data - (Original) Train Data
+  * (Kaggle) Train Data - (Kaggle) Test Data
+  * (Original) Train Data - (Kaggle) Test Data
+
+Based on my observations from these tests, I included the original data.
+I still need to formalize a way of automatically deciding this. The
+setup can be improved, and I want to improve it in the future by
+including tests assessing whether including data is estimated to improve
+performance.
+
+
+      2.  Automated Feature Engineering (OpenFE + AutoGluon)
+
+I suspect this part was by far the most important in obtaining second
+place in this submission. In essence, what I did was: A) run a
+customized version of OpenFE <https://github.com/IIIS-Li-Group/OpenFE>,
+and then B) use AutoGluon's feature selection <https://github.com/
+autogluon/autogluon/blob/master/core/src/autogluon/core/utils/
+feature_selection.py#L154> to prune features.
+
+I played around with B) and used a LightGBM model as a proxy.
+
+For A), I first selected the potential feature candidates by hand to
+control what might be searched over by OpenFE and added a new type of
+feature generator. Then, I ran OpenFE with default settings, which got
+me to ca. 200 features. Finally, I automatically pruned them down using
+B) with a time limit of 1 hour.
+
+Sadly, I do not have all the details for the final feature generators,
+as my pipeline did not log their generator function. Moreover, while
+trying to make automated feature engineering work for the first AutoML
+Grand Prix dataset (spoiler: it was not worth the effort), my code base
+got a bit too messy to trace back my steps.
+
+I used the following code to control the feature generators:
+
+|all_features = list(train_data.columns)
+soft_ordinal = [f for f in all_features if (train_data[f].nunique() <= 100) and (f not in ordinal_columns)]
+numerical_features = [f for f in all_features if f not in categorical_columns]
+candidate_features = get_candidate_features(
+    numerical_features=numerical_features,
+    categorical_features=categorical_columns,
+    ordinal_features=ordinal_columns + soft_ordinal,
+    order=1,  # 2 is likely impossible to use w/o time estimate.
+)
+
+# Restrict Search Space of Candidate Features
+candidate_features = [
+    f
+    for f in candidate_features
+    if f.name
+    in [
+        # "abs" -> dataset specific, not useful in most cases
+        # "log" -> can be done by scalers, no need for GBDTs
+        # "sqrt", -> see above (s.a.)
+        # "square" , -> s.a.
+        # "sigmoid" , -> s.a.
+        "freq", -> # do not like it but giving it a shot. 
+        "round",
+        "residual",
+        # "max", -> IMO, trivial to model for first-order features 
+        # "min", -> s.a.
+        # "+", -> s.a.
+        # "-", -> s.a.
+        "/",
+        "*",
+        # "GroupByThenMin",  -> &nbsp;The essential benefit of GroupBy is captured with any of these, so I filtered this to reduce the search space.
+        # "GroupByThenMax", -> s.a.
+        # "GroupByThenMean", -> s.a.
+        "GroupByThenMedian",
+        "GroupByThenStd",
+        # "GroupByThenRank", -> s.a.
+        "GroupByThenFreq",
+        "GroupByThenNUnique",
+        "Combine",
+        # New Generators 
+        #   - Hacked into OpenFE by adding `new_data = int(d < d.quantile(X).max())` to the generator options. 
+         "<p0.2",  # X = 0.2
+    "<p0.4",   
+    "<p0.6",
+    "<p0.8",
+    ]
+]
+
+|
+content_copy
+
+
+      3. Automated Model Selection (Customzied AutoGluon)
+
+Finally, I used a "tuned" version of AutoGluon to select the final
+model. I will share all the details in my write-up for the AutoML Grand
+Prix. *EDIT*: here <https://www.kaggle.com/competitions/playground-
+series-s4e5/discussion/500783> is the write-up.
+
+Of importance here was that I noticed that stacking worked really well
+for this dataset (with code related to dynamic stacking <https://
+github.com/autogluon/autogluon/pull/3616>). Thus, I set AutoGluon to fit
+up to 6 Layers for Stacking. In the end, it used 5 Layers, but looking
+at the final scores of my submissions, I got the same score with only 3
+layers, but layer 5 did not overfit either!
+
+I hope this (and the more detailed future write-up) provides a good
+overview of my solution. Moreover, I hope you are as excited for more
+and better automated feature engineering as I am ;)
+
+Best,
+Lennart
+
+Author
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Lennart Purucker <https://www.kaggle.com/lennartpuruckerisg>
+
+lennartpuruckerisg
+
+arrow_drop_up
+
+12
+
+Share
+
+more_horiz
+
+surprise6
+add_reaction
+
+comment
+
+
+    5 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s4e4/writeups/lennart-purucker-2nd-place-solution-for-the-
+regres#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/maxuhl98>
+
+
+      MaxUhl98
+
+<https://www.kaggle.com/maxuhl98>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Hi Lennart,
+congratulations for reaching 2. place!
+Since the book 'Get better at anything' suggests that beginners learn
+faster when copying I am trying to use this technique to improving my
+kaggling.
+Currently I am attempting to reproduce your solution, but trying to copy
+your techniques made my results actually worse(.14517 is my best
+autogluon model which uses ALL openfe features without hack, .14555 with
+selected hacked features as described in your post, .14632 when i use
+your feature generation and a vanilla lgbm for feature selection).
+Is it possible for me to take a look at your code for this competition?
+This would greatly help me in my learning efforts, since I won't have to
+manually find out what exactly makes my solutions worse.
+Thanks in advance and keep up the great work,
+Max
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Heyo Max,
+
+I do not have a code snippet to replicate my results.
+
+Based on your description, I am unsure if you have used feature
+selection after OpenFE as I did for this challenge.
+This was quite important for this dataset. Moreover, feature selection
+can be done in many different ways and needs some tuning (besides a good
+validation loop).
+
+Here is a short code snippet for feature pruning, maybe that can help you:
+
+|def run_autogluon_feature_pruning(
+    *,
+    train_data: pd.DataFrame,
+) -> list[str]:
+    from autogluon.core.models import BaggedEnsembleModel
+    from autogluon.core.utils.feature_selection import FeatureSelector
+    from autogluon.tabular.models.lgb.lgb_model import LGBModel
+
+    # -- Input Data
+    train_data = train_data.copy()
+    target_column = "label"
+    n_features_original = train_data.shape[1] - 1  # -1 for target column
+    y = train_data[target_column]
+
+    # -- Problem Settings
+    problem_kwargs = dict(
+        problem_type=, # TODO fill out
+        eval_metric=, # TODO fill out
+    )
+    time_limit = 60 * 5 # TODO
+    n_sub_sample = 300000
+
+    # Get Proxy Model 
+
+    proxy_model = LGBModel
+    model_hps = dict(extra_tees=True)
+
+    proxy_model_kwargs = dict(
+        path=output_path,
+        **problem_kwargs,
+        hyperparameters=dict(
+            **model_hps,
+        ),
+    )
+    proxy_model = BaggedEnsembleModel(
+        path=output_path,
+        model_base=proxy_model,
+        model_base_kwargs=proxy_model_kwargs,
+        random_state=42,
+    )
+    fit_kwargs = dict(
+        sample_weight=sample_weight,
+        k_fold=4,
+        n_repeats=1,
+        replace_bag=False,
+    )
+
+    fs = FeatureSelector(
+        model=proxy_model,
+        time_limit= time_limit,
+        problem_type=problem_kwargs["problem_type"],
+        seed=conf.run.seed,
+        raise_exception=True,
+    )
+    candidate_features = fs.select_features(
+        X=train_data.drop(columns=[arget_column]),
+        y=y,
+        n_train_subsample=n_sub_sample,
+        # Play around with these variables: 
+        prune_threshold="noise",
+        prune_ratio=0.15,
+        stopping_round=4,
+        **fit_kwargs,
+    )
+
+    print(f"Original #feat: {n_features_original}, #feat after Autogluon Feature Pruning: {len(candidate_features)}")
+    print(f"Features:", candidate_features)
+    return candidate_features
+
+|
+content_copy
+
+Best,
+Lennart
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/guavocado>
+
+
+      Reynard S
+
+<https://www.kaggle.com/guavocado>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Hey Lennart, Congratulations on getting the podium position in this
+competition.
+
+Thank you for explaining the workflow, I really appreciated it. As
+someone new to machine learning, this is my first encounter with AutoML,
+it seems to be very interesting, especially the Automated Feature
+Engineering part. I may not be all too familiar with the concepts yet,
+but, I will be looking forward to your AutoML Grandprix write up for
+more details.
+
+Best of luck for the next competition!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lennartpuruckerisg>
+
+
+      Lennart Purucker
+
+<https://www.kaggle.com/lennartpuruckerisg>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+    Hey Lennart, Congratulations on getting the podium position in this
+    competition.
+
+    Thank you for explaining the workflow, I really appreciated it. As
+    someone new to machine learning, this is my first encounter with
+    AutoML, it seems to be very interesting, especially the Automated
+    Feature Engineering part. I may not be all too familiar with the
+    concepts yet, but, I will be looking forward to your AutoML
+    Grandprix write up for more details.
+
+    Best of luck for the next competition!
+
+Thank you!
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (1)
+
+<https://www.kaggle.com/rinshima>
+
+
+      aw
+
+<https://www.kaggle.com/rinshima>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+thankyou for your sharing!
+

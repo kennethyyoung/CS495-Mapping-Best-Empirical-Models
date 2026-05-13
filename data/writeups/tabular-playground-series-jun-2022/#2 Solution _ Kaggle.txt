@@ -1,0 +1,488 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Tabular Playground Series - Jun 2022
+
+        <https://www.kaggle.com/competitions/tabular-playground-series-
+        jun-2022>
+      o
+
+        #2 Solution
+
+        <https://www.kaggle.com/competitions/tabular-playground-series-
+        jun-2022/writeups/arturra-2-solution>
+      o
+
+        #1 Solution - Denoising Autoencoder
+
+        <https://www.kaggle.com/competitions/tabular-playground-series-
+        jun-2022/writeups/sebastian-van-gerwen-1-solution-denoising-
+        autoenco>
+      o
+
+        Tabular Playground Series - May 2022
+
+        <https://www.kaggle.com/competitions/tabular-playground-series-
+        may-2022>
+      o
+
+        TPSMAY22 Keras Test tuned
+
+        <https://www.kaggle.com/code/pourchot/tpsmay22-keras-test-tuned>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+#2 Solution — Tabular Playground Series - Jun 2022
+
+
+  #2 Solution
+
+Tabular Playground Series - Jun 2022
+
+<https://www.kaggle.com/competitions/tabular-playground-series-jun-2022>
+
+Solution Writeup · 2nd place
+
+First of all, I have learned from the winners of the previous Tabular
+Playground (May 2022) that the introductory text can give a hint. I paid
+attention to the next extract: “/The dataset has similarities to the May
+2022 Tabular Playground,…/” I concluded that the best model from the
+previous competition must be able to untangle the same patterns of the
+current dataset. That’s why I decided to use the May 2022 Tabular
+Playground 1# Solution notebook <https://www.kaggle.com/code/pourchot/
+tpsmay22-keras-test-tuned>. For all of that thanks to @ambrosm <https://
+www.kaggle.com/ambrosm> and @pourchot <https://www.kaggle.com/pourchot>.
+Second, I found nothing more useful than just the mean technique for the
+F_1 and F_3 groups. But I think it’s the same for all of us.
+As for the F_4 group, I started using one column as the target and the
+others as features. So, I tuned the model for the F_4 group and got
+stuck at about 0.85.
+The fruitful idea for improvement of my approach was suggested by
+@ehekatlact <https://www.kaggle.com/ehekatlact> (thanks and see notebook
+<https://www.kaggle.com/code/ehekatlact/tps2206-the-na-count-of-each-
+record-is-critical/notebook?scriptVersionId=98204877>). I split the F_4
+data into six groups: without NaNs, with one, two, three, four and five
+NaNs. The first group was used for training, the others – for
+predicting. But I trained different models for these x-NaNs groups by
+changing the number of outputs for x. For example, for the group with
+two NaNs in the columns F_4_0 and F_4_1 I used two outputs for them and
+13 features as inputs (for the columns from F_4_2 to F_4_14). So, I had
+to train a lot more than just 80 regressors (see discussion <https://
+www.kaggle.com/competitions/tabular-playground-series-jun-2022/
+discussion/328369>). And it took a lot of time for training. That’s why
+my work consists of different notebooks.
+An example of my training notebook for 4-NaNs group is here <https://
+www.kaggle.com/code/arturra/nn-with-four-nans/notebook>. Splitting F_4
+data into six groups is here <https://www.kaggle.com/code/arturra/
+analysis-of-nans>.
+After all I got stuck at about 0.8358 and couldn’t do anything for
+further improvement. It was good enough for the second place but I was
+still behind the first place. I can just say: Congrats to Sebastian van
+Gerwen <https://www.kaggle.com/sebastianvangerwen>.
+
+Author
+
+<https://www.kaggle.com/arturra>
+ArturRa <https://www.kaggle.com/arturra>
+
+arturra
+
+arrow_drop_up
+
+19
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    10 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/mpwolke>
+
+
+      Marília Prata
+
+<https://www.kaggle.com/mpwolke>
+
+Posted 4 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats for your 2nd place on this competition and thanks for your
+write-up Artur.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arturra>
+
+
+      ArturRa
+
+<https://www.kaggle.com/arturra>
+Topic Author
+
+Posted 4 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you and you are welcome, Marília.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thedevastator>
+
+
+      The Devastator
+
+<https://www.kaggle.com/thedevastator>
+
+Posted 4 years ago
+
+· 79th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats and thank you for sharing your solution!
+I've summarised parts of it into the winning solutions summary post
+<https://www.kaggle.com/competitions/tabular-playground-series-jun-2022/
+discussion/334415>.
+Let me know what you think and if I missed something in your opinion.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arturra>
+
+
+      ArturRa
+
+<https://www.kaggle.com/arturra>
+Topic Author
+
+Posted 4 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you!
+You've made a good summary. I like it.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/akmalmir>
+
+
+      Akmal Azzam o'g'li
+
+<https://www.kaggle.com/akmalmir>
+
+Posted 4 years ago
+
+· 47th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@arturra <https://www.kaggle.com/arturra> congrats anonymous winner!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arturra>
+
+
+      ArturRa
+
+<https://www.kaggle.com/arturra>
+Topic Author
+
+Posted 4 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks!
+At least my name is Artur. At least but not last 😃
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/rizqyad>
+
+
+      Rizqy Arya D
+
+<https://www.kaggle.com/rizqyad>
+
+Posted 4 years ago
+
+· 404th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats🎉🎉🎉. You have done an amazing job👍. Also, i think you are
+correct in
+
+    I found nothing more useful than just the mean technique for the F_1
+    and F_3 groups. But I think it’s the same for all of us.
+
+I have tried various methods <https://www.kaggle.com/code/rizqyad/a-
+million-imputation>.
+Thank you for sharing.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arturra>
+
+
+      ArturRa
+
+<https://www.kaggle.com/arturra>
+Topic Author
+
+Posted 4 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you for the kind words! And for sharing your nice notebook.
+I guess your experiments prove that features in the groups F_1 and F_3
+are independent. In this case the mean is the best technique. Sebastian
+van Gerwen <https://www.kaggle.com/sebastianvangerwen> gave us a laconic
+proof in this discussion <https://www.kaggle.com/competitions/tabular-
+playground-series-jun-2022/discussion/332985>.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/rizqyad>
+
+
+      Rizqy Arya D
+
+<https://www.kaggle.com/rizqyad>
+
+Posted 4 years ago
+
+· 404th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Yes, I've read it too.👍
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/grahambroughton>
+
+
+      graham broughton
+
+<https://www.kaggle.com/grahambroughton>
+
+Posted 4 years ago
+
+· 132nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+There were a few columns from F1 and F3 that deviated from ~0 mean and 1
+std (F_1: 7, 12 and 13, F_3: 19 and 21). I was hoping someone smarter
+than me could figure out if something important was there. There were
+also a few columns that had slightly different distributions between
+non-null and null containing sets that I wondered if they were important.
+
+replyReply
+add_reactionReact
+

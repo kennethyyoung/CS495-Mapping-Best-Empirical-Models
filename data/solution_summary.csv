@@ -1,0 +1,43 @@
+competition_ref,winner_1st,winner_2nd,winner_3rd,n_solution_topics,github_urls,has_github_link,mentions_xgboost,mentions_lightgbm,mentions_catboost,primary_model,uses_ensemble,ensemble_type,uses_nn,confidence
+icr-identify-age-related-conditions,room722,Banana Overfit Capybaras,siguo,2,,False,False,False,False,unknown,True,blending,True,medium
+playground-series-s3e1,Kirderf,jcerpent,NY,3,,False,False,False,False,unknown,,,,medium
+playground-series-s3e10,Piotr Szulc,Patrick Blackwill,aldparis,5,,False,False,False,False,unknown,True,averaging,,medium
+playground-series-s3e11,AmbrosM,DJ_C,Möbius,4,,False,False,False,False,ensemble_mixed,True,blending,,high
+playground-series-s3e13,Umar,rjZhang97,Unworried1686,2,,False,False,False,False,unknown,,,,medium
+playground-series-s3e14,Sergey Saharovskiy,aci.patlican,hikahika,3,,False,False,False,False,unknown,True,blending,,medium
+playground-series-s3e16,Epikt,Emincan Yilmaz,Ravi Ramakrishnan,6,,False,False,False,False,ensemble_mixed,True,blending,,high
+playground-series-s3e17,[Deleted] 11d44875-64fa-4a34-b8ac-63c86281cafe,Andrey K.,ISoft,3,,False,False,False,False,automl,True,averaging,,low
+playground-series-s3e2,Robert Kirk DeLisle,Hardy Xu,csLeet,2,,False,False,False,False,unknown,,,,medium
+playground-series-s3e22,Da._.unique,V Shashank Bharadwaj,Jasmeen Dahak,1,,False,False,False,False,unknown,,,,low
+playground-series-s3e23,theod,Oscar Aguilar,norm-usr,2,,False,False,False,False,ensemble_mixed,True,blending,,high
+playground-series-s3e24,🇰🇷Pearl-Luck🇰🇷,Chan Lee,Ravi Ramakrishnan,2,,False,False,False,False,ensemble_mixed,True,blending,,medium
+playground-series-s3e26,kailai,Hardy Xu,Fengqian,3,,False,False,False,False,ensemble_mixed,True,stacking,True,high
+playground-series-s3e3,Bill Cruise,Prasad,Cup of Dim,2,,False,False,False,False,ensemble_mixed,True,blending,,medium
+playground-series-s3e4,Dmitry,Numanynklr,Ollie Kemp,3,,False,False,False,False,unknown,True,blending,,low
+playground-series-s3e5,Heitor Rapela Medeiros,NHopeT,Gilles Vandewiele,7,,False,False,False,False,xgboost,False,,False,high
+playground-series-s3e6,Sujith K Mandala,JohnG29,Viktor Taran,2,,False,False,False,False,unknown,,,,low
+playground-series-s3e7,Hardy Xu,Jose Cáliz,Craig Thomas,5,,False,False,False,False,unknown,,,,medium
+playground-series-s3e8,Thierry Neusius,Craig Thomas,Tevfik Erkut,5,,False,False,False,False,unknown,,,,medium
+playground-series-s3e9,AmbrosM,songzijian,Lonan Syayf,3,,False,False,False,False,ensemble_mixed,True,averaging,,high
+playground-series-s4e1,Nikolay Slobodchuk,lukaszl,Iqbal Syah Akbar,4,,False,False,False,False,unknown,,,,medium
+playground-series-s4e10,Hardy Xu,OMID BAGHCHEH SARAEI,nadavcherry,4,,False,False,False,False,catboost,False,,False,high
+playground-series-s4e11,Mahdi Ravaghi,gougou1,Martynov Andrey,5,,False,False,False,False,unknown,,,,medium
+playground-series-s4e12,Chris Deotte,SCRIPTCHEF,Evgeny Nevodnich,2,,False,False,False,False,unknown,False,,,medium
+playground-series-s4e2,shyjin,tdoh86,brightmind19,2,,False,False,False,False,xgboost,True,stacking,,low
+playground-series-s4e3,kailai,Moonlit,Samvel Kocharyan,3,,False,False,False,False,xgboost,,,,high
+playground-series-s4e4,Johannes Heller,Lennart Purucker,LuminousC,2,,False,False,False,False,unknown,True,blending,,medium
+playground-series-s4e5,aldparis,Peaky Blenders,Tilii,6,,False,False,False,False,ensemble_mixed,True,blending,,high
+playground-series-s4e6,ayushokaay,FURGAL HACHAI MAJHI,kailai,6,,False,False,False,False,xgboost,False,,False,medium
+playground-series-s4e7,Cross Sellers,Ujjwal Pandey,Tilii,7,,False,False,False,False,catboost,False,,False,high
+playground-series-s4e8,Optimistix,Sujal Neupane,AutoML Grandmasters,5,,False,False,False,False,automl,True,stacking,True,high
+playground-series-s4e9,Mart Preusse,Gerlando Re,Optimistix,4,,False,False,False,False,neural_network,True,stacking,True,high
+playground-series-s5e10,Tilii,Alexander,steubk,5,,False,False,False,False,automl,,,,high
+playground-series-s5e11,Mahog,AngelosMar,Öinen Huuhkaja,5,,False,False,False,False,ensemble_mixed,True,stacking,True,medium
+playground-series-s5e12,wind1234it,甜食爱好者,Öinen Huuhkaja,2,,False,False,False,False,ensemble_mixed,True,blending,,high
+playground-series-s5e2,Chris Deotte,Ravi Ramakrishnan,automatylicza_knai,2,,False,False,False,False,unknown,False,,,medium
+playground-series-s5e3,Guillaume HIMBERT,Chris Deotte,AndNov,2,,False,False,False,False,ensemble_mixed,True,blending,True,high
+playground-series-s5e4,Chris Deotte,Farukcan Saglam,Johannes Heller,3,,False,False,False,False,ensemble_mixed,True,stacking,,high
+playground-series-s5e5,Chris Deotte,Mahog,nice kazusan,4,,False,False,False,False,ensemble_mixed,True,blending,,high
+playground-series-s5e6,Chris Deotte,Masaya Kawamata,Mahog,5,,False,False,False,False,ensemble_mixed,True,stacking,,high
+playground-series-s5e7,Rapfff,Irfan Ahmad,Resmont,1,,False,False,False,False,unknown,,,,low
+playground-series-s5e8,Optimistix,Mahog,Succeeded. Resource recovered,6,,False,False,False,False,ensemble_mixed,True,blending,,high

@@ -1,45 +1,78 @@
-# 📌 Mapping Best Empirical Models: A Meta-Analysis of Winning ML Solutions
+# Mapping Best Empirical Models: A Meta-Analysis of Winning Kaggle Solutions
 
-## 📖 Project Description (Placeholder)
-This project is an applied empirical meta-analysis designed to move beyond theoretical machine learning and uncover the winning formulas that dominate real-world data science competitions. The research focuses specifically on cross-sectional tabular data, where the order of observations is independent and temporal dependencies are excluded.
+## Project Description
 
-By systematically analyzing the technical history of platforms like Kaggle and OpenML, this study investigates why tree-based Gradient Boosting Machines (GBMs) continue to outperform deep learning on structured datasets. The ultimate goal is to bridge the gap between algorithmic theory and practical implementation by codifying the specific feature engineering and ensembling patterns used by top-tier practitioners.
+A systematic meta-analysis of top-finishing solutions across Kaggle tabular competitions, focused on identifying which preprocessing and feature engineering decisions separate winning solutions from the rest.
 
-## 🎯 Objectives
-*  Curate an Empirical Meta-Dataset: Aggregate technical metadata from 50–100 unique tabular competitions, analyzing the top 3 solutions for each to identify consistent success patterns.
+The study collects structured data from 35 winning competition writeups and notebooks, encodes key pipeline decisions into a dataset, and synthesizes findings into an empirically-grounded decision flowchart for tabular ML pipelines. Competitions are scoped to Playground Series seasons 3–5 and Featured competitions from 2022 onward, restricted to cross-sectional tabular data with tree-based models as the primary or significant ensemble component.
 
-*  Analyze Feature Engineering (FE) Dominance: Quantify the performance impact of specific FE techniques, such as Target Encoding, Interaction Features, and Rank Scaling.
+## Objectives
 
-*  Develop a Procedural Decision Framework: Construct a validated logic tree (flowchart) that guides practitioners through optimal model selection and preprocessing steps based on data characteristics like cardinality and sparsity.
+- Build a structured dataset of 30+ top-finishing competition solutions with one entry per competition (best-documented of top-3 finishers)
+- Identify which preprocessing and feature engineering decisions are most consistently associated with winning, using frequency tables and conditional cross-tabulations
+- Produce a decision flowchart covering key decision nodes (encoding strategy, CV strategy, missing data handling) that maps dataset characteristics to recommended pipeline decisions
+- Validate the flowchart by replicating its recommendations on a held-out competition
 
-*  Validate via Replication: Prove the efficacy of the framework by replicating a baseline version of a high-ranking solution to achieve near-winner performance.
+## Tools & Technologies
 
-## 🧰 Tools / Technologies
-* **Languages:** TBD
-* **Frameworks/Libraries:** TBD
-* **Environment:** TBD
+- **Language:** Python 3.13
+- **Environment:** Poetry (dependency management)
+- **Data:** openpyxl, pandas
+- **Modeling:** XGBoost, LightGBM, CatBoost, scikit-learn
+- **Visualization:** matplotlib, seaborn
+- **Data source:** Kaggle API (`kaggle` Python package)
 
-## 📦 Expected Deliverables
+## Project Structure
 
-*    Empirical Benchmark Dataset: A structured database containing competition profiles, winning methodologies, and ensemble configurations.
+```
+├── data/
+│   ├── kaggle_candidates_v2.xlsx   # Scraped competition shortlist (49 candidates)
+│   └── kaggle_meta_analysis.xlsx   # Main dataset — 35 hand-coded entries
+├── scripts/
+│   ├── kaggle_scraper_v2.py        # Competition discovery & pre-filtering
+│   ├── write_entries.py            # Writes coded entries to Excel dataset
+│   └── build_bar_plots.py          # Generates EDA bar plots from dataset
+├── notebooks/                      # Analysis notebooks (Phase 3+)
+├── outputs/
+│   ├── figures/                    # EDA and analysis plots
+│   └── report/                     # Final writeup
+└── PLAN.md                         # Full project plan with tasks and timeline
+```
 
-*    Analytical Research Report: A deep dive into model frequency, feature patterns, and the "cost of winning" (ensemble complexity vs. rank).
+## How to Run
 
-*    Standardized Decision Flowchart: A step-by-step procedural guide for solving cross-sectional tabular problems.
+**Install dependencies:**
+```bash
+poetry install
+```
 
-## 🚀 How to Run
-*Instructions will be added once the initial project structure is established.*
+**Run Kaggle scraper** (requires `~/.kaggle/kaggle.json`):
+```bash
+python scripts/kaggle_scraper_v2.py
+```
 
-## 👥 Team Members
-* Kenneth Young
-* TBD
+**Write dataset entries to Excel:**
+```bash
+python scripts/write_entries.py
+```
 
-## 📅 Timeline
-* **Project Selection:** April 10
-* **MVP/Prototype:** TBD
-* **Final Delivery:** June 2026
+**Generate bar plots:**
+```bash
+python scripts/build_bar_plots.py
+```
 
----
+## Current Status
 
-### Attribution Requirement:
-Any academic, research, or commercial usage must cite the original repository and authors.
+- Phase 1 (competition discovery & schema design): complete
+- Phase 2 (data collection): 35 entries coded; code exploration pass for `writeup_detail=3` entries pending
+- Phase 3 (EDA & analysis): pending
+- Phase 4 (flowchart construction): pending
+- Phase 5 (replication & validation): pending
+
+## Team
+
+- Kenneth Young (kenneth.young@bellevuecollege.edu)
+
+## Timeline
+
+April 28 – June 24, 2026. See [PLAN.md](PLAN.md) for full milestone breakdown.

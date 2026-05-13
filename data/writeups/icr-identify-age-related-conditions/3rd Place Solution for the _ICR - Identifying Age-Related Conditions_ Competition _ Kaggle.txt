@@ -1,0 +1,359 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        ICR - Identifying Age-Related Conditions
+
+        <https://www.kaggle.com/competitions/icr-identify-age-related-
+        conditions>
+      o
+
+        3rd Place Solution for the "ICR - Identifying Age-Related
+        Conditions" Competition
+
+        <https://www.kaggle.com/competitions/icr-identify-age-related-
+        conditions/writeups/siguo-3rd-place-solution-for-the-icr-
+        identifying-a>
+      o
+
+        Wow (and our solution)
+
+        <https://www.kaggle.com/competitions/icr-identify-age-related-
+        conditions/writeups/banana-overfit-capybaras-wow-and-our-solution>
+      o
+
+        ICR_adv_model
+
+        <https://www.kaggle.com/code/room722/icr-adv-model>
+      o
+
+        How on Earth did I win this competetion?
+
+        <https://www.kaggle.com/competitions/icr-identify-age-related-
+        conditions/writeups/room722-how-on-earth-did-i-win-this-competetion>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd Place Solution for the "ICR - Identifying Age-Related Conditions"
+Competition — ICR - Identifying Age-Related Conditions
+
+
+  3rd Place Solution for the "ICR - Identifying Age-Related Conditions"
+  Competition
+
+ICR - Identifying Age-Related Conditions
+
+<https://www.kaggle.com/competitions/icr-identify-age-related-conditions>
+
+Solution Writeup · 3rd place · Aug 11, 2023
+
+First of all, I was really surprised to be able to achieve this result.
+In fact, after participating in the competition and simply implementing
+a baseline code, I rarely paid attention to this competition again
+because the company usually worked overtime😅.
+The final result was a baseline code based on the catboost model at that
+time, and its public score was 0.21.
+Due to anonymous data features and medical-related health features, my
+initial idea is to construct new features through the ratio between
+different features, just as some indicators in the medical examination
+report are also calculated by the ratio between other indicators.
+Before this, I planned to filter some anonymous features through corr,
+so as not to construct too many invalid features. However, without
+further attempts, the final code is still the cross calculation of all
+features.
+The more effective operations in this competition should be the
+following two points
+1.One is the cross calculation of features
+2.The other is the catboost model
+Because my lightgbm model with the same features got 0.22 on public
+score and 0.38 on private score.
+here's my solution:
+https://www.kaggle.com/code/junyang680/icr-lightgbmbaseline <https://
+www.kaggle.com/code/junyang680/icr-lightgbmbaseline>
+Regarding the parameter selection of the lightgbm model and the catboost
+model, it seems to be based on the contents of some notebooks, but
+sorry, some have forgotten
+
+Author
+
+<https://www.kaggle.com/junyang680>
+siguo <https://www.kaggle.com/junyang680>
+
+junyang680
+
+arrow_drop_up
+
+31
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    5 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/junyang680>
+
+
+      siguo
+
+<https://www.kaggle.com/junyang680>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+I am wondering if the shake in this competition is so serious, is it
+because everyone has done too many operations on the small data to cause
+overfitting, or submitted the post-processing operations for fitting
+public to private?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hoangnguyen719>
+
+
+      Hoang Nguyen
+
+<https://www.kaggle.com/hoangnguyen719>
+
+Posted 3 years ago
+
+· 439th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Both I believe. Everyone within top 250 got shaken down to the bottom.
+I'm sure they all tried LB probing and postprocessing, but given that
+many of them are Masters/GMs, I believe they are experienced enough to
+choose a less risky approach as final submissions.
+
+However, given the small size of the dataset, investing that much time
+is already a risk of overfitting, which turns out to be true.
+
+Congratulations on your gold medal!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yujianmin>
+
+
+      jianmin yu
+
+<https://www.kaggle.com/yujianmin>
+
+Posted 3 years ago
+
+· 309th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Yes, some one has the experience that lower LB score is better. So much
+of competitors try to get the lower LB by many methods.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pardeep19singh>
+
+
+      Pardeep Singh
+
+<https://www.kaggle.com/pardeep19singh>
+
+Posted 3 years ago
+
+· 3307th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats @junyang680 <https://www.kaggle.com/junyang680> and Thanks for
+sharing your code + writeup!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/michaelj8>
+
+
+      Michael Bryant
+
+<https://www.kaggle.com/michaelj8>
+
+Posted 3 years ago
+
+· 2095th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+😭. Good job.
+
+replyReply
+add_reactionReact
+

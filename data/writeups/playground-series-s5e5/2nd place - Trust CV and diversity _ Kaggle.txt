@@ -1,0 +1,338 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predict Calorie Expenditure
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5>
+      o
+
+        2nd place - Trust CV and diversity
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5/
+        writeups/mahog-2nd-place-trust-cv-and-diversity>
+      o
+
+        1st Place - GPU Hill Climbing!
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5/
+        writeups/chris-deotte-1st-place-gpu-hill-climbing>
+      o
+
+        Predict the Introverts from the Extroverts
+
+        <https://www.kaggle.com/competitions/playground-series-s5e7>
+      o
+
+        S05|E07 |Personaltiy Pred Like a Pro
+
+        <https://www.kaggle.com/code/irfanahmad1/s05-e07-personaltiy-
+        pred-like-a-pro>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd place - Trust CV and diversity — Predict Calorie Expenditure
+
+
+  2nd place - Trust CV and diversity
+
+Predict Calorie Expenditure
+
+<https://www.kaggle.com/competitions/playground-series-s5e5>
+
+Solution Writeup · 2nd place
+
+The higher of my 2 selected subs was a rather stereotypical ensemble: 74
+OOFs ensembled with Ridge. But when I looked back through my
+submissions, the highest one on the private LB was an 11 model ensemble,
+ensembled with HC (positive weights only) and it contained the following:
+
+  * 2 Autogluons, 1 without FE and 1 with autofeat features (thanks
+    @masayakawamata <https://www.kaggle.com/masayakawamata> !)
+  * 2 Catboosts without FE
+  * 1 LGBM with TE features
+  * 1 Catboost with TE features
+  * 1 LGBM goss with huber loss, no FE
+  * 1 Linear Regression model based on this <https://www.kaggle.com/
+    code/angelosmar1/s5e5-linear-regression-cv-0-05992> notebook (thanks
+    @angelosmar1 <https://www.kaggle.com/angelosmar1> !)
+  * 1 ResMLP <https://www.kaggle.com/competitions/playground-series-
+    s5e5/discussion/578953> (thanks again @masayakawamata <https://
+    www.kaggle.com/masayakawamata> !)
+  * 1 LNN <https://www.kaggle.com/code/nikitamanaenkov/predict-calorie-
+    lnn> (thanks @nikitamanaenkov <https://www.kaggle.com/
+    nikitamanaenkov> !)
+  * This one's my favorite (HC agreed with me :D), it is a Catboost
+    trained on the original features + Catboost classifier probs (after
+    splitting the target into bins), then I train another Catboost on
+    the residuals (idea from here <https://www.kaggle.com/competitions/
+    playground-series-s4e9/discussion/537202>, thanks @cdeotte <https://
+    www.kaggle.com/cdeotte> !)
+
+Author
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Mahog <https://www.kaggle.com/mahoganybuttstrings>
+
+mahoganybuttstrings
+
+arrow_drop_up
+
+18
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    6 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s5e5/writeups/mahog-2nd-place-trust-cv-and-diversity#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/yekenot>
+
+
+      Vladimir Demidov
+
+<https://www.kaggle.com/yekenot>
+
+Posted a year ago
+
+· 53rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Glad for your result. LNN is a strong, progressive model - it needs to
+be more explorable!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nikitamanaenkov>
+
+
+      Nikita Manaenkov
+
+<https://www.kaggle.com/nikitamanaenkov>
+
+Posted a year ago
+
+· 1050th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I'm slowly doing my research now, looking at different variations,
+comparing them on noisy and longtailed data, LNN has me completely hooked
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+Topic Author
+
+Posted a year ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks! I agree, it definetely has potential
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/srikarthikgowda>
+
+
+      Karthik Gowda
+
+<https://www.kaggle.com/srikarthikgowda>
+
+Posted a year ago
+
+· 3278th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+LNN - Lagrange Neural Networks ?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/deryaumutkulal>
+
+
+      Japyh
+
+<https://www.kaggle.com/deryaumutkulal>
+
+Posted a year ago
+
+· 216th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations. Thanks for the solution.
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (1)
+
+This comment has been deleted.
+

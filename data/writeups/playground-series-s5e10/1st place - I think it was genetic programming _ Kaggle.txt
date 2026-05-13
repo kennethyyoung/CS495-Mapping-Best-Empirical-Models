@@ -1,0 +1,1560 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        3rd Place: From Base to Stacking: A Multilevel Ensembling Solution
+
+        <https://www.kaggle.com/competitions/playground-series-s5e10/
+        writeups/3rd-place-from-base-to-stacking-a-multilevel-ens>
+      o
+
+        Predicting Road Accident Risk
+
+        <https://www.kaggle.com/competitions/playground-series-s5e10>
+      o
+
+        1st place - I think it was genetic programming
+
+        <https://www.kaggle.com/competitions/playground-series-s5e10/
+        writeups/1st-place-i-think-it-was-genetic-programming>
+      o
+
+        Diabetes Prediction Challenge
+
+        <https://www.kaggle.com/competitions/playground-series-s5e12>
+      o
+
+        1st Place Solution | Hill Climbing + Ridge Ensemble
+
+        <https://www.kaggle.com/competitions/playground-series-s5e12/
+        writeups/1st-place-solution-hill-climbing-ridge-ensembl>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+1st place - I think it was genetic programming — Predicting Road
+Accident Risk
+
+
+  1st place - I think it was genetic programming
+
+Many models that didn't help and a few that did
+
+Predicting Road Accident Risk
+
+<https://www.kaggle.com/competitions/playground-series-s5e10>
+
+Solution Writeup · 1st place · Oct 31, 2025
+
+Congratulation to all the winners and many thanks to those contributing
+quality discussions and code: @cdeotte <https://www.kaggle.com/cdeotte>,
+@siukeitin <https://www.kaggle.com/siukeitin>, @optimistix <https://
+www.kaggle.com/optimistix>, @mikhailnaumov <https://www.kaggle.com/
+mikhailnaumov>, @mahoganybuttstrings <https://www.kaggle.com/
+mahoganybuttstrings> You know who you are even if I forgot to mention
+you here.
+
+I want to credit in particular @masayakawamata <https://www.kaggle.com/
+masayakawamata> and his *excellent TabM notebook* <https://
+www.kaggle.com/code/masayakawamata/s5e10-single-tabm-tuned>. It helped
+my ensemble, but mostly because I learned to use a new group of neural
+networks that I suspect will be useful in the future.
+
+It was a close competition on public LB, and remained so on private LB.
+Other than the top 4 spots "tied" at |0.05563|, the next ~200
+competitors were all at |0.05564|. We've had it close before, but this
+seems extreme even by Kaggle standards.
+
+In my academic calendar I have a somewhat open three-week stretch in
+October, so this is my only chance to compete meaningfully outside of
+summer and winter breaks. So I did, and my computers could attest to
+that. It seemed to me from the beginning that not much progress would be
+made in this competition after the first week or so. Boy, did I
+underestimate it! Forget about "not much progress", how about no
+progress at all? I have had the same LB score for the past 3 weeks, even
+though it was internally improving by miniscule amounts when I sorted
+about a dozen submissions that scored |0.05537|. As scores from other
+Kagglers remained the same for the most part, it was clear that this
+stagnation was not happening only to me.
+
+I tried many things, and it would take me a long time to summarize.
+Instead, I will mention what I think made the most difference, even
+though I am not sure there was a difference given that 3 Kagglers are
+tied with me, and another 200 are behind by only 0.00001.
+
+Flowchart
+
+I meant to make a helpful chart but the result above seems overly
+complex. Hopefully it will do the trick. The first row is various data
+types that were used. |Mix| refers to original data that had both
+categorical and numerical features. Sometimes they were all converted to
+|Categorical| or to |Numerical|. After about 10 days I added latent
+space representations by |Autoencoder| and some features derived by |
+Genetic programming|.
+
+Purely numerical representation didn’t work, or I should say it didn't
+work by Kaggle standards. For example, I got a 0.058 CV score and a
+0.05802 private score from Lasso, which is objectively excellent for a
+method that takes about 2 minutes for a 10x10 repeated K-fold run. Not
+only that, but Lasso feature coefficients were extremely informative in
+this competition.
+
+Lasso works
+
+When you translate what’s in that image into numbers (while ignoring
+coefficients with absolute values < 0.05), you get this:
+
+|accident_risk = 
+0.3046 * curvature +
+0.0706 * lighting_2 +
+-0.1203 * lighting_0 +
+-0.1181 * lighting_1 +
+-0.0928 * weather_0 +
+-0.1232 * speed_limit_0 +
+-0.1232 * speed_limit_2 +
+-0.1218 * speed_limit_1 +
+0.0646 * speed_limit_4 +
+0.0629 * speed_limit_3 +
+0.0789 * num_reported_accidents_4 +
+0.0704 * num_reported_accidents_5
+
+|
+content_copy
+
+Compare that to the original equation used to create the target, and we
+have a strong Lasso model that clearly explains feature contributions.
+
+|base_risk = (
+    0.3 * data["curvature"] + 
+    0.2 * (data["lighting"] == "night").astype(int) + 
+    0.1 * (data["weather"] != "clear").astype(int) + 
+    0.2 * (data["speed_limit"] >= 60).astype(int) + 
+    0.1 * (np.array(data["num_reported_accidents"]) > 2).astype(int)
+)
+
+|
+content_copy
+
+But enough of that. As you can see from the flowchart above, I tried
+many different neural networks. Got introduced to PyTorch Tabular and
+even learned rudimentary PyTorch programming. None of those "worked" by
+Kaggle standards. That’s where the TabM notebook was so valuable,
+because it gave another model that could work with my Keras FM and TF
+embedding networks. I added XGB residual boosting by @cdeotte <https://
+www.kaggle.com/cdeotte> too late to my ensemble, and by that time
+neither my CV nor LB scores were budging regardless of promising
+individual models. In the end I fine-tuned TabM parameters and got three
+models that had better scores than the original, and those parameters
+can be found in *this notebook* <https://www.kaggle.com/code/tilii7/
+s5e10-tabm-tuned-further>. One of the three parameter sets is used, and
+the other two are commented out. You may want to try all three and see
+if that helps your ensembles. XGBoost and CatBoost were fairly standard
+for me in this competition, didn’t use LightGBM except for a couple of
+runs at the start.
+
+I do ensembling with multiple methods because it is generally easy, and
+one never knows what will work. That said, my preference is with NNs and
+Lasso for regression, followed by hill climbing for getting a quick
+result. That’s because all these methods generally require no tunning.
+You will see from the flowchart that I also used XGB and CatB for
+ensembling, but those are long Optuna runs where finding the optimal
+parameters takes 4-10 hours. After about 2 weeks I was ensembling
+exclusively with NNs as it worked better than anything else and was
+reasonably fast (1-2 hours for 40-50 models).
+
+I did several AugoGluon runs that produced many promising models, but
+none of them were helping the ensemble.
+
+Since I didn’t talk about it up in the data section, I should say here
+that neither autoencoders (AE) not genetic programming (GP) produced
+features that worked well on their own. Again, take this as a relative
+assessment, because they worked better than Lasso, but were generally
+not competitive. Adding them to individual models didn’t help much either.
+
+Here is what I think made a little difference: adding 11 GP-derived
+features at the ensembling stage. I have a notebook *here* <https://
+www.kaggle.com/code/tilii7/s5e10-genetic-programming-features> showing
+how the GP features were derived. As they are added to the original
+data, you can simply copy those files and try them in your pipelines.
+These features are difficult to rationalize by looking at the formula:
+
+|train['GP_11'] = np.sqrt(np.abs(np.sin(np.sin(np.sin(np.sin(np.sin(np.sin(0.254397*train['speed']*np.sqrt(np.abs(train['lighting']*train['speed']*np.exp(train['curvature'])*np.sqrt(np.abs(train['lighting']**3*np.sin(train['speed']**2*train['accidents']*np.cos(train['weather']))/train['weather']))))))))))))
+
+|
+content_copy
+
+Notice, however, that even here only the relevant features were selected
+for calculation. Just for fun, I did a couple of GP runs that disallowed
+all the fancy algebra and trigonometric manipulations, and only [+, -,
+*, /] operations were allowed. Check out what two of those runs produced
+independently.
+
+|0.308*[curvature] + 0.180*[speed_limit_3] + 0.180*[speed_limit_4] + 0.128*[num_reported_accidents_4] + 0.180*[lighting_2] + 0.107*[weather_1] + 0.118*[weather_2] - 0.0004
+
+|
+content_copy
+
+|0.309*[curvature] + 0.186*[speed_limit_3] + 0.186*[speed_limit_4] + 0.0929*[num_reported_accidents_4] + 0.186*[lighting_2] + 0.099*[weather_1] + 0.0929*[weather_2] + 0.011
+
+|
+content_copy
+
+One would think that these would be great extra features because they
+recapitulate the original target equation almost perfectly, but that’s
+not the case. As they are so similar to good models and individually
+have ~0.059 RMSE to the target, it seems that they are not really needed
+at the ensembling stage. Basically, they don’t bring diversity. Other GP
+features in that notebook were generally more useful in my ensembles.
+Specifically, adding 11 GP features on top of individual models resulted
+in a 0.00001 ensemble improvement.
+
+The last improvement came from using CatBoost as a secondary ensembler.
+CatB has the ability to use a strong “baseline” model as a seed before
+ensembling, which is essentially the same as boosting residuals except
+that adding and subtracting from the target is done automatically for
+us. So I would first run a Keras ensemble without 11 GP features, then
+run CatB with the same group of models + 11 GP features and use the
+Keras ensemble model as a baseline. This improved both pubic and private
+LB scores by ~0.00002. That and GP features is what I suspect made the
+difference in the end.
+
+The final step was taking several first-level ensemble models and making
+a second-level ensemble by hill climbing. Although, one could argue that
+they were already second level ensembles because I run them first
+through Keras and then CatB. That final hill climbing ensemble (using 4
+previous ensemble models) finished with the best score and was my
+winning solution, even though it looks the same over 5 decimals as the
+best individual ensemble. In fact, all my top 12 solutions look the same
+over 5 decimals, so I am happy that among them I picked 2nd and 5th best
+solutions.
+
+Tagged
+Neural Networks <https://www.kaggle.com/search?
+q=neural+networks+tag%3A%22neural+networks%22>Ensembling <https://
+www.kaggle.com/search?q=ensembling+tag%3A%22ensembling%22>Optimization
+<https://www.kaggle.com/search?q=optimization+tag%3A%22optimization%22>
+Author
+
+<https://www.kaggle.com/tilii7>
+Tilii <https://www.kaggle.com/tilii7>
+
+tilii7
+
+arrow_drop_up
+
+211
+
+Share
+
+more_horiz
+
+
+    Project Links
+
+S5E10 | TabM tuned further
+
+7 months ago · 24 upvotes
+
+code
+ <https://www.kaggle.com/tilii7>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://www.kaggle.com/code/tilii7/s5e10-tabm-tuned-further>
+S5E10 Genetic Programming Features
+
+7 months ago · 31 upvotes
+
+code
+ <https://www.kaggle.com/tilii7>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://www.kaggle.com/code/tilii7/s5e10-genetic-programming-features>
+thankYou8yay28
+add_reaction
+
+comment
+
+
+    84 Comments
+
+5 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s5e10/writeups/1st-place-i-think-it-was-genetic-
+programming#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+
+Posted 6 months ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+9
+
+more_vert
+
+Congratulations, awesome job @tilii7 <https://www.kaggle.com/tilii7>
+winning 1st place! You have a great diverse set of models, I
+particularly like Genetic Programming, AutoEncoder, and Keras FM. I will
+need to try these in future competitions. I was impressed with how fast
+you jumped to top of public LB. I could not match your LB score. Well done!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+9
+
+more_vert
+
+They say that necessity is the mother of invention, and I would say it
+certainly applied here. As my GP-derived features were not working on
+their own or when added to primary models, at some point I decided to
+add them as ensemble models. That did it.
+
+Autoencoder features didn't really work, but they made some pretty
+pictures. Below is a t-SNE plot of the whole train dataset based on five
+AE latent features. I think those clusters correspond to unique |
+curvature| values, as there are roughly 100 of them.
+
+replyReply
+love7
+add_reaction
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+Posted 6 months ago
+
+· 10th in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Congrats!
+
+    Got introduced to PyTorch Tabular and even learned rudimentary
+    PyTorch programming
+
+You'll soon be introduced to a few more libraries, I promise you that :D
+
+    In the end I fine-tuned TabM parameters and got three models that
+    had better scores than the original
+
+I would have tuned the parameters as well but lacked the time and
+resources to do that
+
+replyReply
+kaggle1
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+You made the most impressive upward jump, that has to count for something!
+
+replyReply
+kaggle2
+add_reaction
+
+<https://www.kaggle.com/ruekky>
+
+
+      Stephanie O
+
+<https://www.kaggle.com/ruekky>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Big Congratulations @tilii7 <https://www.kaggle.com/tilii7> 🎈 🎉
+Honestly after reading your write-up I realized I have alot to learn
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kovand1>
+
+
+      Alexander
+
+<https://www.kaggle.com/kovand1>
+
+Posted 6 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations! Your solutions gave me a bunch of new ideas I had no
+clue about which I can use in future competitions.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations to you on a strong start and a strong finish.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/talkiestclaw454>
+
+
+      TalkiestClaw454
+
+<https://www.kaggle.com/talkiestclaw454>
+
+Posted 6 months ago
+
+· 106th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations @tilii7 <https://www.kaggle.com/tilii7> for winning 1st
+place!! You know this solution opened a whole new methods for me that i
+never even knew. Thank you very much for the solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+That's good to hear! I learned a couple new approaches as well.
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 6 months ago
+
+· 12th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations - it's great to see you at #1!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you! I knew you would come up strong in the end.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 6 months ago
+
+· 12th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thanks! Mostly laid low this month - having enjoyed the August episode,
+I was highly motivated in September, but was badly disappointed by yet
+another episode with random targets, and ended up skipping the
+competition entirely for the first time in over 1.5 years. Came back
+this month, but participated sparingly, esp. after you pointed out that
+growing the ensemble wasn't doing much for the score. I spent most of
+the last 10 days at around 20 OOFs, and couldn't be bothered to add
+more. Finally added a few in the end, before Computer troubles and
+Halloween upended my final day - still, not bad for what I put in this time.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bhaskar0210s>
+
+
+      Bhaskar S
+
+<https://www.kaggle.com/bhaskar0210s>
+
+Posted 6 months ago
+
+· 372nd in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Woah!, that's a lot of models.🤯
+Congrats🎉
+May I know what hardware did you use for this?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Let's just say that I have plenty of computer power available. If I get
+stuck it is usually the lack of time or ideas, not the resources.
+
+replyReply
+yay1
+add_reaction
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+Posted 6 months ago
+
+· 10th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I'm curious, what GPU(s) do you have?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I don't want to get into details, so let's just say that locally I have
+access at any given time to at least 3-4 GPUs. That said, I also do
+research and other things that require GPUs.
+
+replyReply
+thankYou2yay1
+add_reaction
+
+emoji_people
+ <https://www.kaggle.com/paharpurailab>
+
+
+      Muhammad Awais
+
+<https://www.kaggle.com/paharpurailab>
+
+Posted 6 months ago
+
+· 116th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats🎉 good work.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks, good job by you as well.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/abhishekawasthi151>
+
+
+      Abhishek Awasthi
+
+<https://www.kaggle.com/abhishekawasthi151>
+
+Posted 6 months ago
+
+· 3988th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+how bro , i see the leaderboard teach me something
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+What I wrote in this thread is meant to teach something.
+
+replyReply
+love3
+add_reaction
+
+<https://www.kaggle.com/gambhirkumar>
+
+
+      ENE_MENE_PONKE_PO.
+
+<https://www.kaggle.com/gambhirkumar>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulation's Sir.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gullayeshwantkumar>
+
+
+      yeshwant
+
+<https://www.kaggle.com/gullayeshwantkumar>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+@tilii7 <https://www.kaggle.com/tilii7>
+How did you get this analogy, A lot to learn from you and others
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/craftycode>
+
+
+      Crafty Code
+
+<https://www.kaggle.com/craftycode>
+
+Posted 6 months ago
+
+· 3206th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Bro tili your an awesome humble guy bro love you.
+
+replyReply
+yay1
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Many thanks for your kind words.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shinyeny>
+
+
+      Shinye宁叶
+
+<https://www.kaggle.com/shinyeny>
+
+Posted 6 months ago
+
+· 3045th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+棒！！！很详细的报告，有所启发。
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/chiragc33>
+
+
+      CHIRAG_C33
+
+<https://www.kaggle.com/chiragc33>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! You really deserve 1st place 🎊 thank you
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/aadityaiscoding>
+
+
+      Aaditya Khanal
+
+<https://www.kaggle.com/aadityaiscoding>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+What an incredible detailed writeup! The genetic programming approach is
+fascinating. Well deserved 1st place!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you! You may want to try GP yourself by using *this package*
+<https://github.com/cavalab/ellyn>.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sanjaysavara>
+
+
+      Sanjay Savara
+
+<https://www.kaggle.com/sanjaysavara>
+
+Posted 6 months ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Intresting
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/highvariannce>
+
+
+      Kishan
+
+<https://www.kaggle.com/highvariannce>
+
+Posted 6 months ago
+
+· 641st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+TabM and TabR, thats something new I learned today. Congratulations
+@tilii7 <https://www.kaggle.com/tilii7> and thank you for this detail
+writeup !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you! It was my first exposure to TabM as well.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/punyakdei>
+
+
+      Punyak
+
+<https://www.kaggle.com/punyakdei>
+
+Posted 6 months ago
+
+· 491st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very insightful thank you sir! and congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Cheers and best of luck to you!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yusufilgaz>
+
+
+      Yusuf ILGAZ
+
+<https://www.kaggle.com/yusufilgaz>
+
+Posted 6 months ago
+
+· 1095th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! As a newbie to data science, I learn a lot from
+experienced people like you. Thanks for the solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you! Good luck in future competitions.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ladiposamson>
+
+
+      Ladipo Samson
+
+<https://www.kaggle.com/ladiposamson>
+
+Posted 6 months ago
+
+· 1712th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Huge congratulations on your 1st place finish you truly deserve it! 👏
+
+We really can’t overlook or underplay the contributions and discussions
+from the people like @cdeotte <https://www.kaggle.com/cdeotte>,
+@siukeitin <https://www.kaggle.com/siukeitin>, @optimistix <https://
+www.kaggle.com/optimistix> and their inputs clearly played a big role in
+shaping great ideas throughout the competition.
+
+I also experimented with TabM, but it didn’t quite work out for me. I
+found booster ensembles using CatBoost, XGBoost, and LightGBM to be more
+optimal in my setup.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you kindly! Good luck to you in future competitions.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/ibrahimqasimi>
+
+
+      Muhammad Ibrahim Qasmi
+
+<https://www.kaggle.com/ibrahimqasimi>
+
+Posted 6 months ago
+
+· 63rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats , Greatt to see u on #1
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you, and great job with your final LB showing!
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/princesaiyan9>
+
+
+      Sai Ram Oduri
+
+<https://www.kaggle.com/princesaiyan9>
+
+Posted 6 months ago
+
+· 1360th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Gives a new perspective. I would like to know more how did you come up
+with such bunch of different research?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks much! What forced me into doing so many things is that I
+suspected from the start that it would be difficult to improve the
+result just by ensembling many models. Most of the models were too
+similar to each other.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/davidpupaza>
+
+
+      David Pupăză
+
+<https://www.kaggle.com/davidpupaza>
+
+Posted 6 months ago
+
+· 723rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!
+I'm pretty new to Kaggle comps, but this solution seriously blew me
+away. Super inspiring and packed with cool ideas! Thanks for sharing all
+the details!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Well done to you! That's a strong showing for how early you are in your
+Kaggle career.
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/bassetkerouche>
+
+
+      abdelbasset Basto
+
+<https://www.kaggle.com/bassetkerouche>
+
+Posted 6 months ago
+
+· 4th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, sir! You really deserve 1st place for this amazing
+work. Your write-up is full of great ideas — I’ll definitely use it as a
+reference in the future.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great job by your team as well. This was a close one.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sumeakash>
+
+
+      Akash Kumar Barnwal
+
+<https://www.kaggle.com/sumeakash>
+
+Posted 6 months ago
+
+· 3641st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+“Awesome job — your notebook was genius, congrats on the gold 🥇”
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/romanahmed2024>
+
+
+      Roman@Ahmed
+
+<https://www.kaggle.com/romanahmed2024>
+
+Posted 6 months ago
+
+· 928th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! @tilii7 <https://www.kaggle.com/tilii7> for winning 1st
+place and Thanks for sharing a bunch of new ideas
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+Topic Author
+
+Posted 6 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+You are most welcome.
+
+replyReply
+add_reactionReact
+

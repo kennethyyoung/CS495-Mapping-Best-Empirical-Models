@@ -1,0 +1,530 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Steel Plate Defect Prediction
+
+        <https://www.kaggle.com/competitions/playground-series-s4e3>
+      o
+
+        3rd Place Solution - Mediocres et Impera
+
+        <https://www.kaggle.com/competitions/playground-series-s4e3/
+        writeups/samvel-kocharyan-3rd-place-solution-mediocres-et-i>
+      o
+
+        2nd place solution: OOF Ensemble
+
+        <https://www.kaggle.com/competitions/playground-series-s4e3/
+        writeups/moonlit-2nd-place-solution-oof-ensemble>
+      o
+
+        Binary Classification of Insurance Cross Selling
+
+        <https://www.kaggle.com/competitions/playground-series-s4e7>
+      o
+
+        PlaygroundS4E07|EDA|Baseline|V1
+
+        <https://www.kaggle.com/code/ravi20076/playgrounds4e07-eda-
+        baseline-v1>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd Place Solution - Mediocres et Impera — Steel Plate Defect Prediction
+
+
+  3rd Place Solution - Mediocres et Impera
+
+Steel Plate Defect Prediction
+
+<https://www.kaggle.com/competitions/playground-series-s4e3>
+
+Solution Writeup · 3rd place · Apr 1, 2024
+
+
+    Context:
+
+Steel Plate Defect Prediction Competition (Playground Series - Season 4,
+Episode 3)
+
+  * Business Context: https://www.kaggle.com/competitions/playground-
+    series-s4e3 <https://www.kaggle.com/competitions/playground-series-
+    s4e3/data>
+  * Data Description: https://www.kaggle.com/competitions/playground-
+    series-s4e3/data <https://www.kaggle.com/competitions/playground-
+    series-s4e3/data>
+
+
+    Overview of the approach:
+
+Due to data and targets nature of this competition I considered
+competition as a multi-label problem. I've tried also multi-class
+approach but CV and public LB scores were a bit lower comparing to
+mutli-label.
+Final submission is a combination of the several models - PyBoost,
+AutoGluon and some public bests submissions.
+My simple secret souce in this competition is "Mediocres et Impera"
+(average and rule) strategy: which here means - take something you trust
+the most and average the results.
+
+
+    Overview of the submissions:
+
+  * Selected submission: 0.88936 (Private, *3rd* place), 0.89674
+    (Public, 8th place) - Mix
+  * Selected submission: 0.88763 (Private), 0.89476 (Private) - PyBoost
+    + OpenFE (features)
+  * Unselected BEST: 0.88944 (Private, *2nd* place), 0.89670 (Public,
+    8th place) - Mix
+
+
+    What works?
+
+  * Multi-Label approach
+  * PyBoost framework for really quick multi-label approach (thanks to
+    @btbpanda <https://www.kaggle.com/btbpanda>)
+  * AutoGluon AutoML (thanks to @innixma <https://www.kaggle.com/innixma>)
+  * Ideas, notebooks and submissions published by @thomasmeiner
+    <https://www.kaggle.com/thomasmeiner>, @arunklenin <https://
+    www.kaggle.com/arunklenin>, @ravi20076 <https://www.kaggle.com/
+    ravi20076>, @lucamassaron <https://www.kaggle.com/lucamassaron>,
+    @liudacheldieva <https://www.kaggle.com/liudacheldieva>, @ivanblch
+    <https://www.kaggle.com/ivanblch>, @oscarm524 <https://
+    www.kaggle.com/oscarm524>
+  * OpenFE framework for features generation
+  * Merging, Stacking, Ensembling, Averaging
+  * 🦄 Unicorn's pollen
+
+
+    What doesn't work this time?
+
+  * Standalone models
+  * Original Data
+
+
+    Sources:
+
+https://github.com/sb-ai-lab/Py-Boost <https://github.com/sb-ai-lab/Py-
+Boost>
+https://github.com/autogluon/autogluon <https://github.com/autogluon/
+autogluon>
+https://github.com/IIIS-Li-Group/OpenFE <https://github.com/IIIS-Li-
+Group/OpenFE>
+https://www.kaggle.com/competitions/playground-series-s4e3/
+discussion/481015 <https://www.kaggle.com/competitions/playground-
+series-s4e3/discussion/481015>
+https://www.kaggle.com/competitions/playground-series-s4e3/
+discussion/481098 <https://www.kaggle.com/competitions/playground-
+series-s4e3/discussion/481098>
+https://www.kaggle.com/code/arunklenin/ps4e3-steel-plate-fault-
+prediction-multilabel <https://www.kaggle.com/code/arunklenin/ps4e3-
+steel-plate-fault-prediction-multilabel>
+https://www.kaggle.com/code/ravi20076/playgrounds4e03-eda-
+binaryclassifier <https://www.kaggle.com/code/ravi20076/playgrounds4e03-
+eda-binaryclassifier>
+Thanks to the authors 🙏
+
+
+      BONUS Leaderboard Visualisation
+
+https://www.kaggle.com/code/samvelkoch/s4e3-shake-up-plot <https://
+www.kaggle.com/code/samvelkoch/s4e3-shake-up-plot>
+
+Author
+
+<https://www.kaggle.com/samvelkoch>
+Samvel Kocharyan <https://www.kaggle.com/samvelkoch>
+
+samvelkoch
+
+arrow_drop_up
+
+21
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    9 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/kartikeyakotnala>
+
+
+      kartikeya kotnala
+
+<https://www.kaggle.com/kartikeyakotnala>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Awesome, you guys are impressive….some people on kaggle are so good they
+scare me
+
+replyReply
+funny1
+add_reaction
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats on 3rd place! I've added you to the AutoGluon Hall of Fame
+<https://github.com/Innixma/autogluon/blob/update_readme_1.1/
+AWESOME.md#competition-solutions-using-autogluon>!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samvelkoch>
+
+
+      Samvel Kocharyan
+
+<https://www.kaggle.com/samvelkoch>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you Nick! AutoGluon is great!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arunklenin>
+
+
+      Minato Namikaze
+
+<https://www.kaggle.com/arunklenin>
+
+Posted 2 years ago
+
+· 8th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations for securing 3rd! Great Approach @samvelkoch <https://
+www.kaggle.com/samvelkoch>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samvelkoch>
+
+
+      Samvel Kocharyan
+
+<https://www.kaggle.com/samvelkoch>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you Arun @arunklenin <https://www.kaggle.com/arunklenin> ! You
+notebook leads this competition and I'm very grateful for that. Sorry
+for small shake-up for you and Ravi. I'm curious was there better
+unselected submission?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arunklenin>
+
+
+      Minato Namikaze
+
+<https://www.kaggle.com/arunklenin>
+
+Posted 2 years ago
+
+· 8th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thank you! there were about 20 better unselected results with 0.88951 as
+the highest obtained from Geometric Mean of selected results.
+@samvelkoch <https://www.kaggle.com/samvelkoch>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+
+Posted 2 years ago
+
+· 8th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Of course @samvelkoch <https://www.kaggle.com/samvelkoch>
+We had some old submissions that could have given us 2nd place!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/igorvolianiuk>
+
+
+      Igor Volianiuk
+
+<https://www.kaggle.com/igorvolianiuk>
+
+Posted 2 years ago
+
+· 105th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thanks for sharing @samvelkoch <https://www.kaggle.com/samvelkoch>.
+AutoGluon new meta?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I hope so 😁
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thiagomantuani>
+
+
+      Thiago Mantuani
+
+<https://www.kaggle.com/thiagomantuani>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations on the placement @samvelkoch <https://www.kaggle.com/
+samvelkoch> , share your notebook with us if possible.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samvelkoch>
+
+
+      Samvel Kocharyan
+
+<https://www.kaggle.com/samvelkoch>
+Topic Author
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you Thiago. I will share it. Need some timeout.
+
+replyReply
+add_reactionReact
+
