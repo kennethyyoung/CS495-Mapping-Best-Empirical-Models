@@ -1,0 +1,1074 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        ICR - Identifying Age-Related Conditions
+
+        <https://www.kaggle.com/competitions/icr-identify-age-related-
+        conditions>
+      o
+
+        Wow (and our solution)
+
+        <https://www.kaggle.com/competitions/icr-identify-age-related-
+        conditions/writeups/banana-overfit-capybaras-wow-and-our-solution>
+      o
+
+        ICR_adv_model
+
+        <https://www.kaggle.com/code/room722/icr-adv-model>
+      o
+
+        How on Earth did I win this competetion?
+
+        <https://www.kaggle.com/competitions/icr-identify-age-related-
+        conditions/writeups/room722-how-on-earth-did-i-win-this-competetion>
+      o
+
+        Learning Equality - Curriculum Recommendations
+
+        <https://www.kaggle.com/competitions/learning-equality-
+        curriculum-recommendations>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+Wow (and our solution) — ICR - Identifying Age-Related Conditions
+
+
+  Wow (and our solution)
+
+ICR - Identifying Age-Related Conditions
+
+<https://www.kaggle.com/competitions/icr-identify-age-related-conditions>
+
+Solution Writeup · 2nd place · May 26, 2025
+
+To put it mildly, I'm in complete shock, I woke up today with my
+teammate congrats and I got intrigued as to what place we got? I burst
+out laughing when I saw it was 2nd place, and the funniest thing is my
+solution is just CV - no probing, no nothing
+
+here's my solution:
+
+https://www.kaggle.com/code/opamusora/main-notebook <https://
+www.kaggle.com/code/opamusora/main-notebook>
+
+What we did:
+
+  * just like many people, we used time and max(time)+1 for test
+  * removed rows where time is None, I noticed a weird cluster that was
+    far away from all other data when playing with umap and it were rows
+    with absent time
+  * filling Nan values with -100, probably doesn't matter if its median
+    or low numbers.
+  * reducing dimensions with umap and then labeling clusters with
+    kmeans, it didn't bring a lot of score, but it's there
+  * did feature permutation manually, dropped any cols that made score
+    even slightly worse
+  * for a model I used Catboost, xgb with parameters from some public
+    notebook and tabpfn. LGBM didn't seem to work for me as it always
+    dropped my CV
+  * then we just averaged our predictions for test and that's it
+
+Also, I want to mention that we wanted to try edit tabpfn to get
+embeddings and we had an idea to try fine tune tabpfn, but it didn't
+work out.
+
+I also tried optuna for optimizing my models, but it didn't work out
+
+Stacking didn't help my score much as well
+
+edit: My last 2 sumbissions on this competitions are the highest scoring
+ones 😅
+
+Authors
+
+<https://www.kaggle.com/opamusora>
+opamusora (Ivan Viakhirev) <https://www.kaggle.com/opamusora>
+
+opamusora
+
+<https://www.kaggle.com/kvis21>
+kvis <https://www.kaggle.com/kvis21>
+
+kvis21
+
+<https://www.kaggle.com/kskobylkin>
+Konstantin Kobylkin <https://www.kaggle.com/kskobylkin>
+
+kskobylkin
+
+arrow_drop_up
+
+80
+
+Share
+
+more_horiz
+
+love3
+add_reaction
+
+comment
+
+
+    37 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/raddar>
+
+
+      raddar
+
+<https://www.kaggle.com/raddar>
+
+Posted 3 years ago
+
+· 2404th in this Competition
+
+arrow_drop_up
+
+18
+
+more_vert
+
+I wanted to remove rows, but did not have balls to do that. this might
+have been game changer. congrats!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 3 years ago
+
+· 2555th in this Competition
+
+arrow_drop_up
+
+14
+
+more_vert
+
+Made some brave choices, like removing rows, that I never would have
+done. Take a bow!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/iqbalsyahakbar>
+
+
+      Iqbal Syah Akbar
+
+<https://www.kaggle.com/iqbalsyahakbar>
+
+Posted 3 years ago
+
+· 4331st in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Congrats on the 2nd place! It's really funny that the 1st and 2nd
+solutions are wildly different. Also wow, dropping all rows with no time
+value at all. That's one hell of a move there when the dataset is
+already small.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/opamusora>
+
+
+      opamusora (Ivan Viakhirev)
+
+<https://www.kaggle.com/opamusora>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Yeah, it also dropped my cv score, but data points were really far from
+the main cluster so I decided to remove it anyway
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nyleve>
+
+
+      yukiya
+
+<https://www.kaggle.com/nyleve>
+
+Posted 3 years ago
+
+· 661st in this Competition
+
+arrow_drop_up
+
+6
+
+more_vert
+
+Congratulations, how nice it must be to wake up laughing 😁
+
+    removed rows where time is None
+
+So @cdeotte <https://www.kaggle.com/cdeotte> was right, there's
+something about time
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/artemfedorov>
+
+
+      Artem Fedorov
+
+<https://www.kaggle.com/artemfedorov>
+
+Posted 3 years ago
+
+· 836th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+All the rows without time had no health condition, that can't be by
+accident.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kvis21>
+
+
+      kvis
+
+<https://www.kaggle.com/kvis21>
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+great work!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/wisawesome>
+
+
+      Wojciech "Victor" Fulmyk
+
+<https://www.kaggle.com/wisawesome>
+
+Posted 3 years ago
+
+· 153rd in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+@opamusora <https://www.kaggle.com/opamusora> congratulations on getting
+2nd place and I really enjoyed your contribution to the discord
+discussion today. I really appreciated you sharing the fact that you
+used permutation feature importance to select features, and that your
+best model had around 20 features (if I remember correctly). Very
+insightful!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/opamusora>
+
+
+      opamusora (Ivan Viakhirev)
+
+<https://www.kaggle.com/opamusora>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thanks. Around 20 features removed if I'm not mistaken.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 3 years ago
+
+· 2555th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+@opamusora <https://www.kaggle.com/opamusora> It was great to hear
+details about your solution. Again, well done!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/areejmalkawi>
+
+
+      Areej Malkawi
+
+<https://www.kaggle.com/areejmalkawi>
+
+Posted 3 years ago
+
+· 6332nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congratulations!
+did you use the greeks data set?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yujianmin>
+
+
+      jianmin yu
+
+<https://www.kaggle.com/yujianmin>
+
+Posted 3 years ago
+
+· 309th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+yes, he used greeks data.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gyulamaloveczky4>
+
+
+      Gyula Maloveczky4
+
+<https://www.kaggle.com/gyulamaloveczky4>
+
+Posted 3 years ago
+
+· 2203rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Can you share details of your hyperparameter tuning?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/opamusora>
+
+
+      opamusora (Ivan Viakhirev)
+
+<https://www.kaggle.com/opamusora>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+CatBoost has standart parameters and everything else I took from public
+notebooks, it worked the best like that anyway and didn't need change.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/samandersson>
+
+
+      Sam Andersson
+
+<https://www.kaggle.com/samandersson>
+
+Posted 3 years ago
+
+· 254th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Awesome congrats!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pardeep19singh>
+
+
+      Pardeep Singh
+
+<https://www.kaggle.com/pardeep19singh>
+
+Posted 3 years ago
+
+· 3307th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great work @opamusora <https://www.kaggle.com/opamusora> Congrats!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lastdance9>
+
+
+      Last Dance
+
+<https://www.kaggle.com/lastdance9>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+How did TabPFN work out for you ?
+PS: Dropping the rows was a real baller move.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/opamusora>
+
+
+      opamusora (Ivan Viakhirev)
+
+<https://www.kaggle.com/opamusora>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Tabpfn improved my ensemble and overall its a model I will add to my
+arsenal from now on, from what I understood it's still in development so
+I'm eager to find out what its capable of.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nursultanabdullaev>
+
+
+      NA
+
+<https://www.kaggle.com/nursultanabdullaev>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on the huge win! Greetings to everyone who wanted to
+delete rows but did not decide to do so
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/simonhol>
+
+
+      Simon H
+
+<https://www.kaggle.com/simonhol>
+
+Posted 3 years ago
+
+· 1339th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Interesting! Thanks for the write-up. I tried to use tabpfn too and it
+didn't work out well, I need to spend more time with it. Congrats on
+your place jump! The score change was wild!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/zhengtengduan>
+
+
+      Boyka
+
+<https://www.kaggle.com/zhengtengduan>
+
+Posted 3 years ago
+
+· 827th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Deleting rows, very instructive!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/vitalykudelya>
+
+
+      Vitaly Kudelya
+
+<https://www.kaggle.com/vitalykudelya>
+
+Posted 3 years ago
+
+· 805th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+You dropped 23% of train data (time is None), they all have Class_0
+
+This data seemed strange to me in train.csv, but dropping 23% of data
+seemed to much for me )
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/opamusora>
+
+
+      opamusora (Ivan Viakhirev)
+
+<https://www.kaggle.com/opamusora>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Yeah, I was hesitant to do it and it obviously dropped some score (since
+we remove a lot of easy class 0 ), but eventually I decided to keep it
+cause it would be better for general cases.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/artemfedorov>
+
+
+      Artem Fedorov
+
+<https://www.kaggle.com/artemfedorov>
+
+Posted 3 years ago
+
+· 836th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Couldn't keep myself from tring to remove rows and see what happens.
+Tested both my undersample and oversample solutions.
+Undersample solution lost two points in public dataset (from 0.16 to
+0.18) and improved 5 points on private test set (from 0.43 to 0.38!!).
+Oversample solution also lost two points in public dataset (from 0.16 to
+0.18) but it only improved from 0.45 to 0.44 on private test set.
+
+Any way, congratulations! No way I would try something like that myself,
+given the fact that results for the public test set improved.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/manwithaflower>
+
+
+      Man of the year
+
+<https://www.kaggle.com/manwithaflower>
+
+Posted 3 years ago
+
+· 188th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+How did you make your CV?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/opamusora>
+
+
+      opamusora (Ivan Viakhirev)
+
+<https://www.kaggle.com/opamusora>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+A simple 4 split SKfold
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/beatafaron>
+
+
+      Beata Faron
+
+<https://www.kaggle.com/beatafaron>
+
+Posted 10 months ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+This competition is such a great example of real-world complexity – high
+dimensionality, missing values, and noisy targets all in one. Really
+appreciate all the ideas and resources shared here 🙏
+
+I'm currently working on credit risk models with some similar challenges
+(e.g. feedback sparsity, fallback logic). Love how competitions like
+this one broaden our thinking across domains.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ruiruidayoooo>
+
+
+      ruiruidayoooo
+
+<https://www.kaggle.com/ruiruidayoooo>
+
+Posted 3 years ago
+
+· 3546th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+@opamusora <https://www.kaggle.com/opamusora> congratulations on getting
+2nd place!! Thank you for sharing your notebook.
+In your solution, k-means & UMAP are used for clustering data. When I
+make labels for clusters, always being trouble to determine the
+n_neighbors (or n_clusters) parameter. If you wouldn’t mind, could you
+share the process to decide the numbers.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sambitbarik>
+
+
+      Sambit Barik
+
+<https://www.kaggle.com/sambitbarik>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great work @opamusora <https://www.kaggle.com/opamusora> and nice writeup.
+Can you please describe which parameters did you tune and what was the
+CV making process ?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mipacn>
+
+
+      mumagi
+
+<https://www.kaggle.com/mipacn>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+congratulations! how much time have you guys been coding before this
+competition?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/opamusora>
+
+
+      opamusora (Ivan Viakhirev)
+
+<https://www.kaggle.com/opamusora>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+3 years. By the way, I freaked out a bit when I saw Kevin Levrone pfp,
+since I got one on my media accounts 😂
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mipacn>
+
+
+      mumagi
+
+<https://www.kaggle.com/mipacn>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+hahaha kevin levrone is ubiquitous
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/xxglgl>
+
+
+      Kerwin
+
+<https://www.kaggle.com/xxglgl>
+
+Posted 3 years ago
+
+· 6258th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! But why the new version drops the part of removing raws
+which date is null?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sissiki>
+
+
+      sissiki
+
+<https://www.kaggle.com/sissiki>
+
+Posted 3 years ago
+
+· 2228th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+congrats & awesome work! 🙌 Your notebook is very clear and easy to
+understand, even for people who are new to Kaggle challenges!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yujianmin>
+
+
+      jianmin yu
+
+<https://www.kaggle.com/yujianmin>
+
+Posted 3 years ago
+
+· 309th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+remove data is brave, it improve ? score in public and private data.
+
+replyReply
+add_reactionReact
+

@@ -1,0 +1,1019 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        ICR - Identifying Age-Related Conditions
+
+        <https://www.kaggle.com/competitions/icr-identify-age-related-
+        conditions>
+      o
+
+        How on Earth did I win this competetion?
+
+        <https://www.kaggle.com/competitions/icr-identify-age-related-
+        conditions/writeups/room722-how-on-earth-did-i-win-this-competetion>
+      o
+
+        Learning Equality - Curriculum Recommendations
+
+        <https://www.kaggle.com/competitions/learning-equality-
+        curriculum-recommendations>
+      o
+
+        Mechanisms of Action (MoA) Prediction
+
+        <https://www.kaggle.com/competitions/lish-moa>
+      o
+
+        IEEE-CIS Fraud Detection
+
+        <https://www.kaggle.com/competitions/ieee-fraud-detection>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+How on Earth did I win this competetion? — ICR - Identifying Age-Related
+Conditions
+
+
+  How on Earth did I win this competetion?
+
+ICR - Identifying Age-Related Conditions
+
+<https://www.kaggle.com/competitions/icr-identify-age-related-conditions>
+
+Solution Writeup · 1st place · Aug 18, 2023
+
+Hello there! This was really unexpected. I hoped to be in top 10%, but
+never dreamed of something more. Thanks to everyone who participated in
+the competetion and especially to those who discussed various ideas and
+shared their code! And big thanks to SAMUEL, who introduced reweighting
+the probabilities in this notebook: https://www.kaggle.com/code/
+muelsamu/simple-tabpfn-approach-for-score-of-15-in-1-min <https://
+www.kaggle.com/code/muelsamu/simple-tabpfn-approach-for-score-of-15-
+in-1-min>
+
+My solution was purely based on some sophisticated DNN: https://
+www.kaggle.com/room722/icr-adv-model <https://www.kaggle.com/room722/
+icr-adv-model>
+UPDATE: Training notebook attached.
+
+What did not work for me:
+
+ 1. Gradient boosting was obviously overfitting, although I spent just
+    little time on it and didn't make much fine-tuning.
+ 2. The "greeks" were useless. I think, because we have no greeks for
+    the test data.
+ 3. FE led to overfitting.
+
+What did work:
+
+ 1. DNN based on Variable Selection Network. [1]
+ 2. No "casual" normalization of data like MinMaxScaler or
+    StandartScaler, but instead a linear projection with 8 neurons for
+    each feature.
+ 3. Huge values of dropout: 0.75->0.5->0.25 for 3 main layers.
+ 4. Reweighting the probabilities in the end worked really good.
+ 5. 10 folds cv, repeat for each fold 10-30 times, select 2 best models
+    for each fold based on cv (yes, cv somehow worked in this
+    competition!).The training was so unstable, that the cv-scores could
+    vary from 0.25 to 0.05 for single fold, partially due to large
+    dropout values, partially due to little amount of train data. That's
+    why I picked 2 best models for each fold.
+ 6. The cv was some kind of Multi-label. At first I trained some
+    baseline DNN, gathered all validation data and labeled it as
+    follows: (y_true = 1 and y_pred < 0.2) or (y_true = 0 and y_pred >
+    0.8) -> label 1, otherwise label 0. So, this label was somthing like
+    "hardness to predict". And the other label was, of course, the
+    target itself.
+
+It will be honest to say, that I was lucky to win, but for me personally
+that means also that DNN wins, and probably not just by luck. And as a
+big fan of DNNs this makes me proud and happy))
+
+[1] The idea of this network was taken from here https://arxiv.org/
+abs/1912.09363 <https://arxiv.org/abs/1912.09363>
+
+Author
+
+<https://www.kaggle.com/room722>
+room722 <https://www.kaggle.com/room722>
+
+room722
+
+arrow_drop_up
+
+318
+
+Share
+
+more_horiz
+
+
+    Project Files
+
+  *
+    table_chart
+    adv_model_training.ipynb
+     <https://storage.googleapis.com/kaggle-forum-message-
+    attachments/2384935/19562/adv_model_training.ipynb>
+    get_app <https://storage.googleapis.com/kaggle-forum-message-
+    attachments/2384935/19562/adv_model_training.ipynb>
+
+Download All
+love3
+add_reaction
+
+comment
+
+
+    162 Comments
+
+9 appreciation comments <https://www.kaggle.com/competitions/icr-
+identify-age-related-conditions/writeups/room722-how-on-earth-did-i-win-
+this-competetion#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/cpmpml>
+
+
+      CPMP
+
+<https://www.kaggle.com/cpmpml>
+
+Posted 3 years ago
+
+· 901st in this Competition
+
+arrow_drop_up
+
+16
+
+more_vert
+
+Well done! I am so happy the winner did not win by sheer luck. That you
+used a deep learning model of your own is a great sign.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+
+Posted 3 years ago
+
+· 806th in this Competition
+
+arrow_drop_up
+
+11
+
+more_vert
+
+Congratulations. Great work! I also like DNN and I am happy to see DNN
+win. What did this submission score on public LB?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/room722>
+
+
+      room722
+
+<https://www.kaggle.com/room722>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+6
+
+more_vert
+
+Thank you very much! It scored 0.14.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+
+Posted 3 years ago
+
+· 854th in this Competition
+
+arrow_drop_up
+
+7
+
+more_vert
+
+Hearty congratulations for the victory and *solo gold* medal too
+@room722 <https://www.kaggle.com/room722>
+The solo gold will be a huge boost to you for your next steps as you
+embark on your Kaggle competitions GM journey.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cid007>
+
+
+      Chirag Desai
+
+<https://www.kaggle.com/cid007>
+
+Posted 3 years ago
+
+· 2662nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I agree with @ravi20076 <https://www.kaggle.com/ravi20076> .. I have
+heard from few kaggle grandmasters that wining solo was difficult for
+them and took long time. . Congrats and best wishes for future.👍
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/onkarkota1010>
+
+
+      Onkar Kota
+
+<https://www.kaggle.com/onkarkota1010>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Congrats!!!🎉 @room722 <https://www.kaggle.com/room722>! Your
+achievement is truly inspiring. I am eager to join similar competitions
+myself.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kaggleqrdl>
+
+
+      @kaggleqrdl
+
+<https://www.kaggle.com/kaggleqrdl>
+
+Posted 3 years ago
+
+· 633rd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+@room722 <https://www.kaggle.com/room722>
+
+Curious, why can't you make it opensource? afaict, it's just a variation
+of this code here https://github.com/keras-team/keras-io/blob/master/
+examples/structured_data/classification_with_grn_and_vsn.py <https://
+github.com/keras-team/keras-io/blob/master/examples/structured_data/
+classification_with_grn_and_vsn.py> which is apache license.
+
+fwiw, your code can't be encumbered to win the prize.
+
+/grant to the Competition Sponsor the license to the winning Submission
+stated in the Competition Specific Rules above, and represent that you
+have the unrestricted right to grant that license;/
+
+You don't lose the right to open source your code.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/room722>
+
+
+      room722
+
+<https://www.kaggle.com/room722>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you, now I understand this better)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tomasluna>
+
+
+      Tomás Luna
+
+<https://www.kaggle.com/tomasluna>
+
+Posted 3 years ago
+
+· 1399th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations for the great job @room722 <https://www.kaggle.com/
+room722> !
+About the missings imputation, I saw that you used the median, do you
+think it could be useful to use other method like knn?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/room722>
+
+
+      room722
+
+<https://www.kaggle.com/room722>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thanks!
+Maybe, but I didn't experimented with this.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/michau96>
+
+
+      Michal Bogacz
+
+<https://www.kaggle.com/michau96>
+
+Posted 3 years ago
+
+· 930th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+A wonderful and informative solution!
+
+This makes me reflect that I looped in FE and gradient boosting, being
+convinced that too little effect is a matter of too little effort in
+both topics. Theoretically, I knew that if the approach did not give the
+intended results, it had to be changed, but I was still trying to prove
+to myself that I was right with FE and gradient boosting, because that
+was the result of previous experiences (only on other data with larger
+numbers).
+
+Lesson learned, thanks so much and congratulations on your win!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jakelj>
+
+
+      Jake
+
+<https://www.kaggle.com/jakelj>
+
+Posted 3 years ago
+
+· 419th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Interesting, I used a CNN and it was my only model in which the public
+and private lb were the same!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/salmtcat>
+
+
+      Stephen Bailey
+
+<https://www.kaggle.com/salmtcat>
+
+Posted 3 years ago
+
+· 516th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congrats!
+
+It sounds like you came up with a very good solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/houssamassila>
+
+
+      TheStrugglingEngineer
+
+<https://www.kaggle.com/houssamassila>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congratulations! It takes a great deal of hubris on bad losers part to
+claim that winning in this competition is a matter of luck. Humility
+will do everyone a great deal of good.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kaggleqrdl>
+
+
+      @kaggleqrdl
+
+<https://www.kaggle.com/kaggleqrdl>
+
+Posted 3 years ago
+
+· 633rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Luck plays a huge factor in these comps .. being lucky not to be
+competing against skillfull and talented folks like @room722 <https://
+www.kaggle.com/room722>
+
+I had expected superior models by newcomers, but nothing quite this
+superior. Well deserved 1st place win.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 3 years ago
+
+· 2555th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congratulations on your top spot. This actually sounds like a very
+original model, and your score stands out for sure. Looking forward to
+hearing all the details.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/vasilysevostynov>
+
+
+      Vasily Sevostynov
+
+<https://www.kaggle.com/vasilysevostynov>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! Great job!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/viji1609>
+
+
+      Viji
+
+<https://www.kaggle.com/viji1609>
+
+Posted 3 years ago
+
+· 1147th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats for a well deserved win! Thanks for sharing your notebook.
+Activity regularization, non_linearity handling methods along with
+gating mechanisms used are impressive.
+If you can share - did you have to resample or preprocess for noise
+reduction? Thanks
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/room722>
+
+
+      room722
+
+<https://www.kaggle.com/room722>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you very much!
+No, I didn't)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/viji1609>
+
+
+      Viji
+
+<https://www.kaggle.com/viji1609>
+
+Posted 3 years ago
+
+· 1147th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks for your confirmation.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mayank823>
+
+
+      Mayank 823
+
+<https://www.kaggle.com/mayank823>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+wow getting placed 1 st is surely a big feat cheers
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/raziapatel>
+
+
+      RazPa
+
+<https://www.kaggle.com/raziapatel>
+
+Posted 3 years ago
+
+· 3429th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congratulation! ! !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/charleschuang>
+
+
+      charles chuang
+
+<https://www.kaggle.com/charleschuang>
+
+Posted 3 years ago
+
+· 3457th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! I think greeks data is useful for ML methods, but not for deep
+learning, right?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jonessausage>
+
+
+      JonesSausage
+
+<https://www.kaggle.com/jonessausage>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Nice job, congrats!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gomgomigom>
+
+
+      Woosung Choi
+
+<https://www.kaggle.com/gomgomigom>
+
+Posted 3 years ago
+
+· 282nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!
+Thank you for sharing your idea.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/aristsmith>
+
+
+      Arist Smith
+
+<https://www.kaggle.com/aristsmith>
+
+Posted 3 years ago
+
+· 4779th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Thank you for attaching your code to learn from!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/carlosgaravatti>
+
+
+      CarloSgara
+
+<https://www.kaggle.com/carlosgaravatti>
+
+Posted 3 years ago
+
+· 571st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gwctchs>
+
+
+      GWCTCHS
+
+<https://www.kaggle.com/gwctchs>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Wow, great job!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ern711>
+
+
+      Ern711
+
+<https://www.kaggle.com/ern711>
+
+Posted 3 years ago
+
+· 1221st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats, sounds like an interesting approach!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kaustavchaudhury28>
+
+
+      Kaustav Chaudhury28
+
+<https://www.kaggle.com/kaustavchaudhury28>
+
+Posted 3 years ago
+
+· 3584th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Nicely Done, you used CV did you separately tune each cv
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/vasavibala>
+
+
+      vasavibala
+
+<https://www.kaggle.com/vasavibala>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations for your achievement. Wonderful job done by using DNN
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bhartiashu37>
+
+
+      Ashutosh Bharti
+
+<https://www.kaggle.com/bhartiashu37>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Amazing job done! All the best for your future competitions. @room722
+<https://www.kaggle.com/room722>
+
+replyReply
+add_reactionReact
+
