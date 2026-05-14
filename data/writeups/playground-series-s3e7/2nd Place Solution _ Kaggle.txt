@@ -1,0 +1,457 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification with a Tabular Reservation Cancellation
+        Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e7>
+      o
+
+        2nd Place Solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e7/
+        writeups/jose-c-liz-2nd-place-solution>
+      o
+
+        1st place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e7/
+        writeups/hardy-xu-1st-place-solution>
+      o
+
+        Regression with a Tabular California Housing Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e1>
+      o
+
+        2nd place solution - brief summary
+
+        <https://www.kaggle.com/competitions/playground-series-s3e1/
+        writeups/jcerpent-2nd-place-solution-brief-summary>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd Place Solution — Binary Classification with a Tabular Reservation
+Cancellation Dataset
+
+
+  2nd Place Solution
+
+Binary Classification with a Tabular Reservation Cancellation Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e7>
+
+Solution Writeup · 2nd place · Feb 28, 2023
+
+Hello all,
+
+This is the description on how I achieved the second place on this
+competition:
+
+
+    CV
+
+My CV was done using booking date as the feature to stratify, I decided
+to use this column instead of target because there were month with few
+observations and all of them were assigned to the same fold.
+
+Some models I ensembled used 30 Folds and other 20 Folds just because
+computation was expensive. Original dataset was concated to each fold,
+i.e for a 20 Fold CV each fold had the entire original dataset + 95% of
+the train dataset.
+
+
+    The Imputation
+
+Strange dates were imputed using last day of month.
+
+
+    The Duplicates
+
+All duplicates came in pairs and *always* there was 1 positive label and
+one negative label. There were two leaks, most people figured out the
+first but the second was not disclosed.
+
+ 1. For duplicates on test that were in train, the trick was to assign
+    the unknown label to the opposite of the known label.
+ 2. For duplicates on test that were also in test, the trick is assign a
+    score that maximizes oof. Explanation: if you have a pair of
+    duplicates, any model will predict the same value for them, so any
+    value close to 0 or 1 will hurt your model. Since AUC is a rank
+    metric, and the positive is around 38%, then ideally, the best
+    threshold should be in the 62nd percentile of your predictions, this
+    value can be used to overwrite the duplicates.
+
+
+    Features
+
+I found that most of the out of box features worked well. Some
+additional features I used was |is_generated| and |is_inconsistent|,
+both features are indicators. Dayofyear features also was selected in
+some models when doing Sequential Feature Selection.
+
+
+    The ensemble
+
+Final Ensemble had 16 models that were selected using Hill Climb
+Technique and the weights were optimized using Nelder-mead algorithm. I
+did not rank predictions. Most of the models were LGBM, a couple of
+XGBoost. Everything was trained using EarlyStopping and the test
+predictions were calculating using the mean of each fold-model.
+
+
+    What didn't work
+
+Holidays features, day of month feature, an indicator column that is
+positive whether the day was inconsistent, more than 30 Folds.
+
+My CV was perfectly correlated with the leaderboard, I felt like if I
+had more time maybe I would had used some public notebooks to do a final
+ensemble.
+
+Author
+
+<https://www.kaggle.com/jcaliz>
+Jose Cáliz <https://www.kaggle.com/jcaliz>
+
+jcaliz
+
+arrow_drop_up
+
+34
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    8 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/yus002>
+
+
+      Yue Sun
+
+<https://www.kaggle.com/yus002>
+
+Posted 3 years ago
+
+· 88th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Good observation of the data.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pardeep19singh>
+
+
+      Pardeep Singh
+
+<https://www.kaggle.com/pardeep19singh>
+
+Posted 3 years ago
+
+· 67th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great job getting to 2nd position in this competition @jcaliz <https://
+www.kaggle.com/jcaliz> . Thanks for sharing your solution writeup! 🙌🔥
+
+Can you please share a bit on *Hill Climb Technique* for model selection
+and the *Nelder-mead algorithm* for weights optimisation?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pasqualemar>
+
+
+      Pasquale
+
+<https://www.kaggle.com/pasqualemar>
+
+Posted 3 years ago
+
+· 39th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations, clever solution. Have you tried both assigning 0.5 and
+the 0.62 percentile to the duplicates in test set? Has the latter
+performed significantly better?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jcaliz>
+
+
+      Jose Cáliz
+
+<https://www.kaggle.com/jcaliz>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Choosing 0.5 is a good idea when your classifiers are well calibrated.
+Tree-based models are known for not being well calibrated on imbalaced
+datasets.
+
+Using a late submission these would have been the results, green uses
+62nd and red uses 0.5:
+
+I'm pretty sure I would have used the green submission because it scored
+better on the public and public - private had a strong correlations
+because of the same relationship between CV and Public.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pasqualemar>
+
+
+      Pasquale
+
+<https://www.kaggle.com/pasqualemar>
+
+Posted 3 years ago
+
+· 39th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+There is not a huge difference, I think that your score is mainly the
+result of how well you prepared the data and built the model 😉
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mintlimeade>
+
+
+      Matin
+
+<https://www.kaggle.com/mintlimeade>
+
+Posted 3 years ago
+
+· 373rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats! Did you end up testing any of the other found datasets?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jcaliz>
+
+
+      Jose Cáliz
+
+<https://www.kaggle.com/jcaliz>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I didn't, the dataset was big enough and after seeing the direct
+correlation of CV and LB I suspected that faster iteration would be a
+key to find a good ensemble.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jimgruman>
+
+
+      Jim Gruman
+
+<https://www.kaggle.com/jimgruman>
+
+Posted 3 years ago
+
+· 290th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats. Well done
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+

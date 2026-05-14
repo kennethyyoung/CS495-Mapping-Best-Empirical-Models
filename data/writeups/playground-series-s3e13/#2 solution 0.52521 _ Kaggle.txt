@@ -1,0 +1,329 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Classification with a Tabular Vector Borne Disease Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e13>
+      o
+
+        #2 solution 0.52521
+
+        <https://www.kaggle.com/competitions/playground-series-s3e13/
+        writeups/rjzhang97-2-solution-0-52521>
+      o
+
+        Surprisingly #1, Public LB: 0.37196 | Private LB: 0.53179
+
+        <https://www.kaggle.com/competitions/playground-series-s3e13/
+        writeups/umar-surprisingly-1-public-lb-0-37196-private-lb-0>
+      o
+
+        PS S3 E13 | Important features for each disease
+
+        <https://www.kaggle.com/code/mattop/ps-s3-e13-important-
+        features-for-each-disease>
+      o
+
+        Regression with a Tabular Media Campaign Cost Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e11>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+#2 solution 0.52521 — Classification with a Tabular Vector Borne Disease
+Dataset
+
+
+  #2 solution 0.52521
+
+Classification with a Tabular Vector Borne Disease Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e13>
+
+Solution Writeup · 2nd place
+
+After returning from my holiday, I was pleasantly surprised to find I
+won second place on the private leader board! This was my first
+competition, and it was an awesome experience. I would like to thank
+Kaggle for organizing this series of competitions, which have been super
+helpful for us newcomers. Also, thanks to everyone who shared their
+code, solutions, and experiences - you guys inspired me!
+
+Getting back to the main point, I initially wanted to share my code, but
+I found it to be so messy that I didn't even know where to start
+organizing it. So, I've decided to share some tricks that I use.
+
+I didn't focus much on the model, just went with XGB, and used
+StratifiedKFold while training. Here are my parameters:
+|XGBClassifier(objective = 'multi:softprob', tree_method = 'exact',
+colsample_bytree = 0.6, gamma = 0.8, learning_rate = 0.01, max_depth =
+6, min_child_weight = 3, n_estimators = 300, subsample = 0.6)|
+|StratifiedKFold(n_splits = 4, random_state = 42, shuffle = True)|
+In terms of feature engineering, I first borrowed @sergiosaharovskiy
+<https://www.kaggle.com/sergiosaharovskiy> 's clustering method for
+symptoms within the same category.
+
+And, I combined every pair of features and performed AND, OR, and XOR
+operations, generating over 6000 new features in the process.
+
+The reason I did this is because I think different people might have
+different symptoms for the same illness. For instance, when I have a
+cold, I don't experience a sore throat but do have a headache, while
+others might have the complete opposite or both symptoms. Also, the
+features provided in the data are in 'one hot' format, and since I'm not
+well-versed in medicine, I went with the rather simple method mentioned
+above.
+
+Next, I carried out the feature selection process. Starting with the
+original features as the initial set, I added the newly created features
+and used the model's performance(MAP@3) as a criterion to filter out the
+following additional features:
+'cluster_0',
+'cluster_1',
+'cluster_2',
+'cluster_3',
+'weakness_or_yellow_skin',
+'jaundice_or_abdominal_pain',
+'weakness_or_yellow_eyes',
+'stomach_pain_or_abdominal_pain',
+'back_pain_or_yellow_skin',
+'toenail_loss_xor_bullseye_rash',
+'weakness_or_light_sensitivity',
+'yellow_skin_or_prostraction',
+'coma_or_yellow_skin',
+'inflammation_or_light_sensitivity',
+'weakness_or_urination_loss',
+'weakness_or_slow_heart_rate',
+'abdominal_pain_or_irritability'
+
+Finally, train and submit.
+
+That's all for my work. During the competition, I also tried some
+feature selection methods, such as Sklearn's SelectKBest and the Boruta-
+SHAP package, but their performance on this dataset was not as good as
+the method I used above. Additionally, I've been focusing on researching
+various feature selection techniques recently, so I'm very eager to
+discuss them with all of you. If you have any great suggestions, please
+be sure to let me know!
+
+Author
+
+<https://www.kaggle.com/rjzhang97>
+rjZhang97 <https://www.kaggle.com/rjzhang97>
+
+rjzhang97
+
+arrow_drop_up
+
+13
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    5 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/yusuphmustaphaladi>
+
+
+      Yusuph Mustapha Ladi
+
+<https://www.kaggle.com/yusuphmustaphaladi>
+
+Posted 3 years ago
+
+· 498th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great work
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/indisqualified>
+
+
+      InDisQualified
+
+<https://www.kaggle.com/indisqualified>
+
+Posted 3 years ago
+
+· 272nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Generating over 6000 new features by combining AND, OR, and XOR
+operations within clusters is really valuable approach in terms of
+feature engineering.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/rjzhang97>
+
+
+      rjZhang97
+
+<https://www.kaggle.com/rjzhang97>
+Topic Author
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you!
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+
+This comment has been deleted.
+

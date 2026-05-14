@@ -1,0 +1,1119 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Regression with an Abalone Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4>
+      o
+
+        1st Place Solution for the Regression with an Abalone Dataset
+        Competition
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4/
+        writeups/johannes-heller-1st-place-solution-for-the-regress>
+      o
+
+        Predicting Optimal Fertilizers
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6>
+      o
+
+        3rd place - Ridge and CV are all you need
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6/
+        writeups/mahog-3rd-place-ridge-and-cv-are-all-you-need>
+      o
+
+        2nd Place Solution - L3 Ensemble of 100+ OOFs
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6/
+        writeups/masaya-kawamata-2nd-place-solution-l3-ensemble-of->
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+1st Place Solution for the Regression with an Abalone Dataset
+Competition — Regression with an Abalone Dataset
+
+
+  1st Place Solution for the Regression with an Abalone Dataset Competition
+
+Regression with an Abalone Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s4e4>
+
+Solution Writeup · 1st place
+
+Thanks for hosting the Playground series, it's a great place for
+experimenting and focusing on model building 👏🏽
+
+
+    Context
+
+Business context: https://www.kaggle.com/competitions/playground-series-
+s4e4 <https://www.kaggle.com/competitions/playground-series-s4e4>
+Data context: https://www.kaggle.com/competitions/playground-series-
+s4e4/data <https://www.kaggle.com/competitions/playground-series-s4e4/data>
+
+
+    Overview of the Approach
+
+With this competition, I tried to max out the heavy ensembling GBDT
+strategy. In an earlier tabular data competition I tried different
+neural network architectures only to observe that none of them is
+competitive. I guess the papers claiming ANNs are finally on a par with
+GBDTs for tabular data haven't done proper preprocessing and fine-
+tuning. So here I focused mainly on GBDTs. AutoGluon indirectly adds
+some ANN to the ensemble, though.
+
+The solution in a nutshell:
+
+  * Feature Engineering using an AutoML solution (OpenFE, Zhang et al.
+    (2022) OpenFE: Automated Feature Generation with Expert-level
+    Performance <https://arxiv.org/abs/2211.12507>, https://github.com/
+    IIIS-Li-Group/OpenFE <https://github.com/IIIS-Li-Group/OpenFE>)
+  * Selecting ca. 20 features (in addition to the original columns)
+    using Sequential Feature Selection, individually for LGBM, XGB,
+    Catboost. Examples: 'freq(Shell_weight)', '(Length-Shell_weight)',
+    '(Whole_weight/Shucked_weight)', 'freq(Whole_weight)',
+    '(Whole_weight+Shell_weight)', '(Length/Shell_weight)',
+    'residual(Whole_weight)', 'log(Whole_weight)',
+    'max(Whole_weight,Height)'
+  * Find some good hyperparam combinations using Bayesian Optimization
+    (WandB Sweeps) for LGBM, XGB, CatBoost, HistGB and RandomForest
+    Regression. Attempts with custom MLP were quickly abandoned, see my
+    comment above 😞
+  * Train those models (10-folds CV), save OOF predictions. Use complete
+    original Abalone dataset for training in each fold, never for
+    validation.
+  * AutoGluon (first I had some failed attempts that exceeded the Kaggle
+    time limit or didn't return proper OOF predictions)
+  * Two-step ensemble:
+
+ 1. The ensemble itself consists of 49 models. I optimized the weights
+    using the OOF predictions and Nelder-Mead algorithm. The best
+    results included negative coefficients and summed up to 0.997. That
+    seemed cheesy to me but consistently outperformed coefficients that
+    were clipped at min=0.0 and scaled to sum up to 1.0. Thus, I kept
+    the optimized coefficients to blend the models' predictions.
+ 2. Tried adding some well-performing public notebook submissions to the
+    ensemble. In the absence of OOFs I used some submissions against
+    public LB to find an optimal weight of 17% and ended up with using
+    only one ANN-based submission by endofnight17j03 <https://
+    www.kaggle.com/code/endofnight17j03/abalone-age-ann-xgboost-
+    catboost> 👋
+
+My second submission skipped the external public notebook and scored
+0.14372/0.14379 (public/private LB), i.e. it would have finished first, too.
+
+
+    Details of the submission
+
+
+      Handling of the RMSLE metric
+
+…by using proper loss fn. and eval. metric if possible:
+
+  * LGBM: custom MSLE loss (similar to proposal by broccoli beef
+    <https://www.kaggle.com/siukeitin> in this discussion <https://
+    www.kaggle.com/competitions/playground-series-s4e4/
+    discussion/488283> 👋) - btw 'gamma' objective scored only slightly
+    worse
+  * XGB: 'reg:squaredlogerror'
+  * np.log1p / np.expm1 for other models
+
+
+      Best individual models with CV RMSLE:
+
+  * LGBM: 0.14611
+  * CatBoost: 0.14620
+  * XGB: 0.14616
+  * XGB Classifier with Regression Head: 0.14680
+  * HistGB: 0.14648
+  * (AutoGluon: 0.14592)
+  * (Ensemble: 0.14514)
+
+
+      Classification with custom Regression Head
+
+Prajwal Anagani <https://www.kaggle.com/inagana> introduced an unusual
+approach <https://www.kaggle.com/code/inagana/ps4e4-classification-with-
+xgboost-0-148>👋: Using an XGB Classifier with 'multi:softprob'
+objective but adding a Softmax-based regression head. I still don't know
+why it works (maybe due to the synthetical nature of the dataset and the
+discrete regression target) but the optimized ensemble weights include
+it despite worse individual CV results in comparison to (traditional)
+XGB regressors.
+
+
+      What did not work
+
+Polynomials, more sophisticated stacking/blending/meta-model approaches,
+classic ML approaches, Stratified KFold, any kind of encoding of 'Sex'
+feature (except OHE for models that don't accept categorical features
+natively).
+
+
+      High Value Targets
+
+My models never predicted more than a maximum of 20 Rings (with 29 being
+the maximum in the train dataset). Any approach to tackle that gap
+(SMOTE, augmentation) worsened CV significantly. So did excluding the
+outlier samples from training.
+
+
+    What I learned in the competition:
+
+  * AutoML approaches work (AutoFE, AutoGluon) but require manual post-
+    processing to achieve competitive results.
+  * The Kaggle API is awesome for writing code locally in PyCharm and
+    having it executed at Kaggle with a few clicks.
+  * Wrap often-used code (e.g. Trainer for CV and prediction) into a
+    custom Python Package to guarantee comparable results when
+    experimenting. Kaggle API helps here, too, to automate deployment.
+
+Thanks to the authors and other Kagglers who shared lots of great insights👍
+
+Tagged
+Ensembling <https://www.kaggle.com/search?
+q=ensembling+tag%3A%22ensembling%22>Feature Engineering <https://
+www.kaggle.com/search?
+q=feature+engineering+tag%3A%22feature+engineering%22>Gradient Boosting
+<https://www.kaggle.com/search?
+q=gradient+boosting+tag%3A%22gradient+boosting%22>Optimization <https://
+www.kaggle.com/search?q=optimization+tag%3A%22optimization%22>Regression
+<https://www.kaggle.com/search?q=regression+tag%3A%22regression%22>
+Author
+
+<https://www.kaggle.com/stopwhispering>
+Johannes Heller <https://www.kaggle.com/stopwhispering>
+
+stopwhispering
+
+arrow_drop_up
+
+122
+
+Share
+
+more_horiz
+
+thankYou51love15kaggle1surprise6
+add_reaction
+
+comment
+
+
+    47 Comments
+
+3 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s4e4/writeups/johannes-heller-1st-place-solution-for-the-
+regress#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/msisland>
+
+
+      ms_island
+
+<https://www.kaggle.com/msisland>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+7
+
+more_vert
+
+wow very good !! i'm korean
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mscgeorges>
+
+
+      George Papachristou
+
+<https://www.kaggle.com/mscgeorges>
+
+Posted 2 years ago
+
+· 137th in this Competition
+
+arrow_drop_up
+
+10
+
+more_vert
+
+Congratulations for your winning 🎊 and thanks for sharing!!
+
+I just have two questions, why you said that stratified CV didn't work?
+Tha abalone dataset have Rings with very few samples, this target
+skewness will effect the CV scores by creating significant deviation. In
+my mind, either use CV with many folds (e.g 10+) or with few folds (e.g
+<4) and stratified on Rings will be equivalent.
+
+And the second part of my question is about the following sentence "Use
+complete original Abalone dataset for training in each fold, never for
+validation.". Can you elaborate more? It sounds weird to me to train
+with whole dataset for each fold, so maybe I'm missing something 🥹
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/inagana>
+
+
+      Prajwal Anagani
+
+<https://www.kaggle.com/inagana>
+
+Posted 2 years ago
+
+· 339th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I had tried Stratified too, and i my cv and lb scores were matching up
+very well. I think it might be because of lack of the less occuring
+labels in the test set.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mscgeorges>
+
+
+      George Papachristou
+
+<https://www.kaggle.com/mscgeorges>
+
+Posted 2 years ago
+
+· 137th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks! @inagana <https://www.kaggle.com/inagana> what about train with
+whole dataset for each fold?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/inagana>
+
+
+      Prajwal Anagani
+
+<https://www.kaggle.com/inagana>
+
+Posted 2 years ago
+
+· 339th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I think it means that when training we use the original dataset, doesn't
+make sense to use a part of the original dataset for validation as the
+LB dataset will have a distribution similar to the synthetic dataset
+generated than the original one. So, maybe it's better used for
+training, but not a good validation data
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/msisland>
+
+
+      ms_island
+
+<https://www.kaggle.com/msisland>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+wow good idea
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/inagana>
+
+
+      Prajwal Anagani
+
+<https://www.kaggle.com/inagana>
+
+Posted 2 years ago
+
+· 339th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congratulations @stopwhispering <https://www.kaggle.com/stopwhispering>!
+Also, the XGB with softmax regression head ended up in my ensemble with
+a decent weightage (which I was not expecting because of the CV) as well
+I was always reluctant to use Wandb sweeps, but since it worked well for
+you, I'm going to give it a try sometime :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/stopwhispering>
+
+
+      Johannes Heller
+
+<https://www.kaggle.com/stopwhispering>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I prefer WandB Sweeps to Optuna & Hyperopt mainly because of the easy
+parallelization: Just copy your notebook up to 5 times, use same Sweep
+ID, and run it. Then check the interim results at WandB every now and
+then and when scores are no longer improving, cancel the kernels. Then
+try some good combinations either via copy&paste, API, or Excel export.
+The feature list, however, is somewhat smaller in comparison to Optuna.
+Still more than enough for a competition like this.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/inagana>
+
+
+      Prajwal Anagani
+
+<https://www.kaggle.com/inagana>
+
+Posted 2 years ago
+
+· 339th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+That's very intresting! It'd be great to speed up optimization tbh, a
+good amount of time goes in me optimising via Optuna. Will try that out
+in the current playground series :) Thanks!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/daniilbuchko>
+
+
+      danzoda
+
+<https://www.kaggle.com/daniilbuchko>
+
+Posted 2 years ago
+
+· 129th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+a huge number of models! great job
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kaiusdepaulacorrea>
+
+
+      Kaius de Paula Correa
+
+<https://www.kaggle.com/kaiusdepaulacorrea>
+
+Posted 2 years ago
+
+· 1431st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!! I'll be conducting a few changes to my solution
+inspired by what you've said here, so thank you for your insights!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/isaacmoura>
+
+
+      Isaac Moura
+
+<https://www.kaggle.com/isaacmoura>
+
+Posted 2 years ago
+
+· 1570th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @stopwhispering <https://www.kaggle.com/
+stopwhispering> , thanks for sharing
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 9th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on achieving the 1st place, and thanks for sharing your
+solution! I tried most of the same things, but model-specific feature
+selection is a simple yet brilliant idea that would have probably gotten
+me close to 0.14440, or under. I should look into WandB Sweeps and using
+AutoML more extensively in the future. Congrats once again!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mubashirsidiki>
+
+
+      Mubashir Ahmed Siddiqui
+
+<https://www.kaggle.com/mubashirsidiki>
+
+Posted 2 years ago
+
+· 1606th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @stopwhispering <https://www.kaggle.com/stopwhispering> !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/guilhermepoliveira>
+
+
+      Guilherme P Oliveira
+
+<https://www.kaggle.com/guilhermepoliveira>
+
+Posted 2 years ago
+
+· 1227th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on the great results @stopwhispering <https://
+www.kaggle.com/stopwhispering>!
+Thank you very much for sharing your solution :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sindhurakshit>
+
+
+      Kumar S
+
+<https://www.kaggle.com/sindhurakshit>
+
+Posted 2 years ago
+
+· 1894th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+yes, I also tried different neural network architectures only to observe
+that they could not reach beyond .15xx
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/conykuo>
+
+
+      Cony Kuo
+
+<https://www.kaggle.com/conykuo>
+
+Posted 2 years ago
+
+· 228th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Thank you for the informative sharing.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/amaanakhtar04>
+
+
+      Amaan Akhtar
+
+<https://www.kaggle.com/amaanakhtar04>
+
+Posted 2 years ago
+
+· 2005th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @stopwhispering <https://www.kaggle.com/stopwhispering>!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/amalap862001>
+
+
+      Amal A P
+
+<https://www.kaggle.com/amalap862001>
+
+Posted 2 years ago
+
+· 1980th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @stopwhispering <https://www.kaggle.com/
+stopwhispering> !!!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/rrr4243>
+
+
+      rrr584466
+
+<https://www.kaggle.com/rrr4243>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+👍wow very nice
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arunklenin>
+
+
+      Minato Namikaze
+
+<https://www.kaggle.com/arunklenin>
+
+Posted 2 years ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @stopwhispering <https://www.kaggle.com/stopwhispering>
+
+Thanks for sharing the approach :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+
+Posted 2 years ago
+
+· 130th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+@stopwhispering <https://www.kaggle.com/stopwhispering> thanks for
+sharing your strategic approach, which involved a lot of effort. It is a
+well earned victory. Congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/maxuhl98>
+
+
+      MaxUhl98
+
+<https://www.kaggle.com/maxuhl98>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hi Johannes,
+
+Congratulations on your victory!
+
+Regarding your write-up, I have some questions:
+
+ 1.
+
+    If you train the 5 models LGBM, XGB, CatBoost, HistGB, and
+    RandomForest for 10 folds each, plus probably 1 AutoGluon model and
+    a classificator with a custom regression head, how do you end up
+    with only 49 models in the final ensemble?
+
+ 2.
+
+    How did you generate or access the AutoGluon OOF predictions and
+    ensure they predict the values for the same columns as the OOF
+    predictions from the other models? (I assume that you did not train
+    multiple AutoGluon models since AutoGluon does CV by itself.)
+
+ 3.
+
+    Did you use |scipy.minimize| for Nelder-Mead and |
+    sklearn.SequentialFeatureSelector| for SFS or are there better tools
+    for the job?
+
+Thank you for sharing, and good luck in your future endeavors.
+
+Best regards,
+Max
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/logahn>
+
+
+      Logan
+
+<https://www.kaggle.com/logahn>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations and thanks for sharing your approach.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/zchen0420>
+
+
+      Zhousi Chen
+
+<https://www.kaggle.com/zchen0420>
+
+Posted 2 years ago
+
+· 2352nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+LightGBM is handy. Thanks for sharing the winning methodology!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ayush3954>
+
+
+      Ayush Kumar
+
+<https://www.kaggle.com/ayush3954>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great Work
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/fb042200>
+
+
+      Kaizo ML World
+
+<https://www.kaggle.com/fb042200>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hi Johannes, congratulations for this achievement and lots of success
+for your future competitions.
+You mentioned using OpenFE to get on fast lane for FE. Unfortunately
+they do not provide a lot of parametrization options or documentation,
+e.g. the number of estimators is hard coded and fixed.
+Did you just let it run for several hours or did you adjust the setup,
+for example to test the outputs of OpenFE. Can you provide the setup of
+OpenFE or some links in regards of this matter?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/stopwhispering>
+
+
+      Johannes Heller
+
+<https://www.kaggle.com/stopwhispering>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hi Fb,
+in the absence of any proper API documentation I just ran OpenFE with
+the default setting. For the 8 original features, it generated 192
+additional features. I was able to exclude some of them due to very high
+correlation to other features. For the rest, I ran sequential feature
+selection over night. With the competition's little amount of data this
+was perfectly feasible. For a real-world project with more original
+features and more sample rows, some other approach would probably be
+better.
+Generally it seems to be a suitable tool for a small project like this
+with little, flat, high-quality data. For everything else there are
+better alternatives. OpenFE seems to be no longer maintained, the last
+commits being from last year <https://github.com/IIIS-Li-Group/OpenFE>.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/fb042200>
+
+
+      Kaizo ML World
+
+<https://www.kaggle.com/fb042200>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you for taking your time to respond. They seem to have published
+the code for the paper only. But it sure sounded promising. Have you
+used any other modules, e.g. Featuretools?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sheemazain>
+
+
+      Sheema Zain
+
+<https://www.kaggle.com/sheemazain>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations for your winning !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/udayguntupally>
+
+
+      uday guntupally
+
+<https://www.kaggle.com/udayguntupally>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations for winning thanks for sharing!!!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/innixma>
+
+
+      Nick Erickson
+
+<https://www.kaggle.com/innixma>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats on the win and thanks for sharing your approach!!
+
+I have added you to the AutoGluon Hall of Fame :) https://github.com/
+autogluon/autogluon/blob/master/AWESOME.md#2024 <https://github.com/
+autogluon/autogluon/blob/master/AWESOME.md#2024>
+
+replyReply
+add_reactionReact
+

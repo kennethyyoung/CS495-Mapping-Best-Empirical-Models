@@ -1,0 +1,759 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Backpack Prediction Challenge
+
+        <https://www.kaggle.com/competitions/playground-series-s5e2>
+      o
+
+        3rd Place Solution in Three Words!
+
+        <https://www.kaggle.com/competitions/playground-series-s5e2/
+        writeups/automatylicza-knai-3rd-place-solution-in-three-wor>
+      o
+
+        Rank 2 approach - a century of component feature sets and deep
+        ensemble
+
+        <https://www.kaggle.com/competitions/playground-series-s5e2/
+        writeups/ravi-ramakrishnan-rank-2-approach-a-century-of-com>
+      o
+
+        First Place - Single Model - [LB 38.81]
+
+        <https://www.kaggle.com/code/cdeotte/first-place-single-model-
+        lb-38-81>
+      o
+
+        1st Place - Single Model - Feature Engineering
+
+        <https://www.kaggle.com/competitions/playground-series-s5e2/
+        writeups/chris-deotte-1st-place-single-model-feature-engine>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd Place Solution in Three Words! — Backpack Prediction Challenge
+
+
+  3rd Place Solution in Three Words!
+
+Backpack Prediction Challenge
+
+<https://www.kaggle.com/competitions/playground-series-s5e2>
+
+Solution Writeup · 3rd place · Mar 2, 2025
+
+*Determination – Creativity – Luck*
+
+I'll leave it to you to decide what luck is
+
+*Hello everyone!*
+
+My name is Sebastian, and first of all, I would like to thank *Mr. Paweł
+Godula – narsil (jobs-in-data.com)* for spreading the Kaggle ideology in
+Poland and, most importantly, for playing a key role in helping me
+discover, after many years, what I will pursue in life and in which
+field I will become one of the best in the world.
+
+*Chris Deotte* – Thank you for what you do and how you do it. *WooHoo!!!*
+
+------------------------------------------------------------------------
+
+
+    Main Stages of the Solution
+
+An essential part of my solution is the code that was shared by other
+competitors. The main characters are: @cdeotte <https://www.kaggle.com/
+cdeotte>, @masayakawamata <https://www.kaggle.com/masayakawamata>,
+@mikhailnaumov <https://www.kaggle.com/mikhailnaumov> and
+@vyacheslavbolotin <https://www.kaggle.com/vyacheslavbolotin> .
+
+ 1. *Feature Engineering*
+     1. *Distance Features (|feh_distance|)*
+          * For the raw datasets |train_raw| and |test_raw|, new
+            variables are computed based on the distances between
+            selected attributes (after mapping them to numerical values).
+          * Columns such as |_2_1|, |_2_2|, … |_5_1| are created, which
+            represent the square roots of the sums of squared
+            differences of selected (mapped) attributes, e.g., (x1 -
+            x3)² + (x2 - x4)², etc.
+          * This yields a dozen or so features expressing the
+            “similarity/difference” within the backpack.
+     2. *Creation of Combined (COMBO) Features*
+          * For each original categorical column (e.g., |Brand|, |
+            Style|, |Color|, etc.), a new feature is created by
+            combining it with |Weight Capacity (kg)|.
+          * Example: |new_col = Brand * 100 + Weight Capacity (kg)|.
+          * This helps capture the interactions between the categories
+            and the backpack’s carrying capacity.
+     3. *Statistics from an External Dataset (|orig_price_*|)*
+          * Based on an external dataset (|
+            Noisy_Student_Bag_Price_Prediction_Dataset.csv|), the
+            following values are calculated: |orig_price_mean|, |
+            orig_price_std|, |orig_price_min|, |orig_price_max|, and |
+            orig_price_median|.
+          * The variable |orig_price_missing| is used to capture cases
+            when a given combination did not appear in the external dataset.
+     4. *Group Aggregations and Target Encoding*
+          * *GPU-accelerated* grouping (using |cudf|) was employed for
+            faster computation of statistics such as mean, std, min,
+            max, median, count, and skew.
+          * Multiple aggregations were performed, including grouping by
+            |Weight Capacity (kg)| and the COMBO features.
+          * Additionally, *Target Encoding* (implemented via |
+            cuml.preprocessing.TargetEncoder|) was applied to the
+            columns in |BASE_FEATURES|. As a result, each feature is
+            replaced by the (smoothed) average |Price| within its category.
+     5. *Missing Value Indicators (|_NaN_*|)*
+          * For each of the 7 main categorical features, a missing
+            indicator was defined (e.g., |_NaN_Brand| = 1 if |Brand|
+            equals ‘Missing’).
+          * Additionally, the column |_7_NaNs| sums up the number of
+            missing values across all key fields.
+ 2. *Autoencoder for Feature Extraction with a Supervised Layer*
+      * An *autoencoder* (built with Keras + TensorFlow) was constructed
+        and trained, featuring two main output branches:
+         1. Reconstruction of the original numerical features
+            (reconstructed = |Weight Capacity (kg)|),
+         2. Prediction of the target value (|Price|) in the supervised
+            branch.
+      * Consequently, the hidden layer (|latent|) contains a
+        representation of the numerical features that also “knows” how
+        to assist in predicting the price.
+      * The |latent| vector becomes a valuable feature appended to the
+        final input of the models.
+ 3. *Models and Ensembling*
+      * Four *tree-based* models were utilized: LightGBM, XGBoost,
+        XGBoost (with a different configuration), and CatBoost.
+      * Finally, *stacking* was applied: the prediction vector from
+        (LGBM, XGB, XGB2, CatBoost) is used as input to a
+        *BayesianRidge* model, which finalizes the ensemble prediction.
+      * The coefficients of the tree-based models and BayesianRidge are
+        tuned to minimize the RMSE.
+
+------------------------------------------------------------------------
+
+
+    Training and Prediction
+
+  * *10-fold KFold* for result stabilization,
+  * Each iteration generates Out-Of-Fold (OOF) predictions from 4 models
+    (LGBM, XGB, XGB3, CatBoost),
+  * *Stacking* (using BayesianRidge),
+  * The final test prediction is the output of the Bayesian model
+    applied to the stacked predictions.
+  * The submission that achieved the best result was carefully blended
+    with several public submissions
+
+------------------------------------------------------------------------
+
+*In Summary:*
+
+The notebook makes intensive use of feature engineering – both /
+classical/ (group aggregations, target encoding, handling missing
+values) and more /advanced/ (autoencoder, distance features, external
+price data). The final ensembling combines several tree-based models and
+leverages BayesianRidge in the last layer, which further stabilizes the
+results and reduces RMSE.
+
+------------------------------------------------------------------------
+
+*A Few Loose Thoughts – from a Newbie to Newbies*
+
+I’ve done many things in life, but none of them had anything to do with
+IT. About three months ago, I started learning Python and SQL, and only
+two months ago did I discover Kaggle, so everything I write about my
+competition experiences might contain errors, and I might be mistaken.
+
+I’ve played many games, and often the deciding factor was whether a game
+was challenging enough. Kaggle is the most challenging game I know, and
+the satisfaction from it is on a completely different level.
+
+*A Few Loose Thoughts – from a Newbie to Newbies*, which ran through my
+mind at the finish of the *Backpack Prediction Challenge*. Perhaps
+tomorrow I’ll have different conclusions, so please don’t attach too
+much importance to them. The reflections from the end of the competition
+are mainly non-technical, as I’ll only be ready to tackle those in a few
+months.
+
+  * *Never spend too much time on the fundamental understanding of key
+    aspects of the competition, even those that seem the simplest.* If I
+    thought I understood something, I often discovered there was more to
+    it. Even if we don’t find anything entirely new, delving into topics
+    such as evaluation metrics or exploratory data analysis (EDA) can
+    inspire ideas that seem to come from a completely different area.
+  * *Chasing the leaderboard score from the very beginning* might not be
+    the best strategy.
+  * *Optimization* – it allows for rapid testing of ideas, and sometimes
+    it can prove crucial at the end of the competition, when models
+    start growing and merging.
+  * *The desire to win* serves as a fantastic learning method, or at
+    least I hope so.
+  * *Theory vs. Practice* – it seems to me that training dozens, or even
+    hundreds, of different models offers more insights than reading a
+    few books. Concepts I repeatedly read about before but couldn’t
+    grasp now seem obvious.
+  * *Creativity and unconventional ideas* are rewarded, but they should
+    be applied at the right moment – for instance, in the middle of the
+    competition when I couldn’t enhance the signal found by XGB using
+    standard methods. After testing a dozen very strange solutions, I
+    discovered a function that significantly improved the score. This
+    function amplified the deviation from the median prediction—the
+    greater the deviation, the higher the value. However, as I refined
+    the model, I noticed that this idea ceased to work as the prediction
+    quality improved.
+  * *Experimentation* – I believe that I will once again discover
+    something interesting that no one else has thought of, but now I
+    know it’s best to search and experiment later, rather than in the
+    middle of the competition.
+  * *Hardware* – I performed the vast majority of computations on the
+    free resources provided by Kaggle (my own hardware is much weaker).
+    Although I spent most of the last few days of the competition on an
+    ultimately unsuccessful attempt to optimize my automatic feature
+    selector, I believe this is not a barrier. I’d bet it was possible
+    to win even on a CPU, plus a great idea.
+  * *Overall Planning* – if I were to start this competition over again,
+    I would do everything differently, focusing primarily on refining
+    one model and methods for discovering new, strong features, and
+    perhaps incorporating more models at the end for a better outcome.
+  * *Selection of Kaggle Materials* – it’s crucial to carefully select
+    the materials we use. Gathering three or four excellent ideas from
+    public notebooks, at least at the Playground stage, already provides
+    a lot.
+  * *Chris Deotte* – if you come across his posts, just stick around longer.
+
+------------------------------------------------------------------------
+
+What do you think? What experiences do you have?
+
+------------------------------------------------------------------------
+
+Good luck to everyone in future competitions.
+
+Thank you all for a wonderful competition.
+
+See you on the trail and at the top of the LB.
+
+------------------------------------------------------------------------
+
+Sebastian Kruszek
+automatylicza@gmail.com <mailto:automatylicza@gmail.com>
+
+------------------------------------------------------------------------
+
+*Codziennie Silniejsi!*
+
+Author
+
+<https://www.kaggle.com/automatylicza>
+automatylicza <https://www.kaggle.com/automatylicza>
+
+automatylicza
+
+arrow_drop_up
+
+32
+
+Share
+
+more_horiz
+
+yay11kaggle3surprise1
+add_reaction
+
+comment
+
+
+    15 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s5e2/writeups/automatylicza-knai-3rd-place-solution-in-three-
+wor#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/druanli>
+
+
+      Dang Nguyen Le
+
+<https://www.kaggle.com/druanli>
+
+Posted a year ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Excellent work; you did a great job on this!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/narsil>
+
+
+      narsil (jobs-in-data.com)
+
+<https://www.kaggle.com/narsil>
+
+Posted a year ago
+
+· 442nd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+This is an amazing result. You just started… it is great to see our
+group KNAI stronger and stronger on Kaggle leaderboards!
+
+Codziennie Silniejsi! (Our motto is btw exactly what all Grandmasters
+say - Kaggle is about iteration and being better 1% every day).
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/przemysawonr>
+
+
+      Jimmer
+
+<https://www.kaggle.com/przemysawonr>
+
+Posted a year ago
+
+· 126th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Gratuluję! Codziennie Silniejsi! JUHUUU!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/payal156>
+
+
+      payal156
+
+<https://www.kaggle.com/payal156>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+This is some tough job - all made easy due to your perseverance! Thanks!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/michau96>
+
+
+      Michal Bogacz
+
+<https://www.kaggle.com/michau96>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@automatylicza <https://www.kaggle.com/automatylicza> Gratulacje!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/olabodejames>
+
+
+      Olabode James
+
+<https://www.kaggle.com/olabodejames>
+
+Posted a year ago
+
+· 2879th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Sebastian, this is an amazing effort - and what is remarkable is that
+you started with serious kaggling 3 months ago - please stay around for
+long, as I believe there is still a lot of potential where your amazing
+solution came from, looking forward to more competition entry from you
+and good luck on future competitions.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sarunpm>
+
+
+      Sarun P M
+
+<https://www.kaggle.com/sarunpm>
+
+Posted a year ago
+
+· 128th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+🌺 Congrats on the third price, and thanks for sharing the details. 🌺
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pawelstepanov>
+
+
+      PawelStepanov
+
+<https://www.kaggle.com/pawelstepanov>
+
+Posted a year ago
+
+· 99th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations. Great idea and very good explanation. I wanted to ask
+how much the results improved using Distance Features?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/automatylicza>
+
+
+      automatylicza
+
+<https://www.kaggle.com/automatylicza>
+Topic Author
+
+Posted a year ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hi
+I don't know exactly, I don't have it in my notes but from what I
+remember it was significant.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pawelstepanov>
+
+
+      PawelStepanov
+
+<https://www.kaggle.com/pawelstepanov>
+
+Posted a year ago
+
+· 99th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Got it, thank you
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/brianketelboeter>
+
+
+      Brian Ketelboeter
+
+<https://www.kaggle.com/brianketelboeter>
+
+Posted a year ago
+
+· 2492nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Awesome summary. You obviously have advanced quite quickly,
+congratulations. I completely agree that the best idea is just to spend
+your time on building models, working on data etc. over reading. You
+have amazing skills.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/rushilunagariya>
+
+
+      Rushi Lunagariya
+
+<https://www.kaggle.com/rushilunagariya>
+
+Posted a year ago
+
+· 1854th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+This is good approach @automatylicza <https://www.kaggle.com/
+automatylicza>. Thanks for sharing it.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hridaysamdani3003>
+
+
+      HRIDAY SAMDANI
+
+<https://www.kaggle.com/hridaysamdani3003>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+As you rightly mentioned about learning, I would like to study your
+notebook if you could please share to gain some insights as I am also
+new to machine learning, but an ardent learner
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/justintrans>
+
+
+      Justin Tran
+
+<https://www.kaggle.com/justintrans>
+
+Posted a year ago
+
+· 3079th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+This summary has helped me understand, as a beginner, what I should be
+focusing my attention to. Thank you.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/chanhee0129>
+
+
+      Chanhee0129
+
+<https://www.kaggle.com/chanhee0129>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulation!
+Good Summary!
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (1)
+
+<https://www.kaggle.com/haoyuliao14116>
+
+
+      Howard Liao
+
+<https://www.kaggle.com/haoyuliao14116>
+
+Posted a year ago
+
+· 88th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you for sharing it.
+

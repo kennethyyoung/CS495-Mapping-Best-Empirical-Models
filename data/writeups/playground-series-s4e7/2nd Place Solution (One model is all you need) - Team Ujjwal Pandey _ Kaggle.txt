@@ -1,0 +1,794 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification of Insurance Cross Selling
+
+        <https://www.kaggle.com/competitions/playground-series-s4e7>
+      o
+
+        2nd Place Solution (One model is all you need) - Team Ujjwal Pandey
+
+        <https://www.kaggle.com/competitions/playground-series-s4e7/
+        writeups/ujjwal-pandey-2nd-place-solution-one-model-is-all->
+      o
+
+        Winning approach- Team Cross Sellers
+
+        <https://www.kaggle.com/competitions/playground-series-s4e7/
+        writeups/cross-sellers-winning-approach-team-cross-sellers>
+      o
+
+        Regression with an Insurance Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e12>
+      o
+
+        First Place - Single Model - [CV 1.016 LB 1.016]
+
+        <https://www.kaggle.com/code/cdeotte/first-place-single-model-
+        cv-1-016-lb-1-016>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd Place Solution (One model is all you need) - Team Ujjwal Pandey —
+Binary Classification of Insurance Cross Selling
+
+
+  2nd Place Solution (One model is all you need) - Team Ujjwal Pandey
+
+Binary Classification of Insurance Cross Selling
+
+<https://www.kaggle.com/competitions/playground-series-s4e7>
+
+Solution Writeup · 2nd place · Aug 1, 2024
+
+Hi everyone,
+I would like to extend my gratitude to the Kaggle community and fellow
+participants for an incredible Playground Series episode. This was a
+resource-intensive and time-consuming challenge, demanding a great deal
+of patience to achieve victory. The frequent movement on the public
+leaderboard, especially in the last 2-3 days, reflected the intense
+competition.
+Here's my journey broken into iterations.
+
+
+    Iteration 1
+
+In my initial attempt, I trained a quick, lightly tuned set of models
+(XGB, LGBM, and SnapML <https://ibm.github.io/ai-on-z-101/snapml/>) on
+my local PC equipped with an RTX 4070.
+
+  * The XGB submission was smooth, achieving a Public LB score of |
+    0.88448| with a CV score of |0.8833|.
+  * I faced a problem with LightGBM CUDA flavor because of this bug
+    [CUDA] illegal memory access <https://github.com/microsoft/LightGBM/
+    issues/6512>. Consequently, I had to drop LightGBM from the first
+    iteration.
+  * I did not pursue Random Forest or any sklearn libraries, as public
+    discussions and notebooks indicated they were not worth the
+    computational effort
+  * SnapML usually takes a lot of time on even light datasets but I
+    tried it anyway as it has GPU support but it also achieved an LB
+    score close to |0.8880|.
+
+
+    At the end of this iteration, my score was around |0.88|. To breach
+    the |0.89| mark, I needed further improvements. I had not yet
+    explored CatBoost, as public forums suggested its default settings
+    could yield scores exceeding |0.895|.
+
+
+    Iteration 2
+
+A determined effort to tune XGB, LGBM, and SnapML to match CatBoost's
+performance:
+
+  * I aggressively tuned XGB and SnapML using distributed *Optuna* on
+    four machines (2 x Kaggle GPU P100, 1 x L4 from Colab, 1 x RTX 4070
+    from my local setup). To avoid OOM errors during HPO, I didn't load
+    the test set into memory.
+  * In this stage I also merged the original dataset and created these
+    four additional interaction features from public notebooks.
+
+|train_df['Insured_Vehicle_Damage']=  train_df['Previously_Insured'].astype(str) +  train_df['Vehicle_Damage'].astype(str)
+train_df['Insured_Vehicle_Age'] =  train_df['Previously_Insured'].astype(str) +  train_df['Vehicle_Age'].astype(str
+train_df['Insured_License'] =  train_df['Previously_Insured'].astype(str) +  train_df['Driving_License'].astype(str)
+train_df['Insured_License'] =  train_df['Previously_Insured'].astype(str) +  train_df['Driving_License'].astype(str)
+train_df['Insured_Gender'] =  train_df['Previously_Insured'].astype(str) +  train_df['Gender'].astype(str)
+)
+
+|
+content_copy
+
+  * The tuned XGBoost achieved a public LB score of |0.89387| with a CV
+    score of |0.89113|.
+  * I tuned LightGBM on CPU using three machines (1 x TPU on Kaggle and
+    2 x TPUs on Colab). This model achieved a public LB score of |
+    0.89344| with a CV score of |0.89302|. A challenge with using TPU on
+    Kaggle is the automatic shutdown after 3 hours when TPU is not
+    consumed, but distributed tuning allowed me to quickly resume training
+  * Next was SnapML though sadly this model couldn't even breach the |
+    0.890| on my CV and hence I filtered this out after this iteration ☹️.
+  * After seeing the performance of neural nets from public discussions
+    and notebooks I gave it a try. There's an awesome library pytorch-
+    tabular <https://pytorch-tabular.readthedocs.io/en/latest/
+    tutorials/01-
+    Approaching%20Any%20Tabular%20Problem%20with%20PyTorch%20Tabular/>
+    which I used to train |TABNET| and |GANDALF| and they also achieved
+    CV score of |~0.8910| but they are very expensive to train and
+    didn't offered better performance compared to GBDT.
+
+
+    At the end of this stage I had LB score of |~0.8930| so my next
+    stage was to close this gap by trying some different techniques.
+
+
+    Iteration 3
+
+  * I attempted to use neural embeddings from pytorch-tabular <https://
+    pytorch-tabular.readthedocs.io/en/latest/> |CategoryEmbedding| model
+    to boost the scores of LightGBM and XGBoost. This was a mistake, as
+    the embeddings turned out to be close to 300 dimensions, requiring
+    high RAM. An initial spike in my CV score to 0.895 was due to a bug
+    caused by a seed mismatch, which I discovered too late after
+    exhausting my Colab credits ☹️.
+  * I tried target encoding to some extent but even that wouldn't push
+    the score of XGB or LGBM ☹️ .
+
+
+    At this point, I considered skipping the episode, having exhausted
+    nearly all my compute resources and time with no guarantee of
+    success. With around 30 submissions, I decided to give CatBoost one
+    final attempt.
+
+
+    Final Iteration
+
+At this stage, I tuned just one catboost model (just one) using again
+the same strategy distributed optuna on 3 x machines close to 50 HPO
+rounds, took about 10 hours because unfortunately, catboost GPU doesn't
+support pruner as compared to XGB and LightGBM. These were my parameters
+after HPO tuning.
+
+|'learning_rate': 0.11913236771124495,
+'reg_lambda': 0.5423732686916918,
+'max_depth': 6,
+'subsample': 0.9996168133883909,  # I changed this to 1.0 when training full model.
+'leaf_estimation_iterations': 10,
+'log_max_bin': 15
+
+|
+content_copy
+
+These were my fixed params for HPO
+
+|"loss_function": "Logloss",
+"eval_metric": "AUC",
+"iterations": 3000,
+"random_state": 56315,
+"bootstrap_type": "Bernoulli",
+"grow_policy": "SymmetricTree",
+"task_type": "GPU",
+"early_stopping_rounds": 100,
+"leaf_estimation_method": "Newton",
+"use_best_model": True,
+
+|
+content_copy
+
+
+
+The above parameters when trained to 5000 iterations with some tweak
+would achieve a public LB of |0.89666| but it isn't enough to win it.
+Through my small experiments on Kaggle notebooks I observed two
+important things.
+
+
+ 1. I can manually reduce the learning rate to |0.085| and increase the
+    iterations to |10000|.
+
+ 2. Newton-based |score_function| is superior to Gradient-based. I guess
+    this is what most of the public notebooks missed. As soon as I
+    switched to |NewtonCosine| or |NewtonL2| and used 12 |
+    leaf_estimation_iterations| my CV itself was close to |0.8960|.
+
+    Additionally, I removed contrasting duplicates first from the
+    original and then from both train and original after combining as
+    discussed in this discussion: [https://www.kaggle.com/competitions/
+    playground-series-s4e7/discussion/520253](https://www.kaggle.com/
+    competitions/playground-series-s4e7/discussion/ <https://
+    www.kaggle.com/competitions/playground-series-s4e7/
+    discussion/520253](https://www.kaggle.com/competitions/playground-
+    series-s4e7/discussion/>. I also Binned Aged and Premium features as
+    I found it slightly increases my validation scores.
+
+    After experimenting with everything I divided the dataset into 4
+    folds. I wasn't able to train all the folds together and even
+    training a single fold was not possible on Kaggle as catboost
+    required close to (48 gigs) of RAM post-training.
+
+    I trained the first 3 fold on colab with my remaining computes and
+    the submission this time achieved an LB score of |0.89720| putting
+    me in top 10 but after doing the trick as mentioned by @paddykb
+    <https://www.kaggle.com/paddykb> it got boosted to |0.89780| .
+
+    To finally settle the score I trained small-small versions of
+    catboost with same parameter and reduced iterations on Kaggle with
+    different CV-spilt and random states and did average solely based on
+    validation scores (as at this point I didn't had OOF folds to
+    properly blend with) which settled my final score without trick to |
+    0.89728| and with the trick to |0.89788| which was the winning
+    solution with private LB score of |0.89753|.
+
+    These were my final CV-LB scores of the fold without any trick.
+
+    Fold 	CV score 	LB Score 	
+    Fold-0 	0.8960367441 	0.89625
+    	
+    Fold-1 	0.8962229192 	0.89629
+    	
+    Fold-2 	0.8962465823 	0.89632
+    	
+    Fold-3 	0.8959594369 	0.89620
+    	
+    **Fold-4 	0.8958430433 	-
+    	
+    **|Fold-4| is average of all my small models.
+
+
+    Summary
+
+
+      Key Takeaways
+
+ 1. Monitor discussions and public notebooks to save experimentation and
+    compute time, allowing calculated decisions with fewer submissions.
+ 2. Be patient with large datasets and try different training
+    strategies. Mistakes are learning opportunities.
+ 3. Distributed optimization is faster, more affordable, and has better
+    error tolerance, especially in competitions like this.
+ 4. Be wary of leakage, even with changing random states, especially in
+    neural embeddings.
+
+
+      What Didn’t Work
+
+ 1. Target encoding with XGB and LGBM.
+ 2. Neural embeddings didn't boost performance enough compared to the
+    compute required.
+ 3. Changing the default |max_ctr_complexity| of CatBoost overfit in my
+    case.
+
+
+      What I Could Have Done
+
+ 1. Saving OOF folds and combining would have boosted my score though I
+    couldn't due to their large size.
+ 2. Exploring neural networks more.
+ 3. Trying different CatBoost flavors (maybe lossguide).
+
+
+    #
+
+Special thanks to @ravi20076 <https://www.kaggle.com/ravi20076>,
+@arunklenin <https://www.kaggle.com/arunklenin>, @tilii7 <https://
+www.kaggle.com/tilii7>, and @optimistix <https://www.kaggle.com/
+optimistix> for the healthy competition, and @paddykb <https://
+www.kaggle.com/paddykb>, @ivanmitriakhin <https://www.kaggle.com/
+ivanmitriakhin>, @rzatemizel <https://www.kaggle.com/rzatemizel> for the
+trick.
+
+Author
+
+<https://www.kaggle.com/uryednap>
+Ujjwal Pandey <https://www.kaggle.com/uryednap>
+
+uryednap
+
+arrow_drop_up
+
+45
+
+Share
+
+more_horiz
+
+thankYou3
+add_reaction
+
+comment
+
+
+    15 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 4th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Wonderful solution, and a timely reminder to look into
+all the hyperparameters in great detail.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ayushparwal>
+
+
+      ayushokaay
+
+<https://www.kaggle.com/ayushparwal>
+
+Posted 2 years ago
+
+· 368th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Nice solution. congrats for rank 2 @uryednap <https://www.kaggle.com/
+uryednap>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/harshitstark>
+
+
+      Harshit Sharma
+
+<https://www.kaggle.com/harshitstark>
+
+Posted 2 years ago
+
+· 401st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations on your impressive 2nd place finish, @uryednap <https://
+www.kaggle.com/uryednap> ! Your strategic approach, particularly the use
+of distributed Optuna for tuning and insights from the Kaggle community,
+are truly commendable.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I appreciate your strategy and your overall approach to the problem.
+This is a fantastic learning experience for me @uryednap <https://
+www.kaggle.com/uryednap>
+
+replyReply
+love3
+add_reaction
+
+<https://www.kaggle.com/buixuantruong97>
+
+
+      Xuan Truong Bui
+
+<https://www.kaggle.com/buixuantruong97>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks so much for sharing your thought process! Could I ask why you
+needed to create the four additional interaction features? I'm new to this
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/taraspedchenko>
+
+
+      Taras Pedchenko
+
+<https://www.kaggle.com/taraspedchenko>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! Nice approach
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/marifel>
+
+
+      MariFel
+
+<https://www.kaggle.com/marifel>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+@uryednap <https://www.kaggle.com/uryednap> could be shar your notebook?
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/abdalrhamnhebishy>
+
+
+      AbdalRhamn Hebishy
+
+<https://www.kaggle.com/abdalrhamnhebishy>
+
+Posted 2 years ago
+
+· 1555th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Great Work .
+Congratulations,wonderful solution
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/introverstein>
+
+
+      Bhargav Borah
+
+<https://www.kaggle.com/introverstein>
+
+Posted 2 years ago
+
+· 1043rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! Got to know about lots of new stuff!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/monsieurbongo>
+
+
+      Oumar KEITA
+
+<https://www.kaggle.com/monsieurbongo>
+
+Posted 2 years ago
+
+· 804th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Amazing job !
+Congratulations.
+I have learnt a lot of things from this solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+That was some industrious work - congratulations! You could have dusted
+off all of us big time by combining multiple models, though I understand
+that resources played a part in making that difficult.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arunklenin>
+
+
+      Minato Namikaze
+
+<https://www.kaggle.com/arunklenin>
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! @uryednap <https://www.kaggle.com/uryednap> amazing
+work and thank you for sharing the solution write-up.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/oscarm524>
+
+
+      Oscar Aguilar
+
+<https://www.kaggle.com/oscarm524>
+
+Posted 2 years ago
+
+· 9th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks for sharing your approach, @uryednap <https://www.kaggle.com/
+uryednap>. I really like how your approach started improving step by
+step; this is the data science journey!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/chiragmalhan22>
+
+
+      Chirag Malhan
+
+<https://www.kaggle.com/chiragmalhan22>
+
+Posted 2 years ago
+
+· 364th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hey,
+
+Thanks for being so honest about your process of taking inspiration from
+public notebooks. This was my first-ever competition, and I was
+experiencing massive imposter syndrome because I was mixing public
+notebook ideas with my own experimentation and still not moving past the
+top 300 rankers. It's reassuring to know that this was a common practice
+among the top rankers as well.
+
+Your insights were quite inspiring and interesting. Hopefully, I’ll give
+you a better competition in the next one.
+
+Cheers!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/uryednap>
+
+
+      Ujjwal Pandey
+
+<https://www.kaggle.com/uryednap>
+Topic Author
+
+Posted 2 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Taking inspiration from public notebooks and especially discussions is
+an excellent way to minimize experimentation time. My approach involves
+looking at their CV scores and comparing them with my own results. If my
+method outperforms theirs, I proceed with confidence; otherwise, I
+incorporate their ideas into my strategy. Always evaluate a notebook
+based on its CV scores.
+
+I always avoid notebooks that blend others' work, even if they have high
+scores. Relying on copied or incorporated methods limits your growth.
+Achieving a top rank this way is less fulfilling and doesn't provide the
+same level of satisfaction.
+
+replyReply
+add_reactionReact
+

@@ -1,0 +1,1214 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Diabetes Prediction Challenge
+
+        <https://www.kaggle.com/competitions/playground-series-s5e12>
+      o
+
+        [2nd Place] Winning based on ID Shift Analysis
+
+        <https://www.kaggle.com/competitions/playground-series-s5e12/
+        writeups/2nd-place-solution-winning-based-on-id-shift-an>
+      o
+
+        1st Place Solution | Hill Climbing + Ridge Ensemble
+
+        <https://www.kaggle.com/competitions/playground-series-s5e12/
+        writeups/1st-place-solution-hill-climbing-ridge-ensembl>
+      o
+
+        Predict Calorie Expenditure
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5>
+      o
+
+        ３rd Place - Diversity and Hill Climbing
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5/
+        writeups/nice-kazusan-rd-place-diversity-and-hill-climbing>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+[2nd Place] Winning based on ID Shift Analysis — Diabetes Prediction
+Challenge
+
+
+  [2nd Place] Winning based on ID Shift Analysis
+
+or I‘m just lucky
+
+Diabetes Prediction Challenge
+
+<https://www.kaggle.com/competitions/playground-series-s5e12>
+
+Solution Writeup · 2nd place · Dec 31, 2025
+
+fullscreen
+
+Micro-Scan of the Tail Transition
+
+
+    Thanks
+
+Happy New Year! This month-long marathon is finally over!
+Congratulations to all the winners! I want to thank the organizers for
+hosting this interesting competition.
+
+This was my first time participating in a Playground Series, and I truly
+poured my heart and soul into it. I started learning ML and joined
+Kaggle in March 2025, so it has been 9 months now. This is a wonderful
+New Year's gift. I hope to share this joy with all Kagglers in the
+community, and I wish you all the best in 2026!!!
+
+
+    Learning from discussion
+
+Since the start of this competition, I almost never looked at the public
+notebooks in the code section because it was filled with "upvote bait"—
+notebooks where people simply mix others' kernels to farm upvotes.
+Additionally, there were one or more arrogant cheaters using multiple
+accounts to perform "blind blending."
+
+In contrast, the discussion section contained a lot of high-quality
+content. I read every single post in the discussions in detail and drew
+significant inspiration from them:
+
+
+      Orig FE
+
+@masayakawamata <https://www.kaggle.com/masayakawamata> shared in this
+post <https://www.kaggle.com/competitions/playground-series-s5e12/
+discussion/648186> that using statistical features from the original
+dataset could lead to score improvements. This indeed increased my score
+slightly; however, I didn't perform any aggressive Feature Engineering,
+so I only attempted to use the most fundamental statistics.
+
+
+      The weird dataset
+
+@tilii7 <https://www.kaggle.com/tilii7> mentioned in this post <https://
+www.kaggle.com/competitions/playground-series-s5e12/discussion/652262>
+that this dataset is very strange. The organizers distorted the feature
+distributions and removed decisive strong features, resulting in an
+inconsistency between the Train and Test distributions. To be honest, at
+that point, I even considered giving up on the competition.
+
+
+      ID Shift
+
+The turning point came with this post <https://www.kaggle.com/
+competitions/playground-series-s5e12/discussion/659313> by
+@laureanoarcanio <https://www.kaggle.com/laureanoarcanio> . I strongly
+recommend everyone read this post as it was the pivotal moment of this
+competition. He mentioned a phenomenon: using |id| as a feature
+surprisingly boosts the LB score.
+
+Furthermore, @alan1305 <https://www.kaggle.com/alan1305> pointed out:
+
+    One possible reason could be the interaction of id and
+    physical_activity_minutes_per_week. If we plot the rolling mean of
+    physical_activity_minutes_per_week, it shifts to test distribution
+    at the end of train dataset. Therefore, including id may help
+    indicate which row is "closer" to test set.
+
+I conducted an Adversarial Validation analysis (Micro-Scan of the Tail
+Transition) and found that this phenomenon indeed exists: *the closer
+the data is to the tail, the closer its distribution is to the test set.*
+
+This is actually a serious case of ID leakage, but given the significant
+shift between train and test, this finding was crucial. (I honestly
+don't know why @alan1305 <https://www.kaggle.com/alan1305> only received
+5 upvotes… This was clearly a game-changing finding, yet people were
+busy upvoting public blind-blending notebooks…)
+
+
+      A validation strategy
+
+In this post <https://www.kaggle.com/competitions/playground-series-
+s5e12/discussion/662501>, @masayakawamata <https://www.kaggle.com/
+masayakawamata> proposed a new validation strategy. Since the tail data
+better "represents" the test set, it makes sense to use the tail data
+directly for CV. He also introduced sample weighting.
+
+
+      Concept Shift
+
+@siukeitin <https://www.kaggle.com/siukeitin> mentioned in this post
+<https://www.kaggle.com/competitions/playground-series-s5e12/
+discussion/663033> that simple sample weighting doesn't work well
+because there is *Concept Shift*.
+
+I also conducted experiments regarding this. More specifically, within
+the training set, the more the data resembles the test set (low
+covariate shift), the greater the concept shift becomes. I divided the
+data into 10 bins and found that samples with the smallest covariate
+shift had the largest discrepancy in label distribution, whereas the
+original dataset did not suffer from this issue.
+
+|CUTOFF_ID = best_id
+
+cat_cols = train.select_dtypes(include=['object']).columns.tolist()
+for col in cat_cols:
+    le = LabelEncoder()
+    train[col] = le.fit_transform(train[col].astype(str))
+
+train_ids = train['id'].values
+cutoff_mask = train_ids >= CUTOFF_ID
+
+X_tail = train.loc[cutoff_mask].drop(columns=['id', 'diagnosed_diabetes'])
+y_adversarial_tail = pd.Series(1, index=X_tail.index)
+
+X_head = train.loc[~cutoff_mask].drop(columns=['id', 'diagnosed_diabetes'])
+y_adversarial_head = pd.Series(0, index=X_head.index)
+
+X_adv_train = pd.concat([X_head, X_tail], axis=0)
+y_adv_train = pd.concat([y_adversarial_head, y_adversarial_tail], axis=0)
+
+print(f"1. Training Discriminator: Head({len(X_head)}) vs Tail({len(X_tail)})...")
+params = {
+    'objective': 'binary',
+    'metric': 'auc',
+    'n_estimators': 500, 
+    'learning_rate': 0.05,
+    'num_leaves': 31,
+    'n_jobs': -1,
+    'random_state': 42,
+    'verbose': -1
+}
+
+model = lgb.LGBMClassifier(**params)
+model.fit(X_adv_train, y_adv_train)
+
+print("2. Evaluating Head samples...")
+head_similarity_score = model.predict_proba(X_head)[:, 1]
+
+head_true_labels = train.loc[~cutoff_mask, 'diagnosed_diabetes'].values
+
+df_eval = pd.DataFrame({
+    'tail_similarity': head_similarity_score,
+    'true_label': head_true_labels
+})
+
+# Binning
+df_eval['bin'] = pd.qcut(df_eval['tail_similarity'], q=10, labels=False, duplicates='drop')
+
+agg = df_eval.groupby('bin', observed=False).agg({
+    'true_label': ['count', 'mean'],
+    'tail_similarity': 'mean'
+})
+agg.columns = ['count', 'target_mean', 'similarity_mean']
+
+true_tail_mean = train.loc[cutoff_mask, 'diagnosed_diabetes'].mean()
+
+print(agg)
+print(f"\nTail Set True Mean: {true_tail_mean:.4f}")
+
+plt.figure(figsize=(12, 6))
+bars = sns.barplot(x=agg.index, y=agg['target_mean'], color='skyblue', alpha=0.8)
+
+for i, v in enumerate(agg['target_mean']):
+    plt.text(i, v + 0.005, f"{v:.3f}", ha='center', va='bottom', fontsize=9, fontweight='bold')
+
+plt.axhline(true_tail_mean, color='red', linestyle='--', linewidth=2, label=f'True Tail Mean ({true_tail_mean:.3f})')
+
+plt.title(" Do 'Tail-like' Head samples have correct labels?", fontsize=14)
+plt.xlabel("Similarity to Tail (0=Unlikely, 9=Indistinguishable from Tail)", fontsize=12)
+plt.ylabel("Diabetes Rate (Target Mean)", fontsize=12)
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+|
+content_copy
+
+Result:
+
+|1. Training Discriminator: Head(677000) vs Tail(23000)...
+2. Evaluating Head samples...
+     count  target_mean  similarity_mean
+bin                                     
+0    67700     0.643648         0.019489
+1    67700     0.645583         0.021456
+2    67700     0.642836         0.022520
+3    67700     0.641832         0.023592
+4    67700     0.649926         0.025069
+5    67700     0.655465         0.027066
+6    67700     0.639764         0.029891
+7    67700     0.612186         0.034075
+8    67700     0.581004         0.041102
+9    67700     0.521359         0.070540
+
+Tail Set True Mean: 0.6214
+
+|
+content_copy
+
+Therefore, I decided to apply weighting to the Original dataset as well.
+
+
+    Modeling
+
+Based on the validation strategy derived from the analysis above, I
+trained a diverse set of models. The core philosophy was to force the
+models to learn the distribution of the "Tail" (which resembles the Test
+set) and the "Original" dataset (which holds the ground truth logic),
+while suppressing the noise from the "Head" of the training data.
+
+Here is the summary of the single models used in the final ensemble:
+
+Model Type 	Model Name 	Key Strategy / Features 	Cutoff AUC
+*LightGBM* 	|lgb| 	Baseline with interaction features & Categorical
+encoding. 	0.70435
+	|lgb_te| 	*Tail-based Target Encoding*: TE calculated using only Tail +
+Orig data. 	0.70382
+	|lgb_safe| 	*Feature Selection*: Dropped "toxic" features (high concept
+shift) like |physical_activity|. 	0.67464
+	|lgb_pseudo| 	*Pseudo-Labeling*: Trained on Tail + Pseudo-labeled Test
+data (Top/Bottom confidence).
+Applied *Quantile Mapping* to fix distribution. 	0.70081
+*XGBoost* 	|xgb| 	Baseline XGBoost with standard parameters. 	0.70335
+	|xgb_weighted| 	*Sample Weighting*: *Tail (16x)*, *Orig (8x)*, Head
+(1x). 	0.703??*
+	|xgb_binned| 	*Binning*: Extensive binning of numerical features +
+Target Encoding from Original data. 	0.69898
+	|xgb_pl_soft| 	*Soft Pseudo-Labeling*: Regression objective (|
+reg:squarederror|) on soft labels from best sub. 	0.70231
+	|xgb_residual| 	*Residual Modeling*: Boosting over a fixed base margin
+derived from Tail Mean. 	0.70474
+*CatBoost* 	|cat_weighted| 	*Sample Weighting*: Same 16x/8x/1x strategy
+as XGBoost. 	0.70489
+	|cat_inter| 	*Explicit Interactions*: Manually created interaction
+features (e.g., |gender_age|). 	0.70489
+*NN* 	|nn_dae| 	*DAE* + *Fine-tuning on Tail only*. 	0.70034
+	|nn_stacking| 	Stacked Neural Network (Input: OOF predictions). 	0.70616
+*Linear/Other* 	|tail_lr| 	*Tail-Only LR*: Logistic Regression trained /
+only/ on the last 10% of data.
+Post-processed with Quantile Mapping. 	0.70345
+	|tail_gam| 	*Tail-Only GAM*: Generalized Additive Model trained on Tail
+data. 	0.69325
+
+/> Note: The Cutoff AUC is calculated on the validation set defined by |
+id >= 678260| (approx. last 3% of train data)./
+
+
+      Ensemble Strategy
+
+Given the diverse nature of the models (Linear, GAM, NN, and various
+GBDTs), I used *Bagged Hill Climbing* to find the optimal weights.
+
+  *
+
+    *Method:* Bagged Hill Climbing (50 bags, 2000 iterations per bag)
+    optimizing for *Cutoff AUC*.
+
+  *
+
+    *Final Result:* The ensemble significantly improved the robustness.
+
+      o *Ridge Regression (Positive)*: 0.70751 Cutoff AUC
+      o *Bagged Hill Climbing (Best)*: *0.70771 Cutoff AUC*
+
+The final submission was generated using the weights from the Bagged
+Hill Climbing method.
+
+check here <https://www.kaggle.com/code/daylighth/2nd-place-solution-
+ensumble> if you need my notebook.
+what's more, I also have a notebook to record my hypothesis. You can
+check here <https://www.kaggle.com/code/daylighth/ps-s5e12-hypothesis>
+
+
+    Some advice for beginners
+
+I noticed that many participants in this competition appear to be new to
+machine learning. As a beginner myself, I completely understand the
+learning curve, so I’d like to share a few simple tips based on my
+experience:
+
+ 1. *Conduct purposeful EDA.*
+    The ultimate goal of Exploratory Data Analysis (EDA) is to guide
+    your modeling strategy. If your data analysis doesn't provide
+    insights for feature engineering or model selection—and is just
+    about plotting pretty charts—then I believe it lacks real value.
+    Always ask yourself: "How does this plot help me build a better model?"
+ 2. *Don't obsess over micro-tuning hyperparameters.*
+    Spending too much time fine-tuning parameters is often meaningless.
+    Changing the learning rate from |1e-4| to |1e-5| is rarely worth
+    wasting a submission. The most efficient approach is to spend that
+    time trying out diverse models or exploring new feature engineering
+    ideas.
+
+Finally, Happy New Year again to everyone! I wish you all the best and
+hope you win gold medals in your upcoming competitions!
+
+Author
+
+<https://www.kaggle.com/daylighth>
+DaylightH <https://www.kaggle.com/daylighth>
+
+daylighth
+
+arrow_drop_up
+
+76
+
+Share
+
+more_horiz
+
+
+    Project Links
+
+[PS-S5E12] Hypothesis
+
+5 months ago · 17 upvotes
+
+code
+ <https://www.kaggle.com/daylighth>
+
+Kaggle Notebook
+
+Public
+
+<https://www.kaggle.com/code/daylighth/ps-s5e12-hypothesis>
+[2nd Place Solution] Ensumble
+
+4 months ago · 78 upvotes
+
+code
+ <https://www.kaggle.com/daylighth>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://www.kaggle.com/code/daylighth/2nd-place-solution-ensumble>
+thankYou3love12
+add_reaction
+
+comment
+
+
+    21 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/kazuokumano>
+
+
+      kukazuo
+
+<https://www.kaggle.com/kazuokumano>
+
+Posted 4 months ago
+
+· 699th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+This article was a valuable source of information for me as a beginner.
+I plan to take my time to slowly decipher and learn. Thank you.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/alan1305>
+
+
+      Alan1305
+
+<https://www.kaggle.com/alan1305>
+
+Posted 4 months ago
+
+· 355th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations! I am impressed by your detailed analysis. Glad that
+your efforts paid off!
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/khangtran94vn>
+
+
+      Khang_94_VN
+
+<https://www.kaggle.com/khangtran94vn>
+
+Posted 4 months ago
+
+· 2344th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Crazy idea about ID Shift…. OMG @daylighth <https://www.kaggle.com/
+daylighth> Happy new year and cheer for you
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/santoshd3>
+
+
+      Santosh kumar
+
+<https://www.kaggle.com/santoshd3>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Impressive, great one
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/navneetbende>
+
+
+      Navneet
+
+<https://www.kaggle.com/navneetbende>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Bravo @daylighth <https://www.kaggle.com/daylighth>
+
+replyReply
+yay1
+add_reaction
+
+<https://www.kaggle.com/laureanoarcanio>
+
+
+      Laureano Arcanio
+
+<https://www.kaggle.com/laureanoarcanio>
+
+Posted 4 months ago
+
+· 282nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Thanks for sharing your hard work !
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/glitchartist>
+
+
+      Gaurav Jha
+
+<https://www.kaggle.com/glitchartist>
+
+Posted 4 months ago
+
+· 1460th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+NGL pretty impressed by your analysis and the effort you made for
+beginners like me to understand the data and experimenting before
+directly applying any model.
+i understood the main terms which are important for developing the best
+model :
+
+ 1. understanding the dataset
+ 2. experimenting with various models
+
+correct me if I am wrong.
+
+replyReply
+kaggle2
+add_reaction
+
+<https://www.kaggle.com/irakozekelly>
+
+
+      Irakoze Ntawigenga Kelly
+
+<https://www.kaggle.com/irakozekelly>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+much to be learn in this notebook!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/bassetkerouche>
+
+
+      abdelbasset Basto
+
+<https://www.kaggle.com/bassetkerouche>
+
+Posted 4 months ago
+
+· 484th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations and happy new year!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/y213ui>
+
+
+      Yu Liwei
+
+<https://www.kaggle.com/y213ui>
+
+Posted 4 months ago
+
+· 284th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations. This is my first competition and I just start to learn
+ML from it. It's difficult for me to understand all the post you
+mentioned. What should I do to learn ML as a beginner.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/daylighth>
+
+
+      DaylightH
+
+<https://www.kaggle.com/daylighth>
+Topic Author
+
+Posted 4 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Relax, my friend. To be honest, I don't have a profound background in ML
+theory, so I'm not sure if I'm qualified to give you advice on "learning
+ML." For a competition, understanding the data format and the rules
+might actually be more important.
+
+My post essentially answers just one question: Why did I choose these
+models?
+I included some models by borrowing ideas from the discussion section,
+others simply because I noticed their CV scores were high, and some to
+verify conclusions drawn from experiments. However, this approach is
+specific to this competition and lacks generalizability. What I mean is,
+if you enter a new competition with a new dataset, it likely won't have
+specific quirks like "the tail data resembles the test distribution."
+
+Therefore, when facing a new competition, you need to ask yourself: "Why
+am I choosing this model?" As long as you figure this out, even if you
+are a beginner, it is possible to achieve a good ranking.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/y213ui>
+
+
+      Yu Liwei
+
+<https://www.kaggle.com/y213ui>
+
+Posted 4 months ago
+
+· 284th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you very much.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mohammedrajaa>
+
+
+      Mohammed Rajaa
+
+<https://www.kaggle.com/mohammedrajaa>
+
+Posted 4 months ago
+
+· 472nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations.. great work and thank you for sharing 🖤
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/donmarch14>
+
+
+      Don Mani
+
+<https://www.kaggle.com/donmarch14>
+
+Posted 4 months ago
+
+· 4th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Well deserved!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/yunsuxiaozi>
+
+
+      yunsuxiaozi
+
+<https://www.kaggle.com/yunsuxiaozi>
+
+Posted 4 months ago
+
+· 255th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations and happy new year!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/daylighth>
+
+
+      DaylightH
+
+<https://www.kaggle.com/daylighth>
+Topic Author
+
+Posted 4 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Happy New Year to you too, pal! Thanks for your deep insights in the
+discussion section.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/wind1234it>
+
+
+      wind1234it
+
+<https://www.kaggle.com/wind1234it>
+
+Posted 4 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations on your excellent 2nd place finish, @daylighth <https://
+www.kaggle.com/daylighth> ! Starting to learn ML in March 2025 and
+achieving 2nd place in just 9 months is very impressive.
+
+Was your final selected submission the one with your highest Private LB
+score, or did you have better models that you didn't select for final
+evaluation?
+
+I ask because in my case I experimented with different Ridge alpha
+configurations and found interesting inconsistencies between CV scores,
+Public LB, and Private LB. I'm wondering if your tail-based validation
+approach gave you reliable and very clear signals for submission selection.
+
+Congratulations again, and Happy New Year!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/daylighth>
+
+
+      DaylightH
+
+<https://www.kaggle.com/daylighth>
+Topic Author
+
+Posted 4 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you for your question! Your 1st place finish is also very
+impressive! Your mindset is much stronger than mine — I learned from you
+that I shouldn't just blindly chase the LB.
+
+Actually, my highest-scoring solution that I didn't select (PB 0.70503)
+was based on my original approach with an added XGBoost model with
+linear constraints. But looking at the results, a difference of 0.00001
+isn't really significant. CV couldn't capture trends at such a fine
+level of precision, so I had to keep bagging and regularizing.
+
+During the competition, I found that the tail-based validation method
+occasionally showed consistent results, but there were also conflicting
+cases. What I found strange was that XGBoost and Logistic Regression had
+decent CV-LB consistency, but other models often showed CV-LB
+inconsistencies. I should learn from you and select more diverse models
+as backup submissions.
+
+Congratulations again on your 1st place! By the way, I really like your
+submission file naming format — I'll adopt that approach in the future too!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 4 months ago
+
+· 455th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Here is my file naming convention 😂
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/wind1234it>
+
+
+      wind1234it
+
+<https://www.kaggle.com/wind1234it>
+
+Posted 4 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+@daylighth <https://www.kaggle.com/daylighth> , your Public LB score of
+0.70502 is an outstanding result, especially as it was achieved with
+fewer models than in my case.
+
+I completely relate to your experience with CV-LB inconsistency across
+different model types. I also noticed that tree-based models showed more
+stable CV-LB alignment, while neural networks were less predictable, and
+in this competition I didn't use them extensively.
+
+Regarding the file naming approach — I actually adapted it from @tilii7
+<https://www.kaggle.com/tilii7> and @metamodels <https://www.kaggle.com/
+metamodels>, and I'm glad you find it useful as well. With this
+approach, I can immediately see when a file was created and its
+performance without opening it. The timestamp ensures unique filenames
+even when re-running the same model with some adjustments.
+A few lines of code make experimentation much faster — no manual
+renaming or risk of losing track of what's what:
+
+|ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+fname = f"{method_name}_auc{auc_post:.5f}_{ts}"
+
+# Save numpy arrays
+np.save(os.path.join(OUT_DIR, f"ensemble_oof_{fname}.npy"), oof_preds)
+np.save(os.path.join(OUT_DIR, f"ensemble_test_{fname}.npy"), test_preds)
+
+print(f"\n✓ Saved OOF predictions to: ensemble_oof_{fname}.npy")
+print(f"✓ Saved test predictions to: ensemble_test_{fname}.npy")
+
+|
+content_copy
+
+Again, congratulations on your amazing performance! Your efficiency with
+fewer models is really impressive.
+
+replyReply
+love2
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 4 months ago
+
+· 455th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Great job! This post should be a required reading for everyone starting
+in Kaggle competitions. Come to think of it, even for many people who
+have competed for a while.
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/daylighth>
+
+
+      DaylightH
+
+<https://www.kaggle.com/daylighth>
+Topic Author
+
+Posted 4 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you for your kind words. Every one of your posts is of master-
+level quality. In this competition, many top players like you didn’t
+even seriously participate—otherwise my result might have been even
+worse, haha. Still, being able to provide such deep insights without
+actually competing shows that I have a lot more to learn from GM Kaggler. 😄
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/phillipliu5269>
+
+
+      PhillipLiu5269
+
+<https://www.kaggle.com/phillipliu5269>
+
+Posted 4 months ago
+
+· 3742nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations! You are such a sharp person who can immediately
+identify the key points within a large amount of complex data! Could you
+please give some advice in the field of feature engineering for the
+beginners like me? I will extremely appreciate it!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/daylighth>
+
+
+      DaylightH
+
+<https://www.kaggle.com/daylighth>
+Topic Author
+
+Posted 4 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+6
+
+more_vert
+
+Hi, thanks for your comment! This is a very interesting question.
+
+    Could you please give some advice in the field of feature
+    engineering for beginners like me?
+
+For traditional ML competitions like this one, I think whether or not to
+do FE depends on a few key factors:
+
+ 1. *Understanding* is the most important thing. Our models are actually
+    “smarter” than us in some sense, so you must constantly try to
+    understand /what the model is actually seeing/. Take this
+    competition as an example: when I added |id| as a feature, both the
+    CV score and the LB score improved. By common sense, |id| should not
+    matter at all—it’s just a sample index. When something like this
+    happens, you need to stop and think: /is my model capturing some
+    hidden pattern that I haven’t noticed yet?/
+    This observation eventually led people in the discussion to infer
+    that the tail of the training data is closer to the test
+    distribution, which essentially determined the entire modeling
+    strategy afterward.
+ 2. Many of my feature engineering ideas came from *experiments*. In
+    this notebook <https://www.kaggle.com/code/daylighth/ps-s5e12-
+    hypothesis>, I recorded various experiments. For example, if we
+    assume that the tail dataset can accurately represent the test set,
+    Experiment 7 shows that a significant portion of features have
+    strong linear relationships. This explains why simple models like
+    logistic regression actually performed quite well in this competition.
+ 3. *Intuition*. It’s hard to clearly explain. Hmm… to be honest, most
+    of my code was generated by AI(of course I know how to modify and
+    validate it). AI can give you many suggestions about feature
+    engineering or model selection, but you must decide which ideas are
+    potentially valuable and which ones are just nonsense.
+    There is no trick or strict standard to determine whether AI is
+    lying, nor is there a formula to tell you "this approach is right,
+    and that one is wrong." Therefore, I believe intuitive judgment
+    plays a key role in decision-making.
+
+Of course, everything I mentioned above still doesn’t explain everything
+—after all, machine learning is largely an empirical discipline.
+If you have many ideas but aren’t sure whether they’re correct,*JUST DO
+IT*. Some ideas may turn out to be completely wrong, but that’s totally
+fine—the code can always be changed. Even if you end up with a very low
+score, at least you’ve learned that “this path doesn’t work.”
+In fact, the models I shared here are not all the ones I tried. They are
+only the ideas that worked. I experimented with many more feature
+engineering approaches and models behind the scenes.
+
+Happy New Year and have fun!
+
+replyReply
+add_reactionReact
+

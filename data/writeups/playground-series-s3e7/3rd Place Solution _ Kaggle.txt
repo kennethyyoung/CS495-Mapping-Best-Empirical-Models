@@ -1,0 +1,652 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification with a Tabular Reservation Cancellation
+        Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e7>
+      o
+
+        3rd Place Solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e7/
+        writeups/craig-thomas-3rd-place-solution>
+      o
+
+        2nd Place Solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e7/
+        writeups/jose-c-liz-2nd-place-solution>
+      o
+
+        1st place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e7/
+        writeups/hardy-xu-1st-place-solution>
+      o
+
+        Regression with a Tabular California Housing Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e1>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd Place Solution — Binary Classification with a Tabular Reservation
+Cancellation Dataset
+
+
+  3rd Place Solution
+
+Binary Classification with a Tabular Reservation Cancellation Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e7>
+
+Solution Writeup · 3rd place
+
+
+    Overview
+
+The goal of this competition was to maximize AUC ROC score for hotel
+booking cancellations. My solution implemented a 2-level stacked model.
+The first level of the stack consisted of the best 123 performing
+CatBoost, XGBoost, and LightGBM models that I generated. Each model was
+trained using a different selection of hyper-parameters. No engineered
+features were used, and the original dataset was mixed in for training
+purposes. All models were generated with training data split into 10-
+folds, predictions were made out-of-fold (OOF), and metrics were
+gathered OOF. The second level of the stack was a simple TensorFlow
+neural network. Objective was |SigmoidFocalCrossEntropy| from TensorFlow
+Additions. The neural network was trained using the training predictions
+from the first level, and predictions were made using the testing
+predictions from the first level. Post processing on the final set of
+predictions was performing utilizing the train / test duplication
+inversion technique discussed below.
+
+  * *Model Stack Diagram*
+
+  * *Neural Network Configuration*
+
+
+    What Worked
+
+  *
+
+    *[High Impact] Train / Test Duplication Prediction Inversion*
+
+      o Result: public LB increase of about 0.0141
+      o Reasoning and context: inverting scores for duplicates in the
+        testing data to lift performance - see discussions from @icfoer
+        <https://www.kaggle.com/icfoer> here <https://www.kaggle.com/
+        competitions/playground-series-s3e7/discussion/388851>, and from
+        @sergiosaharovskiy <https://www.kaggle.com/sergiosaharovskiy>
+        here <https://www.kaggle.com/competitions/playground-series-
+        s3e7/discussion/388992>
+  *
+
+    *[Medium Impact] Stacking with Neural Network*
+
+      o Result: CV increase of about 0.0026 compared to single models
+      o Reasoning and context: best neural network configuration
+        combined 123 models, and had an increase over the best single
+        model of 0.0026.
+  *
+
+    *[Medium Impact] Using Original Dataset*
+
+      o Result: CV increase of about 0.002
+      o Reasoning and context: I added the original dataset into the
+        training set, making sure to perform CV metrics on competition
+        data only.
+
+
+    What Didn't Work
+
+  * *[Medium Impact] Any Feature Engineering*
+      o Result: CV drop of about 0.004
+      o Reasoning and context: exhaustive investigation into features
+        along with model testing revealed no significant gains with any
+        engineered features (e.g. time based features). See more below
+        in additional context.
+
+
+    Additional Context
+
+My first big insight - no feature engineering - was key. As I mentioned
+above, I failed to find any way to boost class separation through
+feature engineering. My public facing EDA ended up being incomplete,
+because I stopped updating it when I began a more in-depth hunt for
+engineered features that would result in better separation between the
+positive and negative classes. After spending a lot of time digging
+through various ways of combining features, my conclusion was that I
+couldn't find anything significant that I could qualitatively or
+quantitatively measure as giving any type of lift to my models. I wasn't
+happy with that result, so I spent time doing the opposite - proving to
+myself that most of the feature combinations were hurting performance.
+Any time-based feature engineering such as adding day of week, quarter,
+day of year, etc. worked to bring down local CV scores. My best model
+using time-based features scored 0.900011 compared to my best model
+without them of 0.904148.
+
+My second biggest insight in this competition came from the agreement
+between local metrics and the public LB. Adversarial validation between
+train and test suggested that the two datasets were nearly identical.
+Given that we had a fairly generous ratio of positive cases vs negative
+cases, and that we had a decent number of training and testing samples
+to use (plus additional data we could mix in), my initial hypothesis was
+that local CV and public LB should match up fairly well. To test this, I
+submitted a number of models - each one meant to see how an increase or
+decrease in local CV was reflected on the public LB. About 10 models in,
+it became apparent that my metrics and the LB were in good agreement.
+
+With regards to the testing / training duplication and the inversion
+post-processing, after testing out agreement between my local CV and the
+leaderboard, I looked at the discussion of duplicates between the
+training and testing data, the original from @icfoer <https://
+www.kaggle.com/icfoer> here <https://www.kaggle.com/competitions/
+playground-series-s3e7/discussion/388851> and a followup from
+@sergiosaharovskiy <https://www.kaggle.com/sergiosaharovskiy> here
+<https://www.kaggle.com/competitions/playground-series-s3e7/
+discussion/388992>. I implemented an inversion on the testing duplicates
+and saw a good increase on the public LB by doing so. For every model I
+generated, I made sure to generate a set of testing predictions that
+contained the inversion as well, and tested to make sure that all
+notebooks that inverted the data saw lift on the public LB, which they
+did. Still not trusting the public LB entirely, I hedged bets, and for
+final model selection used the best model that inverted the predictions
+for the duplicates in test and train, and the model that just kept them
+as was. The inverted prediction model won third place.
+
+To ascertain whether I should use the original data, I performed an
+adversarial validation that resulted in an AUC ROC score of 0.7062. This
+suggested that there were differences between the datasets, but local CV
+testing suggested that there was a performance benefit to using it, and
+the public LB scores remained in-line with the CV results. The trick was
+ensuring that the CV metrics were done using only the competition data,
+so that I could compare my models to each other correctly.
+
+In total, I generated 623 models - 553 of them first level, 67 second
+level, and 3 of them third level. First level models were a mixture of
+CatBoost, XGBoost, and LightGBM. The 553 first level models were
+exploratory in nature, usually testing out features and random
+combinations of hyper-parameters. Second level models were combinations
+of the first. I attempted blending and stacking of first level models.
+For blending, I used between 6 and 10 of my top performing models and
+searched for the best co-efficients to blend them together that
+maximized AUC. I would then drop out any models that had 0 weight, and
+swap in another. Best blend had CV increase over best single model of
+0.0007. I then swapped to using a stacking technique using a Ridge
+regression. The best Ridge model had a CV increase over best single
+model of 0.0019. Finally, because my first level model predictions were
+already ranged nicely between 0 and 1, I explored regression using
+neural networks. Best neural network configuration combined 123 models,
+and had an increase over the best single model of 0.0026.
+
+
+    Thanks and Acknowledgements
+
+Thank you to the Kaggle organizers for continuing to deliver the
+Playground series. I very much appreciate the time and effort that goes
+into finding the datasets and generating novel ones from them so that we
+can compete and learn! Thanks to @sergiosaharovskiy <https://
+www.kaggle.com/sergiosaharovskiy> and @icfoer <https://www.kaggle.com/
+icfoer> for sharing their insights about the duplicates in the training
+and test datasets. Finally, thanks to everyone competing for great
+notebooks and discussions - always great to see such great engagement
+and enthusiasm!
+
+Author
+
+<https://www.kaggle.com/craigmthomas>
+Craig Thomas <https://www.kaggle.com/craigmthomas>
+
+craigmthomas
+
+arrow_drop_up
+
+27
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    9 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/pardeep19singh>
+
+
+      Pardeep Singh
+
+<https://www.kaggle.com/pardeep19singh>
+
+Posted 3 years ago
+
+· 67th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great stuff @craigmthomas <https://www.kaggle.com/craigmthomas> and
+congrats on getting 3rd position in this competition.
+I am a bit confused on NN model inputs. Did you just use 123 models'
+output as inputs to NN or both (train dataset + output from 123 models)?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/craigmthomas>
+
+
+      Craig Thomas
+
+<https://www.kaggle.com/craigmthomas>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@pardeep19singh <https://www.kaggle.com/pardeep19singh> the input to the
+NN was just the output from the 123 level 1 models.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pardeep19singh>
+
+
+      Pardeep Singh
+
+<https://www.kaggle.com/pardeep19singh>
+
+Posted 3 years ago
+
+· 67th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Got it @craigmthomas <https://www.kaggle.com/craigmthomas> , thank you!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/dann12>
+
+
+      Arthur
+
+<https://www.kaggle.com/dann12>
+
+Posted 3 years ago
+
+· 174th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+It's amazing wow ! is that possaible to share your code, please ?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/craigmthomas>
+
+
+      Craig Thomas
+
+<https://www.kaggle.com/craigmthomas>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+@dann12 <https://www.kaggle.com/dann12> sorry, the model code is based
+on a custom framework that I am not releasing publicly at the moment. In
+brief though, the framework abstracts the mechanics of building
+different types of models away from the feature engineering and
+exploratory analysis work. In other words, I don't really worry about
+the mechanics of hyper-parameter tuning, building cross-validation
+folds, etc - that's all automated and performed by the framework. I
+essentially point it at the training data and test data, tell it to do
+pre-processing, tell it what features to use, and then set it to build |
+x| number of models of various types, with either fixed hyper-parameters
+or ones it generates at random. It logs all experiments back to an
+online experiment tracker. I focus the bulk of my time on exploring the
+data through Jupyter lab, and looking for features that could
+potentially be exploited.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yus002>
+
+
+      Yue Sun
+
+<https://www.kaggle.com/yus002>
+
+Posted 3 years ago
+
+· 88th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+623 models. That's amazing.😲
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/icfoer>
+
+
+      icfoer
+
+<https://www.kaggle.com/icfoer>
+
+Posted 3 years ago
+
+· 85th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sharovanton>
+
+
+      Sharov Anton
+
+<https://www.kaggle.com/sharovanton>
+
+Posted 3 years ago
+
+· 295th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hi.
+
+Am I right that it was observed that inverting duplicates in test and
+train raise score on LB. And one could get good result just selecting
+model which inverts the most of duplicates?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/craigmthomas>
+
+
+      Craig Thomas
+
+<https://www.kaggle.com/craigmthomas>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@sharovanton <https://www.kaggle.com/sharovanton> the duplicate
+inversion was performed as a post-processing step. If you take your best
+model, and then invert the duplicates after you make your predictions,
+you will likely increase your score.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sharovanton>
+
+
+      Sharov Anton
+
+<https://www.kaggle.com/sharovanton>
+
+Posted 3 years ago
+
+· 295th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Got it, thank you. But could it be also another metric between (good)
+models just observing that one model inverted more values in dup set
+then another? Put it simple, it is weired, but suppose we have some good
+models with good CV, and we should choose one among them. Can in this
+very specific case we select model that inverts more in dup set? (We can
+call it weired cv). I've read your post as you did specifically this
+analysis on your final models and not simple postprocessing. It is
+basically theoretical question for this competition and dup set only.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/craigmthomas>
+
+
+      Craig Thomas
+
+<https://www.kaggle.com/craigmthomas>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+@sharovanton <https://www.kaggle.com/sharovanton> I think I understand
+what you're saying. You're asking if we could not just simply see what
+good models already perform this type of inversion when making
+predictions on the test set, and use that model for the submission
+instead of having to do a post-processing step instead.
+
+I don't think that you would be able to find a good model that does this
+naturally, nor do I know of any CV metrics that you could employ to
+ensure this was being done. If you think about the nature of the
+problem, we're trying to build a classifier that properly identifies
+booking cancellations (1) from non-cancellations (0). In the training
+set, the specific cases we're talking about have the exact same feature
+values in the testing set, but their class labels have been swapped for
+some reason. For example, there was a subset of the duplicates that are
+labelled as cancelled (1) in the training set, but are labelled as not-
+cancelled (0) in the testing set. When we build the classifier, it's
+going to try and learn from the training data that those examples should
+be labelled 1. A good classifier will have learned that, and will
+predict that on the testing data when it is presented with the same
+feature values. The same good classifier will need to do this as well
+with all of the other data in order for our local CV metrics to be high.
+Therefore, if the model has learned from our examples and has a high
+local CV score, it is always going to try and predict the wrong class
+label for these special cases, because for some reason, examples in the
+testing data with the same values have somehow had their class labels
+inverted. If it predicted the opposite class labels - in this case the
+wrong ones - while it would have done well with these inverted examples,
+it probably would have performed badly on all the other training data,
+and would not have been considered a good model base on local CV metrics
+to begin with (i.e. the local CV metrics would probably be bad, because
+if it learned the wrong class labels for the examples we needed to swap,
+it probably learned the wrong class labels for all the other examples too).
+
+replyReply
+add_reactionReact
+

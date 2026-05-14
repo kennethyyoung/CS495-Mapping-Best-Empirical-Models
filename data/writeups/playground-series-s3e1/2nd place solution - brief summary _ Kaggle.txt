@@ -1,0 +1,298 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Regression with a Tabular California Housing Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e1>
+      o
+
+        2nd place solution - brief summary
+
+        <https://www.kaggle.com/competitions/playground-series-s3e1/
+        writeups/jcerpent-2nd-place-solution-brief-summary>
+      o
+
+        That was a surprise! Here is the 1st place solution....
+
+        <https://www.kaggle.com/competitions/playground-series-s3e1/
+        writeups/kirderf-that-was-a-surprise-here-is-the-1st-place->
+      o
+
+        Regression with a Tabular Paris Housing Price Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e6>
+      o
+
+        PS S-3 E-6 🥐
+
+        <https://www.kaggle.com/code/viktortaran/ps-s-3-e-6>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd place solution - brief summary — Regression with a Tabular
+California Housing Dataset
+
+
+  2nd place solution - brief summary
+
+Regression with a Tabular California Housing Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e1>
+
+Solution Writeup · 2nd place · Jan 10, 2023
+
+First of all, thanks to the organizers for a fun, short competition.
+Also thanks to the many notebook contributors in this competition!!!🎉
+
+My final solution is an ensemble of some public contributions with some
+of my own personal ideas.
+
+-I felt like the boosting path was well-explored by many public
+notebooks and designed to base my boosting approach on these methods; as
+mentiond, distance using coordinates plays a big part.
+
+-I noticed many people added the external data to their dataset and
+computed their CV score using this data. Since the competition data is
+an *adaptation* of the original dataset, I think this is why some CV
+scores weren't very well aligned. Instead, I ran a CV split on the
+original data, and added the external data to the training set
+afterwards. This forces validation on the supplied dataset, better
+representing the LB score. Ensembling this with methods that split on
+the full merged data seemed to diversify a lot and improve LB.
+
+-Lastly, I also training a NN in keras using keras_tuner <https://
+keras.io/guides/keras_tuner/getting_started/> on the standard features +
+coordinate features. Local CV was only 0.59, but this also added
+significant diversification in the full blend. Model summary can be seen
+below:
+
+Author
+
+<https://www.kaggle.com/jcerpentier>
+jcerpent <https://www.kaggle.com/jcerpentier>
+
+jcerpentier
+
+arrow_drop_up
+
+21
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    4 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/maikpflugradt>
+
+
+      Maik Pflugradt
+
+<https://www.kaggle.com/maikpflugradt>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+The source code of the top submissions is not published is it?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/thedevastator>
+
+
+      The Devastator
+
+<https://www.kaggle.com/thedevastator>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Really cool solution, I like how simple it is!
+
+The Devastator.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kaggleallenkk>
+
+
+      wickedx
+
+<https://www.kaggle.com/kaggleallenkk>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+why cool，hhha
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/romanahmed2024>
+
+
+      Roman@Ahmed
+
+<https://www.kaggle.com/romanahmed2024>
+
+Posted 9 months ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+very good work , looking for solutions notebook
+
+replyReply
+add_reactionReact
+

@@ -1,0 +1,1447 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification of Insurance Cross Selling
+
+        <https://www.kaggle.com/competitions/playground-series-s4e7>
+      o
+
+        Winning approach- Team Cross Sellers
+
+        <https://www.kaggle.com/competitions/playground-series-s4e7/
+        writeups/cross-sellers-winning-approach-team-cross-sellers>
+      o
+
+        Regression with an Insurance Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e12>
+      o
+
+        First Place - Single Model - [CV 1.016 LB 1.016]
+
+        <https://www.kaggle.com/code/cdeotte/first-place-single-model-
+        cv-1-016-lb-1-016>
+      o
+
+        Rank 2 approach - brute force ensembling (118 oofs)
+
+        <https://www.kaggle.com/competitions/playground-series-s4e12/
+        writeups/scriptchef-rank-2-approach-brute-force-ensembling->
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+Winning approach- Team Cross Sellers — Binary Classification of
+Insurance Cross Selling
+
+
+  Winning approach- Team Cross Sellers
+
+Binary Classification of Insurance Cross Selling
+
+<https://www.kaggle.com/competitions/playground-series-s4e7>
+
+Solution Writeup · 1st place · Jul 31, 2024
+
+Hello all,
+
+I am extremely thankful to Kaggle for the playground series episode. I
+wish to thank all my fellow participants and and my team member
+@arunklenin <https://www.kaggle.com/arunklenin> for a successful team
+building. I also wish to applaud @uryednap <https://www.kaggle.com/
+uryednap> @tilii7 <https://www.kaggle.com/tilii7> @optimistix <https://
+www.kaggle.com/optimistix> for their tough and healthy competition over
+the course of the month's episode.
+
+Please find below our approach for the assignment-
+
+
+    Strategy overview
+
+ 1. We realized since the start of the episode that this dataset has a
+    near-perfect CV-LB relation and the size of the data makes it almost
+    perfectly insulated from overfitting risks.
+ 2. This assignment necessitated baroque GPU resources for efficient
+    model development and experimentation. We decided not to use Kaggle
+    free resources and relied on better GPU hardware including A6000x2,
+    A6000Adax2, A100 and A5000x2, RTX4090, RTX3090 (local PC) for our
+    interim experiments
+ 3. We were well aware of the advantages of using neural networks in
+    this assignment. We used a number of neural networks herewith and
+    all our attempts at this were highly successful
+ 4. Time management and resource management were key in this assignment.
+    Model training had to be on-point and ensembles had to be managed
+    well for memory resources and time to completion as well. We planned
+    to blend a number of diverse models in our final ensemble and rely
+    *on the same CV scheme throughout* the competition to foster
+    effective model comparison
+ 5. Data organization was key to our success herewith. We resorted to a
+    standard file and model naming convention, tracked experiments
+    regularly and were in-control of individual CV-LB scores as well,
+    enabling us to choose the right mix of models in our final ensemble.
+    Small, but pertinent steps like file naming standardization, code
+    automation, usage of a well organized GitHub repository and a
+    planned feature-store design with CV-oriented feature inclusion
+    helped us with a robust, quick, effective and meaningful model
+    training regime
+ 6. We believed that using diverse training datasets, multiple feature
+    combinations, multiple model parameters and options and a diverse
+    combination of neural network architectures with boosted tree models
+    will yield results and perhaps our belief prevailed! We resorted to
+    3 training dataset ideas in this assignment -
+
+  * Training data from the competition only (fully ignored the
+    supplementary dataset)
+  * Training data created from the competition and supplementary dataset
+  * Training data from the competition, with the supplementary dataset
+    added to each fold in entirety- this approach boosted our CV to the
+    maximum
+  * We consistently used the below cv scheme -
+    |StratifiedKFold(n_splits = 5, shuffle = True, random_state =42)|
+
+
+    Feature engineering
+
+ 1. We borrowed ideas from the topper posts in the AutoML component of
+    the competition, but tested the features on the competition
+    synthetic training data only (to avoid bias from the supplementary
+    data). We resorted to testing the feature importance on a single
+    fold only using a simple catboost model consistently.
+ 2. We designed feature stores to collate our feature ideas and created
+    ready-to-use datasets for all further experiments at the end of this
+    step. An illustration of this store is in the kernel here <https://
+    www.kaggle.com/code/ravi20076/playgrounds4e07-featurestore>. Our
+    actual feature store consists of 12 versions (Version V1-V12), this
+    kernel is an illustration only.
+ 3. Using such a centralized feature store with tried-and-tested
+    features helped us iterate through our brute-force experiments well
+    and quickly
+
+
+    Model training process
+
+We resorted to a 3-step training process for the assignment illustrated
+as below-
+
+Model stage 	Included models 	Model training options and strategies
+Stage 1 models 	1. LightGBM (manual)
+2. LAMA lgb
+3. Catboost
+4. Denselight NN and MLP
+5. Tab-Resnet
+6. Tab-Transformer
+7. Autoint 	* Complete training data
+* Component models on previously insured (2 models), vehicle damage (2
+models), previously insured + vehicle damage (4 models)
+Stage 2 models 	1. LightGBM (manual)
+2. LAMA lgb
+3. Catboost
+4. Denselight NN and MLP
+5. Tab-Resnet
+6. Tab-Transformer
+7. Autoint 	* Complete training data
+* Component models on previously insured (2 models), vehicle damage (2
+models), previously insured + vehicle damage (4 models)
+Stage 3 models 	XgBoost 	* Selected OOF predictions from across Stage 1
+and 2 model options
+
+
+This can be visualized as below -
+
+
+      Key notes
+
+ 1. We used the public kernel outputs from the work here <https://
+    www.kaggle.com/code/rzatemizel/stacking-xgb-lgbm-catb-ann>
+ 2. *We did not use XgBoost and max_bins in our weak learners*
+ 3. We stacked tree models with neural networks and vice-versa
+ 4. XgBoost stacker as the last step was the most effective option for
+    CV-LB relations
+ 5. We did not use max_bins anywhere in our process, except for the
+    public kernel outputs
+ 6. We used *78 weak learners* in our final model and *trained more than
+    125 experiments* through the month.
+
+
+      Adjutant artefacts
+
+We have made our single models and a few selected stacks and blends
+public. Feel free to use the kernels and datasets as below-
+
+Kernel/ Dataset 	Contents 	Link
+PlaygroundS4E07-ModelPP 	* OOF scores for all my component models
+* Data preparation for the final stacker model 	https://www.kaggle.com/
+code/ravi20076/playgrounds4e07-modelpp <https://www.kaggle.com/code/
+ravi20076/playgrounds4e07-modelpp>
+PlaygroundS4E07-ModelCollation 	* Single models and a few blends and
+stacks 	https://www.kaggle.com/datasets/ravi20076/
+playgrounds4e07modelcollation <https://www.kaggle.com/datasets/
+ravi20076/playgrounds4e07modelcollation>
+PlaygroundS4E07- 	* Example of stacking from selected private experiments
+* Includes post-processing dataset containing duplicates between train-
+original and test-original for reversing the labels 	https://
+www.kaggle.com/datasets/ravi20076/playgrounds4e07privatefiles <https://
+www.kaggle.com/datasets/ravi20076/playgrounds4e07privatefiles>
+
+
+    Post-processing
+
+  * We discovered the target reversals discussed here <https://
+    www.kaggle.com/competitions/playground-series-s4e7/
+    discussion/520253> on day 1 and used it in the auto ML submission as
+    well.
+  * All our submissions included the target reversal post-processing
+    throughout
+  * Both our final submissions retained the post-processing elements
+
+
+    What worked for us
+
+ 1. Effective time management and resource allocation across single
+    models and ensembles
+ 2. Catboost -this was the best single model and in conjunction with
+    category_features, proved to be the best single model option
+ 3. All neural network options worked well for us. Stacking them with
+    Catboost models boosted our CV-LB together
+ 4. LightGBM was also highly effective here and provided a good boost to
+    the final stack with diversity
+ 5. Using the public kernel helped us a bit towards the end of the
+    competition
+
+
+    What did not work for us
+
+ 1. Catboost stacker
+ 2. Linear approaches, Optuna, Hill Climb
+ 3. XgBoost weak learners -they were good in isolation but did not
+    improve the final CV score when we included them in the final model
+ 4. Harmonic mean/ GM generalization
+ 5. LAMA dense model - they caused memory overflows with stacking approaches
+
+
+    Our key takeaways
+
+ 1. Time and resource management is key in such assignments- effective
+    experiment tracking is key. MLOps is important for Kaggle as well,
+    though this is not directly tested and evaluated
+ 2. Committing resources to a competition is necessary when required.
+    Using better resources enabled us to experiment better
+ 3. Sometimes deviating from the norm is important- not using XgBoost
+    stage 1 model benefitted us a lot
+
+
+    Concluding remarks
+
+ 1. We extend sincere wishes to one and all and hope to see you all in
+    the next episode!
+ 2. We may opine that we have a lot of untapped signal in the dataset
+    even now, despite our collective effort over a month. Perhaps one
+    may consider working on the dataset should time prevail and improve
+    the score from here onwards
+
+Wishing you all the best and happy learning!
+
+Regards,
+Ravi Ramakrishnan
+
+Tagged
+Insurance <https://www.kaggle.com/search?
+q=insurance+tag%3A%22insurance%22>Tabular Classification <https://
+www.kaggle.com/search?
+q=tabular+classification+tag%3A%22tabular+classification%22>
+Authors
+
+<https://www.kaggle.com/ravi20076>
+Ravi Ramakrishnan <https://www.kaggle.com/ravi20076>
+
+ravi20076
+
+<https://www.kaggle.com/arunklenin>
+Minato Namikaze <https://www.kaggle.com/arunklenin>
+
+arunklenin
+
+arrow_drop_up
+
+132
+
+Share
+
+more_horiz
+
+thankYou29yay27love26kaggle2
+add_reaction
+
+comment
+
+
+    91 Comments
+
+3 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s4e7/writeups/cross-sellers-winning-approach-team-cross-
+sellers#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/fredericnicholson>
+
+
+      Frederic Nicholson
+
+<https://www.kaggle.com/fredericnicholson>
+
+Posted 2 years ago
+
+· 1270th in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+@ravi20076 <https://www.kaggle.com/ravi20076> amazing! thanks for
+explaining your work. the approach deserved to win for the structured
+process. how much time (human time, not GPU) did you put into this
+competition?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+A lot @fredericnicholson <https://www.kaggle.com/fredericnicholson>
+I spent about 3-4 hours daily through the month for this competition
+
+replyReply
+thankYou2
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 2 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Well done team Cross Sellers! Your approach was systematic and in the
+end clearly the best. Mine overlapped with yours quite a bit except for
+different neural networks. Hopefully I get to write more about it tomorrow.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Congrats to you too @tilii7 <https://www.kaggle.com/tilii7> for 3rd rank
+We consider your work as an inspiration!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/arupgsh>
+
+
+      Arup
+
+<https://www.kaggle.com/arupgsh>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing your strategy and the extensive write-up.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahdieh002>
+
+
+      Mahdieh Mortazavi
+
+<https://www.kaggle.com/mahdieh002>
+
+Posted 2 years ago
+
+· 39th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congrats! Great ideas!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sethpointaverage>
+
+
+      sethpointaverage
+
+<https://www.kaggle.com/sethpointaverage>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+What is the intuition behind component models? Is it that they are
+faster to train since they can generalize at lower depths (or lower
+parameterization for NNs) and when combined represent the same data
+distribution?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Yes you are right @sethpointaverage <https://www.kaggle.com/
+sethpointaverage>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shan007007>
+
+
+      shan007007
+
+<https://www.kaggle.com/shan007007>
+
+Posted 2 years ago
+
+· 34th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Great work. I learned a lot here which would help me in my future
+competitions. Thanks!!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+
+Posted 2 years ago
+
+· 11th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congratulations for winning! I realized at some point that my chances
+for a better place do not stand well as I do not have the computational
+ressources at home. Besides that I am really impressed by your work and
+I think your victory is well earned. Two questions:
+
+ 1. Component model on previously insured means that you diveded the
+    training data according to previously insured in two sets and
+    trained two models, one on the set previously insured == yes and
+    previously insured == no and combined the oof predictions
+    afterwards? How did you handle the different cv-folds?
+ 2. Do I understand the visualization correctly that you only fed the
+    oof predictions of LightGBM and Catboost to the neural networks
+    (without the training data)?
+
+Thanks for sharing your solution in such detail. It is a great inspiration!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Yes you are right on both accounts @martinapreusse <https://
+www.kaggle.com/martinapreusse>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 4th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+You were a major contributor to this month's competition, with your work
+on under-sampling. Thanks for sharing your research and code - they were
+very valuable!
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/jimmyc891>
+
+
+      jimmyc891
+
+<https://www.kaggle.com/jimmyc891>
+
+Posted 2 years ago
+
+· 74th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congrats on 1st place!
+
+Could you please elaborate on what component models are?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Sure @jimmyc891 <https://www.kaggle.com/jimmyc891>
+Kindly look into the figure
+We have catboost, light gbm and a number of neural networks. These are
+my base models. Stacker models are also composed of the same algorithms,
+but I took tree base learners for neural network stacks and vice versa.
+
+My meta model was a single XgBoost that included 78 selected single
+models and their stacks.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jimmyc891>
+
+
+      jimmyc891
+
+<https://www.kaggle.com/jimmyc891>
+
+Posted 2 years ago
+
+· 74th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Sorry I should have been more specific.
+
+In the 'Model training process' section you mentioned using the Complete
+training data and also component models on previously insured, vehicle
+damage and so on.
+
+Are the component models just a model where its just the one feature
+being used as the training data? i.e only 'previously insured' and all
+other features removed?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@jimmyc891 <https://www.kaggle.com/jimmyc891>
+We built separate models for previously insured = 0, previously insured
+=1, vehicle damage =0 and vehicle damage =1
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jimmyc891>
+
+
+      jimmyc891
+
+<https://www.kaggle.com/jimmyc891>
+
+Posted 2 years ago
+
+· 74th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+ohh okay gotcha! thanks
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/danishyousuf19>
+
+
+      DANISH YOUSUF
+
+<https://www.kaggle.com/danishyousuf19>
+
+Posted 2 years ago
+
+· 517th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congratulations great work
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/marcosviniciuslopes>
+
+
+      Marcos Vinicius Lopes
+
+<https://www.kaggle.com/marcosviniciuslopes>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I'm glad to read it!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/saadsayed123>
+
+
+      Saad Sayed
+
+<https://www.kaggle.com/saadsayed123>
+
+Posted 2 years ago
+
+· 1759th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I am scared yet fascinated by this . What is the maximum score you can
+achieve by only using free resources of GPUs . I mean at what level of
+ensemble learning should 1 give up with free resources ??
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+@saadsayed123 <https://www.kaggle.com/saadsayed123> unfortunately Kaggle
+GPUs cannot be used here. I used A100, A6000Ada x2 and A6000 for my models
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/davinascimento>
+
+
+      Davi N.
+
+<https://www.kaggle.com/davinascimento>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very good work, congrats!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sc0v1n0>
+
+
+      sc0v0ne
+
+<https://www.kaggle.com/sc0v1n0>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! Great ideas!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mrdazh>
+
+
+      MrDAzh
+
+<https://www.kaggle.com/mrdazh>
+
+Posted 2 years ago
+
+· 2209th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I always wanted to try stacking machine learning models, but still
+struggle to find the optimal one, this discussion helps a lot.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I am happy if this helped you @mrdazh <https://www.kaggle.com/mrdazh>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mikhailkhalimov>
+
+
+      pubupka
+
+<https://www.kaggle.com/mikhailkhalimov>
+
+Posted 2 years ago
+
+· 854th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great job!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tanishkpatil>
+
+
+      Tanishk Patil
+
+<https://www.kaggle.com/tanishkpatil>
+
+Posted 2 years ago
+
+· 505th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! This post is very informative for me as a beginner. I
+feel enriched by the knowledge you've shared. Thank you so much for posting!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/royajamshidi>
+
+
+      Roya Jamshidi
+
+<https://www.kaggle.com/royajamshidi>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+🟠> Congratulations! This post is very informative for me as a beginner.
+I feel enriched by the knowledge you've shared. Thank you so much for
+posting!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/amrishcareem>
+
+
+      Amrish Careem
+
+<https://www.kaggle.com/amrishcareem>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+great work
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lucasmorin>
+
+
+      Lucas Morin
+
+<https://www.kaggle.com/lucasmorin>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Sorry I haven't followed this competition. How did you choose to split
+the model on previsouly insured v.s. non insured ?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+We designed 2 separate models with 5 fold CV on the below-
+
+ 1. Previously_insured = 0
+ 2. Previously_insured = 1
+
+Similarly we designed 2 separate models with 5 fold CV on the below-
+
+ 1. Vehicle_damage = 0
+ 2. Vehicle_damage = 1
+
+Finally we extended this to 5-fold CV on 4 component models-
+
+ 1. Previously_insured = 0 and Vehicle_damage = 0
+ 2. Previously_insured = 1 and Vehicle_damage = 0
+ 3. Previously_insured = 0 and Vehicle_damage = 1
+ 4. Previously_insured = 1 and Vehicle_damage = 1
+
+@lucasmorin <https://www.kaggle.com/lucasmorin>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdthinh>
+
+
+      KennyT
+
+<https://www.kaggle.com/cdthinh>
+
+Posted 2 years ago
+
+· 695th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for share the insights of your work. I have learnt a lot.
+Especially how to manage features and models (as well as naming
+convention) to be able to experiment faster. The way you manage feature
+store is excellent, too. I struggled a lot with manage different
+versions of features. I have several questions.
+
+ 1. you mentioned "supplementary dataset". So what supplementary dataset
+    did you use?
+ 2. you said that "We resorted to testing the feature importance on a
+    single fold only using a simple catboost model consistently."
+    The aim is to use important features which are shared between folds?
+ 3. What does "Component models on previously insured (2 models)" mean?
+ 4. The reason to use "public kernel outputs" from other notebook is to
+    increase the variance of OOF predictions?
+ 5. The reason not to use "max_bins" is due to the result of your
+    experiment or something else?
+
+Thanks and congrats again for the gold medal.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@cdthinh <https://www.kaggle.com/cdthinh> please find below my rejoinder-
+
+ 1.
+
+    *Supplementary dataset* -
+    https://www.kaggle.com/datasets/annantkumarsingh/health-insurance-
+    cross-sell-prediction-data <https://www.kaggle.com/datasets/
+    annantkumarsingh/health-insurance-cross-sell-prediction-data>
+
+ 2.
+
+    *Feature importance* -
+    We used a single fold permutation importance score to assess feature
+    importances
+
+ 3.
+
+    *Component models*
+    Separate models for previously insured = 0 and previously insured = 1
+
+ 4.
+
+    *Public kernels*
+    We used the out of fold predictions from 1 kernel in our model stack
+    as a diversity measure
+
+ 5.
+
+    *Max bins*
+    We did not use XgBoost in our single models, except for the public
+    kernel outputs (the kernel writer used max bins and XgBoost)
+    We tried to use XgBoost and stack it to our models, but it did not
+    improve the CV score, so we dumped the XgBoost models from our set
+    of chosen models for the final submission
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdthinh>
+
+
+      KennyT
+
+<https://www.kaggle.com/cdthinh>
+
+Posted 2 years ago
+
+· 695th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you very much to make things clear.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+You are welcome
+Good luck @cdthinh <https://www.kaggle.com/cdthinh>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/lucasmorin>
+
+
+      Lucas Morin
+
+<https://www.kaggle.com/lucasmorin>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+A lot to unpack here. Congratulations to you and your team.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mohammedsalem2011>
+
+
+      Mohammed Salem Lanqes
+
+<https://www.kaggle.com/mohammedsalem2011>
+
+Posted 2 years ago
+
+· 1742nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great work Congratulation , But sorry I still confusing how you overcome
+the problem of class imbalance. Thank you in advance
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+We never considered handling it due to the large data size
+@mohammedsalem2011 <https://www.kaggle.com/mohammedsalem2011>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/patelmanthan17>
+
+
+      Patel Manthan17
+
+<https://www.kaggle.com/patelmanthan17>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulation…!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kryptondx>
+
+
+      Kunal
+
+<https://www.kaggle.com/kryptondx>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very informative and great to know stuff
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sakshamguptaiitkgp>
+
+
+      Saksham Gupta
+
+<https://www.kaggle.com/sakshamguptaiitkgp>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+great explanation
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/deepakjoshi9806>
+
+
+      Deepak Joshi
+
+<https://www.kaggle.com/deepakjoshi9806>
+
+Posted 2 years ago
+
+· 1398th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on winning and thank you for the great explaination!!
+
+replyReply
+add_reactionReact
+

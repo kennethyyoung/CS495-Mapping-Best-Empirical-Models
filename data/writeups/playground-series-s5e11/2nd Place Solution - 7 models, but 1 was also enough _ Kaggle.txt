@@ -1,0 +1,633 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predicting Loan Payback
+
+        <https://www.kaggle.com/competitions/playground-series-s5e11>
+      o
+
+        2nd Place Solution - 7 models, but 1 was also enough
+
+        <https://www.kaggle.com/competitions/playground-series-s5e11/
+        writeups/2nd-place-solution-7-models-but-1-was-also-enou>
+      o
+
+        1st place - A lot of features, a lot of models, and a little bit
+        of luck
+
+        <https://www.kaggle.com/competitions/playground-series-s5e11/
+        writeups/1st-place-a-lot-of-features-a-lot-of-models-an>
+      o
+
+        Binary Prediction with a Rainfall Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s5e3>
+      o
+
+        Predict the Introverts from the Extroverts
+
+        <https://www.kaggle.com/competitions/playground-series-s5e7>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+2nd Place Solution - 7 models, but 1 was also enough — Predicting Loan
+Payback
+
+
+  2nd Place Solution - 7 models, but 1 was also enough
+
+Predicting Loan Payback
+
+<https://www.kaggle.com/competitions/playground-series-s5e11>
+
+Solution Writeup · 2nd place · Nov 30, 2025
+
+My best solution is a ridge ensemble of 7 models, 5x LGBM, 1x TabM, 1x
+RealMLP. My other submission, which was my best single LGBM model, also
+achieves 2nd place. Simplified version of that model can be found in
+this <https://www.kaggle.com/code/angelosmar1/s5e8-lgbm-cv-0-92813-2nd-
+place> notebook.
+
+
+    Features
+
+Apart from the initial columns, I add all initial columns with
+cardinality > 7:
+
+  * Target encoded
+  * Count encoded
+  * Target encoded with targets from the original dataset
+
+The key for a high CV was to discretize/bin the high cardinality columns
+|annual_income| and |loan_amount| in different ways before target
+encoding them. Each of the following ways contributed to a better CV:
+
+  * quantile binning
+  * uniform binning
+  * using |round| and the |//| (integer division) operator
+  * using |.astype(int)| to discard the decimal part
+
+Furthermore, i include digit features from all numeric columns and
+combinations of digits from some numeric columns.
+Finally, i add ratios of counts between the training data and original
+data (how much each value is oversampled or undersampled compared to
+original).
+
+Among things that did not improve CV were interaction features and
+adding original data as rows.
+
+
+    Parameters
+
+LGBM model improved a lot with heavy regularization parameters (low |
+max_depth|, |colsample| etc).
+
+|learning_rate=0.01
+max_depth=4,
+subsample=0.5
+colsample_bytree=0.2
+lambda_l2=15.0
+lambda_l1=10.0
+
+|
+content_copy
+
+
+    Best Ensemble
+
+Model 	5-fold CV 	Notes
+LGBM 	0.92813 	Best single model
+LGBM 	0.9281 	Original data added as extra rows once every fold
+LGBM 	0.9278 	Original data added as extra rows once every fold, less
+features
+LGBM 	0.9277 	Logits initialised from TabPFN trained on original data,
+idea from here <https://www.kaggle.com/competitions/playground-series-
+s5e11/discussion/614986>
+LGBM 	0.9276 	Logits initialised from Autogluon trained on original data
+with |preset='extreme'| option, idea from here <https://www.kaggle.com/
+competitions/playground-series-s5e11/discussion/614986>
+TabM 	0.9277 	-
+RealMLP 	0.9271 	-
+
+
+    Conclusion
+
+Congratulations to @mahoganybuttstrings <https://www.kaggle.com/
+mahoganybuttstrings> for winning. Thanks to all Kagglers who contribute
+in discussions and notebooks. Exploring Playground competitions is fun
+and educational.
+
+Author
+
+<https://www.kaggle.com/angelosmar1>
+AngelosMar <https://www.kaggle.com/angelosmar1>
+
+angelosmar1
+
+arrow_drop_up
+
+31
+
+Share
+
+more_horiz
+
+
+    Project Links
+
+S5E11 | LGBM | CV 0.92813 (2nd place)
+
+5 months ago · 62 upvotes
+
+code
+ <https://www.kaggle.com/angelosmar1>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://www.kaggle.com/code/angelosmar1/s5e11-lgbm-cv-0-92813-2nd-place>
+thankYou2yay3love2
+add_reaction
+
+comment
+
+
+    10 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s5e11/writeups/2nd-place-solution-7-models-but-1-was-also-
+enou#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 5 months ago
+
+· 6th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Great job! How come you didn't submit your single models? Whatever the
+reason, getting to a 2nd place with only 2 submissions is impressive.
+
+I did some limited binning of numeric variables, but not enough to get
+close to your scores. I will take a look at your approach.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/angelosmar1>
+
+
+      AngelosMar
+
+<https://www.kaggle.com/angelosmar1>
+Topic Author
+
+Posted 5 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks and great job to you too. I decided to submit in the late days,
+after I was able to build a strong single model. At that point I wanted
+to try a single submission - single model challenge. Later I decided to
+also add an ensemble as a second submission.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sylvesterdalmeida>
+
+
+      kobby_
+
+<https://www.kaggle.com/sylvesterdalmeida>
+
+Posted 5 months ago
+
+· 299th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations chairman on winning 2nd place. Your notebook is very solid.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 5 months ago
+
+· 9th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! Very impressive to achieve 2nd place with just 2 submissions,
+and such a strong single model.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 5 months ago
+
+· 6th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I have done with your notebook the same exercise as described *here*
+<https://www.kaggle.com/competitions/playground-series-s5e11/
+writeups/1st-place-a-lot-of-features-a-lot-of-models-an#3360132>. In a
+nutshell, I adapted everything to my fold splits, then did an ensembling
+of the resulting model with some models I made.
+
+In my hands your model gets CV: 0.928266 public: 0.92819 private:
+0.92927. When ensembled with my models, CV: 0.928621 public: 0.92841
+private: 0.92947. When ensembled with my models plus
+@mahoganybuttstrings <https://www.kaggle.com/mahoganybuttstrings>
+notebook, CV: 0.928719 public: 0.92861 private: 0.92959. I am surprised
+that there was so much room for improvement on top of both notebooks, as
+you seem to have engineered the features so well.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/angelosmar1>
+
+
+      AngelosMar
+
+<https://www.kaggle.com/angelosmar1>
+Topic Author
+
+Posted 5 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Interesting, thanks for sharing. 0.92959 in private is very big
+improvement, compared to the winning score.
+How many folds do you use for these scores?
+
+I also find interesting, as Mahog mentioned, that our single models had
+close scores but very different features.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+Posted 5 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Yeah, I'm still finding it hard to believe that our single models are so
+different. Even the hyperparameters are different, I discovered that a
+high max_bin value works well while you (and some other people) used a
+very high reg_lambda/reg_alpha. This makes me believe that this comp has
+a lot of 'local minima' (aka there are probably more single models that
+can be designed with about the same score but different features) :V
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 5 months ago
+
+· 6th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I use 10 folds.
+
+From a simple hill climb of your and Mahog's models, I get CV: 0.928499
+public LB: 0.92846 private LB: 0.92948. Not sure if that's what one
+would get if you two combined your actual models, but at least here the
+folds are consistent. So my ~20 models (but mostly 5 categorical models)
+add another ~0.0001 on top of your two.
+
+I am yet to figure out why regularized CatBoost and Keras were still
+overfitting like crazy in some of my ensembles.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+Posted 5 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congrats on 2nd place! Our single models have about the same CV/LB score
+but wildly different features :D. May I ask how much the discretize
+features help?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/angelosmar1>
+
+
+      AngelosMar
+
+<https://www.kaggle.com/angelosmar1>
+Topic Author
+
+Posted 5 months ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations! I thought you will win sooner or later, because you are
+the most consistent participant in the last months.
+
+The discretized features were the most important features for my model
+(along maybe with the digit ones).
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+
+      Mahog
+
+<https://www.kaggle.com/mahoganybuttstrings>
+
+Posted 5 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Hmm, ok, I'll do a test on them to see if a single XGB can beat my best
+ensemble
+
+replyReply
+add_reactionReact
+
+3 more repliesarrow_drop_down
+
+Profile picture for AngelosMar
+Profile picture for Mahog
+
+<https://www.kaggle.com/mohammedsalem2011>
+
+
+      Mohammed Salem Lanqes
+
+<https://www.kaggle.com/mohammedsalem2011>
+
+Posted 5 months ago
+
+· 413th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+congratulations @angelosmar1 <https://www.kaggle.com/angelosmar1> for
+2nd place
+Your working in feature engineering really insightful
+
+replyReply
+thankYou1
+add_reaction
+
+
+    Appreciation (1)
+
+<https://www.kaggle.com/alihaiderahmad>
+
+
+      Ali_Haider_Ahmad
+
+<https://www.kaggle.com/alihaiderahmad>
+
+Posted 5 months ago
+
+· 4th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!
+

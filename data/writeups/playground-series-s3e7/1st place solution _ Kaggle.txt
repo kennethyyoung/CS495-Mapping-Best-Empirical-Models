@@ -1,0 +1,615 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification with a Tabular Reservation Cancellation
+        Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e7>
+      o
+
+        1st place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e7/
+        writeups/hardy-xu-1st-place-solution>
+      o
+
+        Regression with a Tabular California Housing Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e1>
+      o
+
+        2nd place solution - brief summary
+
+        <https://www.kaggle.com/competitions/playground-series-s3e1/
+        writeups/jcerpent-2nd-place-solution-brief-summary>
+      o
+
+        That was a surprise! Here is the 1st place solution....
+
+        <https://www.kaggle.com/competitions/playground-series-s3e1/
+        writeups/kirderf-that-was-a-surprise-here-is-the-1st-place->
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+1st place solution — Binary Classification with a Tabular Reservation
+Cancellation Dataset
+
+
+  1st place solution
+
+Binary Classification with a Tabular Reservation Cancellation Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e7>
+
+Solution Writeup · 1st place · Feb 27, 2023
+
+*Feature Engineering*
+Although all of the data was numeric, a look at the data description
+revealed that the features type_of_meal_plan, room_type_reserved, and
+market_segment_type were actually categorical in nature. I handled these
+variables in 3 different ways:
+
+ 1. Leaving them as is
+ 2. One-hot encoding them
+ 3. Marking them as categorical features (used for LGBM)
+
+I played around with creating additional features, but I didn't find
+anything that improved my CV significantly.
+
+*Data Leakage*
+Within the train and test set, there were 1531 pairs of records that
+were duplicates if you dropped booking status.
+
+ 1. 562 of those pairs were in the train set, and upon closer
+    inspection, each of those pairs had opposite booking statuses.
+ 2. 253 of those pairs were in the test set.
+ 3. The remaining 716 pairs included 1 record in the train set and 1
+    record in the test set.
+
+Out of curiosity, I tried modifying a submission by setting the
+predictions for those 716 records in the test set to the opposite of
+their corresponding record in the train set, and got a boost of +.014 to
+my leaderboard score. I naively hoped to keep this secret to myself, but
+it was quickly discovered <https://www.kaggle.com/competitions/
+playground-series-s3e7/discussion/388851> by the rest of the community
+😅 However, I do have to thank @siukeitin <https://www.kaggle.com/
+siukeitin> for their suggestion to predict .5 for the 253 pairs of
+duplicates in the test set. This boosted my score by +.003, and I don't
+believe this trick was as well-known.
+
+Additionally, I removed from the train set the 562 duplicate pairs, plus
+the 716 records that had a duplicate in the test set, as I found that
+doing so improved my score on a holdout set I constructed to test this.
+I think this only resulted in a minor increase in my private score
+though. However, I do think that perhaps removing the train duplicate
+pairs helped make my CV more reliable.
+
+*Data Cleaning*
+
+When running adversarial validation between the train and original
+datasets, I plotted for the original dataset the predicted probability
+of belonging to the train set and got a bimodal distribution like this:
+
+This led me to experiment with removing the chunk of the original
+dataset that looked the least like the train set. I ended up using
+models that both included the entire original dataset and models that
+removed ~17% of the original dataset that looked the least like the
+train set.
+
+I also played around with things like fixing dates, but didn't see
+significant improvement in CV score from doing so.
+
+*Modeling*
+My CV setup was a stratified 3-fold with 3 repeats. For creating
+submissions, predictions from each fold were averaged. When tuning
+hyperparameters, one thing I noticed was that increased tree
+expressiveness seemed to improve performance to a much greater degree
+than what I had been used to. This meant using XGBoost with the 'exact'
+algorithm instead of 'hist' and max_depths around 12-13, and using LGBM
+with larger max_leaves and max_bin values.
+
+My winning submission was an average of the following 4 XGB submissions
+and 2 LGBM submissions:
+
+  * XGB
+  * XGB with categorical variables one-hot-encoded
+  * XGB with reduced original dataset
+  * XGB with categorical variables one-hot-encoded and reduced original
+    dataset
+  * LGBM with reduced original dataset
+  * LGBM with categorical features and reduced original dataset
+
+Author
+
+<https://www.kaggle.com/hardyxu52>
+Hardy Xu <https://www.kaggle.com/hardyxu52>
+
+hardyxu52
+
+arrow_drop_up
+
+57
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    15 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s3e7/writeups/hardy-xu-1st-place-solution#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/icfoer>
+
+
+      icfoer
+
+<https://www.kaggle.com/icfoer>
+
+Posted 3 years ago
+
+· 85th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congratulations! I knew that you would be the first.
+
+About the leak : in fact, I only found it because you came in first
+place. I couldn't believe that someone had found the "golden bullet".
+I heard that on kaggle, in competition with AUC, there is a trick for
+this - people submit (1-predict) so as not to be at the top of the
+leaderboard.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thank you!
+
+    I heard that on kaggle, in competition with AUC, there is a trick
+    for this - people submit (1-predict) so as not to be at the top of
+    the leaderboard.
+
+Haha, that's actually pretty clever.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/joshmijoshuamable>
+
+
+      Joshmi Joshua Mable
+
+<https://www.kaggle.com/joshmijoshuamable>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congartulations…
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jcaliz>
+
+
+      Jose Cáliz
+
+<https://www.kaggle.com/jcaliz>
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congartulations on achieving first place
+
+| I do have to thank @siukeitin for their suggestion to predict .5 for the 253 pairs of duplicates in the test set. This boosted my score by +.003, and I don't believe this trick was as well-known.
+
+|
+content_copy
+
+Yes I did the same on my submissions, a value of .5 is standard but the
+best value can be obtained by calculating the median because AUC is
+about ranking.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hardyxu52>
+
+
+      Hardy Xu
+
+<https://www.kaggle.com/hardyxu52>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks, congratulations on your second place! Actually I tried
+predicting other values, including mean and median, and found they
+decreased my score compared to predicting .5. Also, I'm not convinced
+that predicting the median is theoretically correct. If we assume the
+booking status percentage is around 38% like it was in the train set,
+then I would think you would want to predict higher than the median,
+since the booking rate for the pairs of duplicates is 50%.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jcaliz>
+
+
+      Jose Cáliz
+
+<https://www.kaggle.com/jcaliz>
+
+Posted 3 years ago
+
+· 2nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I think you are correct, the right value is the percentile (1 - 0.38)
+because is where the optimal threshold should be to perfectly divide
+both sets, I got confused while writing it 😅
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yus002>
+
+
+      Yue Sun
+
+<https://www.kaggle.com/yus002>
+
+Posted 3 years ago
+
+· 88th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I did not notice that there exists a data leakage to use. Good findings!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tripmanas>
+
+
+      Manas Tripathi
+
+<https://www.kaggle.com/tripmanas>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Is there a notebook to look at ?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pardeep19singh>
+
+
+      Pardeep Singh
+
+<https://www.kaggle.com/pardeep19singh>
+
+Posted 3 years ago
+
+· 67th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations on winning this competition @hardyxu52 <https://
+www.kaggle.com/hardyxu52> and thanks for sharing your solution writeup 🙌🙏
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pasqualemar>
+
+
+      Pasquale
+
+<https://www.kaggle.com/pasqualemar>
+
+Posted 3 years ago
+
+· 39th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulations, I've also used the strategy suggested by @siukeitin
+<https://www.kaggle.com/siukeitin> (great tip btw) for the duplicates in
+the test set and that improved my score 😏
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mattop>
+
+
+      Matt OP
+
+<https://www.kaggle.com/mattop>
+
+Posted 3 years ago
+
+· 37th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Well deserved win @hardyxu52 <https://www.kaggle.com/hardyxu52>, nice
+solution writeup as well. Predicting 0.5 for the 253 pairs of duplicates
+in the test data was a clever strategy!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shiv7080>
+
+
+      Shiva Kant Mishra
+
+<https://www.kaggle.com/shiv7080>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+@hardyxu52 <https://www.kaggle.com/hardyxu52> ,Thanks for the sharing
+your winning solution
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gemammi>
+
+
+      gemammi
+
+<https://www.kaggle.com/gemammi>
+
+Posted 3 years ago
+
+· 167th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Nice explanation there and congratulations!, especially to point out the
+categorical features and how to handle them, I did notice about it
+earlier but all the discussion didnt mention it, so i got carried away
+to leave them as is
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+
+This comment has been deleted.
+
+
+    Appreciation (1)
+
+<https://www.kaggle.com/mohammadtanvirul>
+
+
+      Mohammad Tanvirul
+
+<https://www.kaggle.com/mohammadtanvirul>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thank you for your winning solution
+

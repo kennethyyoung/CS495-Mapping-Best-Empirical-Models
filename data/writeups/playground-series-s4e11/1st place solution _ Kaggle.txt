@@ -1,0 +1,1039 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Exploring Mental Health Data
+
+        <https://www.kaggle.com/competitions/playground-series-s4e11>
+      o
+
+        1st place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s4e11/
+        writeups/mahdi-ravaghi-1st-place-solution>
+      o
+
+        Regression of Used Car Prices
+
+        <https://www.kaggle.com/competitions/playground-series-s4e9>
+      o
+
+        Regression with a Flood Prediction Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e5>
+      o
+
+        PSS4E05 #1st place solution - Ensemble with ridge
+
+        <https://www.kaggle.com/code/adaubas/pss4e05-1st-place-solution-
+        ensemble-with-ridge>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+1st place solution — Exploring Mental Health Data
+
+
+  1st place solution
+
+Exploring Mental Health Data
+
+<https://www.kaggle.com/competitions/playground-series-s4e11>
+
+Solution Writeup · 1st place · Nov 30, 2024
+
+Well, this is a nice and totally unexpected surprise! Congratulations to
+everyone who survived the shake-up, and thanks to @optimistix <https://
+www.kaggle.com/optimistix> and @tilii7 <https://www.kaggle.com/tilii7>
+for their support and encouragement last month, which kept me motivated
+to win the competition of this month.
+
+I kept my promise <https://www.kaggle.com/competitions/playground-
+series-s4e10/discussion/543772#3033958>, @optimistix <https://
+www.kaggle.com/optimistix>. Funny enough, my winning solution came from
+an early experiment <https://www.kaggle.com/code/ravaghi/mental-health-
+prediction-1st-place-solution> I ran during the second week of the
+competition, which, honestly, I didn’t think had a chance of winning.
+Over the month, I trained many different models (69 in total) with
+various data pipelines and configurations, and tried many different
+methods to ensemble them. However, as it turned out, fewer models and a
+simpler ensembling approach worked better this time around. I ended up
+using 24 models (still a lot, though!).
+
+The reason I doubted this solution would work was because the CV score
+was much higher than I expected (0.94173), and the public LB score was
+lower than many of my other submissions (0.94284). My other selected
+submission, which I spent a lot more time on, had a CV score of 0.94150
+and a public LB score of 0.94285. Despite this, I couldn’t find any
+errors in my code, so I decided to trust the CV score and use this
+solution as one of my submissions.
+
+My approach this month was similar to last month. I didn't do any
+feature engineering and did not drop any features, despite the
+temptation to remove the |Name| column. For the modeling part, I trained
+XGBoost and three variations of LightGBM on four different data
+pipelines, with the original dataset being included in two of the
+pipelines. I also used the OOF files from my public notebook <https://
+www.kaggle.com/code/ravaghi/s04e11-mental-health-prediction-ensemble>.
+Additionally, I trained two AutoGluon models, one with and one without
+the original dataset. These two models had the highest CV scores and
+were probably the two most important models in my ensemble. The scores
+for each of my models, and my AutoGluon ensemble can be seen in the
+figure below.
+
+After training all the models and collecting their OOF files, I let
+AutoGluon handle the ensembling, ensuring to define the CV strategy
+myself to avoid leakage. It worked really well last month, so I decided
+to try it again, and it didn’t disappoint! I also experimented with
+ensembling the OOF files with hill climbing, Ridge, Logistic Regression,
+and a combination of Ridge and Logistic Regression, but the CV scores
+for these methods didn’t even come close to what I achieved with AutoGluon.
+
+Author
+
+<https://www.kaggle.com/ravaghi>
+Mahdi Ravaghi <https://www.kaggle.com/ravaghi>
+
+ravaghi
+
+arrow_drop_up
+
+105
+
+Share
+
+more_horiz
+
+thankYou54yay36love19kaggle16funny1
+add_reaction
+
+comment
+
+
+    76 Comments
+
+9 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s4e11/writeups/mahdi-ravaghi-1st-place-solution#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/electroknight>
+
+
+      Electro Knight
+
+<https://www.kaggle.com/electroknight>
+
+Posted a year ago
+
+· 866th in this Competition
+
+arrow_drop_up
+
+8
+
+more_vert
+
+But wouldn't not cleaning the data mean machine has learnt false things?
+Like for example if the form is distributed in a specific locality where
+depression is high. There are 2 people having same name let us take
+Rohan. both Rohan have depression. But the data of 1st Rohan is used in
+training and second is used in testing. The machine will learn that the
+Rohan is cause of depression but in reality that it is the very specific
+locality that causes it. Like the poverty in area is the actual factor
+rather than name.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravaghi>
+
+
+      Mahdi Ravaghi
+
+<https://www.kaggle.com/ravaghi>
+Topic Author
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+10
+
+more_vert
+
+What you're saying makes sense and is a valid concern, but keep in mind
+that we are working with a synthetic dataset. With real data, I would
+address the issues you're mentioning, but based on what I've learned
+about synthetic datasets since I began competing in TPS, it's usually
+best to leave the inconsistencies in the data as is.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/electroknight>
+
+
+      Electro Knight
+
+<https://www.kaggle.com/electroknight>
+
+Posted a year ago
+
+· 866th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I see thanks.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted a year ago
+
+· 13th in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Congrats once again! While I'm not surprised that your winning
+submission was achieved early on (so were my highest private scores,
+which I didn't choose), it's great that you chose wisely. You always
+turn in solid work and get great scores and are high on the LB, so it
+was only a matter of time before you won, and here we are. Celebrate this!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/denkuznetz>
+
+
+      Den_Kuznetz
+
+<https://www.kaggle.com/denkuznetz>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! That's a great result!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jusetiz>
+
+
+      JuseTiz
+
+<https://www.kaggle.com/jusetiz>
+
+Posted a year ago
+
+· 15th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Very impressive solution! Thank you for sharing.
+
+A question: how do you save the out-of-fold (OOF) results from
+Autogluon? Did you use the |.predict_proba_oof| method in Autogluon?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravaghi>
+
+
+      Mahdi Ravaghi
+
+<https://www.kaggle.com/ravaghi>
+Topic Author
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you!
+
+Yes, I have an example here <https://www.kaggle.com/code/ravaghi/s04e12-
+insurance-premium-prediction-autogluon>.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shedracka>
+
+
+      Shedrack Eneojo Okute
+
+<https://www.kaggle.com/shedracka>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulation ,Mahdi. What another great opportunity to learn from you
+again
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yannickmaehlmann>
+
+
+      Yannick Maehlmann
+
+<https://www.kaggle.com/yannickmaehlmann>
+
+Posted a year ago
+
+· 1789th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great solution, I wondered if the 1st place finish would include the
+name column in the dataset, as I dropped it instantly, but interestingly
+it does make for better results.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mohameddrabo>
+
+
+      Mohamed Drabo
+
+<https://www.kaggle.com/mohameddrabo>
+
+Posted a year ago
+
+· 436th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I want to know how to select my submissions for my public score. I used
+to think that I should select the submission with the highest score, but
+then I realized that some of my submissions have a better public score
+than my selected submission.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravaghi>
+
+
+      Mahdi Ravaghi
+
+<https://www.kaggle.com/ravaghi>
+Topic Author
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Trust your CV. Works most of the time for me.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/beatafaron>
+
+
+      Beata Faron
+
+<https://www.kaggle.com/beatafaron>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations ! Great solution!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ttuwraboodsaleh>
+
+
+      SP09_
+
+<https://www.kaggle.com/ttuwraboodsaleh>
+
+Posted a year ago
+
+· 1516th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! The explanation of the solution was excellent.
+
+Could you please explain in simple terms what is the use of oof files ?
+@ravaghi <https://www.kaggle.com/ravaghi>
+
+Thanks.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I'll let @ravaghi <https://www.kaggle.com/ravaghi> answer your question
+since that is who you asked.
+
+For the future: any time you have a question, I suggest you start typing
+keywords into the search field at the top of the "Discussion" section.
+Typing |oof| into that field will give you the same results as the link
+below:
+
+https://www.kaggle.com/competitions/playground-series-s4e11/discussion?
+sort=undefined&search=oof <https://www.kaggle.com/competitions/
+playground-series-s4e11/discussion?sort=undefined&search=oof>
+
+Those are all the threads in this competition with a word |oof|, and
+somewhere in there might be an answer to your question.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravaghi>
+
+
+      Mahdi Ravaghi
+
+<https://www.kaggle.com/ravaghi>
+Topic Author
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+The same question is asked and briefly answered in this very thread as well.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/g1llar>
+
+
+      Przemyslaw Kwiecinski
+
+<https://www.kaggle.com/g1llar>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! Excellent solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/chanhee0129>
+
+
+      Chanhee0129
+
+<https://www.kaggle.com/chanhee0129>
+
+Posted a year ago
+
+· 2464th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+That's good
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/riyadmehdi>
+
+
+      Riyad Mehdi
+
+<https://www.kaggle.com/riyadmehdi>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, very interesting
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/makrrc>
+
+
+      Mayko Rodrigues Ribeiro da Costa
+
+<https://www.kaggle.com/makrrc>
+
+Posted a year ago
+
+· 2176th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on the result and exceptional mastery of the tools.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/oleksandrvyshnevskyi>
+
+
+      Oleksandr Vyshnevskyi
+
+<https://www.kaggle.com/oleksandrvyshnevskyi>
+
+Posted a year ago
+
+· 2476th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great solution
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mike2207>
+
+
+      swaminathan07
+
+<https://www.kaggle.com/mike2207>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+great work done
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/horaiudrago>
+
+
+      Dragos
+
+<https://www.kaggle.com/horaiudrago>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great solution, great notebook!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ayoajakaiyeadedamola>
+
+
+      Ayo-Ajakaiye Adedamola
+
+<https://www.kaggle.com/ayoajakaiyeadedamola>
+
+Posted a year ago
+
+· 2489th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulation, Honestly I have to put more work into my modelling, I
+got bored waiting for my system to load the dataset which got me
+demotivated, now I know I have to be more efforts to win thanks.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/aspswe>
+
+
+      A-SP
+
+<https://www.kaggle.com/aspswe>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, bravo!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mohammadarshadahmad>
+
+
+      Mohammad Arshad Ahmad
+
+<https://www.kaggle.com/mohammadarshadahmad>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on the well-deserved win! It's impressive how you
+trusted an early experiment and focused on a simpler ensemble approach,
+proving that persistence and intuition matter. Your detailed breakdown,
+especially the use of AutoGluon, is both insightful and inspiring.
+Looking forward to seeing more of your work @ravaghi <https://
+www.kaggle.com/ravaghi>
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/rzatemizel>
+
+
+      rıza temizel
+
+<https://www.kaggle.com/rzatemizel>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I was pretty sure I’d see this post one day in the near future :) Congrats!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravaghi>
+
+
+      Mahdi Ravaghi
+
+<https://www.kaggle.com/ravaghi>
+Topic Author
+
+Posted a year ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you! I thought the same about you, but you have stopped competing
+in TPS. I'm sure you have more important things to do, but I do hope to
+see more of you in the playground competitions.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdthinh>
+
+
+      KennyT
+
+<https://www.kaggle.com/cdthinh>
+
+Posted a year ago
+
+· 719th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks @ravaghi <https://www.kaggle.com/ravaghi> and congrats for the
+victory. It is another good example of *trust your CV than public LB*. 🥳
+1) So in total you have 4 data pipelines? And what are the differences
+between these data pipeplines?
+2) In this competition, the data is still unbalanced. Why dont you use |
+AUC| instead of |accuracy|?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted a year ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+    2) In this competition, the data is still unbalanced. Why dont you
+    use AUC instead of accuracy?
+
+A correct probability threshold, if using, or a well-calibrated model,
+is needed regardless of whether one uses AUC or accuracy.
+
+I also think this question is answered by the fact that @ravaghi
+<https://www.kaggle.com/ravaghi> won the competition.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdthinh>
+
+
+      KennyT
+
+<https://www.kaggle.com/cdthinh>
+
+Posted a year ago
+
+· 719th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+It is clear to me now. Thanks @tilii7 <https://www.kaggle.com/tilii7>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/william178>
+
+
+      William178
+
+<https://www.kaggle.com/william178>
+
+Posted a year ago
+
+· 556th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! I have a question here, differences in common LB and CV scores
+may be due to differences in data distribution, have you tried using
+different CV grouping strategies (like stratified sampling, time series
+segmentation) to verify the robustness of the model?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yagmurdedekoc>
+
+
+      Yağmur Dedekoç
+
+<https://www.kaggle.com/yagmurdedekoc>
+
+Posted a year ago
+
+· 441st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! The explanation of the solution was excellent.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/bassetkerouche>
+
+
+      abdelbasset Basto
+
+<https://www.kaggle.com/bassetkerouche>
+
+Posted a year ago
+
+· 637th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+congrat @ravaghi <https://www.kaggle.com/ravaghi>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mamutalib>
+
+
+      Md Abdul Mutalib
+
+<https://www.kaggle.com/mamutalib>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, @ravaghi <https://www.kaggle.com/ravaghi>, on your
+great success. Which other model have you tried to get nearly similar
+accuracy?
+
+replyReply
+add_reactionReact
+

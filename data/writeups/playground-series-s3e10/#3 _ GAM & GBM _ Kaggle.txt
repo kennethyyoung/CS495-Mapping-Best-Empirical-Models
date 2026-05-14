@@ -1,0 +1,399 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Binary Classification with a Tabular Pulsar Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e10>
+      o
+
+        #3 : GAM & GBM
+
+        <https://www.kaggle.com/competitions/playground-series-s3e10/
+        writeups/aldparis-3-gam-gbm>
+      o
+
+        How to detect pulsars with GAM (1st place)
+
+        <https://www.kaggle.com/code/seascape/how-to-detect-pulsars-
+        with-gam-1st-place>
+      o
+
+        1st place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e10/
+        writeups/piotr-szulc-1st-place-solution>
+      o
+
+        Ordinal Regression with a Tabular Wine Quality Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e5>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+#3 : GAM & GBM — Binary Classification with a Tabular Pulsar Dataset
+
+
+  #3 : GAM & GBM
+
+Binary Classification with a Tabular Pulsar Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e10>
+
+Solution Writeup · 3rd place · Mar 21, 2023
+
+Hi,
+
+3rd solution is a blend of XGBoost, LightGBM and Generalized Additive
+Models here <https://www.kaggle.com/code/adaubas/pss3e10-3rd-place-
+solution-gam-gbm> :
+
+  *
+
+    with from 4 to 10 folds Stratified CV
+
+  *
+
+    with log transformation of some features
+
+  *
+
+    with some interactions features
+
+  *
+
+    with forward selection of interactions features and values
+    permutations of predictions to do backward features selection and to
+    drop useless features and to avoid overfitting.
+
+  *
+
+    with weak learners for XGBoost and LightGBM : only 5 ou 6 leaves
+
+  *
+
+    with overfitting control by computing difference between /
+    val_logloss/ and /trn_logloss/ for each fold, to fit regularization
+    hyperparameters in XGBoost and LightGBM, *with the hands* (See
+    @ambrosm <https://www.kaggle.com/ambrosm> in https://www.kaggle.com/
+    competitions/playground-series-s3e9/discussion/394592 <https://
+    www.kaggle.com/competitions/playground-series-s3e9/discussion/394592>)
+
+  *
+
+    hence without optuna or other optimization tools
+
+  *
+
+    without calibration of predictions, because by CV I saw it was useless
+
+  *
+
+    without original data.
+
+  *
+
+    with a little mistake in final submission in diversity of models,
+    which costs me the second place (see difference betwwen version v40
+    & v39 - v40 was what i wanted to do but I did v39).
+
+By computing difference between /val_logloss/ and /trn_logloss/, we can
+see that there was less over-fitting with GAM than with GBMs.
+
+I tried RandomForest and ExtraTrees, but my CV was only 0.033.
+
+I tried to fit a LogisticRegression without sucess, I wasn't able to add
+interactions with polynomialfeatures, thank's @ambrosm <https://
+www.kaggle.com/ambrosm> for your solution <https://www.kaggle.com/code/
+ambrosm/pss3e10-7-winning-model>, I'll read it carefully.
+
+*Special thank's to @paddykb <https://www.kaggle.com/paddykb> for GAM*
+in this notebook <https://www.kaggle.com/code/paddykb/ps-s3e10-gam-
+finger-on-the-pulsarrrrr> and log transformation of some features.
+Thank's to @mateuszgrzybpl <https://www.kaggle.com/mateuszgrzybpl> for
+pyGAM in python (pygam) in comments here <https://www.kaggle.com/code/
+paddykb/ps-s3e10-gam-finger-on-the-pulsarrrrr/comments>
+And thank's too to @pourchot <https://www.kaggle.com/pourchot> for GAM
+with pyGAM here <https://www.kaggle.com/code/pourchot/pygam-for-
+generalized-additive-model>
+
+Author
+
+<https://www.kaggle.com/adaubas>
+aldparis <https://www.kaggle.com/adaubas>
+
+adaubas
+
+arrow_drop_up
+
+18
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    4 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/mohammadsdg>
+
+
+      Mohammad O. Siddiq
+
+<https://www.kaggle.com/mohammadsdg>
+
+Posted 3 years ago
+
+· 438th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Why did you went through the process you went through for summing?
+I couldn't understand the purpose of subtracting the corresponding
+feature values from the maximum value and adding the minimum values
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 3 years ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@mohammadsdg <https://www.kaggle.com/mohammadsdg>,
+
+Because I wanted that class 1 peaks to be always on the same side, for
+all features in cell n° 5, first column. Those sym_feats are just
+symetric of original feats, but blue peaks are now all the right side.
+And when sum2 is low, it means that we have more chance to have a class
+1 target.
+
+Without those sym_feats, sums don't mean anything.
+
+But finally sum2 was not a very usefull feature. I've tried…
+
+|import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+train = pd.read_csv("../input/playground-series-s3e10/train.csv", index_col = "id")
+test = pd.read_csv("../input/playground-series-s3e10/test.csv", index_col = "id")
+
+df_stats_train = pd.DataFrame(index = test.columns, columns=["min", "median", "max"])
+for f in test.columns:
+    df_stats_train.loc[f] = train[f].agg(["min", "median", "max"])
+
+for df in [train]:
+    for f in ["EK", "Skewness", "Mean_DMSNR_Curve", "SD_DMSNR_Curve"]:
+        df[f"sym_{f}"] = - (df[f] - df_stats_train.loc[f, "max"] + df_stats_train.loc[f, "min"])
+
+    df["sum1"] = df[['Mean_Integrated', 'SD', 'sym_EK', 'sym_Skewness']].sum(axis=1)
+    df["sum2"] = df[['sym_Mean_DMSNR_Curve', 'sym_SD_DMSNR_Curve', 'EK_DMSNR_Curve', 'Skewness_DMSNR_Curve']].sum(axis=1)
+    df["sum3"] = df[['sum1', 'sum2']].sum(axis=1)
+
+
+cols = [f for f in list(test.columns) if f not in ["EK", "Skewness", "Mean_DMSNR_Curve", "SD_DMSNR_Curve"]] + [f"sym_{f}" for f in ["EK", "Skewness", "Mean_DMSNR_Curve", "SD_DMSNR_Curve"]] + ["sum1", "sum2", "sum3"]
+
+df_temp1 = pd.concat([train.loc[train["Class"]==1], train.loc[train["Class"]==0].sample(frac=.1)], axis=0)
+
+fig, ax = plt.subplots((len(cols)+1)//2, 2, figsize=(16,len(cols)), tight_layout = True)
+ax = ax.flatten()
+
+for i, f in enumerate(cols):
+    sns.kdeplot(data = df_temp1, hue = 'Class', fill = True, x = f, legend = False, ax = ax[i])
+    ax[i].spines[["top", "right"]].set_visible(False)
+
+|
+content_copy
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pourchot>
+
+
+      Laurent Pourchot
+
+<https://www.kaggle.com/pourchot>
+
+Posted 3 years ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@adaubas <https://www.kaggle.com/adaubas> , Bravo ! 😉
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mpwolke>
+
+
+      Marília Prata
+
+<https://www.kaggle.com/mpwolke>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Toutes mes félicitations Paris.
+
+replyReply
+add_reactionReact
+

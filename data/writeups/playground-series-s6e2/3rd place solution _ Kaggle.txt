@@ -1,0 +1,341 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predicting Heart Disease
+
+        <https://www.kaggle.com/competitions/playground-series-s6e2>
+      o
+
+        3rd place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s6e2/
+        writeups/3rd-place-solution>
+      o
+
+        2nd place solution --- Avoid leaks and overfitting
+
+        <https://www.kaggle.com/competitions/playground-series-s6e2/
+        writeups/2nd-place-solution-avoid-leaks-and-overfitting>
+      o
+
+        1st Place Solution — Diversity, Selection, and Trusting the CV–
+        LB Relation
+
+        <https://www.kaggle.com/competitions/playground-series-s6e2/
+        writeups/1st-place-solution-diversity-selection-and-t>
+      o
+
+        Predicting Student Test Scores
+
+        <https://www.kaggle.com/competitions/playground-series-s6e1>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd place solution — Predicting Heart Disease
+
+
+  3rd place solution
+
+Predicting Heart Disease
+
+<https://www.kaggle.com/competitions/playground-series-s6e2>
+
+Solution Writeup · 3rd place · Mar 1, 2026
+
+First, a huge thanks to all the competitors! Special thanks to @cdeotte
+<https://www.kaggle.com/cdeotte> for supplying the original dataset when
+it went missing—it felt exactly like when Gandalf arrived at the dawn of
+the fifth day! :). I also want to thank @include4eto <https://
+www.kaggle.com/include4eto> for the XGB with pseudo-labels approach and
+@omidbaghchehsaraei <https://www.kaggle.com/omidbaghchehsaraei> for the
+RealMLP baseline.
+
+My strategy focused on building models with different feature sets and
+objectives, checking the correlations of the predictions, and strictly
+trusting the CV score.
+
+*Final CV Score: 0.955803*
+
+
+    Models
+
+My final ensemble was a blend of Gradient Boosting, Neural Networks, and
+Linear Models. I used two different feature sets for all the models and
+blended the predictions in the final. Also, I noticed that lower depths
+for GBDT algorithms (2, 3) worked better on this data.
+
+  * Version 1: All features treated as categorical.
+  * Version 2: A "Hybrid" set where only features with *< 10* unique
+    values were categorical, and the rest were treated as continuous.
+
+ 1.
+
+    RealMLP & TabM: RealMLP was my strongest performer with a CV score
+    of 0.95576. I used *n_cv=2 and the 1-auc_ovr metric*, inspired from
+    this discussion <https://www.kaggle.com/competitions/playground-
+    series-s6e2/discussion/674394>.
+
+ 2.
+
+    CatBoost Variants: I utilized both Plain and Ordered boosting types.
+    I found that Ordered boosting was particularly effective as the 2nd
+    best single-model strategy with 0.0.95575 CV score.
+
+ 3.
+
+    XGBoost Variants: Standard XGBoost (GBDT) with low depth (depth=3),
+    XGBoost with Pseudo-labeling, and XGBoost with Logistic Regression
+    Residuals.
+
+ 4.
+
+    HistGradientBoosting & LGBM, Logistic Regression: Included for
+    additional architectural diversity. Helped improve the ensemble CV
+    score.
+
+
+    Feature Engineering & The Original Data
+
+The only feature engineering technique that worked for me was including
+the original dataset. I used it primarily for Target Encoding,
+calculating the mean of the target from the original data for each
+categorical feature and merging it into the competition folds.
+
+
+    Ensemble
+
+I converted all OOF predictions to ranks using scipy.stats.rankdata and
+used a GPU-accelerated Hill Climbing algorithm.
+
+I added my solution to my GitHub. It's not completed yet, but I will try
+to update it soon. Solution link <https://github.com/mert-byrktr/KAGGLE-
+PS-S6E2-PREDICTING-HEART-DISEASE>
+
+Author
+
+<https://www.kaggle.com/mertbayraktar>
+Mert Bayraktar <https://www.kaggle.com/mertbayraktar>
+
+mertbayraktar
+
+arrow_drop_up
+
+14
+
+Share
+
+more_horiz
+
+love2kaggle2
+add_reaction
+
+comment
+
+
+    3 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/sakuno>
+
+
+      Kawthar
+
+<https://www.kaggle.com/sakuno>
+
+Posted 2 months ago
+
+· 875th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats on 3rd place, impressive work ! Thank you for sharing.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/varadvaste>
+
+
+      varad vaste
+
+<https://www.kaggle.com/varadvaste>
+
+Posted 2 months ago
+
+· 3123rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Can you please provide your notebook link for us.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mertbayraktar>
+
+
+      Mert Bayraktar
+
+<https://www.kaggle.com/mertbayraktar>
+Topic Author
+
+Posted 2 months ago
+
+· 3rd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Updated the write-up.
+
+replyReply
+add_reactionReact
+

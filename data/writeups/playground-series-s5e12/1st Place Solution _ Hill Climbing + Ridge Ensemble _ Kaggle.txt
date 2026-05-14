@@ -1,0 +1,904 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Diabetes Prediction Challenge
+
+        <https://www.kaggle.com/competitions/playground-series-s5e12>
+      o
+
+        1st Place Solution | Hill Climbing + Ridge Ensemble
+
+        <https://www.kaggle.com/competitions/playground-series-s5e12/
+        writeups/1st-place-solution-hill-climbing-ridge-ensembl>
+      o
+
+        Predict Calorie Expenditure
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5>
+      o
+
+        ３rd Place - Diversity and Hill Climbing
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5/
+        writeups/nice-kazusan-rd-place-diversity-and-hill-climbing>
+      o
+
+        Predict the Introverts from the Extroverts
+
+        <https://www.kaggle.com/competitions/playground-series-s5e7>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+1st Place Solution | Hill Climbing + Ridge Ensemble — Diabetes
+Prediction Challenge
+
+
+  1st Place Solution | Hill Climbing + Ridge Ensemble
+
+Diabetes Prediction Challenge
+
+<https://www.kaggle.com/competitions/playground-series-s5e12>
+
+Solution Writeup · 1st place · Jan 1, 2026
+
+Happy New Year, Kaggle Community! 🎉
+
+This win came somewhat unexpectedly, but it validates the sustainability
+of my favorite Hill Climbing (HC) approach I've been refining over
+multiple previous competitions, consistently achieving Top 1% places.
+This was an incredible learning experience, and I want to thank everyone
+who shared their insights throughout the competition – especially
+@masayakawamata <https://www.kaggle.com/masayakawamata> for the shared
+post-cutoff cross-validation approach, and @daylighth <https://
+www.kaggle.com/daylighth>, @laureanoarcanio <https://www.kaggle.com/
+laureanoarcanio>, @tilii <https://www.kaggle.com/tilii>, @mikhailnaumov
+<https://www.kaggle.com/mikhailnaumov>, and @siukeitin <https://
+www.kaggle.com/siukeitin> for their discussion posts and scripts.
+
+This 1st place finish was particularly satisfying because it came after
+a frustrating plateau. My HC ensemble was stuck at post-cutoff CV
+0.7088X and Public LB 0.70722. Any addition of new models caused
+improvement in CV, but Public LB dropped. I decided to apply Ridge
+Ensemble Stacking using the top models from HC selection as input. I
+experimented with different alphas on rank-transformed predictions and
+different numbers of models. A plateau was achieved here as well, with
+post-cutoff CV of 0.70860 and Public LB 0.70739. I stopped at this stage
+as the gap between post-cutoff CV and Public LB of 0.00121 seemed
+acceptable.
+
+I suppose that the good final result was ensured through leveraging many
+diverse base models (tree-based and neural networks) with different
+hyperparameters (depth, learning rate, regularization), feature
+engineering (ratios, polynomials, target encoding), seeds (multiple runs
+for variance reduction). I included in HC both single models and other
+ensembles. Such a mixed approach worked for me in previous competitions.
+
+In the Ridge Ensemble, I focused purely on performance (post-cutoff AUC)
+rather than correlation-based diversity. The diversity came naturally
+from HC's exploration process, which tends to select models that
+complement each other.
+
+The Ridge Ensemble (based on Top-36 models from HC and alpha = 10) had
+slightly lower post-cutoff CV than HC (0.70860 vs 0.70886), but
+performed better on both Public and Private LB. This demonstrates that
+stabilization from Ridge regularization sometimes can be more valuable
+than raw CV optimization.
+
+With Ridge Ensemble based on Top-34 models and alpha=5, it was possible
+to achieve a Private LB of 0.70514, but the Public LB score of this
+ensemble was too low (0.70734) to confidently select it for final
+submission based on the gap.
+
+Key takeaways in this competition were:
+1) distribution shifts are competition killers - if CV improves but LB
+drops, it is necessary to investigate data structure;
+2) sometimes a slightly lower CV with better generalization wins;
+3) two-stage ensembles may improve final results when single-stage
+methods reach plateau;
+4) test multiple configurations;
+5) always trust your CV and trust the process.
+
+Wishing everyone success in upcoming Kaggle competitions, exciting
+opportunities in real-world ML projects and continuous learning and
+growth in data science.
+
+Author
+
+<https://www.kaggle.com/wind1234it>
+wind1234it <https://www.kaggle.com/wind1234it>
+
+wind1234it
+
+arrow_drop_up
+
+57
+
+Share
+
+more_horiz
+
+
+    Project Links
+
+s5e12 | 1st place solution| HC & Ridge
+
+4 months ago · 112 upvotes
+
+code
+ <https://www.kaggle.com/wind1234it>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://www.kaggle.com/code/wind1234it/s5e12-1st-place-solution-hc-ridge>
+thankYou11yay9
+add_reaction
+
+comment
+
+
+    24 Comments
+
+5 appreciation comments <https://www.kaggle.com/competitions/playground-
+series-s5e12/writeups/1st-place-solution-hill-climbing-ridge-
+ensembl#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/apedoarthur>
+
+
+      Arthur Apedo
+
+<https://www.kaggle.com/apedoarthur>
+
+Posted 2 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations to you and thank you for this informative post👏
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/sowmyanathi>
+
+
+      Sowmya Nathi
+
+<https://www.kaggle.com/sowmyanathi>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Hill Climbing is a local search algorithm used in Artificial
+Intelligence to find the best solution by continuously moving toward a
+better state.
+It starts with an initial state and compares it with its neighboring
+states. The algorithm moves to the neighbor with a higher value (better
+solution). This process continues until no better neighbor is found. At
+that point, the algorithm stops.
+Hill climbing does not consider all possible paths and does not
+backtrack, so it is fast but may get stuck at a local maximum, plateau,
+or ridge.
+
+replyReply
+thankYou3
+add_reaction
+
+<https://www.kaggle.com/davidlopesmaciel>
+
+
+      DAVID LOPES MACIEL
+
+<https://www.kaggle.com/davidlopesmaciel>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Ótimo trabalho, parabens!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/aditya9151>
+
+
+      Aditya Raj Singh
+
+<https://www.kaggle.com/aditya9151>
+
+Posted 4 months ago
+
+· 3819th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Great Job. Helpful Post
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/olusegunomotesho>
+
+
+      olusegun omotesho
+
+<https://www.kaggle.com/olusegunomotesho>
+
+Posted 4 months ago
+
+· 3459th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats. That's a big shots among thousands of brilliant heads
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/abanoubboshraanis>
+
+
+      Ab.Boshra
+
+<https://www.kaggle.com/abanoubboshraanis>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+This is a huge milestone to achieve, congrats!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/masanakashima>
+
+
+      masa.nakashima
+
+<https://www.kaggle.com/masanakashima>
+
+Posted 4 months ago
+
+· 1552nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations for winning the 1st place!
+
+I learn from your comment, how important it is persistently to update &
+diversify models & their surrounding settings..
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/navneetbende>
+
+
+      Navneet
+
+<https://www.kaggle.com/navneetbende>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+cool achievement @wind1234it <https://www.kaggle.com/wind1234it>
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/les1781>
+
+
+      LeoStaz
+
+<https://www.kaggle.com/les1781>
+
+Posted 4 months ago
+
+· 992nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on the achievement, and thank you for sharing the insights.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/laureanoarcanio>
+
+
+      Laureano Arcanio
+
+<https://www.kaggle.com/laureanoarcanio>
+
+Posted 4 months ago
+
+· 282nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing and congratulations for the 1st place !!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/samithsachidanandan>
+
+
+      Samith Chimminiyan
+
+<https://www.kaggle.com/samithsachidanandan>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on first place!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/davidhhye>
+
+
+      DavidHHYe
+
+<https://www.kaggle.com/davidhhye>
+
+Posted 4 months ago
+
+· 177th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on the first place! Thanks for sharing!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/susihad>
+
+
+      Susila Hadiyati
+
+<https://www.kaggle.com/susihad>
+
+Posted 4 months ago
+
+· 3059th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations! will definitely take a look at your work to learn from it.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/dmitrysavkov>
+
+
+      Dmitry Savkov
+
+<https://www.kaggle.com/dmitrysavkov>
+
+Posted 4 months ago
+
+· 904th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on first place!
+I'm curious, what specific feature engineering (ratios, polynomials,
+target encoding) did you use? Because I failed to succeed in this. Did
+you aggregate original dataset?
+
+replyReply
+thankYou1
+add_reaction
+
+This comment has been deleted.
+
+<https://www.kaggle.com/wind1234it>
+
+
+      wind1234it
+
+<https://www.kaggle.com/wind1234it>
+Topic Author
+
+Posted 4 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thank you for your question, @dmitrysavkov <https://www.kaggle.com/
+dmitrysavkov>!
+
+I'm happy to share some insights. My main purpose was to create a wide
+set of diverse models for Hill Climbing and Ridge Ensemble, rather than
+focusing on a single perfect model.
+
+1) Ratio-based features (Interaction Features) capture relationships
+between related features. For example, the ratio of "bad" cholesterol to
+"good" cholesterol (LDL/HDL) is a standard medical risk indicator:
+
+|def fe_04_ratios(df_train, df_test):
+    """Set 04: Ratio features"""
+    X, X_test = base_preprocess(df_train, df_test)
+
+    ratio_pairs = [
+        ('systolic_bp', 'diastolic_bp'), ('ldl_cholesterol', 'hdl_cholesterol'),
+        ('cholesterol_total', 'hdl_cholesterol'), ('triglycerides', 'hdl_cholesterol'),
+        ('bmi', 'age'), ('physical_activity_minutes_per_week', 'screen_time_hours_per_day'),
+        ('diet_score', 'bmi'), ('sleep_hours_per_day', 'age'),
+        ('heart_rate', 'age'), ('cholesterol_total', 'bmi'),
+        ('triglycerides', 'cholesterol_total'), ('ldl_cholesterol', 'cholesterol_total')
+    ]
+
+    for c1, c2 in ratio_pairs:
+        if c1 in X.columns and c2 in X.columns:
+            X[f'{c1}_div_{c2}'] = X[c1] / (X[c2] + 1e-8)  # +1e-8 prevents division by zero
+            X_test[f'{c1}_div_{c2}'] = X_test[c1] / (X_test[c2] + 1e-8)
+
+    return X, X_test
+
+|
+content_copy
+
+The |+ 1e-8| (0.00000001) is added here to prevent division by zero errors.
+
+2) Polynomial features capture non-linear relationships by creating
+squared and cubed versions of numeric features:
+
+|# Use top 10 numeric columns to avoid feature explosion
+for col in NUMERIC_COLS[:10]:
+    if col in X.columns:
+        # Square features (captures U-shaped relationships)
+        X[f'{col}_sq'] = X[col] ** 2
+        X_test[f'{col}_sq'] = X_test[col] ** 2
+
+        # Cube features (captures S-shaped relationships)
+        X[f'{col}_cb'] = X[col] ** 3
+        X_test[f'{col}_cb'] = X_test[col] ** 3
+
+print(f"After polynomial features - Train shape: {X.shape}")
+print(f"After polynomial features - Test shape: {X_test.shape}")
+
+|
+content_copy
+
+Here polynomial features are used only on the most important features
+(top 10-15), otherwise they will become too many and will slow down
+training.
+
+3) Original dataset aggregation - yes, in the majority of my models I
+concatenated the original diabetes dataset with the competition training
+data to increase sample size and improve models' stability. The combined
+data was used only for training, with all preprocessing and encoding
+performed inside cross-validation folds.
+
+4) For target encoding I recommend checking out Kaggle notebooks of
+@masayakawamata <https://www.kaggle.com/masayakawamata> and @ravi20076
+<https://www.kaggle.com/ravi20076> that implement and explain this
+concept clearly.
+
+Good luck with your Kaggle journey! 🚀
+
+Feel free to ask if you have more specific questions.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/umutszr>
+
+
+      Umutszr
+
+<https://www.kaggle.com/umutszr>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+I also tried Different FE but every attempt dropped public lb and I quit
+
+replyReply
+add_reactionReact
+
+5 more repliesarrow_drop_down
+
+Profile picture for Mahesh Munnuru
+Profile picture for wind1234it
+Profile picture for Umutszr
+Profile picture for Dmitry Savkov
++1
+
+<https://www.kaggle.com/santoshd3>
+
+
+      Santosh kumar
+
+<https://www.kaggle.com/santoshd3>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations!, 70% is good score
+
+replyReply
+thankYou5
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 4 months ago
+
+· 455th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Well done! Can't remember (m)any examples of an upward jump of almost
+200 spots to win a competition. It is possible you would have even
+better result with |RidgeCV| that finds an optimal |alpha| value.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/wind1234it>
+
+
+      wind1234it
+
+<https://www.kaggle.com/wind1234it>
+Topic Author
+
+Posted 4 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thank you so much, @tilii7 <https://www.kaggle.com/tilii7> ! I really
+appreciate your kind words and congratulations.
+
+I experimented today with different alpha configurations across my Ridge
+ensemble of 34 models and was able to push Private LB score even to
+0.70514 through systematic manual alpha tuning. Automated RidgeCV
+optimizing on CV in this competition would pick a0.1 (highest CV
+0.70875) which gives worse private score (0.70504 vs 0.70514) and the
+optimal alphas (a6-a8 range) would be missed.
+
+I think what's particularly exciting is that both your win in S5E10
+Predicting Road Accident Risk competition and my win here demonstrate
+the remarkable potential of Hill Climbing approach.
+
+In the S5E9 Predicting the Beats-per-Minute of Songs competition the
+winner made an incredible 721-position jump from public to private LB.
+Unfortunately, no solutions were published there, and the dataset had
+very weak signal, so it's hard to draw firm conclusions. I was on 18th
+place there (Top 1%) with Hill Climbing solution and that experience
+reinforced my confidence in continuing to explore and refine this
+approach by combing it with Ridge.
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (5)
+
+<https://www.kaggle.com/marshwallen>
+
+
+      Marshwallen
+
+<https://www.kaggle.com/marshwallen>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+great job!!!
+
+<https://www.kaggle.com/khushikyad001>
+
+
+      Khushi Yadav
+
+<https://www.kaggle.com/khushikyad001>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!
+
+<https://www.kaggle.com/bhaweshsinha07>
+
+
+      Bhawesh Sinha 07
+
+<https://www.kaggle.com/bhaweshsinha07>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Well Done!!!!!!
+
+<https://www.kaggle.com/irakozekelly>
+
+
+      Irakoze Ntawigenga Kelly
+
+<https://www.kaggle.com/irakozekelly>
+
+Posted 4 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for sharing this knowledge!
+
+<https://www.kaggle.com/sangeetha007>
+
+
+      Sangeetha Sasikumar
+
+<https://www.kaggle.com/sangeetha007>
+
+Posted 4 months ago
+
+· 3840th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats!! 🎉
+

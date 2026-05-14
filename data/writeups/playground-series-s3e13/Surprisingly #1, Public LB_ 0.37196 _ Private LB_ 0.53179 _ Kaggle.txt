@@ -1,0 +1,646 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Classification with a Tabular Vector Borne Disease Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e13>
+      o
+
+        Surprisingly #1, Public LB: 0.37196 | Private LB: 0.53179
+
+        <https://www.kaggle.com/competitions/playground-series-s3e13/
+        writeups/umar-surprisingly-1-public-lb-0-37196-private-lb-0>
+      o
+
+        PS S3 E13 | Important features for each disease
+
+        <https://www.kaggle.com/code/mattop/ps-s3-e13-important-
+        features-for-each-disease>
+      o
+
+        Regression with a Tabular Media Campaign Cost Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e11>
+      o
+
+        #3 solution
+
+        <https://www.kaggle.com/competitions/playground-series-s3e13/
+        writeups/unworried1686-3-solution>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+Surprisingly #1, Public LB: 0.37196 | Private LB: 0.53179 —
+Classification with a Tabular Vector Borne Disease Dataset
+
+
+  Surprisingly #1, Public LB: 0.37196 | Private LB: 0.53179
+
+Classification with a Tabular Vector Borne Disease Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s3e13>
+
+Solution Writeup · 1st place · May 2, 2023
+
+First of all, I would like to thank Kaggle for organising this
+Playground Series. It was such a nice experience for a competition
+beginner like me.
+
+To be honest, my main aim in joining this competition was to learn how
+to use autoencoders within an ensemble model. Practically, it was
+heavily inspired by this legendary thread <https://www.kaggle.com/
+competitions/porto-seguro-safe-driver-prediction/discussion/44629>. The
+second aim is to get the merchandise :D.
+
+Therefore, I understand that I did not put a lot of effort into pre-
+processing the data, and could say that I was very lucky in this
+competition.
+
+I joined this competition a bit late, so I was only able to produce 4
+types of models. No feature engineering, all features being used were
+scaled using a standard scaler.
+
+Model Name 	Public LB 	Private LB 	Notes
+LightGBM 	0.31677 	0.41337 	Nothing fancy, just a simple LightGBM model
+with default parameters
+Neural Network 	0.33995 	0.44078 	Simple NN using
+64-64relu-32relu-11softmax as the layers. The first 64 is for the input
+layer = num of features on the dataset
+Autoencoder 	0.37196 	0.46052 	The autoencoder uses bottleneck
+architecture 64-64relu-32relu-16relu-32relu-64linear. Take the encoder
+part (up until the 16relu), freeze it, and add 16relu-11softmax on top
+of it
+Ensemble 	0.35871 	*0.53179* 	This is a simple averaging ensemble model
+from the previous three models. Below this table is the explanation.
+
+Each of the models would be able to generate each class' probability. I
+thought that maybe by averaging each class' probability on each model
+(for example, averaging the probability of "Malaria" from LightGBM,
+Neural Network, and Autoencoder), I can somewhat make an educated guess.
+
+I assumed that if something is very convincing for most models (let's
+say, Neural Network and Autoencoder are convinced that the outcome is
+Malaria), but not that convincing for the other (maybe Dengue for
+LightGBM), I would still choose the majority vote here.
+
+Therefore, what I did was to average the probabilities and get the top 3
+probabilities after averaging them.
+
+My notebook is a mess and clearly lacks any explanation, so I am sorry
+that I could not post the notebook publicly.
+
+I was thinking of doing stacking as well but I haven't managed to get my
+code working, so I stopped here.
+
+I am very open to discussion and would like to hear any thoughts from
+you. Have a great week ahead!
+
+Also, I would like to thank @belati <https://www.kaggle.com/belati> and
+@mpwolke <https://www.kaggle.com/mpwolke> . You guys being very active
+in this competition has encouraged me to keep trying!
+
+Author
+
+<https://www.kaggle.com/mufathurrohman>
+Umar <https://www.kaggle.com/mufathurrohman>
+
+mufathurrohman
+
+arrow_drop_up
+
+31
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    17 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/jry321>
+
+
+      JRY321
+
+<https://www.kaggle.com/jry321>
+
+Posted 3 years ago
+
+· 70th in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Congrats! Haven't thought about using an autoencoder, gona try it out now
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mufathurrohman>
+
+
+      Umar
+
+<https://www.kaggle.com/mufathurrohman>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you! Yes I think it's interesting to use autoencoder. Initially, I
+was sceptical because of the small number of data that we have. Thus, I
+tried to mitigate it by using a small neural network architecture too.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pietroac>
+
+
+      PietroAC
+
+<https://www.kaggle.com/pietroac>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thanks for sharing!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mufathurrohman>
+
+
+      Umar
+
+<https://www.kaggle.com/mufathurrohman>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+You are welcome!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/john5928>
+
+
+      John Draper
+
+<https://www.kaggle.com/john5928>
+
+Posted 3 years ago
+
+· 359th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Brilliant, and "why didn't I think of that!". Very kind of you to share
+your secret sauce.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mufathurrohman>
+
+
+      Umar
+
+<https://www.kaggle.com/mufathurrohman>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you! If anything, it's not entirely my secret sauce. I just used
+the inspiration from Michael's post <https://www.kaggle.com/
+competitions/porto-seguro-safe-driver-prediction/discussion/44629> and
+came up with a new cuisine :)
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jmascacibar>
+
+
+      JMAscacibar
+
+<https://www.kaggle.com/jmascacibar>
+
+Posted 3 years ago
+
+· 99th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Great work! It seems that the combination of the Neural Network and
+Autoencoder makes the Ensemble model quite powerful. Thank you for
+posting your solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mufathurrohman>
+
+
+      Umar
+
+<https://www.kaggle.com/mufathurrohman>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+You are welcome! I agree with you, though I still have not explored
+which part of the models actually improved the score significantly. My
+current hypothesis is that I used a soft-voting approach for the
+ensemble part, which theoretically can give better performance than
+hard-voting.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/jmascacibar>
+
+
+      JMAscacibar
+
+<https://www.kaggle.com/jmascacibar>
+
+Posted 3 years ago
+
+· 99th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I also used soft voting in my voting classifier and felt the same way.
+I'm really looking forward to seeing your notebook if you decide to
+publish it. As someone who's new to the field, I find your approach very
+creative and inspiring. Keep going mate!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/soumendraprasad>
+
+
+      SOUMENDRA PRASAD MOHANTY
+
+<https://www.kaggle.com/soumendraprasad>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+@mufathurrohman <https://www.kaggle.com/mufathurrohman> , congrats on
+this achivement
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mufathurrohman>
+
+
+      Umar
+
+<https://www.kaggle.com/mufathurrohman>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ivanisaev>
+
+
+      Ivan Isaev
+
+<https://www.kaggle.com/ivanisaev>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+@mufathurrohman <https://www.kaggle.com/mufathurrohman> congratulations!
+🎉 Interesting approach! Thanks for sharing!🙂
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mufathurrohman>
+
+
+      Umar
+
+<https://www.kaggle.com/mufathurrohman>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you! Yes indeed it is interesting. I first learned about
+representation learning from Michael Jahrer's post, and have been trying
+to implement it whenever I got the chance. Feels like it has a lot of
+potential to be explored.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/shoabahamed>
+
+
+      shoab ahamed
+
+<https://www.kaggle.com/shoabahamed>
+
+Posted 3 years ago
+
+· 203rd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congrats on being first. Did you use only the competition data or mix of
+competition and original data to train the models
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mufathurrohman>
+
+
+      Umar
+
+<https://www.kaggle.com/mufathurrohman>
+Topic Author
+
+Posted 3 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thank you. I only used the competition data here and did not include any
+original/external dataset
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/vyshakhgnair>
+
+
+      VYSHAKH G NAIR
+
+<https://www.kaggle.com/vyshakhgnair>
+
+Posted 3 years ago
+
+· 354th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congrats on the achievement and Thanks for sharing your solution!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sandystep>
+
+
+      Sandy
+
+<https://www.kaggle.com/sandystep>
+
+Posted 3 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+can you share code ?
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+

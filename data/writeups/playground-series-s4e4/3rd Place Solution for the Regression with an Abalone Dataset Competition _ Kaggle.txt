@@ -1,0 +1,337 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Regression with an Abalone Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4>
+      o
+
+        3rd Place Solution for the Regression with an Abalone Dataset
+        Competition
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4/
+        writeups/luminousc-3rd-place-solution-for-the-regression-wi>
+      o
+
+        2nd Place Solution for the Regression with an Abalone Dataset
+        Competition
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4/
+        writeups/lennart-purucker-2nd-place-solution-for-the-regres>
+      o
+
+        1st Place Solution for the Regression with an Abalone Dataset
+        Competition
+
+        <https://www.kaggle.com/competitions/playground-series-s4e4/
+        writeups/johannes-heller-1st-place-solution-for-the-regress>
+      o
+
+        Predicting Optimal Fertilizers
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+3rd Place Solution for the Regression with an Abalone Dataset
+Competition — Regression with an Abalone Dataset
+
+
+  3rd Place Solution for the Regression with an Abalone Dataset Competition
+
+Regression with an Abalone Dataset
+
+<https://www.kaggle.com/competitions/playground-series-s4e4>
+
+Solution Writeup · 3rd place
+
+Thanks for holding this excellent machine learning game. I'm happy here
+to share my learning and experience during the match.
+
+
+    *Context*
+
+Business context: https://www.kaggle.com/competitions/playground-series-
+s4e4 <https://www.kaggle.com/competitions/playground-series-s4e4>
+Data context: https://www.kaggle.com/competitions/playground-series-
+s4e4/data <https://www.kaggle.com/competitions/playground-series-s4e4/data>
+
+
+    *Overview of the approach*
+
+Two key factors that contribute to higher position in the final
+leaderboard are:
+
+  * Feature engineering strategy
+  * Model ensemble way
+
+For feature engineering, I applied a customized version of OpenFE
+<https://github.com/IIIS-Li-Group/OpenFE> in several of final sub-
+models. More details will be covered in later section.
+
+The final model was a ensemble of 6 models as below:
+
+  * AutoGluon selected model with raw feature
+  * AutoGluon selected model with OpenFE* 30 features
+  * AutoGluon selected model with OpenFE* 30 features plus pseudo label data
+  * Ensemble of 3 sub-models(XGB,LGB,CAT) with Optuna tuned weights
+  * Ensemble of 3 sub-models(XGB,LGB,CAT) with Voting regressor
+  * Best ensemble of LGB models from this post <https://www.kaggle.com/
+    code/trupologhelper/ps4e4-lightgbm-only>
+
+The NN ones published in "Code" forum is good but finally I decide to
+not include it as it doesn't perform significantly better than other
+candidates in local CV set.
+
+
+    *Details of the submission*
+
+
+      *Cross-validation is first key*
+
+In this playground series, the public leaderboard is tested on
+approximately 20% of the test data while the private leaderboard is
+tested on approximately 80% test data. This usually lead to different
+performance on both boards. Hence, to build a reliable cross-validation
+way is almost first key in solutions.
+
+
+      *Start with AutoFE and end with careful feature selection*
+
+In feature engineering part, I made some modification on OpenFE
+<https://github.com/IIIS-Li-Group/OpenFE> for the initial feature
+engineering to handle the RMSLE metric. Of course, you could apply the
+np.log1p and np.expm1 to achieve the same effect.
+
+After having initial feature candidates, it'd better to do careful
+feature selection because:
+
+  * reduce feature dimension to avoid overfitting
+  * avoid long training time
+  * make model more general to unseen samples
+
+In my solution, I applied RFE (Recursive Feature Elimination) to select
+important features with a limited size (30 in my case) with Logistic
+Regression. The most important thing is to apply the feature selection
+process on a cross-validation way. If only applied on a single fold, the
+selected feature set could be not generalized enough on different data.
+It could be more stable by average the feature importance on multiple folds.
+
+
+    *Ideas Tried But Not Working*
+
+  * Classification model instead of regression model
+  * More weight on original data instead of synthetic data
+
+
+    *Some Suggestions To Beginners*
+
+Everyone could have chance to win in the competition once you're well-
+prepared. Below are some general guidance that may help you improve the
+model performance:
+
+  * Data study: methods like feature correlation analysis, model error
+    analysis could bring you new feature or ideas.
+  * Model tuning: even with same model, different hyper parameter may
+    lead to huge performance gain.
+  * Selection and ensemble: trying different model combination is one
+    direct way to improve the result.
+  * Learn from others: engage with Kaggle community, participate in
+    forums and learn from others' posts or codes.
+
+Wish all of you have a good journey in those competitions.
+
+Author
+
+<https://www.kaggle.com/rockiecao>
+LuminousC <https://www.kaggle.com/rockiecao>
+
+rockiecao
+
+arrow_drop_up
+
+11
+
+Share
+
+more_horiz
+
+thankYou2yay3love2
+add_reaction
+
+comment
+
+
+    2 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s4e4/writeups/luminousc-3rd-place-solution-for-the-regression-
+wi#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/shantoruet19>
+
+
+      Abdullah An Nu'man Shanto
+
+<https://www.kaggle.com/shantoruet19>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks for giving such a clear understanding.
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (1)
+
+<https://www.kaggle.com/swilly0906>
+
+
+      Willy Wang
+
+<https://www.kaggle.com/swilly0906>
+
+Posted 2 years ago
+
+· 342nd in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Very detail ! thanks for ur sharing~
+
