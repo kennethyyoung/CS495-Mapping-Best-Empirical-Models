@@ -23,15 +23,7 @@ FIXES = {
     'playground-series-s3e9': {
         'encoding_strategy': 'not_described',
     },
-    # Round 2 fixes (session 10 writeup audit)
-    'playground-series-s3e3': {
-        # No StandardScaler in actual solution; wrong notebook downloaded (California Housing)
-        'scaling': 'not_described',
-    },
-    'playground-series-s4e9': {
-        # Writeup says "20 cv folds"; notebook shows plain KFold; regression task
-        'cv_strategy': 'kfold',
-    },
+    # Round 2 fixes (session 11 writeup audit)
     'playground-series-s3e11': {
         # store_sqft has 20 unique values (writeup); 0 was a coding gap, not true cardinality
         'max_cardinality': 20,
