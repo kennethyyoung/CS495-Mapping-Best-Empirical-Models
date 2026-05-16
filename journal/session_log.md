@@ -352,21 +352,24 @@ Ran `scripts/_audit_contradictions.py` against all 45 entries, checking 8 contra
 - s3e9: `encoding_strategy` target_encoding → not_described
 
 **Round 2 fixes (this session, after reading writeups/notebooks):**
-- s4e9: `cv_strategy` stratified_kfold → kfold (writeup says "20 cv folds"; notebook confirms plain KFold)
-- s3e3: `scaling` standard → not_described (no StandardScaler in solution; notebook on file was the WRONG notebook — California Housing vs. Employee Attrition; scaling unverifiable)
 - s3e11: `max_cardinality` 0 → 20 (writeup says `store_sqft` has 20 unique values)
-- s3e6: `max_cardinality` 0 → None, `feature_type_dominant` numeric → mixed (after setting has_categorical=TRUE, these cascaded)
+- s3e6: `max_cardinality` 0 → 2 (cat_cols confirmed as 5 binary features: hasYard, hasPool, isNewBuilt, hasStormProtector, hasStorageRoom; OHE applied)
 - s3e7: `max_cardinality` 0 → None (has_categorical=TRUE but cardinality unknown from writeup)
 - s3e13: `max_cardinality` 11 → None (the 11 was the number of target classes, not a feature cardinality; no categorical features used)
 - s3e17: `feature_type_dominant` numeric → mixed (Binary Classification of Machine Failures; Machine Type is categorical)
 
-**Confirmed-correct flags (remain in audit):**
-- s3e4: GBM+scaling=standard (notebook shows explicit StandardScaler before CatBoost — unusual but intentional)
-- s3e16: regression+stratified_kfold (writeup explicitly uses "stratified 5-fold CV" with target binning)
-- s3e11, s3e23: GBM+scaling=log (log1p transform of target, not feature scaling; correct practice for skewed targets)
-- s3e13: GBM+scaling=standard (writeup: "all features scaled using a standard scaler"; mixed ensemble with NN and autoencoder)
+**Two fixes applied then reverted (caused by _scan_notebook.py bug — see below):**
+- s4e9: `cv_strategy` stratified_kfold → kfold → **reverted to stratified_kfold** (actual notebook Cell 86 confirms `StratifiedKFold` used)
+- s3e3: `scaling` standard → not_described → **reverted to standard** (actual notebook Cell 25 confirms `StandardScaler().fit_transform()` used on full feature matrix)
 
-**Key notebook mismatch discovered:** The notebooks on file for s3e3 and s3e6 are both the California Housing notebook (by Khawaja Abaid), not the Employee Attrition or PS S3E6 notebooks. The code_urls pointed to notebooks that were shared as templates across competitions and the downloader grabbed the wrong version. This means any coding derived from those notebooks is unreliable; we reverted those fields to not_described.
+**Root cause — _scan_notebook.py hardcoded path bug:**
+`scripts/_scan_notebook.py` had the notebook path hardcoded to `s3e1`'s notebook on line 3. Every call to the script (passing s3e3, s4e9, s3e16, etc. as arguments) silently read the s3e1 California Housing notebook instead. This produced plausible-looking but completely wrong output ("no StandardScaler", "uses plain KFold") for all scanned notebooks. The bug was caught when the user asked about s3e6 — reading the notebook directly with Python revealed the correct content.
+
+**Confirmed-correct flags (remain in audit, now 15 total):**
+- s3e3, s3e4, s3e13: GBM+scaling=standard (all confirmed from actual notebooks/writeups)
+- s3e16, s4e9: regression+stratified_kfold (confirmed: both use target binning for stratification)
+- s3e11, s3e23: GBM+scaling=log (log1p target transform, not feature scaling)
+- s5e2, s5e4, s4e8: genuine missing_data_strategy gaps
 
 ### Methodology section fixes
 
@@ -383,11 +386,11 @@ Wrote all 7 subsections of Section 4 (`research_report.md`):
 - Ensembling near-universal: 40/45 (89%); stacking most common (21 mentions)
 - Categorical features present in 30/45 (67%)
 - Target encoding most frequent strategy (16/27 documented entries)
-- CV strategy splits by task type: stratified KFold for classification (76%), plain KFold for regression (64%)
+- CV strategy splits by task type: stratified KFold for classification (67%), plain KFold for regression (47%)
 - Only statistically significant finding: task type vs. CV strategy, Fisher p = 0.03
 
 **Unexpected findings documented:**
-- GBM with standard scaling in 20% of entries (confirmed intentional in 2 investigated cases)
+- GBM with standard scaling in 7/34 GBM entries (21%); confirmed intentional in 3 cases (s3e3, s3e4, s3e13)
 - Regression entries using stratified CV via target binning (3/17 regression entries)
 - Neural networks more prevalent in categorical-heavy datasets (23% vs 7%)
 - Low pipeline heterogeneity in S3: LightGBM+CatBoost stack with target encoding was a de facto standard
@@ -396,9 +399,9 @@ Wrote all 7 subsections of Section 4 (`research_report.md`):
 
 Regenerated all 7 figures in `outputs/figures/` after data cleanup. All figures current as of this session.
 
-### Current state (May 15, 2026)
+### Current state (May 16, 2026)
 
-Results section complete. Section 3 methodology discrepancies corrected. Data quality audit brought flags from 24 to 14. Phase 4 (flowchart construction) not yet started; scheduled for May 19–25.
+Results section complete (numbers corrected after scan-bug reverts). Section 3 methodology discrepancies corrected. Data quality audit: 24 initial flags → 15 final (8 confirmed correct, 3 genuine gaps, 4 uninvestigated soft warnings). Phase 4 (flowchart construction) not yet started; scheduled for May 19–25. Next session: merge `phase3/methodology-fixes` into `phase3/writeup` (or main), then start flowchart.
 
 ---
 
