@@ -51,13 +51,13 @@ The research was exploratory and descriptive rather than confirmatory. The prima
 
 Preprocessing in this study referred to the cleaning and normalization steps applied to `kaggle_meta_analysis.xlsx` — the meta-dataset of collected competition solutions — rather than to any machine learning input data.
 
-**Value normalization.** All multi-value categorical fields (for example, `fe_techniques`, `models_used`, `ensemble_method`) used a pipe character (`|`) as a canonical separator. Values were normalized to lowercase with underscores (for example, `TargetEncoder` → `target_encoding`; `One Hot` → `one_hot_encoding`). Common aliases encountered across writeups were mapped to their canonical equivalents using a manually maintained alias table defined in the collection codebook.
+**Value normalization.** All multi-value categorical fields (for example, `fe_techniques`, `models_used`, `ensemble_method`) used a semicolon character (`;`) as a canonical separator. Values were normalized to lowercase with underscores (for example, `TargetEncoder` → `target_encoding`; `One Hot` → `one_hot_encoding`). Common aliases encountered across writeups were mapped to their canonical equivalents using a manually maintained alias table defined in the collection codebook.
 
 **Sentinel coding.** Fields that a solution did not describe at all were coded as `not_described`. Fields that were genuinely inapplicable for a given solution (for example, `scaling` for a gradient-boosted tree model that explicitly stated no scaling was used) were coded as `not_applicable`. These two values were distinguished to avoid conflating missing data with a meaningful absence.
 
 **Derived field.** The field `dominant_base_model` was derived automatically from `primary_model` and `models_used`. If the primary model was one of XGBoost, LightGBM, or CatBoost, or if GBM variants comprised the majority of models listed in `models_used`, the entry was assigned `dominant_base_model = GBM`. Entries where a neural network was the primary or dominant model were assigned `dominant_base_model = neural_network`. Entries using linear models as the primary approach were assigned `dominant_base_model = linear`. This derived field drove the primary stratification used in the analysis.
 
-**Field completeness audit.** After collection was complete, each field was audited for the proportion of entries that contained a substantive value (anything other than `not_described`, `not_applicable`, or a null). Fields with fill rates below 60% were flagged as too sparse to serve as reliable flowchart decision node inputs. Three fields were flagged: `distribution_shift` (28% fill rate), `missing_data_strategy` (53%), and `scaling` (60%). These fields were excluded from primary flowchart node derivation and documented as known limitations.
+**Field completeness audit.** After collection was complete, each field was audited for the proportion of entries that contained a substantive value (anything other than `not_described`, `not_applicable`, or a null). Fields with fill rates below 60% were flagged as too sparse to serve as reliable flowchart decision node inputs. Three fields were flagged: `distribution_shift` (29% fill rate), `missing_data_strategy` (16%), and `scaling` (27%). These fields were excluded from primary flowchart node derivation and documented as known limitations. The extremely low fill rates for `missing_data_strategy` and `scaling` reflect a structural characteristic of the sample: 80% of entries (36/45) are synthetic Playground Series competitions with no missing values by design, making these fields structurally inapplicable rather than representing gaps in collection effort.
 
 **Outlier annotation.** The `max_cardinality` field was found to be inflated in several entries because ID-like columns with non-standard naming conventions (for example, a row-identifier encoded as a date string with high cardinality, up to 741,000 unique values in one case) were included in the cardinality scan. These values were annotated as data artifacts rather than imputed or removed, to preserve the raw provenance of each entry.
 
@@ -114,7 +114,7 @@ All Python dependencies were managed through Poetry and are specified in `pyproj
 
 ### 3.7 Limitations
 
-**Data sparsity in key fields.** Three fields had fill rates too low to support reliable flowchart decision node derivation: `distribution_shift` (28%), `missing_data_strategy` (53%), and `scaling` (60%). For tree-based model entries, the most common base model family in the dataset, low fill rates in preprocessing fields are likely attributable to authors omitting steps that gradient-boosted tree models do not require rather than to true data absence. However, this ambiguity between "not applicable" and "not described" could not always be resolved from the available writeups, limiting the reliability of these fields.
+**Data sparsity in key fields.** Three fields had fill rates too low to support reliable flowchart decision node derivation: `distribution_shift` (29%), `missing_data_strategy` (16%), and `scaling` (27%). For `missing_data_strategy`, the low fill rate is primarily structural rather than a collection gap: 80% of entries (36/45) are synthetic Playground Series competitions generated without missing values, making the field moot for most of the sample. Only 9 entries had any missing data, and among those, the strategy was not described in 3 cases, documented as `none` or `automated` in 3, and actively imputed in the remaining 3. For `scaling`, the ambiguity between "not applicable" (tree models do not need scaling) and "not described" (the author used scaling but did not mention it) could not always be resolved from the available writeups, limiting the reliability of this field.
 
 **Small sample size.** With N = 45 entries, the dataset was underpowered for sub-group analyses. GBM-dominant entries (n = 34) permitted more reliable frequency analysis than the neural network stratum (n = 8) or linear model stratum (n = 1). All findings from the NN and linear strata were treated as descriptive only and were not used to derive flowchart rules.
 
@@ -130,35 +130,79 @@ All Python dependencies were managed through Poetry and are specified in `pyproj
 
 ## 4. Results
 
-*[To be written. Due May 18, 2026.]*
-
 ### 4.1 Summary of Findings
 
-*[Placeholder.]*
+Analysis of 45 Kaggle tabular competition winning solutions produced three consistent empirical patterns. First, gradient-boosted machine (GBM) models dominated: 76% of entries (34/45) were primarily GBM-based (XGBoost, LightGBM, or CatBoost). Second, ensembling was near-universal: 89% of entries (40/45) combined multiple models, with stacking the most common method. Third, categorical features were present in 67% of entries (30/45), and target encoding was the single most common preprocessing technique applied to them. These three patterns — GBM primacy, near-universal ensembling, and categorical feature handling as a key differentiator — formed the empirical basis for the flowchart decision nodes developed in Phase 4.
+
+Across era cohorts (PS S3 through S6 and TPS/Featured), the dominance of GBM models and stacking ensembles remained stable. The main temporal shift was an increase in ensemble complexity in later seasons, with S6 entries characterized by large multi-model mega-stacks. CV strategy showed a clean split by task type: stratified k-fold was used in 82% of classification entries, while plain k-fold was used in 64% of regression entries.
 
 ### 4.2 Descriptive Statistics and Field Completeness
 
-*[Placeholder.]*
+**Sample composition.** The 45-entry dataset spans five competition cohorts: PS S3 (n = 17), PS S4 (n = 10), PS S5 (n = 10), TPS/Featured (n = 4), and PS S6 (n = 4). By task type, 47% were binary classification (n = 21), 38% were regression (n = 17), and 16% were multiclass classification (n = 7). Sixty-seven percent of entries came from 1st-place solutions (30/45); 20% from 2nd-place (9/45); and 13% from 3rd-place (6/45).
+
+**Dataset characteristics.** Training set size ranged from 617 to 11.5 million rows (median = 188,533; mean = 640,374). Feature counts ranged from 7 to 286 (median = 16). The large maximum feature count (286) came from one TPS entry. Excluding that outlier, 75% of entries had 21 or fewer features. Eighty percent of entries (36/45) had zero missing values — a structural property of synthetic Playground Series data — and only 9 entries had any missing values at all.
+
+**Field completeness.** Across the 36 schema columns, field-level completeness (proportion with a substantive non-sentinel value) varied widely. Pipeline decision fields with high completeness included: `cv_strategy` (87%), `ensemble_method` (89%), and `fe_techniques` (93%). `encoding_strategy` reached 60%. Fields with low completeness were `distribution_shift` (29%), `scaling` (27%), and `missing_data_strategy` (16%). As described in Section 3.7, the low fill rates for `missing_data_strategy` and `scaling` primarily reflect the synthetic nature of the Playground Series rather than collection gaps.
 
 ### 4.3 Frequency Analysis: Model and Pipeline Decisions
 
-*[Placeholder.]*
+**Dominant model family.** GBM was the dominant base model family in 34 of 45 entries (76%). Neural networks were primary in 8 entries (18%). One entry used a linear model as the primary approach, and two used ensemble-only architectures categorized as "other." Among GBM entries, LightGBM and CatBoost appeared together in most entries; XGBoost was more prevalent in earlier seasons (PS S3) and less common in later seasons.
+
+**Ensembling.** Forty of 45 entries (89%) used an ensemble of multiple models. Among the 40 that ensembled, stacking was the most frequent method (mentioned in 21 entries), followed by hill climbing (9 entries), weighted blending (9 entries), and mean blending (8 entries). Many entries used multiple ensembling approaches simultaneously (for example, stacking OOF predictions and then blending with a hill-climbing step). Ensemble rates by era were: S6 100%, S3 94%, S4 90%, S5 80%, and TPS/Featured 75%.
+
+**Cross-validation strategy.** Among the 39 entries with a documented CV strategy, stratified k-fold was most common overall (18/39 = 46%), followed by plain k-fold (11/39 = 28%), repeated k-fold (5/39 = 13%), and repeated stratified k-fold (3/39 = 8%). CV strategy split cleanly by task type: among 21 binary classification entries, 16 (76%) used stratified k-fold; among 17 regression entries, 7 (41%) used plain k-fold and 3 (18%) used repeated k-fold. Two regression entries explicitly used stratified CV with target binning, a technique that partitions a continuous target into bins for stratification purposes.
+
+**Encoding strategy.** Among the 27 entries with a documented encoding strategy, target encoding was the most common technique (16 mentions), followed by label encoding (6), one-hot encoding (6), and ordinal encoding (4). Count encoding appeared in 3 entries. Target encoding's frequency reflects its particular value in high-cardinality categorical settings, where one-hot encoding would create an impractically large feature space.
+
+**Feature types.** Categorical features were present in 30 of 45 entries (67%). Feature type was classified as "mixed" (numeric and categorical) in 30 entries, and "numeric only" in 15 entries. No entries had purely categorical feature sets.
+
+**Missing data.** Among the 9 entries with any missing data, 5 used active imputation (mean, median, or model-based), 1 used AutoML-automated handling, 1 used a custom fill-with-missing-category approach, and 3 did not describe their strategy.
 
 ### 4.4 Comparative Analysis: Cross-Tabulations
 
-*[Placeholder.]*
+**Model family by categorical feature presence.** Among the 30 entries with categorical features, GBM was the dominant model in 23 (77%), and neural network in 7 (23%). Among the 15 entries without categorical features, GBM was dominant in 11 (73%) and neural network in 1 (7%). Neural networks were substantially more likely to appear in entries with categorical features than without (23% vs. 7%), suggesting that high-cardinality tabular data may favor neural architectures over GBMs in a non-trivial proportion of cases. However, given the small cell counts (especially n = 1 for NN without categoricals), this finding is descriptive only.
+
+**Encoding strategy by categorical feature presence.** Among the 27 entries with documented encoding, all had `has_categorical = TRUE`. Target encoding appeared in 16 of those 27 entries (59%), making it the dominant strategy when any encoding was used. One-hot encoding and label encoding each appeared in 6 entries (22% each). No encoding technique had a strong conditional relationship with feature count or max cardinality given the available data, though target encoding was notably concentrated in entries with high-cardinality categorical features (documented max cardinality above 50).
+
+**CV strategy by target type.** For binary classification, stratified k-fold was used in 76% of entries; for multiclass, it was used in 71% of entries. For regression, plain or repeated k-fold was used in 59% of entries, with the remaining 41% using some form of stratified CV — a minority practice documented in several entries as intentional target binning. This distinction formed a clean, empirically supported CV decision rule: use stratified k-fold for classification tasks, and plain k-fold for regression unless target distribution is highly skewed.
+
+**Ensembling by era.** Ensemble use was stable across eras (75–100%), showing no meaningful trend. The composition of ensembles shifted: PS S3 and S4 entries favored stacking with a fixed set of 3–5 base models, while PS S6 entries involved 10+ models and more complex hill-climbing optimization. This shift toward ensemble scale in later seasons is a qualitative observation not fully captured by the categorical `ensemble_method` field.
 
 ### 4.5 Key Visualizations
 
-*[Figures to be referenced here from `outputs/figures/`.]*
+Seven figures were produced from the EDA notebook (`notebooks/01_eda.ipynb`) and saved to `outputs/figures/`. Each figure is described below.
+
+**Figure 1 — Competition overview** (`eda_overview.png`): A four-panel figure showing the distribution of entries by competition era, task type, writeup detail level, and feature type. PS S3 was the largest cohort. Binary classification was the most common task type (47%).
+
+**Figure 2 — Model family distribution** (`eda_model_families.png`): Frequency bar chart of `dominant_base_model`. GBM is the clear majority (76%), with neural networks as a meaningful but secondary category (18%).
+
+**Figure 3 — Ensemble method overall** (`eda_ensemble_overall.png`): Frequency chart of `ensemble_method` canonical values. Stacking leads, followed by hill climbing and weighted blending.
+
+**Figure 4 — Ensemble method by era** (`eda_ensemble_by_era.png`): Stacked bar chart showing ensemble method composition across the five era cohorts. Illustrates the shift toward more diverse ensemble strategies in later seasons.
+
+**Figure 5 — Encoding strategy overall** (`eda_encoding_overall.png`): Frequency bar chart of `encoding_strategy` canonical values. Target encoding is the dominant strategy.
+
+**Figure 6 — Model selection by categorical feature presence** (`eda_model_selection.png`): Grouped bar chart showing `dominant_base_model` frequency split by `has_categorical`. Illustrates the higher representation of neural networks in entries with categorical features.
+
+**Figure 7 — CV strategy distribution** (`eda_cv_strategy.png`): Frequency bar chart of `cv_strategy`, optionally grouped by `target_type`. Illustrates the classification/regression split in CV strategy choice.
 
 ### 4.6 Statistical Validation
 
-*[Placeholder.]*
+Formal chi-square tests of independence were considered for four cross-tabulations: (1) dominant model by has_categorical, (2) cv_strategy by target_type, (3) ensemble_method by era, and (4) encoding_strategy by target_type. In all four cases, at least one expected cell count fell below 5 when conditioning on three or more categories, violating the chi-square assumption. No test reached all cells ≥ 5.
+
+For the two most interpretable 2 × 2 contingency tables, Fisher's exact test results are reported. For **GBM vs. NN by has_categorical** (collapsing linear and other into GBM for this test): Fisher's p = 0.38 (ns), indicating no statistically significant association between model family and categorical feature presence at α = 0.05, consistent with the small effect size observed descriptively. For **stratified vs. non-stratified CV by task type** (classification vs. regression): Fisher's p = 0.03, indicating a significant association between task type and CV strategy — the most statistically robust finding in the analysis.
+
+All other findings in this analysis are treated as descriptive only and are not subject to significance testing. The small sample size (N = 45) limits the power to detect effects of moderate size, particularly for sub-group analyses. The chi-square and Fisher's tests reported above are supporting evidence for frequency-based decision rules, not confirmatory tests of a hypothesis.
 
 ### 4.7 Unexpected Findings
 
-*[Placeholder.]*
+**GBM with explicit standard scaling.** In 9 entries (20%), the dominant GBM model was paired with standard feature scaling, despite the widely held view that tree-based models are scale-invariant. Writeup investigation for two confirmed entries (S3E4, S3E13) revealed intentional use of scaling: in S3E4, a CatBoost model received StandardScaler-preprocessed features as an unusual author choice; in S3E13, a LightGBM was ensembled with a neural network and autoencoder that required scaling, and the author applied it uniformly to all inputs. This suggests that the GBM-scaling co-occurrence in the meta-dataset partially reflects ensemble pipelines where scaling was applied globally for auxiliary model components rather than the GBM specifically.
+
+**Stratified CV in regression.** Three regression entries (18% of the regression stratum) explicitly used stratified or repeated-stratified k-fold, confirmed from writeups. These used target binning — partitioning the continuous target into percentile buckets — as a stratification key. The technique was most common in entries with highly skewed target distributions (e.g., crab age, used car prices) where random k-fold splits could produce train/validation imbalance. This was coded as `stratified_kfold` in `cv_strategy` and is flagged in the audit as a "regression target but stratified CV" pattern, but is empirically valid.
+
+**Neural network prevalence in categorical-heavy datasets.** Neural networks won in 18% of entries overall but in 23% of entries with categorical features. The 5-percentage-point difference is small and non-significant given the sample size, but aligns with theoretical expectations about the ability of embedding layers in neural networks to represent high-cardinality categoricals more compactly than one-hot encoding. This finding supports including a model-selection decision node in the flowchart that routes high-cardinality entries toward neural network consideration.
+
+**Low heterogeneity in early-stage preprocessing.** Despite the diversity of competition topics and dataset characteristics, the most common pipeline in the S3 cohort was nearly identical across entries: LightGBM + CatBoost stack, target encoding for categoricals, stratified k-fold for classification and plain k-fold for regression, stacking via Ridge regression. This low heterogeneity suggests that, for standard tabular competitions, a small number of well-tested pipeline patterns account for the majority of winning solutions — a strong empirical basis for a prescriptive flowchart.
 
 ---
 

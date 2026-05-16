@@ -276,6 +276,132 @@ Added three columns (positions 34–36) via two scripts:
 
 ---
 
+## Session 10 — Phase 3 EDA Notebook
+
+**Branch:** `phase3/eda` (created from `phase3/writeup`)
+
+### What we did
+
+Built `notebooks/01_eda.ipynb` — the full Phase 3 EDA — and retired `scripts/build_bar_plots.py` along with the four stale early-presentation plots (`plot1_model_frequency.png` through `plot4_best_single_model.png`).
+
+**Why retire build_bar_plots.py:** The old plots were generated early for a presentation when the dataset had ~35 entries. After normalization passes and expansion to 45 entries, the numbers were wrong. More critically, the script had two structural bugs: (1) it used `blending` as a category name after the normalization pass renamed it to `mean_blend`/`weighted_blend`, so the ensemble chart would have shown zero counts for blending; (2) it didn't split semicolon-separated multi-value fields, so entries with `stacking;mean_blend` were counted as one string rather than two techniques.
+
+**Notebook structure (9 sections, 7 figures):**
+1. Setup & load
+2. Helpers (era derivation, `explode_field`, row bins)
+3. Field completeness audit — sortable table
+4. Dataset overview — `eda_overview.png` (target type, dominant model, era)
+5. Model family usage — `eda_model_families.png`
+6. Ensemble methods — `eda_ensemble_overall.png` + `eda_ensemble_by_era.png`
+7. Encoding strategy — `eda_encoding_overall.png` + cross-tabs (feature type, target type, cardinality)
+8. CV strategy — `eda_cv_strategy.png` (overall + stratified vs non-stratified by target type)
+9. Model selection — `eda_model_selection.png` (dominant model × dataset size and × has_categorical)
+10. Sparse fields & limitations
+11. Summary of key findings (markdown)
+
+### Bug: Excel booleans read as Python bools
+
+`has_categorical` and `is_monetized` are stored as Excel boolean cells. pandas reads these as Python `True`/`False`, not strings `'TRUE'`/`'FALSE'`. Three lookups were silently returning 0:
+- `row.get('TRUE', 0)` in the model × categorical panel — entire right chart was blank
+- `(x == 'TRUE').mean()` for `pct_has_categorical` — reported 0.0 for GBM and NN
+- `(df['is_monetized'] == 'TRUE').sum()` — reported 0 instead of 1
+
+**Fix:** `row.get(True, 0)`, `x.apply(bool).mean()`, `df['is_monetized'].apply(bool).sum()`.
+
+Lesson: always check column dtypes after `pd.read_excel()`. Boolean Excel cells don't become strings.
+
+### Decision: drop eda_fe_techniques
+
+`fe_techniques` was recorded as free-text prose, not a controlled vocabulary. Splitting on semicolons produced 157 unique tags, 155 of them with count = 1. The bar chart was meaningless.
+
+Two remediation options were evaluated:
+
+**Option 1 — keyword taxonomy matching:** Define ~17 categories, keyword-match each entry's text, count by category. Prototype ran in ~30 minutes and produced defensible top counts (Interaction features: 18, Binning: 17, Target encoding: 15). Rejected: keyword matching on free-text prose is methodologically weak regardless of output quality. A paper would have to describe it as "classified by keyword matching against a researcher-defined taxonomy" — which is manual coding done imprecisely.
+
+**Option 3 — re-code the field in Excel:** Revise `fe_techniques` to a controlled vocabulary for all 42 entries with data. Estimated 2–3 hours. Rejected on different grounds: even with clean coding, the FE chart would be purely descriptive and not connected to any decision node. FE is too dataset-specific to generalize — "interaction features appear in 18/42 entries" doesn't tell a practitioner anything actionable. The encoding_strategy cross-tabs already capture the structured FE signal that feeds the flowchart.
+
+**Outcome:** Dropped the FE bar chart entirely. Replaced with one prose sentence in the summary: *"FE choices varied widely and were highly dataset-specific, consistent with the view that FE requires domain knowledge that resists generalization."* Two hours saved, paper tighter.
+
+### Known issues flagged
+
+The Methodology section (Section 3 of `research_report.md`) has two discrepancies introduced when it was written before data collection was finalized:
+- 3.3 states multi-value fields use `|` as separator — actual data uses `;`
+- 3.7 cites `missing_data_strategy` at 53% and `scaling` at 60% — notebook now shows 18% and 27% respectively (more entries coded after the methodology was written)
+
+Both need to be corrected before the Results section is submitted.
+
+### Current state (May 15, 2026)
+
+Phase 3 EDA is complete. Section 4 (Results) of `research_report.md` is entirely placeholder and due May 18. All content needed to write it exists in the notebook. Phase 4 (flowchart) has not started.
+
+---
+
+## Session 11 — Contradiction Audit, Data Cleanup, Results Section
+
+**Branch:** `phase3/methodology-fixes` (created from `phase3/eda`)
+
+### Contradiction audit
+
+Ran `scripts/_audit_contradictions.py` against all 45 entries, checking 8 contradiction types across fields. Found 24 initial flags. After two rounds of fixes, brought flags down to 14 — of which 5 are confirmed-correct behaviors, 3 are genuine data gaps, and 6 are uninvestigated soft warnings that cannot be verified from the available notebooks or writeups.
+
+**Round 1 fixes (applied in previous session, confirmed this session):**
+- ICR: `feature_type_dominant` numeric → mixed
+- s5e5: `has_categorical` TRUE → FALSE
+- s3e6: `has_categorical` FALSE → TRUE
+- s4e5: `encoding_strategy` target_encoding → not_described
+- s3e9: `encoding_strategy` target_encoding → not_described
+
+**Round 2 fixes (this session, after reading writeups/notebooks):**
+- s4e9: `cv_strategy` stratified_kfold → kfold (writeup says "20 cv folds"; notebook confirms plain KFold)
+- s3e3: `scaling` standard → not_described (no StandardScaler in solution; notebook on file was the WRONG notebook — California Housing vs. Employee Attrition; scaling unverifiable)
+- s3e11: `max_cardinality` 0 → 20 (writeup says `store_sqft` has 20 unique values)
+- s3e6: `max_cardinality` 0 → None, `feature_type_dominant` numeric → mixed (after setting has_categorical=TRUE, these cascaded)
+- s3e7: `max_cardinality` 0 → None (has_categorical=TRUE but cardinality unknown from writeup)
+- s3e13: `max_cardinality` 11 → None (the 11 was the number of target classes, not a feature cardinality; no categorical features used)
+- s3e17: `feature_type_dominant` numeric → mixed (Binary Classification of Machine Failures; Machine Type is categorical)
+
+**Confirmed-correct flags (remain in audit):**
+- s3e4: GBM+scaling=standard (notebook shows explicit StandardScaler before CatBoost — unusual but intentional)
+- s3e16: regression+stratified_kfold (writeup explicitly uses "stratified 5-fold CV" with target binning)
+- s3e11, s3e23: GBM+scaling=log (log1p transform of target, not feature scaling; correct practice for skewed targets)
+- s3e13: GBM+scaling=standard (writeup: "all features scaled using a standard scaler"; mixed ensemble with NN and autoencoder)
+
+**Key notebook mismatch discovered:** The notebooks on file for s3e3 and s3e6 are both the California Housing notebook (by Khawaja Abaid), not the Employee Attrition or PS S3E6 notebooks. The code_urls pointed to notebooks that were shared as templates across competitions and the downloader grabbed the wrong version. This means any coding derived from those notebooks is unreliable; we reverted those fields to not_described.
+
+### Methodology section fixes
+
+Two known discrepancies in `research_report.md` Section 3 corrected:
+1. Section 3.3: separator `|` → `;`
+2. Section 3.7: fill rates updated to actual values (missing_data_strategy 16%, scaling 27%, distribution_shift 29%); reframed explanation — low fill rates reflect structural property (80% of sample has no missing values) rather than collection gap
+
+### Results section written
+
+Wrote all 7 subsections of Section 4 (`research_report.md`):
+
+**Key findings:**
+- GBM dominant: 34/45 (76%)
+- Ensembling near-universal: 40/45 (89%); stacking most common (21 mentions)
+- Categorical features present in 30/45 (67%)
+- Target encoding most frequent strategy (16/27 documented entries)
+- CV strategy splits by task type: stratified KFold for classification (76%), plain KFold for regression (64%)
+- Only statistically significant finding: task type vs. CV strategy, Fisher p = 0.03
+
+**Unexpected findings documented:**
+- GBM with standard scaling in 20% of entries (confirmed intentional in 2 investigated cases)
+- Regression entries using stratified CV via target binning (3/17 regression entries)
+- Neural networks more prevalent in categorical-heavy datasets (23% vs 7%)
+- Low pipeline heterogeneity in S3: LightGBM+CatBoost stack with target encoding was a de facto standard
+
+### EDA notebook re-executed
+
+Regenerated all 7 figures in `outputs/figures/` after data cleanup. All figures current as of this session.
+
+### Current state (May 15, 2026)
+
+Results section complete. Section 3 methodology discrepancies corrected. Data quality audit brought flags from 24 to 14. Phase 4 (flowchart construction) not yet started; scheduled for May 19–25.
+
+---
+
 ## Recurring Themes / Article Notes
 
 - **The Kaggle API surface is shallower than it looks.** Competition list, leaderboard, topic titles — yes. Topic bodies, notebook code, author attribution on posts — no.
