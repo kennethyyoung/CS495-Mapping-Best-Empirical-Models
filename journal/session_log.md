@@ -405,6 +405,104 @@ Results section complete (numbers corrected after scan-bug reverts). Section 3 m
 
 ---
 
+## Session 12 — Pre-Phase 4 Viability Analysis, EDA Corrections, Blockers Report
+
+**Branch:** `phase3/methodology-fixes` (no new branch; corrections applied to existing files)
+
+### Pre-Phase 4 dataset viability discussion
+
+Before starting Phase 4 (flowchart construction, scheduled May 19–25), conducted a structured analysis of whether the dataset can support the planned decision flowchart. Key findings:
+
+**What the data can support (3–4 defensible branches):**
+- Task type → CV strategy: the only statistically significant finding (Fisher's exact p = 0.03). Binary/multiclass → stratified k-fold; regression → k-fold.
+- has_categorical → encoding approach: descriptive, n adequate. None → no encoding; TRUE → target encoding default.
+- Model selection default: GBM ensemble (76% consensus). NN consideration for binary + categorical subgroup (23% vs 7%).
+- Missing data: 78% of winners explicitly chose no treatment. "Don't impute by default" is itself an empirically grounded recommendation.
+
+**What the data cannot support:**
+- `distribution_shift` as an input node: 71% not_described — genuinely sparse (writeup culture gap).
+- `outlier_treatment` as an input node: 67% not_described — same cause.
+- Multi-variable conditioning: n=45 split across target type × has_categorical yields 3–16 entries per cell. Too thin for reliable conditional rules.
+- Complex nested branches: dominant patterns (GBM 76%, ensembling 89%) leave insufficient variance to condition on.
+
+**Conclusion:** Flowchart is viable but must be scoped to 3–4 shallow branches. Framed as empirically-grounded heuristic guide, not a statistically validated decision tree.
+
+### EDA notebook correctness bug discovered and fixed
+
+**Root cause:** `SKIP_VALS = {'not_described', 'not_applicable', 'automated', 'none', 'nan', ''}` was designed for multi-select technique fields (e.g., `fe_techniques`, `ensemble_method`) where `none` means "no technique used" and should not be counted. The same constant was used in the completeness audit (Cell 4), causing `none` and `not_applicable` to be treated as unknown for ALL fields — including `missing_data_strategy` and `scaling`, where `none` is a legitimate, meaningful answer (the winner explicitly did not impute / did not scale).
+
+**Effect on reported numbers:**
+| Field | Reported (wrong) | Correct |
+|---|---|---|
+| `missing_data_strategy` | 6/45 = 13% | 42/45 = 93% |
+| `scaling` | 12/45 = 27% | 29/45 = 64% |
+| `encoding_strategy` | 27/45 = 60% | 39/45 = 87% |
+| `cv_strategy` | 39/45 = 87% | 41/45 = 91% |
+
+**Distinction established:**
+- `missing_data_strategy` at 93%: 35/45 explicitly "none/not_applicable" (structural — 80% of PS data has no missing values); only 3/45 genuinely not_described.
+- `scaling` at 64%: 15/45 explicitly "none"; 16/45 genuinely not_described (authors didn't mention it). Excluded from flowchart nodes because 36% remains unknown.
+- `distribution_shift` at 29%: genuinely sparse — 71% not_described. Actual documentation gap.
+
+**Fixes applied:**
+1. `notebooks/01_eda.ipynb` Cell 4: completeness audit now uses `NOT_KNOWN = {'not_described', 'nan', ''}` (narrower than `SKIP_VALS`). Added inline comment explaining the distinction.
+2. `notebooks/01_eda.ipynb` Cell 22: print statements updated with correct numbers and "structurally omitted" framing. `distribution_shift` explicitly contrasted as a genuine gap.
+3. `outputs/report/research_report.md` Section 3.7: split into two paragraphs — "Structurally omitted fields" (scaling, missing_data_strategy) and "Genuinely sparse field" (distribution_shift). Numbers corrected.
+4. `outputs/report/research_report.md` Section 4.2: field completeness paragraph updated with corrected percentages.
+
+**Notebook re-executed** via `conda run -n ds_env` (miniforge3). Standard `jupyter-nbconvert` failed with DeadKernelError (Windows proactor event loop issue with zmq); fixed by using `asyncio.WindowsSelectorEventLoopPolicy()` and running via `conda run` with a temp script. All 7 figures regenerated; outputs current.
+
+### Blockers report for Prof. Albuquerque
+
+Generated `private/phase4_blockers_report.md` documenting the three blockers and three supporting figures (`private/fig1_input_completeness.png`, `fig2_subgroup_sizes.png`, `fig3_outcome_concentration.png`). Report includes adjusted scope table and three questions for the professor. Updated to distinguish genuinely sparse fields from structurally omitted ones.
+
+### Word cloud from solution writeups
+
+Generated a word cloud from all 88 solution writeup `.txt` files in `data/writeups/` (43 competitions, ~456K chars of cleaned prose). Files are HTML-scraped Kaggle pages requiring two-stage cleaning:
+
+1. **Nav truncation:** "Kaggle uses cookies" block is a consistent marker ~1900–2100 chars in; content starts after the following `\n\n`.
+2. **Comment truncation:** Cut at first match of `Hotness\n` (comment editor toolbar) or `Posted (?:\d+|a|an) .* ago` — the Hotness pattern catches high-engagement posts where the toolbar precedes the first "Posted" line.
+3. **Line-level boilerplate:** Regex strips Kaggle UI icon names (expand_more, content_copy, format_bold, insert_link, Hotness, etc.) and markdown link artifacts.
+
+Three iterations needed to clean residual artifacts: "year ago" (regex missed "Posted a year ago"), editor toolbar (Hotness/undo/redo/format_bold block), and comment reaction labels.
+
+**Outputs (all in `private/`, gitignored):**
+- `gen_wordcloud.py` — generation script; walks `data/writeups/` dynamically, no hardcoded paths
+- `writeup_corpus_clean.txt` — concatenated cleaned prose for inspection
+- `fig_writeup_wordcloud.png` — final word cloud (1400×700, Blues colormap)
+
+**Top terms:** feature, ensemble, OOF, fold, feature engineering, XGBoost, CatBoost, AutoGluon, Hill Climbing, LGBM, stacking, categorical, cross validation. Clean ML signal; a few borderline generics (different, time, work) retained as they appear legitimately in ML prose.
+
+**Note:** `wordcloud` package installed into `ds_env` via `conda run pip install wordcloud`. Running via conda run + temp script (same pattern as notebook execution).
+
+**Next:** Generated two additional subgroup word clouds (see below).
+
+### Subgroup word clouds — GBM vs NN and Era
+
+Built `private/gen_wordcloud_subgroups.py` to map each writeup folder to its competition entry via `competition_ref` in the Excel, then generate subgroup clouds using the same cleaning pipeline. No hardcoded paths.
+
+**Figure A — GBM vs Neural Network** (`fig_wordcloud_gbm_vs_nn.png`, 1×2):
+- GBM (n=32, Blues): `feature`, `ensemble`, `Hill Climbing`, `Regression`, `LGBM`, `combination`, `discussion`
+- NN (n=8, Greens): `AutoGluon`, `RealMLP`, `TabM`, `interaction`, `categorical`, `Single`, `CatBoost`
+- Contrast subtler than expected — both groups share `feature` and `ensemble` dominance. NN writers reference GBM tools as comparison baselines; GBM writers don't reciprocate.
+
+**Figure B — Era** (`fig_wordcloud_era.png`, 1×5 horizontal strip):
+- TPS/Featured (n=4, Purples): `mask`, `output`, `row`, `method`, `group` — earlier competitions had more diverse/unusual problem structures
+- S3 (n=16, Blues): `original`, `ensemble`, `duplicate`, `level` — duplicate handling between train/test was a defining S3 theme
+- S4 (n=10, Greens): `AutoGluon`, `OOF`, `XGBoost`, `fold`, `prediction` — AutoGluon dominance and OOF stacking becomes standard
+- S5 (n=9, Oranges): `XGBoost`, `ensemble`, `single`, `original` — consolidation; less novelty vs S4
+- S6 (n=4, Reds): `RealMLP`, `ipynb`, `categorical`, `XGBoost` — KGMON era, notebook-heavy, NN variety re-emerges
+
+Layout iterated from 2×3 (cramped bottom row) to 1×5 horizontal strip.
+
+**Note on S6 char count:** S6 has 122K chars despite only 4 competitions — the KGMON writeups are substantially longer than earlier-era posts, consistent with their more elaborate methodology.
+
+### Current state (May 17, 2026)
+
+EDA notebook corrected and re-executed. Research report Sections 3.7 and 4.2 corrected. Blockers report ready for professor meeting. Three word cloud figures generated (overall, GBM vs NN, era). Phase 4 (flowchart construction) starts May 19. Next: merge branch, then build flowchart from the 3–4 supported decision nodes.
+
+---
+
 ## Recurring Themes / Article Notes
 
 - **The Kaggle API surface is shallower than it looks.** Competition list, leaderboard, topic titles — yes. Topic bodies, notebook code, author attribution on posts — no.
