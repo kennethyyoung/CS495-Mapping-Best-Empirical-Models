@@ -11,23 +11,19 @@ XL_PATH = ROOT / "data" / "kaggle_meta_analysis.xlsx"
 NOT_DESCRIBED = {"not described", "not_described", "none", "nan", "", None}
 
 # --- Define update ---
-SLUG = "playground-series-s3e3"
+SLUG = "icr-identify-age-related-conditions"
 
 UPDATES = {
-    "missing_data_strategy": "none",
-    "encoding_strategy": "ordinal",
-    "scaling": "standard",
-    "outlier_treatment": "none",
-    "rare_class_handling": "none",
-    "ensemble_method": "weighted_blend",
-    "cv_strategy": "stratified_kfold",
-    "hyperparameter_tuning": "none",
-    "original_data_usage": "concat_rows",
-    "code_url": "https://www.kaggle.com/code/bcruise/starting-strong-xgboost-lightgbm-catboost",
+    "code_url": "https://www.kaggle.com/room722/icr-adv-model",
+    "missing_data_strategy": "imputation",
+    "encoding_strategy": "label_encoding",
+    "scaling": "none",
+    "cv_strategy": "repeated_kfold",
+    "ensemble_method": "mean_blend",
+    "original_data_usage": "not_applicable",
 }
 
 FORCE_UPDATES = {
-    "writeup_url": "https://www.kaggle.com/competitions/playground-series-s3e3/writeups/bill-cruise-1st-place-that-was-unexpected",
 }
 
 # --- Apply ---

@@ -24,3 +24,6 @@ Thumbs.db
 
 # Kaggle credentials (never commit)
 kaggle.json
+
+# Private context (rubrics, grading materials — local only)
+private/
