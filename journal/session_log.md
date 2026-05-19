@@ -503,6 +503,59 @@ EDA notebook corrected and re-executed. Research report Sections 3.7 and 4.2 cor
 
 ---
 
+## Session 13 — Feature Engineering Word Cloud Cleanup
+
+**Branch:** `cs485_may_18`
+
+### What we did
+
+Cleaned `research/generate_wordcloud.py` (the feature engineering word cloud added at the end of Session 12) through several iterative passes.
+
+**Root cause bug fixed first:** The `stopwords` list was defined in the script but never passed to the `WordCloud()` constructor. Every prior regeneration had been using only the library's default English stopwords. Fixed by adding `stopwords=set(stopwords)` to the `WordCloud()` call.
+
+**Abbreviation expansion:** Added a regex replacement pass before WordCloud generation to pool abbreviations with their full forms:
+
+| Abbreviation | Expanded to |
+|---|---|
+| `XGB` | `XGBoost` |
+| `TE` | `target encoding` |
+| `CE` | `count encoding` |
+| `LR` | `linear regression` |
+| `NN` | `neural network` |
+| `GP` | `genetic programming` |
+| `NaN` | `missing` |
+
+This caused `target encoding` to jump from ~0.095 to 0.270 relative frequency — it was the dominant technique all along, just fragmented across `TE` and spelled-out forms.
+
+**Redundant form folding:** Rather than stopping near-duplicate terms, folded them into canonical forms so counts pool:
+- `binned`, `bins` → `binning`
+- `combos` → `combinations`
+- `transform` → `transformation`
+- `numerical` → `numeric`
+
+**Stopword passes (three rounds):**
+1. Code variable names that leaked in from the Excel field (`catboost_oof_as_feature`, `target_encoding_median`, `leakfree`, etc.)
+2. Competition-specific noise (`IBM`, `yield`, `horsepower`, `AgeInDays`, `fruitset`, `fruitmass`, etc.)
+3. Generic English and topic-level words (`feature`, `features`, `encoding`, `column`, `count`, `original`, `pairs`, `fold`, `CV`, `model`, `score`, etc.)
+
+**Decision on `feature` / `features`:** Removed — the entire dataset is about feature engineering, so the word appears in every entry and conveys no signal. Same reasoning as removing "word" from a word cloud about words.
+
+**Tooling:** Created `research/_list_words.py` — reads the text from `generate_wordcloud.py`, applies the same abbrev_map and stopwords, and prints words sorted by relative frequency. Used for every review pass without regenerating the image.
+
+### Final top words (cleaned)
+
+`target encoding`, `categorical`, `numeric`, `digit`, `interaction`, `binning`, `ratio`, `mean`, `combinations`, `residual`, `linear`, `transformation`, `selection`, `groupby`, `XGBoost`, `quantile`, `label`, `duplicate`, `pairwise`, `cyclical`, `permutation`, `ordinal`, `neural network`, `genetic programming`, `min max`
+
+### GitHub authentication fix
+
+Push failed because fine-grained PATs require explicit per-repository permission. Fix: under the token settings, set **Repository permissions → Contents → Read and write** for the target repo. Classic tokens need `repo` scope; fine-grained tokens need Contents write explicitly.
+
+### Current state (May 18, 2026)
+
+Feature engineering word cloud cleaned and pushed to `cs485_may_18`. Phase 4 (flowchart) starts May 19. Word clouds considered for future: target-type subgroup clouds from writeup text (supports CV strategy finding), ensemble method field cloud, has_categorical subgroup cloud.
+
+---
+
 ## Recurring Themes / Article Notes
 
 - **The Kaggle API surface is shallower than it looks.** Competition list, leaderboard, topic titles — yes. Topic bodies, notebook code, author attribution on posts — no.
