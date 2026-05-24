@@ -503,6 +503,22 @@ EDA notebook corrected and re-executed. Research report Sections 3.7 and 4.2 cor
 
 ---
 
+## Session 13 — Branch Merge and Session Housekeeping
+
+**Branch:** `phase3/methodology-fixes` → merged into `main` via GitHub website
+
+### What we did
+
+**Branch merge:** Answered the pending merge-to-main question from Session 12. `phase3/methodology-fixes` was 8 commits ahead of main with linear history — clean merge candidate. User merged via the GitHub website (no local merge command needed). Branch captures all Phase 3 work: Methodology section, EDA notebook, contradiction audit, Results section, EDA corrections, and blockers report prep.
+
+**Journal gitignore discussion:** Considered whether `journal/session_log.md` should be gitignored. Decision: keep it tracked. Rationale — the journal is already in git history (removing it from tracking doesn't scrub history), it's low-stakes for a private repo, and it serves as an audit trail if methodology decisions need to be explained. Can revisit if the repo goes public.
+
+### Current state (May 17, 2026)
+
+`main` is now current with all Phase 3 deliverables. `private/` materials (blockers report + 7 figures) are gitignored and need manual transfer to laptop before the professor meeting. Phase 4 (flowchart construction) starts May 19 — create `phase4/flowchart` from updated `main`.
+
+---
+
 ## Recurring Themes / Article Notes
 
 - **The Kaggle API surface is shallower than it looks.** Competition list, leaderboard, topic titles — yes. Topic bodies, notebook code, author attribution on posts — no.
