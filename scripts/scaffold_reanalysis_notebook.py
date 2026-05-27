@@ -202,36 +202,212 @@ print(pass1['ensemble_method'].value_counts())
 # ============== Section 2: Paradigm Characterization ==============
 cells.append(md("""## 2. Paradigm Characterization
 
-Headline finding: what does \"winning\" look like across paradigms?
+Five views of paradigm structure across the 45-entry set:
+- 2.1 Paradigm distribution (headline figure)
+- 2.2 Paradigm × era (stacked bar) — are paradigms era-stable or era-shifting?
+- 2.3 Paradigm × photo-finish — does photo-finish coupling hold?
+- 2.4 Paradigm × n_rows (log scale) — does single-model-FE require large data?
+- 2.5 Paradigm × origination_score — do some paradigms inherit more than others?
 
-**Paradigm × constraint cross-tabs to build:**
-- Paradigm × era (stacked bar)
-- Paradigm × n_rows (scatter or binned bar)
-- Paradigm × top_3_margin (violin or boxplot per paradigm)
-- Paradigm × origination_score (heatmap)
+**Note on top_3_margin:** raw margin is metric-confounded (AUC ~0.0001 vs RMSE ~2335). We use the `photo_finish` boolean (margin < 0.0005) for AUC/Accuracy/MAP@K entries and a normalized per-metric photo-finish flag elsewhere.
 """))
 
-cells.append(code("""# Paradigm distribution
-print('Paradigm counts:')
-print(merged['paradigm'].value_counts())
-print(f'\\nTotal: {len(merged)}')
+cells.append(code("""# ----- Shared style + paradigm color map -----
+PARADIGM_ORDER = ['ensemble-stacking', 'single-model-FE', 'lookup-exploit',
+                  'problem-fit-NN', 'community-template-tweak', 'mixed']
+PARADIGM_COLORS = {
+    'ensemble-stacking':         '#1f77b4',  # blue (dominant)
+    'single-model-FE':           '#ff7f0e',  # orange (cdeotte-flavored)
+    'lookup-exploit':            '#d62728',  # red (exploit family)
+    'problem-fit-NN':            '#2ca02c',  # green (NN clusters)
+    'community-template-tweak':  '#9467bd',  # purple (high-inheritance)
+    'mixed':                     '#7f7f7f',  # grey
+}
+ERA_ORDER = ['TPS', 'S3', 'S4', 'S5', 'S6', 'Featured']
+
+plt.rcParams.update({'figure.dpi': 110, 'savefig.dpi': 150,
+                     'axes.spines.top': False, 'axes.spines.right': False,
+                     'font.size': 10})
 """))
 
-cells.append(code("""# Paradigm × era cross-tab
-xt_paradigm_era = pd.crosstab(merged['paradigm'], merged['era'])
-xt_paradigm_era = xt_paradigm_era.reindex(columns=['TPS', 'S3', 'S4', 'S5', 'S6', 'Featured'], fill_value=0)
-print(xt_paradigm_era)
-# TODO: stacked bar plot
+cells.append(md("""### 2.1 Paradigm distribution"""))
+
+cells.append(code("""# Horizontal bar of paradigm counts
+counts = merged['paradigm'].value_counts().reindex(PARADIGM_ORDER, fill_value=0)
+fig, ax = plt.subplots(figsize=(8, 3.5))
+colors = [PARADIGM_COLORS[p] for p in counts.index]
+ax.barh(range(len(counts)), counts.values, color=colors, edgecolor='white')
+ax.set_yticks(range(len(counts)))
+ax.set_yticklabels(counts.index)
+ax.invert_yaxis()
+ax.set_xlabel('Number of winning entries (n=45)')
+ax.set_title('Paradigm distribution across winners')
+for i, v in enumerate(counts.values):
+    pct = v / len(merged) * 100
+    ax.text(v + 0.3, i, f'{v} ({pct:.0f}%)', va='center', fontsize=9)
+ax.set_xlim(0, counts.max() * 1.18)
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_21_paradigm_distribution.png', bbox_inches='tight')
+plt.show()
+print('Headline: ensemble-stacking is 62% of wins; lookup-exploit + problem-fit-NN are tail paradigms but not negligible (16% combined).')
 """))
 
-cells.append(code("""# Paradigm × top_3_margin
-print(merged.groupby('paradigm')['top_3_margin'].describe())
-# TODO: violin/boxplot grouped by paradigm
+cells.append(md("""### 2.2 Paradigm × era (stacked bar)"""))
+
+cells.append(code("""# Stacked bar: era on x, paradigm composition stacked
+xt = pd.crosstab(merged['era'], merged['paradigm'])
+xt = xt.reindex(index=ERA_ORDER, columns=PARADIGM_ORDER, fill_value=0)
+
+fig, ax = plt.subplots(figsize=(9, 4))
+bottom = np.zeros(len(xt))
+for paradigm in PARADIGM_ORDER:
+    vals = xt[paradigm].values
+    ax.bar(xt.index, vals, bottom=bottom, label=paradigm,
+           color=PARADIGM_COLORS[paradigm], edgecolor='white', linewidth=0.5)
+    bottom += vals
+ax.set_ylabel('Winning entries')
+ax.set_xlabel('Era')
+ax.set_title('Paradigm composition by era')
+ax.legend(loc='upper left', bbox_to_anchor=(1.02, 1.0), frameon=False, fontsize=9)
+# annotate totals
+totals = xt.sum(axis=1).values
+for i, t in enumerate(totals):
+    ax.text(i, t + 0.2, f'n={t}', ha='center', fontsize=9, color='dimgray')
+ax.set_ylim(0, totals.max() * 1.18)
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_22_paradigm_by_era.png', bbox_inches='tight')
+plt.show()
+print('Counts:')
+print(xt)
+print('\\nObservation: problem-fit-NN concentrates in TPS+Featured era (pre-2024). lookup-exploit')
+print('appears in every era except S4 and Featured. ensemble-stacking dominates every era.')
 """))
 
-cells.append(code("""# Paradigm × n_rows (log-scale relevant)
-print(merged.groupby('paradigm')['n_rows'].describe())
-# TODO: scatter plot of n_rows (log scale) colored by paradigm
+cells.append(md("""### 2.3 Paradigm × photo-finish
+
+We define photo-finish as top_3_margin < 0.0005 for AUC/Accuracy/probability-based metrics, and use a metric-relative threshold for RMSE/MSE/MAE/RMSLE entries (margin < 0.1% of 1st-place score).
+"""))
+
+cells.append(code("""# Metric-aware photo-finish flag
+def is_photo_finish(row):
+    metric = str(row.get('metric', '')).lower()
+    margin = row['top_3_margin']
+    if pd.isna(margin):
+        return None
+    # AUC, accuracy, probability-based metrics: absolute threshold
+    if any(k in metric for k in ['auc', 'accuracy', 'map', 'log loss', 'kappa', 'matthews', 'multiclass loss']):
+        return margin < 0.0005
+    # Regression metrics (RMSE/MSE/MAE/RMSLE): relative threshold
+    # Need 1st-place score for relative comparison
+    lb_path = LB_DIR / row['competition_ref'] / 'leaderboard.json'
+    if lb_path.exists():
+        data = json.load(open(lb_path))
+        if data:
+            s1 = abs(float(data[0]['score'])) or 1.0
+            return margin / s1 < 0.001  # 0.1% of 1st score
+    return None
+
+merged['photo_finish_aware'] = merged.apply(is_photo_finish, axis=1)
+print('Photo-finish (metric-aware): {}/{} entries'.format(
+    int(merged['photo_finish_aware'].sum()), merged['photo_finish_aware'].notna().sum()))
+"""))
+
+cells.append(code("""# Photo-finish rate per paradigm
+photo_xt = pd.crosstab(merged['paradigm'], merged['photo_finish_aware'])
+photo_xt = photo_xt.reindex(index=PARADIGM_ORDER, fill_value=0)
+if True not in photo_xt.columns: photo_xt[True] = 0
+if False not in photo_xt.columns: photo_xt[False] = 0
+photo_xt['total'] = photo_xt[True] + photo_xt[False]
+photo_xt['photo_finish_rate'] = (photo_xt[True] / photo_xt['total']).fillna(0)
+photo_xt = photo_xt.sort_values('photo_finish_rate', ascending=False)
+print(photo_xt[[True, False, 'total', 'photo_finish_rate']].rename(
+    columns={True: 'photo_finish', False: 'wider'}))
+
+fig, ax = plt.subplots(figsize=(8, 3.5))
+ax.barh(range(len(photo_xt)), photo_xt['photo_finish_rate'] * 100,
+        color=[PARADIGM_COLORS[p] for p in photo_xt.index], edgecolor='white')
+ax.set_yticks(range(len(photo_xt)))
+ax.set_yticklabels(photo_xt.index)
+ax.invert_yaxis()
+ax.set_xlabel('% of paradigm wins that are photo-finish (margin < 0.0005 or <0.1% relative)')
+ax.set_title('Photo-finish rate by paradigm')
+for i, (rate, total) in enumerate(zip(photo_xt['photo_finish_rate'], photo_xt['total'])):
+    ax.text(rate * 100 + 1, i, f'{int(rate * total)}/{int(total)}', va='center', fontsize=9)
+ax.set_xlim(0, 100)
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_23_paradigm_photofinish.png', bbox_inches='tight')
+plt.show()
+"""))
+
+cells.append(md("""### 2.4 Paradigm × n_rows (log scale strip plot)"""))
+
+cells.append(code("""# Strip plot: n_rows on log x-axis, y = paradigm, color = paradigm
+fig, ax = plt.subplots(figsize=(9, 3.8))
+np.random.seed(0)
+for i, paradigm in enumerate(PARADIGM_ORDER):
+    sub = merged[merged['paradigm'] == paradigm]['n_rows'].dropna()
+    if len(sub) == 0:
+        continue
+    # jitter on y
+    y_jitter = np.full(len(sub), i) + (np.random.rand(len(sub)) - 0.5) * 0.3
+    ax.scatter(sub, y_jitter, s=70, color=PARADIGM_COLORS[paradigm],
+               edgecolor='white', linewidth=0.8, alpha=0.85, zorder=3)
+ax.set_xscale('log')
+ax.set_yticks(range(len(PARADIGM_ORDER)))
+ax.set_yticklabels(PARADIGM_ORDER)
+ax.invert_yaxis()
+ax.set_xlabel('Training rows (log scale)')
+ax.set_title('Dataset size (n_rows) per winning entry, grouped by paradigm')
+ax.xaxis.set_major_formatter(mticker.FuncFormatter(
+    lambda x, _: f'{int(x/1e6)}M' if x >= 1e6 else (f'{int(x/1e3)}K' if x >= 1e3 else str(int(x)))))
+ax.grid(axis='x', alpha=0.3)
+# Vertical reference line at 50K (cdeotte's 'small data' threshold)
+ax.axvline(50_000, linestyle='--', color='gray', alpha=0.5)
+ax.text(55_000, len(PARADIGM_ORDER) - 0.3, 'cdeotte 50K threshold', fontsize=8, color='gray')
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_24_paradigm_n_rows.png', bbox_inches='tight')
+plt.show()
+
+# Summary stats per paradigm
+size_by_paradigm = merged.groupby('paradigm')['n_rows'].agg(['min', 'median', 'max', 'count'])
+size_by_paradigm = size_by_paradigm.reindex(PARADIGM_ORDER)
+print('n_rows per paradigm:')
+print(size_by_paradigm)
+"""))
+
+cells.append(md("""### 2.5 Paradigm × origination_score (heatmap)"""))
+
+cells.append(code("""# Heatmap: paradigm (y) × origination_score (x), counts as cells
+xt = pd.crosstab(merged['paradigm'], merged['origination_score'])
+xt = xt.reindex(index=PARADIGM_ORDER, fill_value=0)
+# Ensure all 4 score columns present
+for s in [0, 1, 2, 3]:
+    if s not in xt.columns:
+        xt[s] = 0
+xt = xt[[0, 1, 2, 3]]
+
+fig, ax = plt.subplots(figsize=(7, 3.5))
+im = ax.imshow(xt.values, cmap='Blues', aspect='auto')
+ax.set_xticks(range(4))
+ax.set_xticklabels(['0\\n(pure fork)', '1\\n(fork+tweak)', '2\\n(significant)', '3\\n(mostly original)'])
+ax.set_yticks(range(len(PARADIGM_ORDER)))
+ax.set_yticklabels(PARADIGM_ORDER)
+ax.set_xlabel('origination_score')
+ax.set_title('Paradigm × origination_score (counts)')
+# Annotate cells
+for i in range(len(xt)):
+    for j in range(4):
+        val = xt.iloc[i, j]
+        if val > 0:
+            color = 'white' if val > xt.values.max() / 2 else 'black'
+            ax.text(j, i, str(val), ha='center', va='center', color=color, fontsize=10)
+plt.colorbar(im, ax=ax, fraction=0.04, pad=0.02, label='count')
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_25_paradigm_origination.png', bbox_inches='tight')
+plt.show()
+print('Observation: no paradigm has any score-0 entries (no pure forks anywhere).')
+print('community-template-tweak and lookup-exploit skew toward score 1 (fork+tweak); single-model-FE,')
+print('problem-fit-NN, and ensemble-stacking skew toward score 3 (mostly original).')
 """))
 
 # ============== Section 3: Constraint Cross-Tabs ==============
@@ -262,7 +438,7 @@ cells.append(code("""# n_rows binned × paradigm (cdeotte's small-data rule)
 bins = [0, 5_000, 50_000, 500_000, 5_000_000, 20_000_000]
 labels = ['<5K', '5K-50K', '50K-500K', '500K-5M', '5M+']
 merged['n_rows_bin'] = pd.cut(merged['n_rows'], bins=bins, labels=labels)
-xt = pd.crosstab(merged['n_rows_bin'], merged['paradigm'], observed=False)
+xt = pd.crosstab(merged['n_rows_bin'].astype(str), merged['paradigm'])
 print(xt)
 """))
 
