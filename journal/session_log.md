@@ -526,3 +526,45 @@ EDA notebook corrected and re-executed. Research report Sections 3.7 and 4.2 cor
 - **Title-only signals are surprisingly strong at the model level** but completely silent on preprocessing. Two different layers of information requiring two different collection strategies.
 - **Manual review is unavoidable** for preprocessing fields. The information simply isn't surfaced by any automated endpoint.
 - **Ensemble methods dominate.** The clearest finding from even title-level data is that single-model wins are the exception, not the rule, in PS S3–S5.
+
+---
+
+## Session 14 — Phase 4 Writeup Re-evaluation (full sweep)
+
+**Branch:** `phase4/writeup-reevaluation`
+
+### What we did
+
+Re-evaluated 45 curated writeups in reverse-chronological order using a 9-section per-writeup template (Identifiers, Dataset, What spreadsheet records, Public-notebook reuse, What's actually original, Dataset constraints, Code vs writeup check, Headline finding, Surprising/unusual). Built `analysis/writeup-reevaluation/INDEX.md` as the synthesis surface — status table + cross-cutting observations (constraint→strategy couplings, hypotheses on watch, methodology gaps, era patterns, community-graph hubs).
+
+**Sweep order:** s6e4→s6e1, s5e12→s5e2 (skipping s5e9), s4e12→s4e1 (skipping s4e2, s4e6), s3e26→s3e1 (skipping gaps), then TPS Feb/May/Jun 2022, then ICR (first Featured/monetized entry, 6,430 teams). Two interim commits (425737f for s6 quartet, a62ba8c for s5 era); final commit bundles the rest.
+
+### What worked
+
+**The constraint→strategy framing held up.** Promoted couplings reached N≥2 (lookup-exploit families: identity, inversion, distance-via-generator-flaw; stacker families; validation-discipline variants). Hypotheses-on-watch list grew to ~133 single-case observations awaiting a second instance.
+
+**Community-graph hubs surfaced:** ambrosm N=7 (4 wins + 3 source citations), siukeitin N=6, arunklenin N=5, paddykb N=4. cdeotte pre-dominance presence pushed back to Aug 2023 (ICR commenter, 806th).
+
+**Cross-competition academic citation persistence:** TFT paper (Lim et al. 2019, arxiv 1912.09363) cited at ICR (Aug 2023, room722) and s6e1 (Jan 2026, mahog) — 29 months apart, two different authors. Academic techniques propagate across years.
+
+**NN-primary winners cluster pre-2024:** TPS May 2022 (two-branch NN from xgbfir graph), TPS Jun 2022 (DAE for imputation), ICR Aug 2023 (Variable Selection Network at 617 rows). All three with custom architectures matching problem structure. Refined hypothesis: NN-primary requires (a) NN-friendly task, (b) discoverable interaction structure, or (c) tiny-data + heavy regularization + repeated training.
+
+### What didn't work / friction
+
+**Edit tool stale-string failures:** When sequentially editing INDEX.md (couplings/observations sections), wording from earlier edits sometimes invalidated later `old_string` matches. Fix: grep for current text before retrying.
+
+**Windows PowerShell + UTF-8:** Python one-liners reading writeups with Chinese characters or em-dashes hit cp932 encoding errors. Workaround: prepend `sys.stdout.reconfigure(encoding='utf-8')`.
+
+**Spreadsheet vs notebook discrepancies:** Found two cases where the user's notes ("no notebook") didn't match disk state. Noted and proceeded with both sources where available.
+
+### Patterns rolled into INDEX
+
+- Three lookup-exploit families (identity, inversion, distance-via-generator-flaw)
+- Four "community pre-existed cdeotte canonization" techniques (HC, brute-force FE, Ridge-as-stacker, RAPIDS XGBoost)
+- N=5 surprised-author wins, all at small-data or high-variance LB competitions
+- N=5 academic-paper-as-technique-source cases (TFT paper, PLE Gorishniy, OpenFE Zhang, AutoGluon Erickson, masked-loss arxiv 2002.08338)
+- First Featured/monetized competition (ICR) introduced new commenters: CPMP (Grandmaster of Grandmasters), pre-dominance cdeotte
+
+### Current state (May 27, 2026)
+
+44 per-writeup docs + ICR (45 total) sitting in `analysis/writeup-reevaluation/`. INDEX.md at 223 lines with 6 promoted couplings and ~133 hypotheses-on-watch. All work committed on `phase4/writeup-reevaluation`. Next: build the flowchart deliverable from promoted constraint→strategy couplings (Phase 4 main output).
