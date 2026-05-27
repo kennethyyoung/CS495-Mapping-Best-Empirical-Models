@@ -566,34 +566,198 @@ print('and 1 lookup-exploit (tps-feb-2022 ambrosm Knuth). NN paradigm is academi
 # ============== Section 4: Community / attribution ==============
 cells.append(md("""## 4. Community / Attribution
 
-- Author centrality (appearance count, cross-referencing)
-- cdeotte timeline (pre-dominance Feb 2023 → first win Dec 2024 → dominant from there)
-- Cross-author citation graph (degree distribution per recurring contributor)
-- `available-not-used` cases (cdeotte s3e5, adaubas s4e5 — CV-driven decisions)
+- 4.1 Author centrality: wins vs citations (the "technique-source vs competitor" axis)
+- 4.2 cdeotte timeline: pre-dominance commenter (Feb 2023) → first win (Dec 2024) → dominant from there
+- 4.3 `available-not-used` cases — the rare counter-pattern of CV-driven non-use
+- 4.4 Cross-author co-occurrence — who shows up in whose writeups
 """))
 
-cells.append(code("""# Author appearance counts (from Pass 2 author_appearance_count)
-# Note: same author may appear in multiple rows (mahog wins s5e11, s6e1, s5e8 rank2)
-authors = merged[['author', 'author_appearance_count']].drop_duplicates(subset=['author'])
-print('Top authors by appearance count (Pass 2):')
-print(authors.sort_values('author_appearance_count', ascending=False).head(15).to_string(index=False))
-"""))
+cells.append(md("""### 4.1 Author centrality — wins vs citations"""))
 
-cells.append(code("""# Cited-community-members flattened — count citations per handle
-all_citations = []
+cells.append(code("""# Build a single author-level table combining:
+#   - wins: rows where author matches (counting their direct wins in our set)
+#   - citations: count of times handle appears in cited_community_members
+#   - notable commenter: count of times in notable_commenters
+
+# Normalize: extract individual handles from team strings like 'ravi20076+arunklenin (Cross Sellers)'
+import re
+def extract_handles(author_str):
+    if pd.isna(author_str):
+        return []
+    # remove parenthetical
+    s = re.sub(r'\\([^)]*\\)', '', author_str).strip()
+    # split on +, comma, /
+    parts = re.split(r'\\s*[+,/]\\s*', s)
+    return [p.strip().lower() for p in parts if p.strip()]
+
+wins_counter = Counter()
+for a in merged['author']:
+    for h in extract_handles(a):
+        wins_counter[h] += 1
+
+cite_counter = Counter()
 for cited in merged['cited_community_members'].fillna(''):
-    for handle in split_semicolons(cited):
-        all_citations.append(handle.lower())
-top_cited = Counter(all_citations).most_common(20)
-print('Top cited community members (across all writeups):')
-for handle, n in top_cited:
-    print(f'  {handle:40s} {n}')
+    for h in split_semicolons(cited):
+        # strip parenthetical aliases
+        h_clean = re.sub(r'\\([^)]*\\)', '', h).strip().lower()
+        cite_counter[h_clean] += 1
+
+commenter_counter = Counter()
+for nc in merged['notable_commenters'].fillna(''):
+    for h in split_semicolons(nc):
+        commenter_counter[h.strip().lower()] += 1
+
+# Combine
+all_handles = set(wins_counter) | set(cite_counter) | set(commenter_counter)
+centrality = pd.DataFrame([{
+    'handle': h,
+    'wins': wins_counter.get(h, 0),
+    'citations': cite_counter.get(h, 0),
+    'comments': commenter_counter.get(h, 0),
+    'total': wins_counter.get(h, 0) + cite_counter.get(h, 0) + commenter_counter.get(h, 0),
+} for h in all_handles]).sort_values('total', ascending=False)
+TOP_N = 15
+top = centrality.head(TOP_N)
+print(f'Top {TOP_N} authors by combined centrality:')
+print(top.to_string(index=False))
 """))
 
-cells.append(code("""# 'Available but not used' counter-pattern — both should be CV-driven decisions
-not_used = merged[merged['external_original_use_mode'] == 'available-not-used']
+cells.append(code("""# Stacked horizontal bar — wins / citations / comments per top author
+fig, ax = plt.subplots(figsize=(9, 5))
+y = np.arange(len(top))
+ax.barh(y, top['wins'], color='#1f77b4', label='wins', edgecolor='white')
+ax.barh(y, top['citations'], left=top['wins'], color='#ff7f0e', label='citations', edgecolor='white')
+ax.barh(y, top['comments'], left=top['wins'] + top['citations'],
+        color='#9467bd', label='notable comments', edgecolor='white')
+ax.set_yticks(y)
+ax.set_yticklabels(top['handle'])
+ax.invert_yaxis()
+ax.set_xlabel('Appearances across set (wins + citations + notable comments)')
+ax.set_title(f'Community centrality: top {TOP_N} handles by total appearances')
+ax.legend(loc='lower right', frameon=False)
+for i, total in enumerate(top['total']):
+    ax.text(total + 0.3, i, str(int(total)), va='center', fontsize=9)
+ax.set_xlim(0, top['total'].max() * 1.18)
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_41_author_centrality.png', bbox_inches='tight')
+plt.show()
+print('\\nObservation: siukeitin tops the list despite never winning in our set --')
+print('pure technique-source role. The recurring 5-grandmaster cluster (cdeotte, mahog,')
+print('masayakawamata, ambrosm, tilii7) all have wins+citations both nonzero.')
+"""))
+
+cells.append(md("""### 4.2 cdeotte timeline — observer → dominant winner
+
+cdeotte's earliest documented presence in our set is Feb 2023 (commenter on Bill Cruise's s3e3 writeup); first win is Dec 2024 (s4e12). The 22-month observe-then-win arc is the central evidence for the canonization narrative.
+"""))
+
+cells.append(code("""# Build per-entry cdeotte status: WIN | CITED | COMMENTER | ABSENT
+def cdeotte_status(row):
+    author = str(row.get('author', '')).lower()
+    cited = str(row.get('cited_community_members', '')).lower()
+    commenters = str(row.get('notable_commenters', '')).lower()
+    if 'cdeotte' in author:
+        return 'WIN'
+    if 'cdeotte' in commenters:
+        return 'COMMENTER'
+    if 'cdeotte' in cited:
+        return 'CITED'
+    return 'ABSENT'
+
+merged['cdeotte_status'] = merged.apply(cdeotte_status, axis=1)
+merged['end_date_dt'] = pd.to_datetime(merged['end_date'], errors='coerce')
+
+cd_timeline = merged[merged['cdeotte_status'] != 'ABSENT'][
+    ['end_date_dt', 'competition_ref', 'finish_rank', 'cdeotte_status', 'author']
+].sort_values('end_date_dt')
+print(f'cdeotte presence: {len(cd_timeline)} of {len(merged)} entries')
+print(cd_timeline.to_string(index=False))
+"""))
+
+cells.append(code("""# Timeline figure: x = date, y = entries, dot color = status
+status_color = {'WIN': '#d62728', 'CITED': '#1f77b4', 'COMMENTER': '#7f7f7f'}
+status_size = {'WIN': 180, 'CITED': 90, 'COMMENTER': 50}
+
+fig, ax = plt.subplots(figsize=(10, 3.5))
+for status in ['ABSENT', 'COMMENTER', 'CITED', 'WIN']:
+    sub = merged[merged['cdeotte_status'] == status].sort_values('end_date_dt')
+    if status == 'ABSENT':
+        ax.scatter(sub['end_date_dt'], [0] * len(sub), s=15,
+                   color='lightgray', alpha=0.4, label=f'ABSENT (n={len(sub)})', zorder=1)
+    else:
+        ax.scatter(sub['end_date_dt'], [0] * len(sub), s=status_size[status],
+                   color=status_color[status], alpha=0.85, label=f'{status} (n={len(sub)})',
+                   edgecolor='white', linewidth=1.2, zorder=3)
+
+# Mark first win
+first_win = cd_timeline[cd_timeline['cdeotte_status'] == 'WIN']['end_date_dt'].min()
+if pd.notna(first_win):
+    ax.axvline(first_win, linestyle='--', color='#d62728', alpha=0.4)
+    ax.annotate(f'First win:\\n{first_win.strftime("%b %Y")}\\n(s4e12)',
+                xy=(first_win, 0.4), xytext=(first_win, 0.55), ha='center',
+                fontsize=9, color='#d62728')
+
+# Mark first appearance
+first_appearance = cd_timeline['end_date_dt'].min()
+if pd.notna(first_appearance):
+    ax.axvline(first_appearance, linestyle=':', color='gray', alpha=0.4)
+    ax.annotate(f'First documented\\npresence: {first_appearance.strftime("%b %Y")}\\n(s3e3 commenter)',
+                xy=(first_appearance, -0.4), xytext=(first_appearance, -0.6),
+                ha='center', fontsize=9, color='gray')
+
+ax.set_yticks([])
+ax.set_ylim(-0.8, 0.8)
+ax.set_xlabel('Competition end date')
+ax.set_title('cdeotte timeline: observer (2023) → dominant winner (2024-2026)')
+ax.legend(loc='upper left', frameon=False, fontsize=9)
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_42_cdeotte_timeline.png', bbox_inches='tight')
+plt.show()
+
+# Months between first appearance and first win
+months = (first_win - first_appearance).days / 30.44
+print(f'\\nMonths from first documented presence to first win: {months:.1f}')
+"""))
+
+cells.append(md("""### 4.3 'available-not-used' counter-pattern
+
+Only 2 entries in 45 have an available external original but explicitly chose not to use it. Both are CV-driven decisions — author saw the original hurt local CV and trusted the CV signal over the convenience of more training data.
+"""))
+
+cells.append(code("""not_used = merged[merged['external_original_use_mode'] == 'available-not-used']
 print('available-not-used entries:')
-print(not_used[['competition_ref', 'finish_rank', 'author', 'paradigm', 'winner_unique_edge']].to_string(index=False))
+print(not_used[['competition_ref', 'finish_rank', 'author', 'paradigm',
+                'top_3_margin', 'winner_unique_edge']].to_string(index=False))
+print(f'\\nBoth are tiny-data + AUC-style metrics:')
+print(not_used[['competition_ref', 'n_rows', 'metric']].to_string(index=False))
+print('\\nNote: at this scale (~2K rows) the original dataset would be 50%+ of training,')
+print('so its distribution character heavily dominates if used. Trust-CV is the disciplined call.')
+"""))
+
+cells.append(md("""### 4.4 Recurring contributors — who wins where
+
+For the top recurring handles, what competitions do they win vs get cited in?
+"""))
+
+cells.append(code("""# For top 5 handles by total centrality, list their per-entry presence type
+top_handles = top.head(5)['handle'].tolist()
+print(f'Top 5 handles: {top_handles}')
+print()
+for handle in top_handles:
+    print(f'\\n=== {handle.upper()} ===')
+    # Win rows
+    wins = merged[merged['author'].str.lower().str.contains(handle, na=False)]
+    if len(wins):
+        print(f'WINS ({len(wins)}):')
+        for _, r in wins.iterrows():
+            print(f'  {r[\"competition_ref\"]:40s} rank={r[\"finish_rank\"]} paradigm={r[\"paradigm\"]}')
+    # Cited-in rows
+    cited_in = merged[merged['cited_community_members'].str.lower().str.contains(handle, na=False, regex=False)]
+    cited_in = cited_in[~cited_in.index.isin(wins.index)]  # exclude self-mentions
+    if len(cited_in):
+        print(f'CITED IN ({len(cited_in)}):')
+        for _, r in cited_in.iterrows():
+            print(f'  {r[\"competition_ref\"]:40s} (winner: {r[\"author\"][:30]})')
 """))
 
 # ============== Section 5: Coupling Evidence Table ==============
