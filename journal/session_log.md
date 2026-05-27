@@ -503,6 +503,22 @@ EDA notebook corrected and re-executed. Research report Sections 3.7 and 4.2 cor
 
 ---
 
+## Session 13 — Branch Merge and Session Housekeeping
+
+**Branch:** `phase3/methodology-fixes` → merged into `main` via GitHub website
+
+### What we did
+
+**Branch merge:** Answered the pending merge-to-main question from Session 12. `phase3/methodology-fixes` was 8 commits ahead of main with linear history — clean merge candidate. User merged via the GitHub website (no local merge command needed). Branch captures all Phase 3 work: Methodology section, EDA notebook, contradiction audit, Results section, EDA corrections, and blockers report prep.
+
+**Journal gitignore discussion:** Considered whether `journal/session_log.md` should be gitignored. Decision: keep it tracked. Rationale — the journal is already in git history (removing it from tracking doesn't scrub history), it's low-stakes for a private repo, and it serves as an audit trail if methodology decisions need to be explained. Can revisit if the repo goes public.
+
+### Current state (May 17, 2026)
+
+`main` is now current with all Phase 3 deliverables. `private/` materials (blockers report + 7 figures) are gitignored and need manual transfer to laptop before the professor meeting. Phase 4 (flowchart construction) starts May 19 — create `phase4/flowchart` from updated `main`.
+
+---
+
 ## Recurring Themes / Article Notes
 
 - **The Kaggle API surface is shallower than it looks.** Competition list, leaderboard, topic titles — yes. Topic bodies, notebook code, author attribution on posts — no.
@@ -510,3 +526,92 @@ EDA notebook corrected and re-executed. Research report Sections 3.7 and 4.2 cor
 - **Title-only signals are surprisingly strong at the model level** but completely silent on preprocessing. Two different layers of information requiring two different collection strategies.
 - **Manual review is unavoidable** for preprocessing fields. The information simply isn't surfaced by any automated endpoint.
 - **Ensemble methods dominate.** The clearest finding from even title-level data is that single-model wins are the exception, not the rule, in PS S3–S5.
+
+---
+
+## Session 14 — Phase 4 Writeup Re-evaluation (full sweep)
+
+**Branch:** `phase4/writeup-reevaluation`
+
+### What we did
+
+Re-evaluated 45 curated writeups in reverse-chronological order using a 9-section per-writeup template (Identifiers, Dataset, What spreadsheet records, Public-notebook reuse, What's actually original, Dataset constraints, Code vs writeup check, Headline finding, Surprising/unusual). Built `analysis/writeup-reevaluation/INDEX.md` as the synthesis surface — status table + cross-cutting observations (constraint→strategy couplings, hypotheses on watch, methodology gaps, era patterns, community-graph hubs).
+
+**Sweep order:** s6e4→s6e1, s5e12→s5e2 (skipping s5e9), s4e12→s4e1 (skipping s4e2, s4e6), s3e26→s3e1 (skipping gaps), then TPS Feb/May/Jun 2022, then ICR (first Featured/monetized entry, 6,430 teams). Two interim commits (425737f for s6 quartet, a62ba8c for s5 era); final commit bundles the rest.
+
+### What worked
+
+**The constraint→strategy framing held up.** Promoted couplings reached N≥2 (lookup-exploit families: identity, inversion, distance-via-generator-flaw; stacker families; validation-discipline variants). Hypotheses-on-watch list grew to ~133 single-case observations awaiting a second instance.
+
+**Community-graph hubs surfaced:** ambrosm N=7 (4 wins + 3 source citations), siukeitin N=6, arunklenin N=5, paddykb N=4. cdeotte pre-dominance presence pushed back to Aug 2023 (ICR commenter, 806th).
+
+**Cross-competition academic citation persistence:** TFT paper (Lim et al. 2019, arxiv 1912.09363) cited at ICR (Aug 2023, room722) and s6e1 (Jan 2026, mahog) — 29 months apart, two different authors. Academic techniques propagate across years.
+
+**NN-primary winners cluster pre-2024:** TPS May 2022 (two-branch NN from xgbfir graph), TPS Jun 2022 (DAE for imputation), ICR Aug 2023 (Variable Selection Network at 617 rows). All three with custom architectures matching problem structure. Refined hypothesis: NN-primary requires (a) NN-friendly task, (b) discoverable interaction structure, or (c) tiny-data + heavy regularization + repeated training.
+
+### What didn't work / friction
+
+**Edit tool stale-string failures:** When sequentially editing INDEX.md (couplings/observations sections), wording from earlier edits sometimes invalidated later `old_string` matches. Fix: grep for current text before retrying.
+
+**Windows PowerShell + UTF-8:** Python one-liners reading writeups with Chinese characters or em-dashes hit cp932 encoding errors. Workaround: prepend `sys.stdout.reconfigure(encoding='utf-8')`.
+
+**Spreadsheet vs notebook discrepancies:** Found two cases where the user's notes ("no notebook") didn't match disk state. Noted and proceeded with both sources where available.
+
+### Patterns rolled into INDEX
+
+- Three lookup-exploit families (identity, inversion, distance-via-generator-flaw)
+- Four "community pre-existed cdeotte canonization" techniques (HC, brute-force FE, Ridge-as-stacker, RAPIDS XGBoost)
+- N=5 surprised-author wins, all at small-data or high-variance LB competitions
+- N=5 academic-paper-as-technique-source cases (TFT paper, PLE Gorishniy, OpenFE Zhang, AutoGluon Erickson, masked-loss arxiv 2002.08338)
+- First Featured/monetized competition (ICR) introduced new commenters: CPMP (Grandmaster of Grandmasters), pre-dominance cdeotte
+
+### Current state (May 27, 2026)
+
+44 per-writeup docs + ICR (45 total) sitting in `analysis/writeup-reevaluation/`. INDEX.md at 223 lines with 6 promoted couplings and ~133 hypotheses-on-watch. All work committed on `phase4/writeup-reevaluation`. Next: build the flowchart deliverable from promoted constraint→strategy couplings (Phase 4 main output).
+
+### Session-14 continuation: pivot away from flowchart deliverable, build Pass 2 sheet
+
+Discussion concluded that the evidence base doesn't support a prescriptive flowchart — only 6 couplings reached N≥2, ~133 single-case hypotheses can't justify decision nodes. Pivoted the deliverable framing from "flowchart" to **descriptive characterization (sociology-of-ML angle)**: typology of winning paradigms + attribution/canonization dynamics + community-graph analysis. Section outline drafted with new Discussion + Limitations + Implications sections (Methodology + Results-figures travel; Intro thesis and Prior Studies reframe).
+
+Decided the original `kaggle_meta_analysis.xlsx` is **useful for distributional questions, flawed for origination/attribution questions** — added a new `Paradigm & Attribution` sheet rather than replacing the original (`scripts/build_pass2_sheet.py`). Schema designed and locked after 5 weigh-in questions:
+- `lookup_exploit_subtype` strictly conditional on `paradigm=lookup-exploit`; separate `lookup_material_present` bool captures the pattern independently
+- `origination_score` 0–3 ordinal with explicit anchor definitions in Codebook
+- `uses_canonized_technique` list of 12 named techniques (HC, brute-force-FE, Ridge-as-stacker, RAPIDS-XGB, AG-as-ensembler, target-encoding-stack, LAD-as-stacker, original-as-columns, MLP-stacker, DAE-as-base-encoder, pseudo-labeling, adversarial-validation), with explicit exclusion list for universals
+- `notable_commenters` threshold-gated (Grandmaster OR appears elsewhere in set)
+- `winner_unique_edge` hard-capped at 200 chars
+
+**Pass 2 sheet stats (45 rows):**
+- Paradigm: ensemble-stacking 28, single-model-FE 6, lookup-exploit 4, problem-fit-NN 3, community-template-tweak 3, mixed 1
+- Lookup material present in **13/45 (29%)** — material is often there even when not the winning move
+- Origination: 0 entries at score 0 (pure fork), 5 at 1, 10 at 2, 30 at 3 — **even the most fork-heavy entries added some unique contribution**
+- Surprised wins: 5; forked from public notebook: 8; academic paper cited: 6
+
+Important meta-finding the sheet surfaced: **"pure fork" wins (origination=0) don't actually exist in our set.** Even Bill Cruise / Kirderf / Moonlit / kirill0212 (the heaviest fork cases) added something meaningfully original. The community-template-tweak paradigm is real but it's "fork+meaningful tweak," not "fork verbatim."
+
+### Session-14 continuation: Pass 1 data quality audit + corrections in severity order
+
+Built `Data Quality Audit` sheet catalogueing 24 issues from the re-eval (5 high / 14 medium / 5 low; 17 cell-level + 7 schema-wide). Applied corrections in severity order with full diff trail in a new `Corrections Log` sheet.
+
+**Workbook now has 6 sheets and Competition Data has 40 columns:**
+
+Corrections applied:
+- **HIGH cell-level (4):** s5e2 `n_rows` 300000 → 4000000 (combined train.csv + training_extra.csv; misclassified the strategy-shaping constraint); s3e4 `winner_1st`/`winner_2nd` filled from leaderboard.json (was 'not described'); s6e2 `fe_techniques` removed 'knowledge distillation' (training-time, not FE).
+- **MEDIUM cell-level (9):** `models_used` undercounts expanded for s5e11 (16→23), s5e8 (7→13), s5e10, s5e12, s4e7, s5e7; s6e3 `dominant_base_model` neural_network → gbm (90 trees vs 60 NN); s5e10 `original_data_usage` 'yes' → 'none' (no external original — internal data augmentation only); s4e11 `missing_data_strategy` imputation → leave_as_is (per author principle).
+
+Two new columns added:
+- **`top_3_margin`** (numeric, all 45 backfilled from leaderboard.json) — unblocks photo-finish → validation-discipline coupling analysis. Tightest margins surfaced: s6e2 (0.00001), s5e10 (0.00000 — 4-way tie at 0.05563), s5e5/s3e23/s3e11 (0.00002 each).
+- **`distribution_shift_type`** (enum: temporal / covariate / label-noise / none / not-applicable) — disambiguates the 5 TRUE entries: s5e3 + s5e12 are temporal; s4e4 + tps-feb-2022 + ICR are covariate.
+
+**`original_data_usage` split:** Replaced the conflated single-field encoding with two columns — `external_original_available` (TRUE/FALSE/unknown) and `external_original_use_mode` (rows-only/columns-only/both/features-derived/lookup/available-not-used/unavailable/unknown). All 45 rows mapped from re-eval docs. Old column preserved in place with deprecation note in Codebook. 90 backfill entries appended to Corrections Log.
+
+**Distributions newly visible from the split:**
+- External original available: TRUE 30 / FALSE 12 / unknown 3
+- Use mode: rows-only 17, both 8, unavailable 12, **available-not-used 2** (cdeotte s3e5 + adaubas s4e5 — both CV-driven decisions to skip available original), lookup 2, columns-only 1, unknown 3
+
+The `available-not-used` count (only 2) is a tiny but meaningful counter-pattern: most winners use available original; the explicit "don't use" decision based on CV evidence is rare.
+
+**Codebook clarifications (11 new entries):** primary_model vs best_single_model vs dominant_base_model divergence rules; hyperparameter_tuning automated-vs-optuna distinction; models_used base-vs-stacker convention; the two new columns (top_3_margin, distribution_shift_type); the deprecation + split of original_data_usage.
+
+### Current state (May 27, 2026)
+
+Six-sheet workbook is the Pass 1 + Pass 2 + audit-and-corrections artifact. 103 cell-level corrections logged total (13 typed-as-corrections + 90 from the split backfill). All work committed on `phase4/writeup-reevaluation`. Re-analysis (new figures, paradigm-by-margin tables, updated research_report Results section) starts on a fresh branch using the corrected data.
