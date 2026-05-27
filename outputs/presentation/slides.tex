@@ -237,18 +237,23 @@ which was a medical-data contest with a real prize pool.
 
 % ---------------- Pivot slide (NEW) ----------------
 \begin{frame}{From flowchart to typology: a pivot}
-\begin{itemize}
-  \item \textbf{Original goal:} derive a feature-engineering decision flowchart from the data
-  \item \textbf{What we found:}
-  \begin{itemize}
-    \item GBM dominated 76\% of wins -- no real ``which model'' branch
-    \item FE notes were free text: \alert{157 unique tags, 155 with count = 1}
-    \item Several decision-node fields fell below the 70\% completeness threshold
-  \end{itemize}
-  \item \textbf{Honest question:} is FE really what distinguishes winners, or is something else?
-  \item \textbf{Pivot:} characterize winners by \alert{paradigm}, not by individual FE technique
-  \item Several ``contradicted'' patterns later in the talk are direct evidence the original framing wouldn't have generalized
+\begin{columns}[T,onlytextwidth]
+\column{0.46\textwidth}
+\small
+\textbf{Original goal:} derive a feature-engineering decision flowchart \\[4pt]
+\textbf{What the data showed:}
+\begin{itemize}\itemsep2pt
+  \item GBM dominated \alert{78\%} -- no real ``which model'' branch
+  \item FE was free text: \alert{166 unique tags, 163 appear only once} (98\%)
+  \item Several decision-node fields below 70\% completeness
 \end{itemize}
+\vspace{2pt}
+\textbf{Pivot:} characterize by \alert{paradigm}, not by individual FE technique
+\column{0.51\textwidth}
+\centering
+\includegraphics[width=\textwidth]{phase5_62_model_family.png}\\[2pt]
+\includegraphics[width=\textwidth]{phase5_61_fe_tag_frequency.png}
+\end{columns}
 
 \note{
 This is the most important methodology slide. Let me be candid about
@@ -258,15 +263,21 @@ The original goal was to build a decision flowchart from the data.
 Feed in the dataset's properties and have the flowchart recommend
 which feature-engineering steps to take.
 
-What the data showed us. Gradient-boosted machines were the dominant
-model in 76 percent of wins -- so there was no meaningful ``which
-model'' branch in the flowchart. Feature engineering was recorded
-as free-text prose in the writeups; when I tried to bucket it I
-got 157 unique tags and 155 of them appeared exactly once. You
-can't build a frequency chart from that. And several fields that
-were supposed to be decision-node inputs -- scaling, outlier
-treatment, distribution shift -- were filled in less than 70
-percent of the time.
+The two charts on the right show what the data actually looked like.
+Top right: gradient-boosted machines were the dominant model family
+in 78 percent of wins. The other model families are tiny by
+comparison. So there was no meaningful ``which model'' branch in
+the flowchart.
+
+Bottom right: feature engineering was recorded as free-text prose
+in the writeups. When I tried to bucket the tags, I got 166 unique
+tags across 45 wins, and 163 of those -- 98 percent -- appear
+exactly once. You can't build a frequency chart from that. Each
+winner's feature engineering is essentially custom.
+
+A few fields that were supposed to be decision-node inputs --
+scaling, outlier treatment, distribution shift -- were filled in
+less than 70 percent of the time.
 
 So we asked the honest question: is feature engineering really
 what distinguishes winners, or is something else? The pivot was to
@@ -448,19 +459,26 @@ is empty.
 
 % ---------------- How winners actually build solutions (NEW) ----------------
 \begin{frame}{How winners actually build solutions}
-\begin{itemize}
-  \item \textbf{67\%} of winners draw heavily on community work (origination score $\leq 2$)
-  \item \textbf{18\%} explicitly fork a single public notebook as their starting point
-  \item \textbf{7\%} are ``community-template-tweak'' wins (fork + one meaningful addition)
+\begin{columns}[T,onlytextwidth]
+\column{0.46\textwidth}
+\small
+\begin{itemize}\itemsep4pt
+  \item \textbf{67\%} draw heavily on community work \\ (origination score $\leq 2$)
+  \item \textbf{18\%} fork a single public notebook
+  \item \textbf{7\%} are ``community-template-tweak'' \\ (fork + one meaningful addition)
   \item \textbf{0\%} are pure forks -- every winner adds at least one original element
   \item Only \textbf{33\%} are mostly-original work
 \end{itemize}
-\vspace{10pt}
-\centering
+\vspace{4pt}
 \alert{Two myths, both wrong:}
-\\
-\textit{``Winners just copy popular public notebooks''} (no -- 0\% do this) \\
-\textit{``Winners build everything from scratch''} (no -- 67\% inherit heavily)
+\\[2pt]
+\textit{``Winners just copy popular notebooks''} \\(no -- 0\% do this) \\[2pt]
+\textit{``Winners build everything from scratch''} \\(no -- 67\% inherit heavily)
+
+\column{0.51\textwidth}
+\centering
+\includegraphics[width=\textwidth]{phase5_63_origination_score.png}
+\end{columns}
 
 \note{
 This answers a question newcomers often have: what does winning Kaggle
@@ -516,21 +534,22 @@ Four couplings are contradicted. The most striking is the next slide.
 
 % ---------------- Use as columns correction (NEW) ----------------
 \begin{frame}{The ``use as columns'' correction}
-\textbf{Widely-shared Kaggle tip} (attributed to one famous author):
+\begin{columns}[T,onlytextwidth]
+\column{0.42\textwidth}
+\small
+\textbf{Widely-shared Kaggle tip:}
 \begin{quote}
-\textit{``When the original public dataset is available, attach it as new \textbf{columns} to your training data.''}
+\itshape ``When the original public dataset is available, attach it as new \textbf{columns} to your training data.''
 \end{quote}
-\vspace{6pt}
-Of the \textbf{30 winners} with an available external original dataset:
-\begin{itemize}
-  \item \textbf{17} just added it as more \emph{rows} (the boring concatenation)
-  \item \textbf{8} used both rows and columns
-  \item \textbf{1} used columns only
-  \item \textbf{2} chose not to use it at all (CV-driven decision)
-\end{itemize}
-\vspace{6pt}
-\alert{The ``as columns'' advice describes one author's idiosyncratic practice. \\
-The community pattern is rows-only concatenation.}
+\vspace{4pt}
+\alert{The community pattern is rows-only concatenation.}
+\\[2pt]
+The ``as columns'' advice describes \textbf{one author's} idiosyncratic practice.
+
+\column{0.55\textwidth}
+\centering
+\includegraphics[width=\textwidth]{phase5_64_use_mode_breakdown.png}
+\end{columns}
 
 \note{
 This is the single most actionable finding -- a direct contradiction

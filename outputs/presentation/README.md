@@ -11,18 +11,22 @@
 1. Create a new blank project on Overleaf (https://www.overleaf.com).
 2. Delete the auto-generated `main.tex` if Overleaf creates one.
 3. Upload `slides.tex`.
-4. Upload the following 7 PNG figures from `analysis/figures/phase5/` to the **project root** (same level as `slides.tex`):
+4. Upload the following **11 PNG figures** from `analysis/figures/phase5/` to the **project root** (same level as `slides.tex`):
 
-   - `phase5_21_paradigm_distribution.png`
-   - `phase5_22_paradigm_by_era.png`
-   - `phase5_23_paradigm_photofinish.png`
-   - `phase5_24_paradigm_n_rows.png`
-   - `phase5_31_use_mode_paradigm.png`
-   - `phase5_41_author_centrality.png`
-   - `phase5_42_cdeotte_timeline.png`
-   - `phase5_51_coupling_evidence.png`
+   Main deck figures:
+   - `phase5_21_paradigm_distribution.png` — slide 10 (four paradigms)
+   - `phase5_22_paradigm_by_era.png` — slide 14 (paradigm by era)
+   - `phase5_41_author_centrality.png` — slide 16 (community centrality)
+   - `phase5_51_coupling_evidence.png` — slide 12 (coupling evidence)
+   - `phase5_61_fe_tag_frequency.png` — slide 6 (pivot, FE tag histogram)
+   - `phase5_62_model_family.png` — slide 6 (pivot, model family bar)
+   - `phase5_63_origination_score.png` — slide 11 (how winners build)
+   - `phase5_64_use_mode_breakdown.png` — slide 13 (use-as-columns correction)
 
-   That's 8 PNGs total (counted again — 8 figure references in slides.tex).
+   Appendix figures:
+   - `phase5_23_paradigm_photofinish.png` — appendix
+   - `phase5_24_paradigm_n_rows.png` — appendix
+   - `phase5_31_use_mode_paradigm.png` — appendix
 
 5. In Overleaf's compiler menu, set the compiler to **XeLaTeX** or **LuaLaTeX**. The Metropolis theme requires one of these (not pdfLaTeX) for proper font rendering.
 
