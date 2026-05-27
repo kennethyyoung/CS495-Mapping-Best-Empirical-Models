@@ -587,3 +587,31 @@ Decided the original `kaggle_meta_analysis.xlsx` is **useful for distributional 
 - Surprised wins: 5; forked from public notebook: 8; academic paper cited: 6
 
 Important meta-finding the sheet surfaced: **"pure fork" wins (origination=0) don't actually exist in our set.** Even Bill Cruise / Kirderf / Moonlit / kirill0212 (the heaviest fork cases) added something meaningfully original. The community-template-tweak paradigm is real but it's "fork+meaningful tweak," not "fork verbatim."
+
+### Session-14 continuation: Pass 1 data quality audit + corrections in severity order
+
+Built `Data Quality Audit` sheet catalogueing 24 issues from the re-eval (5 high / 14 medium / 5 low; 17 cell-level + 7 schema-wide). Applied corrections in severity order with full diff trail in a new `Corrections Log` sheet.
+
+**Workbook now has 6 sheets and Competition Data has 40 columns:**
+
+Corrections applied:
+- **HIGH cell-level (4):** s5e2 `n_rows` 300000 → 4000000 (combined train.csv + training_extra.csv; misclassified the strategy-shaping constraint); s3e4 `winner_1st`/`winner_2nd` filled from leaderboard.json (was 'not described'); s6e2 `fe_techniques` removed 'knowledge distillation' (training-time, not FE).
+- **MEDIUM cell-level (9):** `models_used` undercounts expanded for s5e11 (16→23), s5e8 (7→13), s5e10, s5e12, s4e7, s5e7; s6e3 `dominant_base_model` neural_network → gbm (90 trees vs 60 NN); s5e10 `original_data_usage` 'yes' → 'none' (no external original — internal data augmentation only); s4e11 `missing_data_strategy` imputation → leave_as_is (per author principle).
+
+Two new columns added:
+- **`top_3_margin`** (numeric, all 45 backfilled from leaderboard.json) — unblocks photo-finish → validation-discipline coupling analysis. Tightest margins surfaced: s6e2 (0.00001), s5e10 (0.00000 — 4-way tie at 0.05563), s5e5/s3e23/s3e11 (0.00002 each).
+- **`distribution_shift_type`** (enum: temporal / covariate / label-noise / none / not-applicable) — disambiguates the 5 TRUE entries: s5e3 + s5e12 are temporal; s4e4 + tps-feb-2022 + ICR are covariate.
+
+**`original_data_usage` split:** Replaced the conflated single-field encoding with two columns — `external_original_available` (TRUE/FALSE/unknown) and `external_original_use_mode` (rows-only/columns-only/both/features-derived/lookup/available-not-used/unavailable/unknown). All 45 rows mapped from re-eval docs. Old column preserved in place with deprecation note in Codebook. 90 backfill entries appended to Corrections Log.
+
+**Distributions newly visible from the split:**
+- External original available: TRUE 30 / FALSE 12 / unknown 3
+- Use mode: rows-only 17, both 8, unavailable 12, **available-not-used 2** (cdeotte s3e5 + adaubas s4e5 — both CV-driven decisions to skip available original), lookup 2, columns-only 1, unknown 3
+
+The `available-not-used` count (only 2) is a tiny but meaningful counter-pattern: most winners use available original; the explicit "don't use" decision based on CV evidence is rare.
+
+**Codebook clarifications (11 new entries):** primary_model vs best_single_model vs dominant_base_model divergence rules; hyperparameter_tuning automated-vs-optuna distinction; models_used base-vs-stacker convention; the two new columns (top_3_margin, distribution_shift_type); the deprecation + split of original_data_usage.
+
+### Current state (May 27, 2026)
+
+Six-sheet workbook is the Pass 1 + Pass 2 + audit-and-corrections artifact. 103 cell-level corrections logged total (13 typed-as-corrections + 90 from the split backfill). All work committed on `phase4/writeup-reevaluation`. Re-analysis (new figures, paradigm-by-margin tables, updated research_report Results section) starts on a fresh branch using the corrected data.
