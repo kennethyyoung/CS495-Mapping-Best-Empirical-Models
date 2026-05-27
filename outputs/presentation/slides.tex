@@ -28,7 +28,7 @@
 % \setbeameroption{show notes on second screen=right} % uncomment for dual-monitor rehearsal
 % \setbeameroption{show only notes}                    % uncomment to print notes-only deck
 
-% --- Custom colors (lightly Bellevue-flavored: slate blue + warm accent) ---
+% --- Custom colors ---
 \definecolor{kc-accent}{HTML}{C8932A}   % warm gold accent for emphasis
 \definecolor{kc-muted}{HTML}{8A8A8A}    % muted gray for secondary text
 
@@ -52,13 +52,13 @@
 \maketitle
 
 \note{
-Good [morning/afternoon]. My name is Kenneth Young, and over the next about six minutes
-I'll walk you through a meta-analysis of how people win tabular machine-learning
-competitions on the Kaggle platform.
+Good [morning/afternoon]. My name is Kenneth Young, and over the next
+about six minutes I'll walk you through a meta-analysis of how people
+win tabular machine-learning competitions on the Kaggle platform.
 
-The audience for this talk is mostly people who haven't competed on Kaggle, so I'll start
-with what Kaggle actually is, then move into the research question, the method, and the
-findings.
+The audience for this talk is mostly people who haven't competed on
+Kaggle, so I'll start with what Kaggle actually is, then move into the
+research question, the method, and the findings.
 }
 
 
@@ -71,95 +71,65 @@ findings.
 \begin{frame}{What is Kaggle?}
 \begin{itemize}
   \item Largest public platform for machine-learning \alert{competitions}
-  \item Participants submit predictive models against a shared dataset
-  \item Submissions are ranked by a stated metric -- accuracy, RMSE, AUC, etc.
-  \item Two competition types in scope here:
+  \item People submit predictive models against a shared dataset
+  \item Submissions are ranked by a stated score -- accuracy, RMSE, AUC
+  \item Two competition types matter here:
   \begin{itemize}
-    \item \textbf{Featured} -- monetized, sponsor-funded, real prize money
-    \item \textbf{Playground Series} -- monthly, non-monetized, synthetic data
+    \item \textbf{Featured} -- sponsor-funded, real prize money
+    \item \textbf{Playground Series} -- monthly, no prize, synthetic data
   \end{itemize}
-  \item Solutions are publicly documented after the contest closes
-  \begin{itemize}
-    \item Writeup post (qualitative description)
-    \item Notebook (executable code)
-    \item Leaderboard (final rank and score)
-  \end{itemize}
+  \item After each contest ends, winners post a public \alert{writeup}
+  \item Writeups are the raw material for this study
 \end{itemize}
 
 \note{
-Kaggle is the dominant public venue for competitive machine learning. Think of it as
-a series of contests: a sponsor or Kaggle itself publishes a dataset, sets an evaluation
-metric, and competitors spend a month or two trying to build the best-scoring model.
+Kaggle is the largest public platform for machine-learning competitions.
+The format is simple: a sponsor or Kaggle itself publishes a dataset,
+sets a scoring metric, and competitors spend a month or two trying to
+build the highest-scoring model.
 
-There are two competition types I'm studying. Featured competitions have real prize
-money -- typically tens of thousands of dollars. Playground Series competitions are
-monthly contests that Kaggle runs themselves with synthetic data, primarily as a
-learning venue.
+Two types of competitions are in scope for this study. Featured
+competitions have real prize money, typically tens of thousands of
+dollars. Playground Series competitions are monthly contests Kaggle
+runs themselves with synthetic data -- mostly as a learning venue.
 
-After the competition ends, the winners write up what they did. That writeup is the
-raw material for this study.
+After the competition ends, the winners post a writeup that describes
+what they did. That writeup is the raw material for this study.
 }
 \end{frame}
 
 
-% ---------------- Research question ----------------
-\begin{frame}{The research question}
+% ---------------- Research arc (merged + pivot framing) ----------------
+\begin{frame}{The research arc}
 \begin{itemize}
-  \item Thousands of writeups exist -- but no systematic empirical characterization
-  \item \alert{What strategies actually win tabular Kaggle competitions?}
-  \item Three concrete questions:
-  \begin{enumerate}
-    \item What is the \textbf{distributional structure} of winning strategies?
-    \item Can the diversity be reduced to a \textbf{small typology}?
-    \item Do informally observed \textbf{constraint-to-strategy patterns} hold up?
-  \end{enumerate}
-  \item Most existing knowledge is \textit{anecdotal} -- blog posts, individual tutorials
-  \item Academic benchmarking studies compare \textit{algorithms}, not \textit{strategies}
+  \item \textbf{Original question:} which feature engineering techniques do winners use?
+  \begin{itemize}
+    \item ``Ensembles of tree models win'' is already common knowledge
+    \item Which specific FE techniques is \emph{not} well documented
+  \end{itemize}
+  \item \textbf{What we hit in the data:} the FE question couldn't be answered cleanly
+  \item \textbf{Re-framed question:}
+  \begin{itemize}
+    \item What \alert{kind of strategy} wins?
+    \item And how does each kind connect to the \alert{data conditions} of the competition?
+  \end{itemize}
 \end{itemize}
 
 \note{
-Despite thousands of publicly documented winning solutions, nobody has systematically
-characterized what those solutions look like as a population. The practitioner literature
-is anecdotal -- you'll read a blog post from one prominent Kaggler about "what worked for
-me." The academic literature compares algorithms like XGBoost vs LightGBM on fixed
-benchmarks. Neither tells you what winning solutions across the platform actually do.
+The research arc has two stages.
 
-That's the gap. My three concrete questions are: what's the distribution of strategies,
-can I find a small typology, and do the informal patterns hold up under quantitative
-scrutiny.
-}
-\end{frame}
+The original question was: which feature engineering techniques do
+winners actually use? This is a substantive question because the
+high-level answer is already common knowledge -- ensembles of
+tree-based models dominate tabular competitions. But the specific
+feature-engineering choices that separate winners from runners-up are
+not well documented in the practitioner literature.
 
-
-% ---------------- Why this matters ----------------
-\begin{frame}{Why this matters}
-\begin{columns}[T,onlytextwidth]
-\column{0.55\textwidth}
-\begin{itemize}
-  \item \textbf{For practitioners:} replace recipe-based folk knowledge with empirically-grounded patterns
-  \item \textbf{For ML meta-research:} demonstrate a replicable two-pass coding methodology
-  \item \textbf{For the Kaggle community:} test whether widely-cited techniques actually dominate
-\end{itemize}
-\column{0.42\textwidth}
-\centering
-\small
-\textit{``How on Earth did I win this competition?''} \\[4pt]
-\textit{``1st place. That was unexpected\ldots''} \\[4pt]
-\textit{``Surprisingly \#1''}
-\\[10pt]
-{\color{kc-muted}\scriptsize Three of five surprised-author winners in the corpus}
-\end{columns}
-
-\note{
-This matters to three different audiences. For practitioners new to competitive ML,
-the typology gives them an empirical map instead of recipe-based folk knowledge.
-For ML meta-research, the two-pass coding method I'll describe is replicable elsewhere.
-And for the Kaggle community itself, I'll show that several widely-cited patterns
-don't actually dominate the data.
-
-The pull-quotes on the right are interesting: five of the 45 winners in my corpus
-explicitly described their wins as a surprise. That's not zero. There's some genuine
-variance in this game that gets papered over in folk knowledge.
+We tried to answer that question. We hit a wall, which I'll show you
+in two slides. So we re-framed: instead of asking which FE techniques
+win, we asked what kind of strategy wins, and how does that connect
+to the data conditions of the competition. That re-framing is what
+produces the typology you'll see in the results.
 }
 \end{frame}
 
@@ -169,36 +139,39 @@ variance in this game that gets papered over in folk knowledge.
 % =================================================================
 
 
-% ---------------- Related work + gap ----------------
-\begin{frame}{Related work + the gap}
+% ---------------- Related work + gap (simplified) ----------------
+\begin{frame}{What's been done -- and what hasn't}
 \begin{itemize}
-  \item \textbf{Tabular ML benchmarking} -- Caruana \& Niculescu-Mizil; Erickson et al.\ (AutoGluon); Gorishniy et al.\ (numerical embeddings, NeurIPS 2022); Borisov et al.\ (tabular DL survey)
+  \item \textbf{Academic ML research:} compares \emph{algorithms} on benchmark datasets
   \begin{itemize}
-    \item Compares \textit{algorithms} on standardized datasets
+    \item ``Which model is best on dataset X?''
   \end{itemize}
-  \item \textbf{Competition-as-method studies} -- M5 forecasting retrospectives (Makridakis et al.); Athey et al.\ on data science competitions
+  \item \textbf{Practitioner blog posts:} describe individual winning solutions
   \begin{itemize}
-    \item Focuses on \textit{specific competitions or families}
+    \item ``Here's how I won this competition.''
   \end{itemize}
-  \item \textbf{Open-community attribution} -- von Krogh \& von Hippel (open source); Merton (norms of science)
-  \begin{itemize}
-    \item Not previously applied to competitive ML
-  \end{itemize}
+  \item \textbf{Neither systematically characterizes what strategies recur across many wins}
 \end{itemize}
 \vspace{8pt}
-\alert{Gap:} The literature treats Kaggle as a \emph{source of techniques}, not as a \emph{community to characterize empirically}.
+\alert{The gap:} Treat the Kaggle community as a \textbf{population to study}, not just a \textbf{source of techniques}.
 
 \note{
-The existing literature breaks into three buckets. Tabular ML benchmarking compares
-algorithms head-to-head on standardized datasets -- it tells you XGBoost beats logistic
-regression, but not what winning solutions actually do. Competition-as-method studies
-exist, but they focus on individual competitions like the M5 forecasting series or the
-Netflix Prize. And there's a separate literature on attribution in open communities
-from open-source software and science studies, but it hasn't been applied to competitive
-ML.
+Two existing strands of literature touch this space.
 
-The gap is straightforward: nobody's looked at recent tabular Kaggle competitions as
-a population to be empirically described.
+First, academic machine-learning research compares one algorithm to
+another on standardized benchmark datasets. Studies will tell you that
+XGBoost beats logistic regression on tabular data, or that a particular
+neural-network architecture is competitive with gradient-boosted trees.
+But these studies compare algorithms on fixed datasets -- they don't
+tell you what winning solutions across many competitions actually do.
+
+Second, practitioner blog posts and tutorial notebooks describe
+individual winning strategies. Someone wins a competition, they write
+up what they did, and that becomes folk knowledge. But each post is
+one case study; there's no systematic look across many wins.
+
+The gap is straightforward: nobody's empirically characterized
+winning Kaggle strategies as a population. That's what this study does.
 }
 \end{frame}
 
@@ -208,19 +181,22 @@ a population to be empirically described.
 % =================================================================
 
 
-% ---------------- Data + scope ----------------
+% ---------------- Data + scope (with manual-reading note) ----------------
 \begin{frame}{Data: 45 winning solutions, 2022--2026}
 \begin{columns}[T,onlytextwidth]
 \column{0.55\textwidth}
 \begin{itemize}
   \item \textbf{Inclusion criteria}
   \begin{itemize}
-    \item Tabular competitions only (no images / NLP / time series)
-    \item At least partial writeup available
+    \item Tabular competitions only
     \item Top-three finishers
+    \item Writeup must exist
   \end{itemize}
-  \item \textbf{Unit of analysis}: one solution per competition (most-complete writeup of top-three)
-  \item \textbf{Date range}: Feb 2022 -- Apr 2026
+  \item \textbf{One solution per competition}
+  \item \alert{Kaggle's API does not expose writeup bodies or winner notebooks}
+  \begin{itemize}
+    \item Every entry required \textbf{manual reading}
+  \end{itemize}
 \end{itemize}
 \column{0.42\textwidth}
 \centering
@@ -241,95 +217,150 @@ Featured (ICR) & 1 \\
 \end{columns}
 
 \note{
-The corpus is 45 winning tabular Kaggle solutions from February 2022 through April 2026.
-I restricted to tabular competitions, excluded time series, image and NLP work, and took
-one solution per competition -- specifically, the top-three finisher with the most
-complete writeup.
+The corpus is 45 winning tabular Kaggle solutions from February 2022
+through April 2026. I restricted to tabular competitions, excluded
+time series, image, and NLP work, and took one solution per competition --
+specifically the top-three finisher with the most complete writeup.
 
-The cohort breakdown is roughly even across the recent Playground Series seasons, plus
-three earlier TPS competitions from 2022 and one Featured competition: ICR, which was
-a medical-data contest with a real prize pool.
+One thing worth saying clearly: Kaggle's API does not expose the body
+text of writeups, and it does not return the winners' notebooks. The
+API will tell you who finished where, but for the actual content of
+each solution, manual reading was unavoidable. Every one of these
+45 entries was read by hand from the discussion forum.
+
+The cohort breakdown spans the recent Playground Series seasons, plus
+three earlier TPS competitions and one Featured competition -- ICR,
+which was a medical-data contest with a real prize pool.
 }
 \end{frame}
 
 
-% ---------------- Two-pass coding ----------------
+% ---------------- Pivot slide (NEW) ----------------
+\begin{frame}{From flowchart to typology: a pivot}
+\begin{itemize}
+  \item \textbf{Original goal:} derive a feature-engineering decision flowchart from the data
+  \item \textbf{What we found:}
+  \begin{itemize}
+    \item GBM dominated 76\% of wins -- no real ``which model'' branch
+    \item FE notes were free text: \alert{157 unique tags, 155 with count = 1}
+    \item Several decision-node fields fell below the 70\% completeness threshold
+  \end{itemize}
+  \item \textbf{Honest question:} is FE really what distinguishes winners, or is something else?
+  \item \textbf{Pivot:} characterize winners by \alert{paradigm}, not by individual FE technique
+  \item Several ``contradicted'' patterns later in the talk are direct evidence the original framing wouldn't have generalized
+\end{itemize}
+
+\note{
+This is the most important methodology slide. Let me be candid about
+the pivot.
+
+The original goal was to build a decision flowchart from the data.
+Feed in the dataset's properties and have the flowchart recommend
+which feature-engineering steps to take.
+
+What the data showed us. Gradient-boosted machines were the dominant
+model in 76 percent of wins -- so there was no meaningful ``which
+model'' branch in the flowchart. Feature engineering was recorded
+as free-text prose in the writeups; when I tried to bucket it I
+got 157 unique tags and 155 of them appeared exactly once. You
+can't build a frequency chart from that. And several fields that
+were supposed to be decision-node inputs -- scaling, outlier
+treatment, distribution shift -- were filled in less than 70
+percent of the time.
+
+So we asked the honest question: is feature engineering really
+what distinguishes winners, or is something else? The pivot was to
+characterize winners by paradigm -- the overall kind of strategy
+they used -- instead of trying to bucket their individual FE
+techniques. Several of the ``contradicted'' patterns you'll see
+in the results are direct evidence that the original FE-flowchart
+approach wouldn't have generalized.
+}
+\end{frame}
+
+
+% ---------------- Two-pass coding (modified to emphasize WHY) ----------------
 \begin{frame}{Two-pass coding design}
 \begin{columns}[T,onlytextwidth]
 \column{0.48\textwidth}
 \textbf{Pass 1: structured schema}
 \begin{itemize}
-  \item 38-variable spreadsheet
-  \item Models, ensembling, CV strategy, encoding, FE techniques
-  \item Captures \textit{what was used}
-  \item Suitable for distributional analysis
+  \item 38-column spreadsheet
+  \item Models, ensembling, CV, encoding, FE
+  \item Captures \alert{what was used}
 \end{itemize}
 
 \column{0.48\textwidth}
 \textbf{Pass 2: qualitative re-evaluation}
 \begin{itemize}
-  \item Per-writeup 9-section template
+  \item Per-writeup, nine-section template
   \item Origination vs.\ inheritance
   \item Paradigm classification
-  \item Captures \textit{what was originated}
-  \item Suitable for typology + community-graph analysis
+  \item Captures \alert{what was originated}
 \end{itemize}
 \end{columns}
-\vspace{12pt}
+\vspace{14pt}
 \centering
-\alert{Pass 1 alone cannot tell you whether a technique was originated by the winner or inherited from a publicly shared community notebook.}
+\alert{Pass 1 can tell you that target encoding was used.
+It cannot tell you whether the winner originated the technique \\
+or copied it from a public notebook.}
 
 \note{
-The methodological centerpiece is this two-pass design. Pass 1 is a structured
-spreadsheet: I went through each writeup and coded 38 variables -- what model family,
-what ensembling, what cross-validation, and so on. That gives me distributional data:
-how often does XGBoost appear, what's the modal CV strategy, etc.
+The methodological centerpiece. Pass 1 is the structured spreadsheet
+I just described -- 38 columns capturing what techniques each winner
+used. That's good for distributional analysis: how often does XGBoost
+appear, what's the modal CV strategy, that kind of thing.
 
-But Pass 1 has a critical limitation: it can't tell me whether a technique listed
-in the spreadsheet was actually originated by the winner, or whether they forked it
-from a public notebook by another community member. That distinction matters for
-the typology and especially for the community-attribution analysis. So I did a
-second pass, re-reading each writeup with a nine-section template that explicitly
-separates origination from inheritance.
+But Pass 1 has a critical blind spot. It can tell me that target
+encoding was used in a winning solution. It can't tell me whether
+the winner originated that technique or whether they inherited it
+from a publicly-shared notebook by another community member.
 
-The two-pass design is itself a contribution of the project. It's replicable.
+That distinction matters a lot for the typology and especially for
+the community-attribution analysis you'll see later. So I did a
+second pass -- re-reading each writeup with a nine-section template
+that explicitly separates origination from inheritance. The two-pass
+design is itself a methodological contribution, and it's replicable.
 }
 \end{frame}
 
 
-% ---------------- Audit + corrections ----------------
-\begin{frame}{Data-quality audit + corrections workflow}
+% ---------------- Audit + corrections (simpler language) ----------------
+\begin{frame}{Double-checking our own work}
 \begin{itemize}
-  \item Pass 2 surfaced cell-level inconsistencies in Pass 1
-  \item Built a dedicated \texttt{Data Quality Audit} sheet:
+  \item Pass 2 surfaced cell-level errors in Pass 1
   \begin{itemize}
-    \item 24 issues catalogued (5 high / 14 medium / 5 low)
-    \item 17 cell-level + 7 schema-wide
+    \item Example: one entry had \texttt{n\_rows = 300{,}000}, writeup said \alert{4 million} (two CSV files were loaded together)
   \end{itemize}
-  \item Applied corrections in severity order
-  \item Recorded every diff in a \texttt{Corrections Log} sheet
-  \item \textbf{103 total corrections logged} (13 cell-level + 90 column-split backfills)
-  \item Two new columns added: \texttt{top\_3\_margin}, \texttt{distribution\_shift\_type}
-  \item One column split: \texttt{original\_data\_usage} $\to$ availability + use-mode
+  \item Built a dedicated \texttt{Data Quality Audit} sheet
+  \begin{itemize}
+    \item 24 issues catalogued, color-coded by severity
+  \end{itemize}
+  \item Applied corrections in severity order (high $\to$ medium $\to$ low)
+  \item Recorded every change in a separate \texttt{Corrections Log} sheet
+  \begin{itemize}
+    \item Old value, new value, reason, source
+  \end{itemize}
+  \item Added two columns the audit identified as missing (\texttt{top\_3\_margin}, \texttt{distribution\_shift\_type})
 \end{itemize}
 
 \note{
-When I re-read the writeups for Pass 2, I started finding cell-level errors in Pass 1.
-For example, one entry had n_rows coded as 300,000 when the writeup explicitly said
-4 million training rows were loaded -- I had counted one CSV file but not the second.
+When I re-read the writeups for Pass 2, I started finding cell-level
+errors in Pass 1. For example, one entry had n-rows coded as 300,000
+when the writeup explicitly said 4 million training rows were loaded.
+I had counted one CSV file but missed a second one that the winner
+loaded alongside it. Small thing, but it changed what kind of
+problem that entry was -- 4 million rows supports a very different
+strategy than 300,000.
 
-I built a dedicated audit sheet to catalog every issue I found, colored by severity.
-Then I applied the corrections in severity order -- high first, then medium, then low --
-and recorded every change in a separate corrections log with the old value, the new
-value, the reason, and the source. 103 total corrections.
+I built a dedicated audit sheet to catalog every issue I found,
+color-coded by severity. Then I applied corrections in severity
+order -- high first, then medium, then low -- and recorded every
+change in a separate corrections log with the old value, the new
+value, the reason, and the source.
 
-I also added two new columns the audit identified as missing -- top-three margin
-which captures how tight each competition's photo-finish was, and distribution shift
-type which captures what kind of train-test shift was present. And I split one
-column that was conflating two questions.
-
-This audit trail is the methodological piece that makes the work replicable and
-defensible.
+I also added two columns the audit identified as missing. That
+audit trail is what makes the work replicable and defensible.
 }
 \end{frame}
 
@@ -339,34 +370,41 @@ defensible.
 \begin{itemize}
   \item \textbf{Small sample.} N = 45 limits sub-group analysis
   \begin{itemize}
-    \item Ensemble-stacking stratum (n = 28) is reliable
+    \item Ensemble-stacking group (n = 28) is reliable
     \item Smaller paradigms (n = 3--6) are descriptive only
   \end{itemize}
-  \item \textbf{Single-researcher coding.} No formal inter-rater reliability
+  \item \textbf{Single coder.} No formal inter-rater check
   \begin{itemize}
-    \item Mitigated by Pass-2 audit on Pass-1 codings (17 corrections applied)
+    \item Pass-2 audit on Pass-1 codings caught 17 cell-level errors
   \end{itemize}
-  \item \textbf{Writeup-availability bias.} Excludes wins without published writeups
-  \item \textbf{Winners only.} Cannot directly compare to runner-up or non-top-three solutions
-  \item \textbf{Detection-limited couplings.} 200-char summary field may miss subtle signals
+  \item \textbf{Writeup availability.} Excludes wins where no writeup was published
+  \item \textbf{Winners only.} No runner-up or non-top-three comparison
+  \item \textbf{Detection limit.} 200-character ``unique edge'' field may miss subtle signals
 \end{itemize}
 
 \note{
-The limitations to be transparent about. Sample size of 45 is small for sub-group work.
-The dominant paradigm has 28 entries which supports cross-tabulation reasonably well,
-but the smaller paradigms only have three to six entries, so claims about them are
-descriptive only.
+Limitations to be transparent about.
 
-I'm the only coder; no inter-rater reliability check. The Pass 2 audit on Pass 1
-codings partially substitutes for that -- 17 cell-level corrections came out of it --
-but it's not the same as a second coder.
+Sample size of 45 is small for sub-group analysis. The dominant
+paradigm has 28 entries which supports cross-tabulation reasonably
+well, but the smaller paradigms only have three to six entries each,
+so claims about them are descriptive only.
 
-I only see solutions with writeups, which is a real selection effect.
+I'm the only coder. There's no formal inter-rater reliability check.
+The Pass 2 audit on Pass 1 codings serves as a partial substitute --
+it caught 17 cell-level errors, which is a structured second-pass
+check -- but it's not the same as a second independent coder.
 
-And there's a methodological constraint on the coupling-evidence framework I'll show
-next: the strategy detector keys off a 200-character summary field, and for couplings
-whose strategy signal is subtle, the actual contradicted-versus-supported split may
-be partly detection-limited rather than actually contradicted.
+I only see solutions with published writeups, which is a real
+selection effect.
+
+I only have winners, not losers. So I can describe what winners do,
+but I can't directly tell you what separates winners from competitors.
+
+And the coupling-evidence framework I'll show next uses a
+200-character summary field as its strategy detector. For couplings
+whose signal is subtle, the verdict may be partly detection-limited
+rather than actually contradicted.
 }
 \end{frame}
 
@@ -376,41 +414,78 @@ be partly detection-limited rather than actually contradicted.
 % =================================================================
 
 
-% ---------------- Four paradigms ----------------
+% ---------------- Four paradigms (KEEP figure, modify notes) ----------------
 \begin{frame}{Four winning paradigms (+ two minor categories)}
 \centering
-\includegraphics[width=0.88\textwidth]{phase5_21_paradigm_distribution.png}
+\includegraphics[width=0.86\textwidth]{phase5_21_paradigm_distribution.png}
 \\[6pt]
 {\color{kc-muted}\scriptsize Source: \texttt{phase5\_21\_paradigm\_distribution.png}}
 
 \note{
-The first headline. The 45 winning solutions reduce to a four-paradigm typology that
-captures 96 percent of the corpus.
+The first headline. The 45 winning solutions reduce to four paradigms
+covering 96 percent of the corpus.
 
-Ensemble-stacking dominates: 28 of 45 wins, 62 percent. The winner trains many base
-models -- gradient-boosted trees, neural networks, sometimes classical kernel methods --
-then combines them with a stacker layer.
+The obvious finding -- ensemble-stacking is the majority, 62 percent --
+is the one most people in this room already expect. The more
+interesting finding is the other 38 percent. The wins that don't do
+the ensemble-stacking thing don't randomly do other things; they
+split into three specialist strategies, each of which requires
+specific data conditions.
 
-Single-model heavy-FE -- 13 percent. One model, hundreds of engineered features. This
-is the cdeotte signature recipe.
+Single-model heavy-FE works at extreme data sizes. Lookup-exploit
+needs an exploitable generator artifact and clusters at small data.
+Problem-fit neural networks only appear when no external original
+dataset is available. The typology is conditional -- not a universal
+recipe.
 
-Lookup-exploit -- 9 percent. The winner exploits a property of the synthetic data
-generator to predict by direct key matching instead of by a learned model.
-
-Problem-fit neural network -- 7 percent. Custom NN architecture matched to a specific
-structural property of the data.
-
-And two smaller categories: community-template-tweak which is fork-plus-meaningful-tweak,
-and mixed for one entry that doesn't fit cleanly.
-
-Important descriptive finding: there are zero entries scored as pure forks. Even the
-most fork-heavy paradigm contains at least one meaningful original contribution per
-winner.
+And one finding I didn't expect when I started: there are zero pure
+forks in this corpus. Every single winner contributed at least one
+meaningful original element. The category of ``win-by-pure-copy''
+is empty.
 }
 \end{frame}
 
 
-% ---------------- Coupling evidence (the headline) ----------------
+% ---------------- How winners actually build solutions (NEW) ----------------
+\begin{frame}{How winners actually build solutions}
+\begin{itemize}
+  \item \textbf{67\%} of winners draw heavily on community work (origination score $\leq 2$)
+  \item \textbf{18\%} explicitly fork a single public notebook as their starting point
+  \item \textbf{7\%} are ``community-template-tweak'' wins (fork + one meaningful addition)
+  \item \textbf{0\%} are pure forks -- every winner adds at least one original element
+  \item Only \textbf{33\%} are mostly-original work
+\end{itemize}
+\vspace{10pt}
+\centering
+\alert{Two myths, both wrong:}
+\\
+\textit{``Winners just copy popular public notebooks''} (no -- 0\% do this) \\
+\textit{``Winners build everything from scratch''} (no -- 67\% inherit heavily)
+
+\note{
+This answers a question newcomers often have: what does winning Kaggle
+actually look like as a process?
+
+Two contradictory myths circulate in the community. The cynical view
+says people just copy popular public notebooks and submit them. My
+data contradicts that -- zero winners do this. Every single one of
+the 45 winners contributes at least one meaningful original element.
+
+The heroic view says real winners build everything from scratch. My
+data also contradicts that -- two thirds of winners draw heavily on
+community work in some form. Eighteen percent explicitly start from a
+single forked public notebook. Seven percent are pure
+community-template-tweak wins where the public notebook is the
+engine and the winner adds one meaningful tweak.
+
+The honest picture is in the middle. Heavy inheritance from community
+work plus one meaningful original contribution. That's what winning
+actually looks like.
+}
+\end{frame}
+
+
+% ---------------- Coupling evidence (KEEP) ----------------
 \begin{frame}{Coupling evidence: only 2 of 6 promoted patterns survive}
 \centering
 \includegraphics[width=0.92\textwidth]{phase5_51_coupling_evidence.png}
@@ -418,152 +493,246 @@ winner.
 {\color{kc-muted}\scriptsize Source: \texttt{phase5\_51\_coupling\_evidence.png}}
 
 \note{
-This is the analytical centerpiece. Pass 2 identified six promoted constraint-to-strategy
-couplings -- patterns that appeared in multiple writeups and looked like real community
-practice. To test each one quantitatively, I defined a constraint filter and a strategy
-filter, then counted supporting, contradicting, and neutral cases.
+This is the analytical centerpiece. Pass 2 identified six promoted
+constraint-to-strategy couplings -- patterns that appeared in multiple
+writeups and looked like real community practice. To test each one
+quantitatively, I defined a constraint filter and a strategy filter,
+then counted supporting, contradicting, and neutral cases.
 
-Two couplings survive at the strong-evidence threshold of 75 percent support.
+Two couplings survive at the strong-evidence threshold.
 
-Linear-stacker dominance: 32 of 40 testable cases, 80 percent. When winners ensemble,
-they overwhelmingly choose a linear stacker -- Ridge regression, mean blending, hill
-climbing -- rather than a nonlinear one.
+Linear-stacker dominance: 32 of 40 testable cases. When winners
+ensemble, they overwhelmingly use a linear stacker -- Ridge regression,
+mean blending, hill climbing -- rather than a nonlinear stacker like
+a neural network or another tree model.
 
-Distribution-shift-driven custom CV: four of five testable cases, also 80 percent.
-But the testable sample is only five entries, so this is a strong-with-small-n caveat.
+Distribution-shift-driven custom CV: four of five testable cases.
+Small sample, treat with caution.
 
-Four couplings are contradicted. The most striking is "use available external original
-as columns" -- the widely-cited cdeotte pattern. Of 30 entries with an available
-external original, only 11 use it as columns or features-derived. The dominant pattern
-is actually plain rows-only concatenation. The "use as columns" framing is one author's
-practice, not the community's practice.
-
-The two contradicted couplings labeled in red and the photo-finish coupling are partly
-detection-limited, which I flagged in the limitations.
+Four couplings are contradicted. The most striking is the next slide.
 }
 \end{frame}
 
 
-% ---------------- Paradigm by era ----------------
+% ---------------- Use as columns correction (NEW) ----------------
+\begin{frame}{The ``use as columns'' correction}
+\textbf{Widely-shared Kaggle tip} (attributed to one famous author):
+\begin{quote}
+\textit{``When the original public dataset is available, attach it as new \textbf{columns} to your training data.''}
+\end{quote}
+\vspace{6pt}
+Of the \textbf{30 winners} with an available external original dataset:
+\begin{itemize}
+  \item \textbf{17} just added it as more \emph{rows} (the boring concatenation)
+  \item \textbf{8} used both rows and columns
+  \item \textbf{1} used columns only
+  \item \textbf{2} chose not to use it at all (CV-driven decision)
+\end{itemize}
+\vspace{6pt}
+\alert{The ``as columns'' advice describes one author's idiosyncratic practice. \\
+The community pattern is rows-only concatenation.}
+
+\note{
+This is the single most actionable finding -- a direct contradiction
+of a widely-cited Kaggle technique.
+
+There's a famous piece of Kaggle advice attributed to one prominent
+author: when the original public dataset is available for a synthetic
+competition, attach it as new columns to your training data, not just
+as more rows.
+
+My data says this is wrong for almost everyone. Of the 30 winners
+in my corpus with an available original dataset, seventeen just added
+it as more training rows. The boring concatenation. Only one used
+columns-only. Two chose not to use it at all because their cross-
+validation said it would hurt.
+
+The ``as columns'' trick reflects one author's practice. The community
+pattern is plain rows-only. A practitioner who reads that famous
+writeup and assumes everyone does this would be working from a
+misleading template.
+
+This is the kind of finding the work contributes -- not new techniques,
+but corrections to community folk knowledge.
+}
+\end{frame}
+
+
+% ---------------- Paradigm by era (KEEP figure, sharper notes) ----------------
 \begin{frame}{Paradigm composition by era}
 \centering
-\includegraphics[width=0.88\textwidth]{phase5_22_paradigm_by_era.png}
+\includegraphics[width=0.86\textwidth]{phase5_22_paradigm_by_era.png}
 \\[6pt]
 {\color{kc-muted}\scriptsize Source: \texttt{phase5\_22\_paradigm\_by\_era.png}}
 
 \note{
-Paradigm composition is era-dependent. The three earliest competitions in the corpus --
-the Tabular Playground Series from 2022 -- contributed two problem-fit-NN wins and one
-lookup-exploit win, and zero ensemble-stacking wins.
+Paradigm composition is era-dependent. The most striking thing on
+this chart: the three earliest competitions in the corpus -- the
+Tabular Playground Series from 2022 -- contributed two problem-fit-NN
+wins and one lookup-exploit win, and zero ensemble-stacking wins.
 
-From Season 3 onward, ensemble-stacking is the modal paradigm in every era, accounting
-for 60 to 80 percent of each era's wins.
+The dominant paradigm of today wasn't dominant before mid-2022.
 
-The diversity of paradigms peaks in Season 3, where five of the six paradigm categories
-appear at least once.
+From Season 3 onward, ensemble-stacking is the modal paradigm in
+every era, accounting for 60 to 80 percent of each era's wins. The
+diversity of paradigms peaks in Season 3, where five of the six
+paradigm categories appear at least once.
 
-This era-dependence matters: the typology is current as of mid-2026, but earlier eras
-of competitive tabular ML looked qualitatively different. The dataset captures both
-the current dominant pattern and the historical variation.
+This era-dependence matters: the typology is current as of mid-2026.
+Earlier eras of competitive tabular machine learning looked
+qualitatively different. The dataset captures both the current
+dominant pattern and the historical variation.
 }
 \end{frame}
 
 
-% ---------------- Community + cdeotte timeline ----------------
-\begin{frame}{Community centrality: 3 archetypes}
-\centering
-\includegraphics[width=0.95\textwidth]{phase5_41_author_centrality.png}
-\\[4pt]
-{\color{kc-muted}\scriptsize Source: \texttt{phase5\_41\_author\_centrality.png}}
+% ---------------- What each winner uniquely did (NEW showcase) ----------------
+\begin{frame}{What each winner uniquely did (examples)}
+\small
+\begin{block}{Sergey, s3e14 (lookup-exploit)}
+\textit{``Match test rows to original dataset by (fruitset, fruitmass) keys; assign exact original yield values.''}
+\end{block}
+
+\begin{block}{Mart Preusse, s4e9 (community-template-tweak)}
+\textit{``Last-day fork of yekenot's DeepTables NN starter + added 4 OOFs as features; NN-as-stacker won.''}
+\end{block}
+
+\begin{block}{cdeotte, s4e12 (single-model heavy-FE)}
+\textit{``GPU brute-force search of 145K+ categorical combinations $\to$ kept 170 that moved CV.''}
+\end{block}
+
+\begin{block}{Bill Cruise, s3e3 (community-template-tweak, surprised win)}
+\textit{``Forked 3-GBDT notebook + added 7 HR risk-flag features (Age<34, JobHopper, etc.).''}
+\end{block}
 
 \note{
-Aggregating wins and citations across the corpus, three centrality archetypes appear.
+To give the typology some texture, here are four concrete examples of
+what individual winners uniquely did. Each one is the single distinguishing
+element captured in Pass 2's ``unique edge'' field.
 
-First: pure technique-source. The most-cited handle in the entire corpus is siukeitin,
-with 12 citations across 12 different writeups. siukeitin never appears as a top-three
-winner in any of my 45 entries. paddykb is similar: 5 citations, zero wins. These
-are community members whose techniques propagate widely but who don't themselves win.
+Sergey's s3e14 win was a lookup exploit. He matched test rows to
+original-dataset rows by a two-column key and just assigned the exact
+original yield values. That's the entire winning move.
 
-Second: member who occasionally wins. tilii7 has one win plus eight citations.
-masayakawamata has one win plus five citations.
+Mart Preusse's s4e9 win was a last-day fork. He took someone else's
+neural-network starter notebook, added four out-of-fold predictions
+from other models as extra features, and the NN-as-stacker won. He
+wasn't planning to do that -- it was a last-day move.
 
-Third: dominant competitor who is also cited. cdeotte has four wins plus six citations.
-Same for mahoganybuttstrings and for the AmbrosM-plus-team-partner pair.
+cdeotte's s4e12 win was the famous brute-force feature-engineering
+search. He let his GPU run for days iterating through 145 thousand
+categorical combinations, kept the 170 that moved cross-validation,
+and used those as the input to a single XGBoost model.
 
-This empirical separation -- pure source, occasional winner, dominant cited competitor --
-is the strongest example I have of the originator-versus-canonizer gap in competitive ML.
-It's worth saying out loud: the most-cited technique source in my corpus has not won a
-top-three position in any of the competitions I analyzed.
+Bill Cruise's s3e3 win was a fork of a 3-model notebook plus seven
+HR-domain risk flags -- ``age under 34,'' ``frequent job changer,''
+that kind of thing. Domain knowledge applied on top of a community
+template.
+
+The point: each winner did one specific thing that separated them.
+Pass 2 captures that one thing for all 45 entries. It's the kind of
+qualitative data that the structured spreadsheet alone couldn't surface.
 }
 \end{frame}
 
 
-% ---------------- cdeotte timeline ----------------
-\begin{frame}{Observer-to-winner: 22 months}
+% ---------------- Community: who wins vs who's cited (MERGED) ----------------
+\begin{frame}{Who wins vs.\ who's cited}
+\begin{columns}[T,onlytextwidth]
+\column{0.55\textwidth}
 \centering
-\includegraphics[width=0.95\textwidth]{phase5_42_cdeotte_timeline.png}
-\\[6pt]
-{\color{kc-muted}\scriptsize Source: \texttt{phase5\_42\_cdeotte\_timeline.png}}
-
-\note{
-Zooming in on one of the most prominent winners: cdeotte. His earliest documented
-presence in my corpus is February 2023, when he commented on a winning writeup as
-an outside observer. His first win in the corpus is December 2024, 22 months later.
-
-Between those two dates he appears as a commenter on other writeups, as a non-winning
-competitor placing 81st in one competition and 806th in another, and as a cited
-source for techniques other winners use. Then his wins accelerate, producing four
-top-three finishes in 14 months.
-
-This 22-month observe-before-win arc is a specific case of a more general pattern:
-dominance in competitive ML is preceded by a long period of community observation.
-The techniques that cdeotte later canonized in his writeups -- hill climbing, brute-force
-feature engineering, RAPIDS XGBoost -- were already in use by other community members
-before he started winning with them.
-}
-\end{frame}
-
-
-% ---------------- Unexpected findings ----------------
-\begin{frame}{Three unexpected findings}
+\includegraphics[width=\textwidth]{phase5_41_author_centrality.png}
+\column{0.42\textwidth}
+\textbf{Three archetypes:}
 \begin{itemize}
-  \item \textbf{No pure forks among winners.} Zero entries at origination-score 0
-  \begin{itemize}
-    \item Even community-template-tweak winners add a meaningful tweak
-  \end{itemize}
-  \item \textbf{Most-cited contributor has never won.} siukeitin: 12 citations, 0 wins in corpus
-  \begin{itemize}
-    \item Pure technique-source role is real and measurable
-  \end{itemize}
-  \item \textbf{``Use as columns'' is contradicted.} 19 of 30 entries with available original use rows-only
-  \begin{itemize}
-    \item The widely-cited pattern reflects one author's practice, not the community's
-  \end{itemize}
+  \item \textbf{Pure technique-source} \\ \textit{cited often, never wins} \\ siukeitin: 12 citations, 0 wins
+  \item \textbf{Occasional winner} \\ tilii7: 1 win + 8 citations \\ masayakawamata: 1 + 5
+  \item \textbf{Dominant + cited} \\ cdeotte: 4 wins + 6 citations \\ mahog: 4 + 6
 \end{itemize}
+\vspace{6pt}
+\centering
+\alert{cdeotte: 22 months from first observer comment to first win}
+\end{columns}
 
 \note{
-To close: three findings I didn't expect going in.
+Aggregating wins and citations across the corpus, three centrality
+archetypes appear.
 
-One: no pure forks among winners. I had assumed -- as a lot of community folk knowledge
-implies -- that some wins are essentially "fork a strong public notebook and submit." My
-data says no. Every single one of the 45 winners contributes at least one meaningful
-original element.
+First: pure technique-source. The most-cited handle in the entire
+corpus is siukeitin, with 12 citations across 12 different writeups.
+siukeitin has never appeared as a top-three winner in any of my 45
+entries. They contribute techniques but don't themselves compete
+for the top three.
 
-Two: the most-cited technique source in the corpus has never won a top-three competition
-in the corpus. That's siukeitin, cited 12 times across 12 different writeups. The
-originator-versus-canonizer gap is not just a theoretical possibility -- it's directly
-measurable here.
+Second: member who occasionally wins. tilii7 has one win plus eight
+citations. masayakawamata has one win plus five citations. They
+win sometimes, and they're widely cited as sources by other winners.
 
-Three: the "use available original as columns" pattern, which the practitioner community
-widely associates with one prominent author, is actually contradicted by the data. Most
-winners with an available external original just concatenate the original as additional
-training rows. The "as columns" pattern is one author's idiosyncratic practice that
-got popularized in his writeups.
+Third: dominant competitor also cited. cdeotte has four wins plus
+six citations. Same for mahog.
 
-These three findings together support the broader claim that empirically characterizing
-winning Kaggle practice surfaces real contradictions with folk knowledge.
+The note at the bottom is the cdeotte timeline finding. His earliest
+documented presence in the corpus is February 2023, commenting on
+someone else's winning writeup as an outside observer. His first
+win in the corpus is December 2024 -- 22 months later. The
+observe-before-win arc is concrete in his case.
 
-I'm happy to take questions.
+This empirical separation -- pure source, occasional winner,
+dominant cited competitor -- is the strongest example I have of
+the originator-versus-canonizer gap in competitive machine learning.
+The most-cited technique source in my corpus has not won a top-three
+position.
+}
+\end{frame}
+
+
+% ---------------- Closer: what this work contributes (NEW) ----------------
+\begin{frame}{What this work contributes}
+\textbf{(beyond ``ensembles win'')}
+\vspace{8pt}
+\begin{enumerate}
+  \item \textbf{A typology with constraint structure}
+  \begin{itemize}
+    \item Four paradigms cover 96\% of wins
+    \item Three of the four align with measurable data conditions
+  \end{itemize}
+  \item \textbf{A correction to community folk knowledge}
+  \begin{itemize}
+    \item 4 of 6 widely-cited patterns don't hold up
+    \item ``Use as columns'' reflects one author, not the community
+  \end{itemize}
+  \item \textbf{A measured originator-vs-canonizer gap}
+  \begin{itemize}
+    \item Most-cited contributor: zero wins
+    \item Dominant winners spent 12--22 months as observers first
+  \end{itemize}
+\end{enumerate}
+
+\note{
+To close: three things this work contributes beyond what an audience
+member already knows.
+
+First, a typology with constraint structure. The four paradigms cover
+96 percent of wins, and three of the four align with measurable data
+conditions. So it's not just a labeling exercise -- it tells you
+something about what wins under what circumstances.
+
+Second, a correction to community folk knowledge. Four of six
+widely-cited patterns I tested don't hold up. The ``use as columns''
+pattern in particular is one author's practice, not the community's.
+That's the kind of finding that helps a newcomer not be misled by
+reading a single famous writeup.
+
+Third, the originator-versus-canonizer gap is measurable. The
+most-cited technique source in my corpus has zero wins. The dominant
+winners spent twelve to twenty-two months as community observers
+before their first win. ``Famous on Kaggle'' and ``wins on Kaggle''
+are different things.
+
+These three findings together support a broader claim:
+empirically characterizing this community surfaces real
+contradictions with practitioner folk knowledge. Thanks. I'm happy
+to take questions.
 }
 \end{frame}
 
@@ -601,7 +770,7 @@ Photo-finish $\to$ valid.\ disc. & 6 & 21 & 27 & 22\% & Contradicted$^\ast$ \\
 \end{frame}
 
 
-\begin{frame}{Appendix: dataset by size and paradigm}
+\begin{frame}{Appendix: dataset size by paradigm}
 \centering
 \includegraphics[width=0.9\textwidth]{phase5_24_paradigm_n_rows.png}
 \end{frame}

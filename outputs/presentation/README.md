@@ -39,10 +39,33 @@ For the actual presentation, leave both lines commented (default) — notes won'
 
 ## Slide count + timing
 
-- **Main deck:** 14 content slides + 1 title + 1 thank-you = 16 slides
+- **Main deck:** 15 content slides + 1 title + 1 thank-you = 17 slides
 - **Appendix:** 4 slides (coupling table, n_rows scatter, photo-finish bar, use-mode heatmap)
 - **Target talk length:** 5–7 minutes
-- **Pacing:** roughly 25–30 seconds per content slide, faster for section dividers
+- **Pacing:** roughly 22–28 seconds per content slide, faster for section dividers
+
+## Slide order (current version)
+
+1. Title
+2. What is Kaggle?
+3. The research arc (original FE question → pivot to typology)
+4. What's been done — and what hasn't (related work + gap)
+5. Data: 45 winning solutions (with manual-reading caveat)
+6. **From flowchart to typology: a pivot** (explains why we did Pass 2)
+7. Two-pass coding design
+8. Double-checking our own work (audit + corrections)
+9. Limitations
+10. Four winning paradigms
+11. **How winners actually build solutions** (67% inheritance, 0% pure forks)
+12. Coupling evidence (the headline)
+13. **The "use as columns" correction**
+14. Paradigm composition by era
+15. **What each winner uniquely did (examples)**
+16. Who wins vs. who's cited (community centrality + cdeotte timeline merged)
+17. **What this work contributes** (closer)
+18. Thank you / Questions?
+
+**Bold** = new slides added in this revision (vs. the original draft).
 
 ## Customization notes
 
