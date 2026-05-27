@@ -1,0 +1,7 @@
+coupling,n_supporting,n_contradicting,n_neutral,n_testable,support_rate,verdict
+C1: photo-finish -> validation-discipline,6,21,18,27,0.222,contradicted
+C2: heavy-citations + recurring-author -> fork-heavy win,3,5,37,8,0.375,contradicted
+C3: linear stacker dominance,32,8,5,40,0.8,strong
+C4: available original -> use as columns/features/lookup,11,19,15,30,0.367,contradicted
+C5: small data (<50K) -> no FE / single-model,3,10,32,13,0.231,contradicted
+C6: distribution shift -> custom CV,4,1,40,5,0.8,strong

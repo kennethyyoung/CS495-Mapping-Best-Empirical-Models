@@ -763,45 +763,221 @@ for handle in top_handles:
 # ============== Section 5: Coupling Evidence Table ==============
 cells.append(md("""## 5. Coupling Evidence Table
 
-For each of the 6 promoted couplings in `analysis/writeup-reevaluation/INDEX.md`, derive:
-- N supporting (cases that fit the coupling)
-- N contradicting (cases that violate it)
-- N neutral (not testable in this case)
+For each of the 6 promoted couplings in `analysis/writeup-reevaluation/INDEX.md`:
+- **Constraint filter:** what entries are testable
+- **Strategy filter:** what counts as the predicted strategy
+- **N supporting:** constraint AND strategy both true
+- **N contradicting:** constraint true, strategy NOT chosen
+- **N neutral:** constraint not applicable (excluded from rate)
+- **Verdict:** strong (≥75%) / weak (50–74%) / contradicted (<50%) / undersupported (<3 testable)
 
-Output: single CSV `analysis/reanalysis/coupling_evidence.csv` for use in Discussion §5.1.
-
-**Promoted couplings to score:**
-1. Photo-finish → validation-discipline (anti-greedy submission selection)
-2. Heavy public-notebook + author with framework → KGMON-style fork-heavy win
-3. Linear stacker dominance (Ridge / mean / LR)
-4. Available original → "use as columns" (or "use as features-derived") pattern
-5. Small data (<50K rows) → no FE / single-model
-6. Distribution shift → custom CV strategy
+Output: `analysis/reanalysis/coupling_evidence.csv` + figure for Discussion §5.1.
 """))
 
-cells.append(code("""# Skeleton: build evidence rows incrementally
-evidence_rows = []
+cells.append(md("""### 5.1 Coupling checks — operational definitions
 
-# --- Coupling 1: Photo-finish → validation-discipline ---
-# Supporting: top_3_margin < 0.0005 AND Pass 2 winner_unique_edge mentions anti-greedy/CV-trust
-# Contradicting: top_3_margin < 0.0005 AND no validation-discipline framing
-# TODO: implement check on winner_unique_edge text
+Each coupling defined as a pair of filter functions over the merged dataframe.
+"""))
 
-# --- Coupling 2: Heavy citations + author has framework ---
-# Supporting: n_cited_members >= 5 AND author_recurring_in_set
-# TODO
+cells.append(code("""# ---- helper: keyword check on winner_unique_edge ----
+def edge_contains(row, *keywords):
+    edge = str(row.get('winner_unique_edge', '') or '').lower()
+    return any(kw.lower() in edge for kw in keywords)
 
-# --- Coupling 3: Linear stacker dominance ---
-# Supporting: uses_canonized_technique contains Ridge-as-stacker / LAD-as-stacker
-# OR ensemble_method == mean_blend / weighted_blend
-# TODO
+# ---- Coupling 1: Photo-finish -> validation-discipline ----
+def c1_constraint(row):
+    return row.get('photo_finish_aware') == True
 
-# --- Couplings 4-6: TODO ---
+def c1_strategy(row):
+    return edge_contains(row,
+        'anti-greedy', 'trust-cv', 'trust cv', 'lower public', 'lower-public',
+        'over public', 'over-public', 'discipline', 'non-greedy', 'cv-driven',
+        '2 submissions', 'only 2 submissions', 'minimal submissions',
+        'chose lower', 'rejected', 'ignored public')
 
-# evidence_df = pd.DataFrame(evidence_rows)
-# evidence_df.to_csv(OUT_DIR / 'coupling_evidence.csv', index=False)
-# print(evidence_df.to_string(index=False))
-print('Skeleton — fill in per-coupling checks')
+# ---- Coupling 2: Heavy citations + recurring author -> fork-heavy win ----
+def c2_constraint(row):
+    return (row.get('n_cited_members', 0) >= 5
+            and str(row.get('author_recurring_in_set', '')).upper() == 'TRUE')
+
+def c2_strategy(row):
+    # fork-heavy = origination_score <= 2 (significant inheritance), preferably <= 1
+    score = row.get('origination_score')
+    return pd.notna(score) and int(score) <= 2
+
+# ---- Coupling 3: Linear stacker dominance (over nonlinear stackers) ----
+def c3_constraint(row):
+    # Testable only when an ensemble stacker is used
+    em = str(row.get('ensemble_method', '') or '').lower()
+    return any(t in em for t in ['stacking', 'blend', 'hill_climbing']) and em != 'none'
+
+def c3_strategy(row):
+    # Linear stacker = ensemble_method is mean/weighted blend OR canon contains Ridge/LAD-as-stacker
+    em = str(row.get('ensemble_method', '') or '').lower()
+    canon = str(row.get('uses_canonized_technique', '') or '').lower()
+    if any(linear in em for linear in ['mean_blend', 'weighted_blend', 'hill_climbing']):
+        return True
+    if any(linear in canon for linear in ['ridge-as-stacker', 'lad-as-stacker']):
+        return True
+    return False
+
+# ---- Coupling 4: Available original -> use as columns (or features-derived) ----
+def c4_constraint(row):
+    return str(row.get('external_original_available', '')).upper() == 'TRUE'
+
+def c4_strategy(row):
+    mode = str(row.get('external_original_use_mode', '') or '').lower()
+    return mode in ('columns-only', 'both', 'features-derived', 'lookup')
+
+# ---- Coupling 5: Small data (<50K) -> no FE / single-model ----
+def c5_constraint(row):
+    nr = row.get('n_rows')
+    return pd.notna(nr) and nr < 50_000
+
+def c5_strategy(row):
+    # 'no FE / single model' = paradigm is single-model-FE OR mixed
+    # OR fe_techniques explicitly says 'No FE' / 'none'
+    paradigm = str(row.get('paradigm', '') or '').lower()
+    fe = str(row.get('fe_techniques', '') or '').lower()
+    if paradigm in ('single-model-fe', 'mixed'):
+        return True
+    if any(kw in fe for kw in ['no fe', 'fe_techniques: none', 'no feature']):
+        return True
+    return False
+
+# ---- Coupling 6: Distribution shift -> custom CV strategy ----
+def c6_constraint(row):
+    return str(row.get('distribution_shift_type', '')) in ('temporal', 'covariate', 'label-noise')
+
+def c6_strategy(row):
+    cv = str(row.get('cv_strategy', '') or '').lower()
+    # Custom = anything except vanilla kfold/stratified_kfold
+    return cv not in ('kfold', 'stratified_kfold', 'not_described', 'nan', '')
+
+print('Coupling check functions defined.')
+"""))
+
+cells.append(md("""### 5.2 Compute per-coupling counts
+"""))
+
+cells.append(code("""COUPLINGS = [
+    ('C1: photo-finish -> validation-discipline', c1_constraint, c1_strategy),
+    ('C2: heavy-citations + recurring-author -> fork-heavy win', c2_constraint, c2_strategy),
+    ('C3: linear stacker dominance', c3_constraint, c3_strategy),
+    ('C4: available original -> use as columns/features/lookup', c4_constraint, c4_strategy),
+    ('C5: small data (<50K) -> no FE / single-model', c5_constraint, c5_strategy),
+    ('C6: distribution shift -> custom CV', c6_constraint, c6_strategy),
+]
+
+def score_coupling(label, constr, strat, df):
+    constraint_true = df.apply(constr, axis=1)
+    strategy_true = df.apply(strat, axis=1)
+    n_supporting = int((constraint_true & strategy_true).sum())
+    n_contradicting = int((constraint_true & ~strategy_true).sum())
+    n_neutral = int((~constraint_true).sum())
+    n_testable = n_supporting + n_contradicting
+    support_rate = n_supporting / n_testable if n_testable > 0 else None
+    if n_testable < 3:
+        verdict = 'undersupported'
+    elif support_rate >= 0.75:
+        verdict = 'strong'
+    elif support_rate >= 0.50:
+        verdict = 'weak'
+    else:
+        verdict = 'contradicted'
+    return {
+        'coupling': label,
+        'n_supporting': n_supporting,
+        'n_contradicting': n_contradicting,
+        'n_neutral': n_neutral,
+        'n_testable': n_testable,
+        'support_rate': round(support_rate, 3) if support_rate is not None else None,
+        'verdict': verdict,
+    }
+
+evidence = pd.DataFrame([score_coupling(*c, merged) for c in COUPLINGS])
+print(evidence.to_string(index=False))
+
+OUT_DIR.mkdir(parents=True, exist_ok=True)
+evidence.to_csv(OUT_DIR / 'coupling_evidence.csv', index=False)
+print(f'\\nSaved to {OUT_DIR / \"coupling_evidence.csv\"}')
+"""))
+
+cells.append(md("""### 5.3 Per-coupling drilldown — which specific entries support vs contradict?
+"""))
+
+cells.append(code("""def list_entries(label, constr, strat, df):
+    constraint_true = df.apply(constr, axis=1)
+    strategy_true = df.apply(strat, axis=1)
+    supporting = df[constraint_true & strategy_true][['competition_ref', 'finish_rank', 'author']]
+    contradicting = df[constraint_true & ~strategy_true][['competition_ref', 'finish_rank', 'author']]
+    print(f'\\n{\"=\"*70}\\n{label}\\n{\"=\"*70}')
+    print(f'\\n  SUPPORTING ({len(supporting)}):')
+    for _, r in supporting.iterrows():
+        print(f'    {r[\"competition_ref\"]:42s} rank={r[\"finish_rank\"]} ({r[\"author\"][:30]})')
+    print(f'\\n  CONTRADICTING ({len(contradicting)}):')
+    for _, r in contradicting.iterrows():
+        print(f'    {r[\"competition_ref\"]:42s} rank={r[\"finish_rank\"]} ({r[\"author\"][:30]})')
+
+for label, constr, strat in COUPLINGS:
+    list_entries(label, constr, strat, merged)
+"""))
+
+cells.append(md("""### 5.4 Evidence figure (stacked horizontal bar)
+"""))
+
+cells.append(code("""# Stacked bar: supporting (green) | contradicting (red) | neutral (grey)
+ev = evidence.iloc[::-1].reset_index(drop=True)  # reverse so C1 is at top
+
+fig, ax = plt.subplots(figsize=(11, 4.5))
+y = np.arange(len(ev))
+
+# Use total stack length to compare visually
+ax.barh(y, ev['n_supporting'], color='#2ca02c', label='supporting', edgecolor='white')
+ax.barh(y, ev['n_contradicting'], left=ev['n_supporting'],
+        color='#d62728', label='contradicting', edgecolor='white')
+ax.barh(y, ev['n_neutral'],
+        left=ev['n_supporting'] + ev['n_contradicting'],
+        color='lightgray', label='neutral (constraint N/A)', edgecolor='white')
+
+# Verdict label at right
+verdict_color = {'strong': '#2ca02c', 'weak': '#ff7f0e',
+                 'contradicted': '#d62728', 'undersupported': '#7f7f7f'}
+for i, (verdict, rate, n_test) in enumerate(zip(ev['verdict'], ev['support_rate'], ev['n_testable'])):
+    rate_str = f'{rate * 100:.0f}%' if rate is not None else 'n/a'
+    ax.text(45.5, i, f'  {verdict.upper()} ({rate_str}, n={n_test})',
+            va='center', fontsize=9, color=verdict_color[verdict], weight='bold')
+
+ax.set_yticks(y)
+ax.set_yticklabels(ev['coupling'], fontsize=9)
+ax.set_xlabel('Number of entries (n=45)')
+ax.set_title('Coupling evidence: supporting / contradicting / neutral counts per promoted coupling')
+ax.legend(loc='lower right', frameon=False, fontsize=9)
+ax.set_xlim(0, 60)
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_51_coupling_evidence.png', bbox_inches='tight')
+plt.show()
+"""))
+
+cells.append(md("""### 5.5 Verdict summary for Discussion §5.1
+
+Brief interpretation per coupling — this is what carries into the paper.
+"""))
+
+cells.append(code("""print('VERDICT SUMMARY')
+print('=' * 75)
+for _, row in evidence.iterrows():
+    rate = row['support_rate']
+    rate_str = f'{rate * 100:.0f}%' if rate is not None else 'n/a'
+    print(f'\\n{row[\"coupling\"]}')
+    print(f'  -> {row[\"verdict\"].upper()} ({row[\"n_supporting\"]}/{row[\"n_testable\"]} testable = {rate_str})')
+
+print('\\n' + '=' * 75)
+print('Verdicts available for Discussion section claims:')
+print(f'  STRONG (>=75%):       can be stated as documented pattern')
+print(f'  WEAK (50-74%):        suggestive, with caveats')
+print(f'  CONTRADICTED (<50%):  re-eval promotion was premature; drop or reframe')
+print(f'  UNDERSUPPORTED (<3):  insufficient sample to evaluate')
 """))
 
 # ============== End ==============
