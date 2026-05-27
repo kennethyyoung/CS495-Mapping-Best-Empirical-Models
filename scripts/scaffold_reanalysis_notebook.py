@@ -413,41 +413,154 @@ print('problem-fit-NN, and ensemble-stacking skew toward score 3 (mostly origina
 # ============== Section 3: Constraint Cross-Tabs ==============
 cells.append(md("""## 3. Constraint → Strategy Cross-Tabs
 
-Test specific couplings the re-eval flagged as N≥2 promotable:
+Cross-tabs not already visualized in Section 2:
+- 3.1 `external_original_use_mode` × `paradigm` (heatmap)
+- 3.2 `distribution_shift_type` → `cv_strategy` (the 5 shifted entries)
+- 3.3 Canonized-technique frequency (which techniques actually propagate)
+- 3.4 Citations × origination_score (do high-origination wins cite less?)
+- 3.5 Academic-paper citation × paradigm
 
-| Cross-tab | Tests coupling |
-|---|---|
-| `external_original_available` × `paradigm` | Does lookup-exploit require external original? |
-| `external_original_use_mode` × `paradigm` | Is "columns-only" mainly a cdeotte/single-model-FE pattern? |
-| `distribution_shift_type` × `cv_strategy` | Custom-CV-when-shifted coupling |
-| `n_rows` (binned) × `paradigm` | cdeotte's "small data → no FE / single model" rule |
-| `top_3_margin` (binned: photo-finish vs not) × `paradigm` | Photo-finish → ensemble-stacking? |
+(`paradigm × n_rows` is in §2.4; `paradigm × photo_finish` is in §2.3 — not duplicated here.)
 """))
 
-cells.append(code("""# external_original × paradigm
+cells.append(md("""### 3.1 external_original_use_mode × paradigm"""))
+
+cells.append(code("""# Heatmap: use_mode (y) × paradigm (x), counts as cells
+USE_MODE_ORDER = ['rows-only', 'columns-only', 'both', 'features-derived',
+                  'lookup', 'available-not-used', 'unavailable', 'unknown']
+
 xt = pd.crosstab(merged['external_original_use_mode'], merged['paradigm'])
-print(xt)
+xt = xt.reindex(index=USE_MODE_ORDER, columns=PARADIGM_ORDER, fill_value=0)
+
+fig, ax = plt.subplots(figsize=(8.5, 4))
+im = ax.imshow(xt.values, cmap='Blues', aspect='auto')
+ax.set_xticks(range(len(PARADIGM_ORDER)))
+ax.set_xticklabels(PARADIGM_ORDER, rotation=30, ha='right')
+ax.set_yticks(range(len(USE_MODE_ORDER)))
+ax.set_yticklabels(USE_MODE_ORDER)
+ax.set_xlabel('paradigm')
+ax.set_ylabel('external_original_use_mode')
+ax.set_title('External-original use mode × paradigm (counts)')
+for i in range(len(USE_MODE_ORDER)):
+    for j in range(len(PARADIGM_ORDER)):
+        val = xt.iloc[i, j]
+        if val > 0:
+            color = 'white' if val > xt.values.max() / 2 else 'black'
+            ax.text(j, i, str(val), ha='center', va='center', color=color, fontsize=10)
+plt.colorbar(im, ax=ax, fraction=0.04, pad=0.02, label='count')
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_31_use_mode_paradigm.png', bbox_inches='tight')
+plt.show()
+print('\\nKey observations:')
+print('* lookup paradigm only appears with use_mode=lookup OR both (by construction)')
+print('* problem-fit-NN: all 3 cases are unavailable -- NN-primary tends to come up when no original to lean on')
+print('* single-model-FE columns-only entry = cdeotte s5e2 (the only columns-only winner)')
+print('* available-not-used: 2 entries split between ensemble-stacking and single-model-FE -- both CV-driven choices')
 """))
 
-cells.append(code("""# distribution_shift_type × cv_strategy (for the 5 TRUE entries)
-shifted = merged[merged['distribution_shift_type'].isin(['temporal', 'covariate', 'label-noise'])]
-print(shifted[['competition_ref', 'distribution_shift_type', 'cv_strategy', 'paradigm']].to_string(index=False))
+cells.append(md("""### 3.2 distribution_shift_type → cv_strategy
+
+Only 5 entries flagged with distribution shift. Each chose a different CV approach matched to shift type.
 """))
 
-cells.append(code("""# n_rows binned × paradigm (cdeotte's small-data rule)
-bins = [0, 5_000, 50_000, 500_000, 5_000_000, 20_000_000]
-labels = ['<5K', '5K-50K', '50K-500K', '500K-5M', '5M+']
-merged['n_rows_bin'] = pd.cut(merged['n_rows'], bins=bins, labels=labels)
-xt = pd.crosstab(merged['n_rows_bin'].astype(str), merged['paradigm'])
-print(xt)
+cells.append(code("""shifted = merged[merged['distribution_shift_type'].isin(['temporal', 'covariate', 'label-noise'])]
+display_cols = ['competition_ref', 'finish_rank', 'distribution_shift_type',
+                'cv_strategy', 'paradigm', 'winner_unique_edge']
+print(shifted[display_cols].sort_values(['distribution_shift_type', 'competition_ref']).to_string(index=False))
+print('\\nObservation: each shifted entry uses a DIFFERENT cv_strategy -- no single recipe for')
+print('shift handling. temporal shifts -> grouped or post_cutoff; covariate shifts -> kfold or')
+print('repeated_kfold + leave-original-out validation (s4e4). The coupling \"distribution shift ->')
+print('custom CV\" holds qualitatively (none used vanilla stratified_kfold) but doesn\\'t pin down')
+print('a specific recipe.')
 """))
 
-cells.append(code("""# top_3_margin classified as photo-finish (<0.0005) or not
-merged['photo_finish'] = merged['top_3_margin'] < 0.0005
-print('Photo-finish entries (top_3_margin < 0.0005):')
-print(f'  count: {merged[\"photo_finish\"].sum()} / {len(merged)}')
-print()
-print(pd.crosstab(merged['photo_finish'], merged['paradigm']))
+cells.append(md("""### 3.3 Canonized-technique frequency
+
+Which of the 12 codebook-defined canonized techniques actually propagate across writeups? This tests the claim that techniques get canonized AND adopted (versus canonized but rarely used).
+"""))
+
+cells.append(code("""# Flatten uses_canonized_technique across all entries
+tech_counts = Counter()
+for val in merged['uses_canonized_technique'].fillna(''):
+    for t in split_semicolons(val):
+        tech_counts[t] += 1
+
+tech_df = pd.DataFrame(tech_counts.most_common(), columns=['technique', 'n_entries'])
+tech_df['pct'] = (tech_df['n_entries'] / len(merged) * 100).round(1)
+print(tech_df.to_string(index=False))
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.barh(range(len(tech_df)), tech_df['n_entries'].values,
+        color='steelblue', edgecolor='white')
+ax.set_yticks(range(len(tech_df)))
+ax.set_yticklabels(tech_df['technique'])
+ax.invert_yaxis()
+ax.set_xlabel('Entries using technique (n=45 winners)')
+ax.set_title('Canonized-technique adoption frequency')
+for i, (n, p) in enumerate(zip(tech_df['n_entries'], tech_df['pct'])):
+    ax.text(n + 0.3, i, f'{n} ({p}%)', va='center', fontsize=9)
+ax.set_xlim(0, tech_df['n_entries'].max() * 1.18)
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_33_canonized_techniques.png', bbox_inches='tight')
+plt.show()
+"""))
+
+cells.append(md("""### 3.4 Citations × origination_score
+
+Hypothesis: high-origination wins (mostly-original work) cite fewer community members than low-origination wins (fork+tweak). Testing whether the citation count is a valid proxy for inheritance depth.
+"""))
+
+cells.append(code("""# Boxplot: n_cited_members (y) by origination_score (x)
+fig, ax = plt.subplots(figsize=(7, 4))
+data_by_score = []
+labels = []
+for s in sorted(merged['origination_score'].dropna().unique()):
+    vals = merged[merged['origination_score'] == s]['n_cited_members'].dropna().values
+    data_by_score.append(vals)
+    labels.append(f'{int(s)}\\n(n={len(vals)})')
+
+bp = ax.boxplot(data_by_score, labels=labels, patch_artist=True,
+                medianprops=dict(color='black'))
+for patch, color in zip(bp['boxes'], ['#9467bd', '#ff7f0e', '#1f77b4', '#2ca02c']):
+    patch.set_facecolor(color)
+    patch.set_alpha(0.7)
+
+# Overlay scatter
+np.random.seed(1)
+for i, vals in enumerate(data_by_score):
+    x_jit = np.full(len(vals), i + 1) + (np.random.rand(len(vals)) - 0.5) * 0.15
+    ax.scatter(x_jit, vals, s=25, color='black', alpha=0.5, zorder=3)
+
+ax.set_xlabel('origination_score')
+ax.set_ylabel('n_cited_members')
+ax.set_title('Citation count by origination score')
+plt.tight_layout()
+plt.savefig(FIG_DIR / 'phase5_34_citations_origination.png', bbox_inches='tight')
+plt.show()
+
+print('Per-score summary:')
+print(merged.groupby('origination_score')['n_cited_members'].agg(['min', 'median', 'max', 'mean']).round(2))
+"""))
+
+cells.append(md("""### 3.5 Academic-paper citation × paradigm
+
+6/45 entries cite academic papers. Are these clustered in certain paradigms (especially problem-fit-NN, where custom architectures map to NeurIPS papers)?
+"""))
+
+cells.append(code("""merged['cites_academic'] = merged['academic_papers_cited'].fillna('').astype(str).str.strip().astype(bool)
+xt = pd.crosstab(merged['paradigm'], merged['cites_academic'])
+xt = xt.reindex(index=PARADIGM_ORDER, fill_value=0)
+xt['total'] = xt.sum(axis=1)
+xt['rate'] = (xt[True] / xt['total']).round(3) if True in xt.columns else 0
+print(xt.rename(columns={True: 'cites_academic', False: 'no_citation'}))
+
+academic_entries = merged[merged['cites_academic']][
+    ['competition_ref', 'author', 'paradigm', 'academic_papers_cited']]
+print('\\nEntries citing academic papers:')
+print(academic_entries.to_string(index=False))
+print('\\nObservation: of 6 academic citers, all 3 problem-fit-NN entries cite papers (100%),')
+print('plus 1 single-model-FE (s4e4 stopwhispering OpenFE), 1 ensemble-stacking (s3e26 Hardy Xu PLE),')
+print('and 1 lookup-exploit (tps-feb-2022 ambrosm Knuth). NN paradigm is academic-leaning; the rest is occasional.')
 """))
 
 # ============== Section 4: Community / attribution ==============
