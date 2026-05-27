@@ -568,3 +568,22 @@ Re-evaluated 45 curated writeups in reverse-chronological order using a 9-sectio
 ### Current state (May 27, 2026)
 
 44 per-writeup docs + ICR (45 total) sitting in `analysis/writeup-reevaluation/`. INDEX.md at 223 lines with 6 promoted couplings and ~133 hypotheses-on-watch. All work committed on `phase4/writeup-reevaluation`. Next: build the flowchart deliverable from promoted constraint→strategy couplings (Phase 4 main output).
+
+### Session-14 continuation: pivot away from flowchart deliverable, build Pass 2 sheet
+
+Discussion concluded that the evidence base doesn't support a prescriptive flowchart — only 6 couplings reached N≥2, ~133 single-case hypotheses can't justify decision nodes. Pivoted the deliverable framing from "flowchart" to **descriptive characterization (sociology-of-ML angle)**: typology of winning paradigms + attribution/canonization dynamics + community-graph analysis. Section outline drafted with new Discussion + Limitations + Implications sections (Methodology + Results-figures travel; Intro thesis and Prior Studies reframe).
+
+Decided the original `kaggle_meta_analysis.xlsx` is **useful for distributional questions, flawed for origination/attribution questions** — added a new `Paradigm & Attribution` sheet rather than replacing the original (`scripts/build_pass2_sheet.py`). Schema designed and locked after 5 weigh-in questions:
+- `lookup_exploit_subtype` strictly conditional on `paradigm=lookup-exploit`; separate `lookup_material_present` bool captures the pattern independently
+- `origination_score` 0–3 ordinal with explicit anchor definitions in Codebook
+- `uses_canonized_technique` list of 12 named techniques (HC, brute-force-FE, Ridge-as-stacker, RAPIDS-XGB, AG-as-ensembler, target-encoding-stack, LAD-as-stacker, original-as-columns, MLP-stacker, DAE-as-base-encoder, pseudo-labeling, adversarial-validation), with explicit exclusion list for universals
+- `notable_commenters` threshold-gated (Grandmaster OR appears elsewhere in set)
+- `winner_unique_edge` hard-capped at 200 chars
+
+**Pass 2 sheet stats (45 rows):**
+- Paradigm: ensemble-stacking 28, single-model-FE 6, lookup-exploit 4, problem-fit-NN 3, community-template-tweak 3, mixed 1
+- Lookup material present in **13/45 (29%)** — material is often there even when not the winning move
+- Origination: 0 entries at score 0 (pure fork), 5 at 1, 10 at 2, 30 at 3 — **even the most fork-heavy entries added some unique contribution**
+- Surprised wins: 5; forked from public notebook: 8; academic paper cited: 6
+
+Important meta-finding the sheet surfaced: **"pure fork" wins (origination=0) don't actually exist in our set.** Even Bill Cruise / Kirderf / Moonlit / kirill0212 (the heaviest fork cases) added something meaningfully original. The community-template-tweak paradigm is real but it's "fork+meaningful tweak," not "fork verbatim."
