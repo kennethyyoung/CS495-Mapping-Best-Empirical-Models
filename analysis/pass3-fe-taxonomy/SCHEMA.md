@@ -1,11 +1,20 @@
-# Pass 3 FE Taxonomy — Schema (v2, expanded granularity)
+# Pass 3 FE Taxonomy — Schema (v3, post-pilot)
 
-**Status:** Draft for review.
+**Status:** Locked after 3-entry pilot.
 **Branch:** `phase9/fe-taxonomy`.
 **Author:** Kenneth Young.
 **Date:** 2026-05-28.
 
-This document defines the structured-coding schema for Pass 3 — the FE taxonomy that unlocks "what feature engineering do winners use?" as a queryable question. **v2 leans toward more granular columns because aggregating up is easy and disaggregating after the fact is expensive.** A second coder revisiting `uses_target_encoding = TRUE` cannot tell whether it was vanilla TE or within-fold TE without re-reading the writeup. v2 separates these at the source.
+This document defines the structured-coding schema for Pass 3 — the FE taxonomy that unlocks "what feature engineering do winners use?" as a queryable question. **v2 leaned toward more granular columns because aggregating up is easy and disaggregating after the fact is expensive.** A second coder revisiting `uses_target_encoding = TRUE` cannot tell whether it was vanilla TE or within-fold TE without re-reading the writeup. v2 separated these at the source.
+
+**v3 changes from v2 (after pilot, see `PILOT.md`):**
+
+1. Added column 53 `uses_forked_base_model_fe_uncatalogued` — flag fork-heavy entries where base-model FE isn't documented in the winner's writeup.
+2. Clarified column 2 (within-fold TE) — allow `null` for entries where the writeup doesn't specify and no notebook is available. Three-valued boolean rather than two-valued.
+3. Clarified column 16 (brute-force combinatorial search) — **must include a model-in-the-loop selection step**. Pure enumeration without selection is not brute-force.
+4. Clarified column 17 (higher-order categorical combos) — covers enumeration with or without selection. If a brute-force selection step is present, ALSO mark column 16.
+5. Clarified column 18 (numerics-as-cats then combos) — applies only when features were originally numeric (int/float) and converted, not when features were already categorical-typed.
+6. Updated expected `n_fe_techniques_used` ranges per paradigm to match what the pilot observed — the schema captures FE technique *diversity*, not feature *count*. A 2,268-feature monster model uses ~7 distinct techniques.
 
 ## Design philosophy
 
@@ -24,7 +33,7 @@ This document defines the structured-coding schema for Pass 3 — the FE taxonom
 | # | Column | Includes | Excludes |
 |---|---|---|---|
 | 1 | `uses_target_encoding_basic` | Single-statistic mean target encoding applied to one or more categorical columns. Vanilla "replace category with mean of target." | Multiple-statistic TE (next column). Within-fold leakage-safe TE (column 2). |
-| 2 | `uses_target_encoding_within_fold` | Leakage-safe TE explicitly computed inside the CV loop (nested-fold target-aware FE; per-fold TE; "leakfree" TE). Iqbal s4e1; cdeotte signature. | Vanilla TE applied to full training data (column 1). |
+| 2 | `uses_target_encoding_within_fold` | Leakage-safe TE explicitly computed inside the CV loop (nested-fold target-aware FE; per-fold TE; "leakfree" TE). Iqbal s4e1; cdeotte signature. Three-valued: TRUE if explicitly stated in writeup or visible in notebook; FALSE if explicitly stated as globally-applied; **`null` if ambiguous** (writeup-only entries where author doesn't specify). | Vanilla TE applied to full training data (column 1). |
 | 3 | `uses_te_multiple_aggregations` | Multiple TE statistics per categorical column (mean + median + min + max + std + nunique + skew). cdeotte's 7-encoding pattern. | Single TE statistic. |
 | 4 | `uses_te_alternative_targets` | TE using a non-target column as the target. mahog s5e11 TE on `employment_status` and `debt_to_income_ratio`. | Standard TE on competition target. |
 | 5 | `uses_count_encoding` | Replacing each category with its raw count in the training set. | Frequency encoding (next column — normalized to 0–1). |
@@ -48,9 +57,9 @@ This document defines the structured-coding schema for Pass 3 — the FE taxonom
 | 13 | `uses_pairwise_multiplicative_interactions` | Hand-coded `a*b`, `a/b`, `a%b` between specific feature pairs. Mart Preusse `MonthlyIncome/Age`; gemstone aspect-ratio × carat. | Systematic enumeration (column 16). |
 | 14 | `uses_pairwise_additive_interactions` | Hand-coded `a+b`, `a-b` between specific feature pairs. | Sums across many features at once (rowwise stats — column 26). |
 | 15 | `uses_threshold_or_binary_flags` | Rule-based binary features: `(a > threshold)`, `(a > x) & (b > y)`. Bill Cruise s3e3 HR risk flags; adaubas s4e5 count-thresholds. | Domain-knowledge binary flags (Group E). |
-| 16 | `uses_brute_force_combinatorial_search` | Systematic enumeration of feature combinations with a model-in-the-loop selection step. cdeotte s4e12 145K combos → 170 kept; greysky 6-way TE; arunklenin's brute-force at s3e24. | Hand-picked combos (columns 13–15). |
-| 17 | `uses_higher_order_categorical_combos` | 3+ way categorical groupings (3 or more columns combined into one composite), with or without further TE/CE on top. cdeotte 2–6-way combos. | Pairwise (2-way) only. |
-| 18 | `uses_numerics_as_categoricals_then_combos` | Treating a numeric column as categorical (via binning or direct conversion) then combining with other features for combinatorial FE. cdeotte s4e12 numerics-as-cats + TE/CE pattern. | Plain numerics combined with plain numerics. |
+| 16 | `uses_brute_force_combinatorial_search` | Systematic enumeration of feature combinations **with a model-in-the-loop selection step** (search and keep best). cdeotte s4e12 145K combos → 170 kept; arunklenin's brute-force at s3e24. | Hand-picked combos (columns 13–15). **Pure enumeration without selection** (cdeotte s5e6 uses all 162 combos without filtering) → use column 17 only. |
+| 17 | `uses_higher_order_categorical_combos` | 3+ way categorical groupings (3 or more columns combined into one composite), with or without further TE/CE on top. cdeotte 2–6-way combos. Covers enumeration with or without selection — **if a brute-force selection step is also present, mark column 16 TRUE in addition**. | Pairwise (2-way) only. |
+| 18 | `uses_numerics_as_categoricals_then_combos` | Treating a column that was **originally numeric (int/float)** as categorical (via binning or direct conversion) then combining with other features for combinatorial FE. cdeotte s4e12 numerics-as-cats + TE/CE pattern. | Plain numerics combined with plain numerics. **Does NOT apply when features were already categorical-typed** (e.g., string columns like Soil Type) — those are coded under columns 16/17 directly. |
 
 ### Group D — Aggregates and groupby (8)
 
@@ -119,12 +128,13 @@ This document defines the structured-coding schema for Pass 3 — the FE taxonom
 | 49 | `uses_sfs_or_backward_elimination` | Sequential feature selection (SFS), backward elimination, or step-wise forward selection. adaubas s4e5 permutation + backward; stopwhispering s4e4 SFS per model. | Permutation importance only (previous column). |
 | 50 | `uses_correlation_or_constant_dropping` | Dropping features by high pairwise correlation or near-zero variance. | Other selection (covered above). |
 
-### Group K — Meta indicators (2)
+### Group K — Meta indicators (3)
 
 | # | Column | Includes | Excludes |
 |---|---|---|---|
 | 51 | `explicit_minimal_or_no_fe` | Author explicitly states minimal or no FE was used, often as a deliberate choice. cdeotte s5e3 "small data → no FE"; Heitor s3e5 single XGB; ravaghi s4e11 "no FE." | Writeup that simply doesn't mention FE (missing data, not explicit minimal). |
 | 52 | `uses_adversarial_validation_for_fe` | Adversarial validation (train classifier to distinguish train vs test, or synthetic vs original) used to filter features or filter rows. Hardy Xu s3e7 filter original; stopwhispering s4e4 adversarial-validation notebook. | Adversarial validation used only for diagnostic purposes. |
+| 53 | `uses_forked_base_model_fe_uncatalogued` | Winner cites multiple forked public notebooks as base-model sources without enumerating the FE techniques used inside those notebooks. The winning ensemble *includes* those notebooks' FE but it isn't catalogued. Sergey s3e14 (8 forked base OOFs); Moonlit s4e3 (3 OOFs from public notebooks). Flag-only — doesn't double-count the techniques as TRUE in other columns. | Winner who cites one forked notebook AND describes its FE in detail (those techniques get coded individually). |
 
 ## Source-confidence column (1)
 
@@ -142,7 +152,7 @@ This document defines the structured-coding schema for Pass 3 — the FE taxonom
 | `pass3_notes` | string | Free-text per entry. Flags ambiguities, judgment calls, and "Pass 2 MD missed technique X" findings — those become Pass 2 corrections. |
 | `pass3_date_coded` | date | When this row was finalized. Lets us track Stage 1 vs Stage 2 cells. |
 
-**Sheet total: 52 boolean + 5 admin + 1 source-confidence = 58 columns × 45 rows = 2,610 cells.**
+**Sheet total: 53 boolean + 5 admin + 1 source-confidence = 59 columns × 45 rows = 2,655 cells.**
 
 ## Resolution of the v1 open questions
 
@@ -158,7 +168,7 @@ This document defines the structured-coding schema for Pass 3 — the FE taxonom
 
 ## What's intentionally NOT in scope
 
-- **Post-processing of model outputs.** OptimizedRounder, target reversal, probability calibration, threshold tuning.
+- **Post-processing of model outputs.** OptimizedRounder, target reversal, probability calibration, threshold tuning. *Note: several distinctive corpus techniques fall here — Heitor s3e5 OptimizedRounder, Cross Sellers s4e7 target reversal — and won't be captured by the FE taxonomy. The schema is FE-specific by design.*
 - **Cross-validation strategy.** Covered by Pass 1 `cv_strategy`.
 - **Ensemble methods.** Covered by Pass 1 `ensemble_method`.
 - **Hyperparameter tuning.** Covered by Pass 1 `hyperparameter_tuning`.
@@ -196,15 +206,28 @@ For each of the 45 entries:
 - New §4.9 paragraph in `research_report.md` describing FE-by-paradigm patterns (if the project extends).
 - Possibly a heatmap figure: paradigm × FE category (boolean rate per cell).
 
-## Pilot plan
+## Pilot results (completed)
 
-Before coding all 45 entries, pilot with **3 representative entries** to stress-test the schema:
+Pilot of 3 entries completed and documented in `PILOT.md`. Headline findings:
+- **cdeotte s5e6** (heavyweight): 7 TRUE columns (expected 15–25, recalibrated to 6–12)
+- **Sergey s3e14** (lookup): 1 TRUE column (matches recalibrated 1–4 range)
+- **Heitor s3e5** (minimal-FE): 1 TRUE column (matches recalibrated 0–3 range)
 
-- **One ensemble-stacking heavyweight:** cdeotte s5e6 (KGMON-proto) — should hit many encoding, aggregate, combinatorial, and original-derived columns.
-- **One lookup-exploit:** Sergey s3e14 — should be very sparse; primarily `uses_exact_key_match_lookup`.
-- **One minimal-FE:** Heitor s3e5 — should be TRUE on `explicit_minimal_or_no_fe`, FALSE on most others.
+**Key calibration finding:** the schema captures FE technique *diversity* (~5–12 for heavyweight wins), not FE feature *count* (which can be in the thousands). This is a feature of the schema, not a bug — it makes paradigm-level cross-tabs meaningful instead of dominated by cdeotte's 2,268-feature monster.
 
-Expected pattern: the heavyweight should have `n_fe_techniques_used` in the 15–25 range; the lookup-exploit in the 1–3 range; the minimal-FE in the 0–2 range. If those expectations don't materialize, the schema needs revision before the full 45 pass.
+### Revised expected `n_fe_techniques_used` ranges per paradigm
+
+| Paradigm | Expected range |
+|---|---|
+| Ensemble-stacking heavyweight (cdeotte s4e12 / s5e2 / s5e6 / s6e3) | 6–12 |
+| Ensemble-stacking standard (most s3/s4/s5 winners) | 4–9 |
+| Single-model heavy-FE | 8–15 |
+| Lookup-exploit | 1–4 |
+| Problem-fit NN | 2–6 |
+| Community-template-tweak | 3–7 |
+| Minimal-FE (explicit) | 0–3 |
+
+Entries that fall well outside these ranges during the full pass are flags for re-examination — either a coding error or a methodologically interesting outlier.
 
 ## Aggregation paths (for later)
 
