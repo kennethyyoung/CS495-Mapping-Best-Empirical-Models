@@ -750,3 +750,100 @@ Three methodology Q&A topics surfaced during prep and have notes/answers prepare
 Presentation deck final and uploaded to Overleaf. Report is on `phase6/report-revision` with the typology rewrite complete; References section still needs APA-formatted entries before any formal submission. Three methodology answers prepared but not committed to either document — captured here in case they need to land later.
 
 `phase4/writeup-reevaluation` → `phase5/reanalysis` → `phase6/report-revision` → `phase7/presentation` all pushed to origin. None merged to main yet. Branch decision (when ready): probably merge phase4 → main first since it's the longest-living, then merge phase5 → phase6 → phase7 → main sequentially, OR squash-merge phase7 to main as one final integrated state. To be decided.
+
+---
+
+## Session 16 — Project Retrospective + Pass 3 Design
+
+**Branch:** `phase8/retrospective`
+
+Reflective session after the presentation prep ended. Conducted a structured peer-review-style critique of the project, discussed strategic next steps, and clarified the Pass 1 vs Pass 2 methodological positions before designing Pass 3 (FE taxonomy).
+
+### Critique conducted
+
+Wrote a peer-review critique covering what works and what would need strengthening before publication outside the capstone. Findings:
+
+**What works (kept):**
+- Two-pass coding design is the strongest methodological contribution
+- The pivot from flowchart to typology was the right call under data-supported framing
+- "Use as columns" contradiction is a genuinely actionable finding for practitioners
+- Audit + corrections workflow is unusually rigorous for capstone-scale work
+
+**Major concerns identified:**
+1. Selection bias on writeup-detail (overweights authors who write thoroughly — cdeotte overrepresented)
+2. Author dependence not handled (5–6 entries are cdeotte; paradigm-by-era trends partly his recent activity)
+3. Typology is partly circular — derived from the same data it's tested on; no held-out validation
+4. Coupling-evidence verdict thresholds (75% / 50%) are intuitively chosen, not statistically grounded
+5. Originator-vs-canonizer claim assumes participation; siukeitin's "0 wins" doesn't mean what it sounds like without entry data
+6. Community-graph analysis is degree-counting, not actual graph analysis (no betweenness, no clustering)
+7. FE-coding pivot evidence partly artifactual (163-of-166 unique-tags claim depends on free-text coding choice)
+8. "No pure forks" is partly definitional artifact of the 0-3 scoring anchors
+
+**Minor concerns:** typology × constraint alignments use the same 45 entries both for derivation and validation; deck appendix has redundancy; generalization to other modalities/domains not discussed.
+
+**Net assessment:** Solid capstone work, above-average rigor for student-scale meta-research. Would need 4 specific strengthening passes before journal submission: held-out typology validation, author-removal robustness, selection-bias sensitivity, tighter originator-canonizer framing.
+
+### Pass 1 vs Pass 2 methodological clarification
+
+User pushed back on the framing of the two-pass methodology with a real question: *"the presentation mostly referenced findings from Pass 2; what makes the two-pass methodology useful? Pass 1 was just a less detailed, more rigid pass."*
+
+Honest accounting: most analytical findings did come from Pass 2 (paradigm typology, origination, attribution, community archetypes). Pass 1's load-bearing contributions are infrastructure:
+1. Cross-tabs requiring structured numerical/categorical fields (paradigm × n_rows etc.) need Pass 1
+2. The audit + corrections workflow only works because Pass 1 and Pass 2 can disagree — without Pass 1, no audit
+3. Pass 1 is replicable (a second researcher would get nearly identical results); Pass 2 is interpretive
+4. Pass 1 forces recording of absence (`not_described`) that Pass 2 silently skips
+5. Coupling-evidence strategy filters partly key off Pass 1 fields (ensemble_method for C3, cv_strategy for C6)
+
+Reframing: Pass 1 is the table-stakes structured coding any meta-analysis needs; Pass 2 is the unique contribution. The methodological argument is that the **two-pass design surfaces its own scope limits** — Pass 1's distributional sparsity revealed the original FE-flowchart wasn't supportable, which forced the Pass 2 reframing. Most ML meta-analyses don't have a built-in pivot mechanism; this one did.
+
+### Did Pass 2 capture FE techniques?
+
+Confirmed: Pass 2 captured FE in prose (per-writeup MDs have "What's actually original" sections rich with FE detail), but **not as structured data**. The only Pass-2 fields that touch FE are `uses_canonized_technique` (only 12 named techniques) and `winner_unique_edge` (200-char headline summary). Cross-tabs like "target encoding × paradigm" are not possible from existing structured data.
+
+### Pass 3 design decision
+
+Proposed Pass 3 as a structured FE taxonomy: ~20–25 canonical boolean columns (uses_target_encoding, uses_brute_force_combinations, uses_groupby_aggregates, etc.) joined to existing sheets on (competition_ref, finish_rank).
+
+**User's critical concern about Pass 3:** *"It's working off Pass 2, which means it's one generation away from the original writeups and notebooks."*
+
+This is correct. Pass 2 MDs were never written to be comprehensive FE catalogs — they distill what mattered for the typology, not what mattered for FE counting. Building Pass 3 from Pass 2 MDs alone would systematically undercount FE techniques.
+
+**Resolution: Pass 3 uses a layered source strategy.**
+
+1. **Pass 2 MD as starting checklist** — gives the qualitative narrative and the techniques already noticed
+2. **Original writeup in `data/writeups/<slug>/`** as the ground truth for what the winner *said* they did
+3. **Notebook (`.ipynb`) in same folder** as the ground truth for what the code *did* — preferred where available since writeup and code often disagree
+4. **`pass3_source_confidence` column** explicitly tracking each entry's source basis: `notebook+writeup` (highest) / `writeup+notes` / `writeup-only` / `notes-only` (lowest)
+
+**Side effect of Pass 3:** acts as an audit pass for Pass 2 (techniques the MD missed get flagged), the same way Pass 2 acted as an audit pass for Pass 1.
+
+**Expected effort:** ~2 days total. Stage 1 (half day): draft taxonomy from Pass 2 MDs as a first cut. Stage 2 (1–2 days): source-validate each entry against writeup + notebook; record additions. The delta between Stage 1 and Stage 2 is itself a methodological finding (how much Pass 2 undercounts).
+
+### Sequencing decision
+
+Discussed whether to:
+- (A) Do more audit/correction work on Pass 1/Pass 2 before extending
+- (B) Build Pass 3 first
+
+Concluded (B) for three reasons:
+1. The audit work has been thorough; continued auditing has diminishing returns
+2. Pass 3 is self-contained — needs only join keys and the per-writeup MDs/writeups, doesn't depend on Pass 1 being any cleaner than it is
+3. Pass 3 will surface more Pass 1/Pass 2 issues by side effect, same as the pattern that produced the audit in Session 14
+
+### Outstanding methodology / critique items deferred
+
+Not all critique items are addressable by Pass 3. The following remain on the post-Pass-3 roadmap if the project extends to journal-quality:
+- Held-out typology validation (apply 4-paradigm definitions to 5–10 winning solutions not in original corpus)
+- Author-removal robustness check (leave-cdeotte-out reanalysis of headline findings)
+- Writeup-detail sensitivity analysis (does selecting rank-2 vs rank-1 by writeup-detail shift the paradigm distribution?)
+- Originator-vs-canonizer claim needs either participation data or softer framing
+- Community-graph analysis upgraded from degree-counting to actual DiGraph with centrality measures
+- FE-coding caveat for slide 6 / report §3.7 (small fix, was deferred during presentation prep)
+
+The three methodology questions from Session 15 (2022+ rationale, cross-sectional scope, FE-coding caveat) also remain available for application to the report if/when it's submitted formally.
+
+### Current state (May 28, 2026)
+
+Critique documented, Pass 1/Pass 2/Pass 3 methodological positions clarified, Pass 3 source strategy locked. Next branch starts the actual Pass 3 implementation.
+
+`phase8/retrospective` pushed to origin. No code changes on this branch — pure reflection + planning.
