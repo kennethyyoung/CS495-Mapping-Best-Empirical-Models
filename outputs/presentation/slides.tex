@@ -748,20 +748,21 @@ position.
 % ---------------- Closer: what this work contributes (NEW) ----------------
 \begin{frame}{What this work contributes}
 \textbf{(beyond ``ensembles win'')}
-\vspace{8pt}
-\begin{enumerate}
+\vspace{6pt}
+\begin{enumerate}\itemsep4pt
   \item \textbf{A typology with constraint structure}
-  \begin{itemize}
-    \item Four paradigms cover 96\% of wins
-    \item Three of the four align with measurable data conditions
+  \begin{itemize}\itemsep1pt
+    \item 4 main paradigms cover 91\% of wins (98\% with community-template-tweak)
+    \item \alert{Lookup-exploit}, \alert{problem-fit NN}, \alert{single-model heavy-FE} each align with specific data conditions
+    \item Only \alert{ensemble-stacking} is universal across all conditions
   \end{itemize}
   \item \textbf{A correction to community folk knowledge}
-  \begin{itemize}
+  \begin{itemize}\itemsep1pt
     \item 4 of 6 widely-cited patterns don't hold up
     \item ``Use as columns'' reflects one author, not the community
   \end{itemize}
   \item \textbf{A measured originator-vs-canonizer gap}
-  \begin{itemize}
+  \begin{itemize}\itemsep1pt
     \item Most-cited contributor: zero wins
     \item Dominant winners spent 12--22 months as observers first
   \end{itemize}
@@ -771,10 +772,21 @@ position.
 To close: three things this work contributes beyond what an audience
 member already knows.
 
-First, a typology with constraint structure. The four paradigms cover
-96 percent of wins, and three of the four align with measurable data
-conditions. So it's not just a labeling exercise -- it tells you
-something about what wins under what circumstances.
+First, a typology with constraint structure. Four main paradigms
+cover 91 percent of wins; adding community-template-tweak brings
+coverage to 98 percent of the corpus. The interesting part isn't
+just the labels. Three of the four paradigms align with specific
+measurable data conditions. Lookup-exploit requires an external
+original dataset that's exploitable, and clusters at small-to-medium
+data sizes. Problem-fit neural networks only appear when no external
+original is available -- it's what winners reach for when the
+exploit-original toolkit is empty. Single-model heavy-FE works at
+extremes of data size -- either very large, in the millions of rows,
+or very small with the right metric. Only ensemble-stacking is
+universal -- it appears at every data size, every era, every
+original-availability condition. That makes the typology more than
+just labels: it tells you something about what wins under what
+circumstances.
 
 Second, a correction to community folk knowledge. Four of six
 widely-cited patterns I tested don't hold up. The ``use as columns''
