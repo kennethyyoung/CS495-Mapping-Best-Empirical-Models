@@ -615,3 +615,138 @@ The `available-not-used` count (only 2) is a tiny but meaningful counter-pattern
 ### Current state (May 27, 2026)
 
 Six-sheet workbook is the Pass 1 + Pass 2 + audit-and-corrections artifact. 103 cell-level corrections logged total (13 typed-as-corrections + 90 from the split backfill). All work committed on `phase4/writeup-reevaluation`. Re-analysis (new figures, paradigm-by-margin tables, updated research_report Results section) starts on a fresh branch using the corrected data.
+
+---
+
+## Session 15 — Phase 5 Reanalysis, Phase 6 Report Revision, Phase 7 Presentation Deck
+
+**Branches:** `phase5/reanalysis` → `phase6/report-revision` → `phase7/presentation`
+
+Three connected phases compressed into one extended session. Each got its own branch and built on the previous one. Notebook → report rewrite → presentation deck + glossary, ending with two systematic sweeps for numeric errors.
+
+### Phase 5 — Reanalysis notebook + new figures
+
+Built `notebooks/02_reanalysis.ipynb` from scratch on `phase5/reanalysis` to supersede the Phase 3 EDA notebook (`notebooks/01_eda.ipynb` left in place as the historical artifact, since the corrections changed several distributional counts).
+
+Five-section structure: setup + load, distributional refresh, paradigm characterization, constraint cross-tabs, community + attribution, coupling evidence table.
+
+**11 figures generated under `analysis/figures/phase5/`:**
+
+| File | Section / purpose |
+|---|---|
+| phase5_21_paradigm_distribution.png | §2.1 — typology headline |
+| phase5_22_paradigm_by_era.png | §2.2 — paradigm × era stacked bar |
+| phase5_23_paradigm_photofinish.png | §2.3 — metric-aware photo-finish rate by paradigm |
+| phase5_24_paradigm_n_rows.png | §2.4 — n_rows scatter by paradigm (log scale) |
+| phase5_25_paradigm_origination.png | §2.5 — paradigm × origination_score heatmap |
+| phase5_31_use_mode_paradigm.png | §3.1 — external_original_use_mode × paradigm |
+| phase5_33_canonized_techniques.png | §3.3 — canonized-technique frequency bar |
+| phase5_34_citations_origination.png | §3.4 — citations × origination_score boxplot |
+| phase5_41_author_centrality.png | §4.1 — wins + citations + comments per top-15 |
+| phase5_42_cdeotte_timeline.png | §4.2 — cdeotte observer-to-winner timeline |
+| phase5_51_coupling_evidence.png | §5.1 — stacked-bar of supporting/contradicting/neutral per coupling |
+
+Plus 4 additional figures generated specifically for the presentation (Phase 7) via `scripts/build_presentation_figures.py`: phase5_61 (FE tag frequency), phase5_62 (model family distribution), phase5_63 (origination score histogram), phase5_64 (use-mode breakdown).
+
+**Coupling evidence outcome:** of 6 promoted couplings from INDEX, only 2 survive at strong-evidence threshold (≥75% support):
+- C3 linear-stacker dominance: 32/40 (80%)
+- C6 distribution-shift → custom CV: 4/5 (80%, small n)
+
+Four contradicted (one detection-limited):
+- C4 "use available original as columns": 11/30 (37%) — most striking, a direct contradiction of widely-cited cdeotte folk-knowledge
+- C5 small-data → no-FE single-model: 3/13 (23%)
+- C2 heavy-citations + recurring → fork-heavy: 3/8 (38%)
+- C1 photo-finish → validation-discipline: 6/27 (22%) — flagged as detection-limited (strategy detector keys off 200-char `winner_unique_edge` summary)
+
+**Output CSV:** `analysis/reanalysis/coupling_evidence.csv` for downstream paper use.
+
+### Phase 6 — research_report.md rewrite
+
+Branched `phase6/report-revision` from `phase5/reanalysis`. Rewrote `outputs/report/research_report.md` from 225 lines to 296 lines, pivoting framing from flowchart deliverable to typology + coupling-evidence.
+
+**Sections written from scratch:**
+- Abstract (~300 words, hits all four headlines)
+- §1 Introduction (1.1–1.6, written for Kaggle-naive audience)
+- §2 Background and Related Work (competition-as-method + knowledge-propagation framing)
+
+**Sections substantially reframed:**
+- §3 Methodology — added Pass 2 + audit + corrections workflow, replaced flowchart-rule extraction with coupling-evidence framework, expanded §3.7 Limitations
+- §4 Results — restructured paradigm-first; new subsections for paradigm typology (4.2), coupling evidence (4.3), paradigm-by-era (4.4), constraint cross-tabs (4.5), community + attribution (4.6); existing field distributions moved to 4.7 as supporting evidence; new 4.8 for unexpected findings
+
+**Sections removed per the no-Discussion presentation plan:**
+- §5 Discussion (interpretation lives in verbal narration)
+- §6 Conclusion (folded into 4.8)
+
+**Sections corrected during rewrite:**
+- §3.2 cohort sizes (previously inconsistent with §4.2) now matches: S3=17, S4=10, S5=10, S6=4, TPS=3, Featured=1
+- §3.2 column count updated (was 36, now 40 after corrections + 2 new columns)
+
+**Outstanding:** §5 References still a placeholder note. ~10 academic sources need formal APA 7th entries (Caruana, Erickson, Gorishniy, Borisov, Lim, Makridakis, Athey, von Krogh, Merton, plus inline NeurIPS/arXiv papers). Mechanical to fill in but not done.
+
+### Phase 7 — Beamer presentation deck
+
+Branched `phase7/presentation` from `phase6/report-revision`. Built Metropolis-themed Beamer deck targeting the May 4 capstone presentation (5–7 minutes, Kaggle-naive audience).
+
+**Final structure (22 slides):**
+- 1 title + 16 main content + 1 standout thank-you + 4 appendix
+- 11 figure references from `analysis/figures/phase5/`
+- 17 `\note{}` speaker-note blocks
+- README documents Overleaf upload procedure (XeLaTeX/LuaLaTeX required for Metropolis fonts)
+- 63-term glossary (`outputs/presentation/glossary.md`) added for Q&A reference
+
+**Deck went through 4 iterations:**
+1. Initial draft — 16 main slides
+2. Restructuring after discussion: net +4 slides, -3 = +1 slide. Added "From flowchart to typology" pivot slide, "How winners actually build solutions", "Use as columns correction", "What each winner uniquely did" examples. Merged cdeotte timeline into community slide. Replaced three unexpected findings closer with "What this work contributes (beyond ensembles win)".
+3. Word-wrap fixes — `\sloppy`, `\setlength{\emergencystretch}{3em}`, and `\raggedright` in every narrow column. Beamer's default justified text was overflowing narrow columns.
+4. Numeric error sweep (see below).
+
+**Adapted methodology framing for adaption note:** The Methodology guideline (and Results guideline) assumes a standard ML modeling project with baselines + RMSE/accuracy metrics. The report and deck explicitly adapt each subsection for a meta-analysis context. Captured in the report's §3.1 closing sentence.
+
+### Numeric error sweep
+
+The presentation prep surfaced a string of numeric errors propagated from earlier work into both slides and report. Caught and fixed in two sweeps; 12 errors total.
+
+**Sweep 1 (provoked by user spotting slide 10 / slide 11):**
+1. Slide 10 note: "96% / 4 paradigms" → 4 paradigms = 41/45 = 91%; 5 paradigms = 44/45 = 98%
+2. Report §4.1: same "96% / 43 of 45" error
+3. Slide 11 bullets: had inverted 67% / 33% (chart shows 67% are mostly-original, not 33%); also mixed in two metrics (`forked_from_public_notebook` flag and `community-template-tweak` paradigm count) that the audience couldn't map to chart bars — moved those to speaker note
+4. Slide 17 (closer): "96% / 'three of the four'" → 91/98% + named the three (lookup-exploit / problem-fit-NN / single-model heavy-FE align with conditions; ensemble-stacking is the universal one)
+
+**Sweep 2 (provoked by user spotting slide 16):**
+5. Slide 16 cdeotte: said "4 wins + 6 citations", chart shows 6 + 6 (chart's "wins" axis counts all top-three appearances, not only rank-1 wins)
+6. Slide 16 mahog: said "4 + 6", chart shows 3 + 4. Added paddykb (5+0) and ambrosm (4+3) to flesh out the archetypes.
+7. Slide 17: "Dominant winners spent 12–22 months as observers" — 22 is cdeotte specifically; 12 was adaubas but adaubas has only 1 win, not a dominant winner. Narrowed to "cdeotte spent 22 months..."
+8. Report §4.1: same author-count error, plus "From PS Season 4 onward" inconsistency (should be "From PS Season 3 onward" — S3 also has 65% ensemble-stacking)
+9. Report §4.6: same author-count error in Dominant-competitor-also-cited bullet
+10. Report §4.6: cdeotte timeline said "four entries in 14 months" — should be five top-three appearances in 15 months
+11. Report §4.7: "five competition cohorts" but the list enumerates six
+12. Report §4.7: external original use-mode breakdown omitted lookup=2
+
+All twelve fixed across `outputs/presentation/slides.tex` (on `phase7/presentation`) and `outputs/report/research_report.md` (on `phase6/report-revision`).
+
+### Methodology questions discussed but not fully resolved
+
+Three methodology Q&A topics surfaced during prep and have notes/answers prepared but were not applied to the report or deck because we ran out of time on the presentation side:
+
+**1. Why temporal scope 2022+?** Discussed two reasons: (a) tooling changes — RAPIDS cuML/cuDF, AutoGluon adoption, modern tabular NN architectures, A100 GPU access, and LLM-assisted coding all matured around 2021–2022; mixing earlier eras would conflate tool availability with strategy. (b) Technique propagation — Kaggle techniques migrate between competitions, so any era reflects what came before; including older competitions would mean characterizing a moving target. Possible future additions to report §1.5 Scope or §3.7 Limitations: explicit paragraph on the cutoff rationale.
+
+**2. Cross-sectional vs time-series scope.** The corpus is implicitly cross-sectional tabular but the framing isn't explicit. Time-series exclusion rationale: different model families (ARIMA / Prophet / sequence models vs GBM / NN-for-tabular), different cross-validation (walk-forward vs k-fold), different metric vocabulary (MASE/sMAPE vs RMSE/AUC), different feature engineering vocabulary (lag features / rolling windows vs target encoding / groupby aggregates). Possible future addition: explicit positive framing in §1.5 Scope and slide 5 to say "cross-sectional tabular only" rather than just "no time series."
+
+**3. FE-coding caveat for the pivot slide.** The "166 unique tags, 163 with count=1" stat is partly a coding artifact — `fe_techniques` was coded as free text, not normalized to a controlled vocabulary. The pivot rationale still holds (GBM dominance + decision-node field sparsity are coding-independent), but the FE chart is overstated supporting evidence. Honest Q&A answer drafted ("partly yes — but the underlying variance is real even after normalization, and the pivot rests on multiple legs"). Possible future addition: small footnote on slide 6 chart or one-sentence note in report §3.7 Limitations.
+
+### Files added this session
+
+- `notebooks/02_reanalysis.ipynb` (61 cells across 5 sections)
+- `scripts/scaffold_reanalysis_notebook.py` (generator for above)
+- `scripts/build_presentation_figures.py` (generator for phase5_61–64)
+- `analysis/figures/phase5/` — 11 figures
+- `analysis/reanalysis/coupling_evidence.csv`
+- `outputs/presentation/slides.tex` (Beamer deck)
+- `outputs/presentation/README.md` (Overleaf upload instructions)
+- `outputs/presentation/glossary.md` (63 alphabetical terms for Q&A reference)
+
+### Current state (May 27, 2026)
+
+Presentation deck final and uploaded to Overleaf. Report is on `phase6/report-revision` with the typology rewrite complete; References section still needs APA-formatted entries before any formal submission. Three methodology answers prepared but not committed to either document — captured here in case they need to land later.
+
+`phase4/writeup-reevaluation` → `phase5/reanalysis` → `phase6/report-revision` → `phase7/presentation` all pushed to origin. None merged to main yet. Branch decision (when ready): probably merge phase4 → main first since it's the longest-living, then merge phase5 → phase6 → phase7 → main sequentially, OR squash-merge phase7 to main as one final integrated state. To be decided.
