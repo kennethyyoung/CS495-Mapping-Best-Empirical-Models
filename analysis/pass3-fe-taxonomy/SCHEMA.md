@@ -1,103 +1,136 @@
-# Pass 3 FE Taxonomy — Schema Proposal
+# Pass 3 FE Taxonomy — Schema (v2, expanded granularity)
 
 **Status:** Draft for review.
 **Branch:** `phase9/fe-taxonomy`.
 **Author:** Kenneth Young.
 **Date:** 2026-05-28.
 
-This document proposes the structured-coding schema for Pass 3 — the FE taxonomy that unlocks "what feature engineering do winners use?" as a queryable question. React to anything that feels mis-bucketed, missing, or over-granular before any coding work begins.
+This document defines the structured-coding schema for Pass 3 — the FE taxonomy that unlocks "what feature engineering do winners use?" as a queryable question. **v2 leans toward more granular columns because aggregating up is easy and disaggregating after the fact is expensive.** A second coder revisiting `uses_target_encoding = TRUE` cannot tell whether it was vanilla TE or within-fold TE without re-reading the writeup. v2 separates these at the source.
 
 ## Design philosophy
 
-1. **Boolean columns over free text.** Every category is TRUE or FALSE for each of the 45 entries. This makes cross-tabs trivial and avoids the 166-unique-tags problem the Pass 1 `fe_techniques` field has.
-2. **~20–25 categories total.** Too few and everything is `uses_target_encoding`; the schema can't distinguish paradigms. Too many and most cells are FALSE; sparsity returns. 24 boolean technique columns feels like the sweet spot.
-3. **Clear inclusion criteria per category.** Each column has an explicit "what counts" and "what doesn't count" rule so any second coder could replicate.
-4. **In scope: feature engineering only.** Pre-modeling transformations of input features. NOT in scope: post-processing of model outputs (OptimizedRounder, target reversal, calibration), CV strategy, ensemble methods, hyperparameter tuning.
-5. **`pass3_source_confidence` column** explicitly tracks which sources were available for each entry (notebook + writeup is highest confidence; writeup-only is lowest). Lets us measure the generational-drift concern.
-6. **Layered source strategy.** Stage 1 codes from Pass 2 MDs as a starting checklist. Stage 2 source-validates against the original writeup + notebook. The delta between Stage 1 and Stage 2 is itself a methodological finding.
+1. **Boolean columns over free text.** Every category is TRUE or FALSE for each of the 45 entries. Avoids the 166-unique-tags problem the Pass 1 `fe_techniques` field has.
+2. **Prefer granularity at the source.** If two techniques have meaningfully different implementations or implications (vanilla TE vs within-fold TE), they get separate columns. We can OR them into a coarser category later for cross-tabs; we can't split a TRUE cell into two without re-reading. **52 boolean technique columns in v2.**
+3. **Clear inclusion criteria per column.** Each column has explicit "includes" and "excludes" rules with concrete examples from the corpus, so any second coder could replicate.
+4. **Single-author-specific columns are acceptable.** If only cdeotte uses histogram-binned groupby, that's a measured fact worth structuring. "0 entries in the corpus use technique X except cdeotte" is itself a finding.
+5. **In scope: feature engineering only.** Pre-modeling transformations of input features. NOT in scope: post-processing of model outputs, CV strategy, ensemble methods, hyperparameter tuning, model architecture choices.
+6. **`pass3_source_confidence` column** explicitly tracks which sources were consulted for each row. Lets us measure the generational-drift concern (notebook+writeup = high; notes-only = low).
+7. **Layered source strategy.** Stage 1 codes from Pass 2 MDs as a starting checklist. Stage 2 source-validates against original writeup + notebook. Stage-1-to-Stage-2 delta is itself a methodological finding.
 
-## Boolean technique columns (24)
+## Boolean technique columns (52)
 
-Listed with rough functional groups for readability. The actual sheet will have all 24 as siblings.
+### Group A — Categorical encoding (7)
 
-### Group A — Categorical encoding (4 columns)
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 1 | `uses_target_encoding_basic` | Single-statistic mean target encoding applied to one or more categorical columns. Vanilla "replace category with mean of target." | Multiple-statistic TE (next column). Within-fold leakage-safe TE (column 2). |
+| 2 | `uses_target_encoding_within_fold` | Leakage-safe TE explicitly computed inside the CV loop (nested-fold target-aware FE; per-fold TE; "leakfree" TE). Iqbal s4e1; cdeotte signature. | Vanilla TE applied to full training data (column 1). |
+| 3 | `uses_te_multiple_aggregations` | Multiple TE statistics per categorical column (mean + median + min + max + std + nunique + skew). cdeotte's 7-encoding pattern. | Single TE statistic. |
+| 4 | `uses_te_alternative_targets` | TE using a non-target column as the target. mahog s5e11 TE on `employment_status` and `debt_to_income_ratio`. | Standard TE on competition target. |
+| 5 | `uses_count_encoding` | Replacing each category with its raw count in the training set. | Frequency encoding (next column — normalized to 0–1). |
+| 6 | `uses_frequency_encoding` | Replacing each category with its normalized frequency (count / total). | Raw count encoding (previous column). |
+| 7 | `uses_missing_indicator_features` | Encoding the *pattern* of missing values as a feature. cdeotte s5e2 NaN-base-2 bitstring; or per-column `is_missing` boolean features added. | Simple imputation (covered by Pass 1 `missing_data_strategy`). |
 
-| Column | Includes | Excludes |
-|---|---|---|
-| `uses_target_encoding` | Any form of target-mean encoding: vanilla TE, smoothed TE, M-estimate, CatBoost encoder (when explicitly applied as preprocessing), within-fold leakage-safe TE. | CatBoost's internal handling of categoricals when it's just the model's default behavior with no explicit encoder choice. Ordinal/label encoding. |
-| `uses_te_multiple_aggregations` | Multiple TE statistics per column (mean + median + min + max + std + nunique + skew). cdeotte's signature 7-encoding pattern is the canonical example. | A single TE statistic (mean only). One alternative aggregation alone (e.g., median-only TE). |
-| `uses_te_alternative_targets` | TE using a non-target column as the target — e.g., mahog's s5e11 TE on `employment_status` and `debt_to_income_ratio` instead of the actual `loan_payback` target. | Standard TE on the competition target. Auxiliary classifiers whose OOFs become features (that's a different category). |
-| `uses_count_or_frequency_encoding` | Count encoding (replace category with its frequency). Frequency-as-feature. | One-hot encoding. Label encoding. |
+### Group B — Numeric transformations (5)
 
-### Group B — Numeric transformations (4 columns)
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 8 | `uses_log_transform` | `log`, `log1p`, `log10` applied to feature columns. | Target log-transform only (modeling choice). |
+| 9 | `uses_power_or_polynomial_transform` | `sqrt`, square, cube, higher powers, Box-Cox, Yeo-Johnson applied to feature columns. | Cross-feature polynomial interactions (covered by Group C). |
+| 10 | `uses_binning_discretization` | Equal-width, quantile, or custom-threshold binning of a numeric column. Then treating bins as categorical or numeric. | Binning the *target* (modeling/CV choice). |
+| 11 | `uses_digit_features` | Extracting individual digits from a numeric column as separate features. cdeotte float-position digits; mahog s5e11 digit interactions; ambrosm tps-feb-2022 decamer-count digits. | Casting numeric to integer. |
+| 12 | `uses_rounding_multi_precision` | Rounding the same numeric column at multiple precisions then using each as features or groupby keys. cdeotte signature; greysky s5e4. | Single rounding step as preprocessing. |
 
-| Column | Includes | Excludes |
-|---|---|---|
-| `uses_log_or_power_transform` | `log1p`, `log`, `sqrt`, square, cube, Box-Cox, Yeo-Johnson applied to feature columns. | Log transform of the *target* only (that's a metric/target choice, not FE). |
-| `uses_binning_discretization` | Equal-width binning, quantile binning, custom-threshold binning, then treating the bins as categorical or numeric features. | Binning the *target* (e.g., target binning for stratified CV — that's a CV choice). |
-| `uses_digit_features` | Extracting individual digits from a numeric column as separate features. cdeotte float-position digits; mahog `s5e11` digit interactions. | Single integer-cast of a float. |
-| `uses_rounding_multi_precision` | Rounding the same numeric column at multiple precisions (e.g., `round(x, 0)`, `round(x, 1)`, `round(x, 2)`) then using each as features or groupby keys. cdeotte signature. | Single rounding step as part of normal preprocessing. |
+### Group C — Interactions and combinatorial (6)
 
-### Group C — Interactions and combinatorial (3 columns)
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 13 | `uses_pairwise_multiplicative_interactions` | Hand-coded `a*b`, `a/b`, `a%b` between specific feature pairs. Mart Preusse `MonthlyIncome/Age`; gemstone aspect-ratio × carat. | Systematic enumeration (column 16). |
+| 14 | `uses_pairwise_additive_interactions` | Hand-coded `a+b`, `a-b` between specific feature pairs. | Sums across many features at once (rowwise stats — column 26). |
+| 15 | `uses_threshold_or_binary_flags` | Rule-based binary features: `(a > threshold)`, `(a > x) & (b > y)`. Bill Cruise s3e3 HR risk flags; adaubas s4e5 count-thresholds. | Domain-knowledge binary flags (Group E). |
+| 16 | `uses_brute_force_combinatorial_search` | Systematic enumeration of feature combinations with a model-in-the-loop selection step. cdeotte s4e12 145K combos → 170 kept; greysky 6-way TE; arunklenin's brute-force at s3e24. | Hand-picked combos (columns 13–15). |
+| 17 | `uses_higher_order_categorical_combos` | 3+ way categorical groupings (3 or more columns combined into one composite), with or without further TE/CE on top. cdeotte 2–6-way combos. | Pairwise (2-way) only. |
+| 18 | `uses_numerics_as_categoricals_then_combos` | Treating a numeric column as categorical (via binning or direct conversion) then combining with other features for combinatorial FE. cdeotte s4e12 numerics-as-cats + TE/CE pattern. | Plain numerics combined with plain numerics. |
 
-| Column | Includes | Excludes |
-|---|---|---|
-| `uses_manual_pairwise_interactions` | Hand-coded specific interactions: `a*b`, `a/b`, `a+b`, `a-b`, `(a > threshold) & (b > threshold)`. Bill Cruise s3e3 `risk_flag`, Mart Preusse `MonthlyIncome/Age` ratio, gemstone aspect-ratio × carat. | Systematic enumeration of all pairs (that's the next column). |
-| `uses_brute_force_combinatorial_search` | Systematic enumeration of feature combinations with a model-in-the-loop selection step. cdeotte s4e12 145K combinations → 170 kept; greysky 6-way TE combinatorics; arunklenin's brute-force at s3e24. | A few hand-picked pairs (that's the previous column). |
-| `uses_higher_order_categorical_combos` | 3+ way categorical groupings (combining 3 or more columns into one composite category), with or without further TE/CE on top. cdeotte 2–6-way category combos. | Pairwise (2-way) combos only — those are covered by `uses_manual_pairwise_interactions` if hand-picked, or `uses_brute_force_combinatorial_search` if enumerated. |
+### Group D — Aggregates and groupby (8)
 
-### Group D — Aggregate / groupby features (4 columns)
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 19 | `uses_groupby_basic_stats` | groupby + mean / median / std / min / max within a group. | Count / nunique (next column). Quantiles (column 21). |
+| 20 | `uses_groupby_count_or_nunique` | groupby + count / nunique within a group. | Basic stats (previous column). |
+| 21 | `uses_groupby_quantiles` | Multiple quantile values computed within groups as features (e.g., cdeotte `QUANTILES = [5,10,40,45,55,60,90,95]`). | A single percentile = covered by basic stats. |
+| 22 | `uses_groupby_histogram_bins` | cdeotte's histogram-bin counts within groups (groupby + count of values in each of N bins). Distinctive cdeotte invention. | Standard groupby aggregates. |
+| 23 | `uses_groupby_zscores` | Within-group standardization (subtract group mean, divide by group std) used as features. cdeotte s5e5 groupby z-scores; tilii s5e10. | Standard mean/std (covered by basic stats). |
+| 24 | `uses_groupby_skew_or_higher_moments` | groupby skew, kurtosis, or other higher moments. | Mean/std (covered). |
+| 25 | `uses_groupby_division_of_aggregates` | Second-order combinations of already-aggregated features (`count / nunique`, `std / count`). cdeotte s5e2. | Plain ratios between raw features (column 13). |
+| 26 | `uses_rowwise_statistics` | sum / mean / std / max / min / count-above-threshold computed *across* multiple feature columns *within a row*. Viable when features commensurable. adaubas s4e5 Poisson-sum row-stats; oscarm524 log-transformed row stats. | Groupby aggregates (different axis). |
 
-| Column | Includes | Excludes |
-|---|---|---|
-| `uses_groupby_basic_aggregates` | groupby with mean / median / std / min / max / count / nunique within a group. The classic groupby pattern. | Row-wise statistics (across columns within a row) — that's a different column. |
-| `uses_groupby_quantiles` | Multiple quantile values computed within groups as features (e.g., cdeotte's `QUANTILES = [5,10,40,45,55,60,90,95]`). | A single percentile (e.g., just the median) — that's covered by `uses_groupby_basic_aggregates`. |
-| `uses_groupby_advanced` | Less-common groupby techniques: histogram-bin counts within groups (cdeotte invention), groupby z-scores, groupby skew, division-of-aggregations (`count/nunique`). | Standard groupby (covered by basic). Quantiles (covered separately). |
-| `uses_rowwise_statistics` | sum / mean / std / max / min / count-of-nonzero / count-of-thresholds computed *across* multiple feature columns *within a row*. Viable when features are commensurable (same units). adaubas s4e5 Poisson-sum row-stats; tilii GP features. | Groupby aggregates (different axis). |
+### Group E — Domain / temporal / structural (5)
 
-### Group E — Domain / structural / temporal (3 columns)
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 27 | `uses_domain_binary_flags` | Hand-crafted binary features that require domain knowledge. Bill Cruise s3e3 (Age<34, JobHopper). | Threshold flags computed without domain interpretation (column 15). |
+| 28 | `uses_domain_ratios` | Domain-meaningful ratios (anatomical, financial, quality). Ravi s3e16 meat-yield, pseudo-BMI; Craig s3e8 aspect-ratio. | Generic pairwise ratios without domain rationale (column 13). |
+| 29 | `uses_domain_ordinal_scales` | Encoding a categorical column to a domain-ordered numeric scale (gemstone clarity D→J, education levels). Craig s3e8 gemstone quality. | Generic label encoding without domain ordering. |
+| 30 | `uses_datetime_decomposition` | Year / month / day / weekday / day-of-year / hour extracted from datetime columns. cdeotte s4e12 Policy Start Date. | Cyclical sin/cos encoding (next column). |
+| 31 | `uses_cyclical_encoding` | sin / cos encoding of cyclical features (day-of-week, month, hour). mahog s5e8 yekenot cyclical features. | Plain datetime decomposition. |
 
-| Column | Includes | Excludes |
-|---|---|---|
-| `uses_domain_features` | Hand-engineered features that require domain knowledge of the problem area. Bill Cruise s3e3 HR risk flags (Age<34, JobHopper); Ravi s3e16 anatomical ratios (meat yield, pseudo BMI); Craig s3e8 gemstone aspect ratio. | Generic FE that doesn't need domain knowledge (digit features, pairwise interactions). |
-| `uses_datetime_decomposition` | Extracting year / month / day / weekday / day-of-year / week-of-year / hour from date or datetime columns. cdeotte s4e12 Policy Start Date decomposition. | Cyclical encoding (sin/cos) — that's the next column. |
-| `uses_cyclical_encoding` | Sin/cos encoding of cyclical features (day-of-week, month, hour-of-day) so the model sees continuous wrap-around. mahog s5e8 yekenot cyclical features. | Plain datetime decomposition (covered separately). |
+### Group F — External-original-derived features (6)
 
-### Group F — External-original-derived features (2 columns)
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 32 | `uses_original_target_mean_as_feature` | Simple mean of the external-original target computed per category and attached to the synthetic training data. | Smoothed / WoE / entropy variants (next column). |
+| 33 | `uses_original_target_advanced_stats` | Smoothed mean, Weight of Evidence (WoE), entropy, log-odds from external-original target. masaya s6e2. | Plain mean (previous column). |
+| 34 | `uses_exact_key_match_lookup` | Deterministic merge on a feature-tuple key joining synthetic to original. Sergey s3e14 `(fruitset, fruitmass)`; Irfan s5e7 `match_p`. | Approximate nearest-neighbor (next column). |
+| 35 | `uses_approximate_neighbor_lookup` | KDTree, BallTree, FAISS, or other approximate nearest-neighbor lookup from synthetic to original; attaching neighbor's properties as features. cdeotte s6e3 cKDTree snap. | Exact key match (previous column). |
+| 36 | `uses_drift_features` | Features measuring the difference / ratio between dataset distributions (train vs original). cdeotte s6e3 drift ratios. | Plain comparisons without distribution interpretation. |
+| 37 | `uses_distribution_anomaly_features` | Benford's law deviation, statistical anomaly scores, distributional fingerprints. cdeotte s6e3 Benford. | Generic statistical features. |
 
-| Column | Includes | Excludes |
-|---|---|---|
-| `uses_original_target_stats` | Statistics computed from an external original dataset's target column (mean / smoothed mean / WoE / entropy / target std) and attached as features to the synthetic training data. masaya s6e2; mahog s5e8 TE-bigrams using original targets. | Concatenating original rows for training (that's `external_original_use_mode = rows-only` in Pass 1). |
-| `uses_snap_or_kdtree_lookup` | "Snap" each row to nearest neighbor in the original dataset (KDTree, BallTree, or exact key matching) and attach that neighbor's properties as features. cdeotte KGMON Playbook snap features; Irfan s5e7 match_p; Sergey s3e14 (this is the lookup-exploit paradigm). | Just concatenating the original dataset (covered by Pass 1). |
+### Group G — Learned / advanced derived (4)
 
-### Group G — Learned / advanced features (3 columns)
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 38 | `uses_autoencoder_latents` | DAE / VAE / Variational Autoencoder encoder outputs used as input features for a downstream model. Umar s3e13 frozen-encoder-as-classifier; tilii s5e10; masaya s6e2 DVAE. | DAE as the prediction model itself (e.g., for imputation). |
+| 39 | `uses_pca_svd_components` | PCA / Truncated SVD / Kernel PCA components used as features. Iqbal s4e1 TF-IDF + SVD. | Random projection (next column). |
+| 40 | `uses_random_projection_features` | Gaussian random projection (GRP), sparse random projection used as features. cdeotte s6e3 GRP on IBM original. | Linear dim reduction (previous column). |
+| 41 | `uses_genetic_programming_features` | Symbolic-regression / GP-derived features (gplearn library). tilii s5e10 11 GP features at ensemble stage; masaya s6e2 gplearn. | Other nonlinear FE. |
 
-| Column | Includes | Excludes |
-|---|---|---|
-| `uses_autoencoder_latents` | Training a DAE (denoising autoencoder) or VAE on features and using the encoder's latent layer outputs as input features for a downstream model. Umar s3e13 frozen-encoder-as-classifier; tilii s5e10 AE latents; masaya s6e2 DVAE. | DAE used directly as the prediction model (e.g., for imputation where the task IS reconstruction) — that's modeling, not FE. |
-| `uses_dim_reduction_features` | PCA / SVD / Truncated SVD / GRP / t-SNE / UMAP components used as input features. Iqbal s4e1 TF-IDF + SVD; cdeotte s6e3 PCA+GRP on IBM original. | Dimensionality reduction used only for visualization. |
-| `uses_genetic_programming_features` | Symbolic-regression / GP-derived features (gplearn library; tilii's s5e10 11 GP features at ensemble stage; masaya s6e2 gplearn). | Any other FE that happens to be nonlinear. |
+### Group H — Text and string-pattern (3)
 
-### Group H — Text and exotic (2 columns)
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 42 | `uses_tfidf_features` | TF-IDF representations of a string column. Iqbal s4e1 Surname-as-text. | High-cardinality categorical encoded categorically. |
+| 43 | `uses_character_or_string_pattern_features` | Character n-grams, substring extraction, length-of-string, regex pattern extraction. Mart Preusse s4e9 engine-string parsing for horsepower/displacement. | Plain TF-IDF (previous column). |
+| 44 | `uses_lasso_generator_recovery` | Using a Lasso regression diagnostically to reverse-engineer the synthetic-data generator's target formula. tilii s5e10. | Lasso used as a base model. |
 
-| Column | Includes | Excludes |
-|---|---|---|
-| `uses_text_features` | Treating a column as text and applying TF-IDF, character n-grams, word embeddings, or extracting structured info from text strings. Iqbal s4e1 Surname-as-text + TF-IDF; Mart Preusse s4e9 engine-string parsing. | A high-cardinality categorical that happens to be string-typed but is treated categorically (covered by encoding columns). |
-| `uses_lasso_generator_recovery` | Using a Lasso regression diagnostically to reverse-engineer the synthetic-data generator's target formula. tilii s5e10 (recovered the 0.3×curvature + 0.2×lighting + … formula). | Lasso used as a base model. |
+### Group I — Model-derived as features (3)
 
-### Group I — Negative / meta indicators (3 columns)
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 45 | `uses_pseudo_labels_as_features` | Predicting test labels with one model, then attaching those predicted labels as features for another model. cdeotte s5e6 "pseudo-label COLUMNS" variant. | Pseudo-labels for training-set augmentation (modeling choice). |
+| 46 | `uses_residual_features` | Residuals from one model used as features (or as targets) for the next model. cdeotte s5e5 residual chain (NN over LR residuals, XGB over NN residuals); s5e6 boosting over LR margin. | Plain stacking without residual structure. |
+| 47 | `uses_outlier_or_aux_classifier_as_feature` | Training a classifier on an auxiliary target (outlier flag, IQR bin, category derived from rules), then using its OOFs as features for the main regressor. Mart Preusse s4e9 outlier-bin CatBoost classifier → OOF as feature. | Plain stacking. |
 
-| Column | Includes | Excludes |
-|---|---|---|
-| `explicit_minimal_or_no_fe` | Author explicitly states minimal or no FE was used, often as a deliberate choice (cdeotte s5e3 "small data → no FE"; Heitor s3e5 "no FE, single XGB"). | Just a writeup that doesn't mention FE — that's missing data, not explicit minimal FE. |
-| `uses_pseudo_labels_as_features` | Predicting test labels with one model, then using those predicted labels as features for another model. Different from pseudo-labeling for training data augmentation. cdeotte s5e6 pseudo-label COLUMNS variant. | Pseudo-labels used only for retraining (that's training augmentation, not FE). |
-| `uses_adversarial_validation_for_fe` | Adversarial validation (train classifier to distinguish source from target) used to filter or select features (or filter original-dataset rows used as training augmentation). Hardy Xu s3e7; stopwhispering s4e4. | Adversarial validation used only for diagnostic purposes. |
+### Group J — Feature selection (3)
+
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 48 | `uses_permutation_importance_selection` | Permutation importance used to rank and prune features. Ravi s3e24; viktortaran s3e6. | Other selection methods (next columns). |
+| 49 | `uses_sfs_or_backward_elimination` | Sequential feature selection (SFS), backward elimination, or step-wise forward selection. adaubas s4e5 permutation + backward; stopwhispering s4e4 SFS per model. | Permutation importance only (previous column). |
+| 50 | `uses_correlation_or_constant_dropping` | Dropping features by high pairwise correlation or near-zero variance. | Other selection (covered above). |
+
+### Group K — Meta indicators (2)
+
+| # | Column | Includes | Excludes |
+|---|---|---|---|
+| 51 | `explicit_minimal_or_no_fe` | Author explicitly states minimal or no FE was used, often as a deliberate choice. cdeotte s5e3 "small data → no FE"; Heitor s3e5 single XGB; ravaghi s4e11 "no FE." | Writeup that simply doesn't mention FE (missing data, not explicit minimal). |
+| 52 | `uses_adversarial_validation_for_fe` | Adversarial validation (train classifier to distinguish train vs test, or synthetic vs original) used to filter features or filter rows. Hardy Xu s3e7 filter original; stopwhispering s4e4 adversarial-validation notebook. | Adversarial validation used only for diagnostic purposes. |
 
 ## Source-confidence column (1)
 
 | Column | Allowed values | Definition |
 |---|---|---|
-| `pass3_source_confidence` | `notebook+writeup` / `writeup+notes` / `writeup-only` / `notes-only` | The basis on which the row was coded. `notebook+writeup` = both source files were available and consulted. `writeup+notes` = original writeup file was consulted plus the Pass 2 MD as a checklist. `writeup-only` = only the original writeup was consulted (no notebook published). `notes-only` = only the Pass 2 MD was consulted (worst case — flag for follow-up). |
+| `pass3_source_confidence` | `notebook+writeup` / `writeup+notes` / `writeup-only` / `notes-only` | The basis on which the row was coded. `notebook+writeup` = highest confidence; both sources consulted. `writeup+notes` = original writeup file + Pass 2 MD. `writeup-only` = only writeup (no notebook published or pulled). `notes-only` = only Pass 2 MD (worst case; flag for follow-up). |
 
 ## Meta / admin columns (5)
 
@@ -105,77 +138,87 @@ Listed with rough functional groups for readability. The actual sheet will have 
 |---|---|---|
 | `competition_ref` | string | Join key with Pass 1 and Pass 2. |
 | `finish_rank` | int | Join key with Pass 1 and Pass 2. |
-| `n_fe_techniques_used` | int | Derived count: sum of TRUE values across the 24 technique columns. Lets us answer "do single-model-FE wins use more techniques on average than ensemble-stacking wins?" |
-| `pass3_notes` | string | Free-text notes per entry. Flags ambiguities, judgment calls, and especially "Pass 2 MD missed technique X" findings — those become Pass 2 corrections. |
+| `n_fe_techniques_used` | int | Derived: sum of TRUE values across the 52 technique columns. Answers "do single-model-FE wins use more techniques on average than ensemble-stacking wins?" |
+| `pass3_notes` | string | Free-text per entry. Flags ambiguities, judgment calls, and "Pass 2 MD missed technique X" findings — those become Pass 2 corrections. |
 | `pass3_date_coded` | date | When this row was finalized. Lets us track Stage 1 vs Stage 2 cells. |
+
+**Sheet total: 52 boolean + 5 admin + 1 source-confidence = 58 columns × 45 rows = 2,610 cells.**
+
+## Resolution of the v1 open questions
+
+| v1 Open question | v2 resolution |
+|---|---|
+| Split `uses_target_encoding` into within-fold vs not? | **Split** — columns 1 and 2 are separate. |
+| Is `uses_groupby_advanced` too vague? | **Split** — columns 19–25 break aggregates into 7 distinct columns instead of 1. |
+| Add `uses_outlier_classification_as_feature`? | **Added** — column 47 (`uses_outlier_or_aux_classifier_as_feature`). |
+| `uses_domain_features` too broad? | **Split** — columns 27–29: binary flags, ratios, ordinal scales. |
+| Add `uses_explicit_feature_selection`? | **Added as 3 columns** — Group J (48–50): permutation, SFS/backward, correlation/constant. |
+| Add `uses_residual_features`? | **Added** — column 46. |
+| `uses_snap_or_kdtree_lookup` overlap with lookup paradigm? | **Split** — columns 34 and 35: exact key match vs approximate neighbor. Retained for granularity. |
 
 ## What's intentionally NOT in scope
 
-Boundary clarifications, so the scope is unambiguous:
-
-- **Post-processing of model outputs.** OptimizedRounder for ordinal classification, target reversal at submission time, probability calibration, threshold tuning, predicted-label-as-submission tweaks. These aren't feature engineering — they're post-modeling.
-- **Cross-validation strategy.** Stratified vs plain k-fold, post-cutoff CV, year-grouped CV. Covered by Pass 1 `cv_strategy`.
-- **Ensemble methods.** Stacking, hill climbing, mean blending, weighted blending. Covered by Pass 1 `ensemble_method`.
-- **Hyperparameter tuning.** Optuna, GridSearch, manual. Covered by Pass 1 `hyperparameter_tuning`.
-- **Model architecture choices.** Choice of XGBoost vs LightGBM, custom NN architectures, AutoGluon configuration. Covered by Pass 1 `models_used`.
-- **Pseudo-labeling for training data augmentation.** That's a training-time technique, not FE. (Distinct from `uses_pseudo_labels_as_features` which is specifically pseudo-labels used *as features*.)
-- **Knowledge distillation.** Training-time loss/label technique. Already corrected in s6e2 audit.
-- **Custom loss functions** (e.g., LightGBM custom MSLE). That's a modeling choice.
-
-## Open questions for your reaction
-
-1. **Granularity check on encoding.** Should `uses_target_encoding` split into within-fold vs not? You've read these writeups more carefully than I have — does this distinction matter?
-
-2. **Boundary on aggregates.** Is `uses_groupby_advanced` too vague? I've grouped histogram-bins, z-scores, and division-of-aggregations together. They could be three separate columns.
-
-3. **Should there be a `uses_outlier_classification_as_feature` column?** Mart Preusse's s4e9 outlier-classifier-OOFs-as-features pattern is distinctive but rare in the corpus. May not justify its own column.
-
-4. **Domain features — too broad?** Currently one column for any domain-knowledge-driven FE. Could split into "domain-specific binary flags" vs "domain-specific ratios" if there's enough volume in each.
-
-5. **Is "feature selection" itself a category?** Permutation importance, backward elimination, SFS — these are *selection*, not creation. Currently out of scope but you may want it as one column (`uses_explicit_feature_selection`).
-
-6. **Should we add `uses_residual_features`?** cdeotte's residual modeling chain (NN over LR residuals, XGB over NN residuals) appears in s5e5 and elsewhere. It's the model's predictions becoming features for the next model, which is borderline FE / borderline ensembling.
-
-7. **Lookup-exploit category overlap.** `uses_snap_or_kdtree_lookup` is partly redundant with the lookup-exploit paradigm classification in Pass 2. Worth keeping for granularity?
+- **Post-processing of model outputs.** OptimizedRounder, target reversal, probability calibration, threshold tuning.
+- **Cross-validation strategy.** Covered by Pass 1 `cv_strategy`.
+- **Ensemble methods.** Covered by Pass 1 `ensemble_method`.
+- **Hyperparameter tuning.** Covered by Pass 1 `hyperparameter_tuning`.
+- **Model architecture choices.** Covered by Pass 1 `models_used`.
+- **Pseudo-labeling for training data augmentation.** Distinct from `uses_pseudo_labels_as_features` (column 45), which is specifically pseudo-labels used *as features*.
+- **Knowledge distillation.** Training-time technique.
+- **Custom loss functions.** Modeling choice.
 
 ## Proposed workflow
 
-**Stage 1 — Draft from Pass 2 MDs (half day)**
+**Stage 1 — Draft from Pass 2 MDs (~half day)**
 
-1. Build the workbook sheet skeleton: create `FE Taxonomy` sheet in `data/kaggle_meta_analysis.xlsx` with the 30 columns above.
+1. Build the workbook sheet skeleton: create `FE Taxonomy` sheet in `data/kaggle_meta_analysis.xlsx` with the 58 columns above.
 2. Read each of the 45 per-writeup MDs (`analysis/writeup-reevaluation/*.md`).
-3. Code each row based on the MD's "What's actually original" and "Dataset constraints" sections.
+3. Code each row's 52 booleans based on the MD's "What's actually original" and "Dataset constraints" sections.
 4. Set `pass3_source_confidence = notes-only` for every row at this stage.
-5. Sanity-check: compute `n_fe_techniques_used` distribution; flag entries with 0 or with >10.
+5. Sanity check: compute `n_fe_techniques_used` distribution; flag entries with 0 or >15 for closer look.
 
-**Stage 2 — Source-validate (1–2 days)**
+**Stage 2 — Source-validate (~1–2 days)**
 
 For each of the 45 entries:
 
 1. Open the original writeup at `data/writeups/<slug>/<title>.txt`.
 2. If a notebook exists at `data/writeups/<slug>/*.ipynb`, open it too.
-3. Re-evaluate every TRUE/FALSE column against the source material.
-4. Add any techniques the MD missed (flip cells from FALSE to TRUE).
+3. Re-evaluate every TRUE/FALSE cell against the source material.
+4. Add any techniques the MD missed (flip FALSE → TRUE).
 5. Update `pass3_source_confidence` to `writeup+notes`, `notebook+writeup`, etc.
-6. Record in `pass3_notes` any techniques added from Stage 1, with a tag like `[+from_writeup]` or `[+from_notebook]`.
-7. Each "MD-missed-this" finding is also a Pass 2 audit signal — log them.
+6. Record in `pass3_notes` any techniques added, with a tag like `[+from_writeup]` or `[+from_notebook]`.
+7. Each "MD missed this" finding is also a Pass 2 audit signal — log them.
 
 **Output deliverables**
 
 - New `FE Taxonomy` sheet in `data/kaggle_meta_analysis.xlsx`
-- Stage 1 → Stage 2 delta metric: how many cells flipped FALSE → TRUE during validation, by category. This quantifies generational drift.
+- Stage 1 → Stage 2 delta metric: how many cells flipped FALSE → TRUE during source validation, by category. This quantifies generational drift.
 - New §4.9 paragraph in `research_report.md` describing FE-by-paradigm patterns (if the project extends).
+- Possibly a heatmap figure: paradigm × FE category (boolean rate per cell).
 
 ## Pilot plan
 
-Before coding all 45 entries, pilot with **2–3 representative entries** to validate the schema:
+Before coding all 45 entries, pilot with **3 representative entries** to stress-test the schema:
 
-- **One ensemble-stacking heavyweight:** cdeotte s5e6 (the KGMON-proto entry) — should hit many encoding + aggregate + combinatorial columns
-- **One lookup-exploit:** Sergey s3e14 — should be sparse on most columns, TRUE on `uses_snap_or_kdtree_lookup`, possibly `uses_count_or_frequency_encoding`
-- **One minimal-FE:** Heitor s3e5 — should be TRUE on `explicit_minimal_or_no_fe` and mostly FALSE elsewhere
+- **One ensemble-stacking heavyweight:** cdeotte s5e6 (KGMON-proto) — should hit many encoding, aggregate, combinatorial, and original-derived columns.
+- **One lookup-exploit:** Sergey s3e14 — should be very sparse; primarily `uses_exact_key_match_lookup`.
+- **One minimal-FE:** Heitor s3e5 — should be TRUE on `explicit_minimal_or_no_fe`, FALSE on most others.
 
-If the schema cleanly handles these three, it'll handle the rest. If we find ourselves squinting at boundaries, the schema needs revision.
+Expected pattern: the heavyweight should have `n_fe_techniques_used` in the 15–25 range; the lookup-exploit in the 1–3 range; the minimal-FE in the 0–2 range. If those expectations don't materialize, the schema needs revision before the full 45 pass.
+
+## Aggregation paths (for later)
+
+Because the schema is granular, several useful coarse groupings can be derived after coding:
+
+- **`uses_any_target_encoding`** = columns 1 OR 2 OR 3 OR 4
+- **`uses_any_groupby`** = columns 19 OR 20 OR 21 OR 22 OR 23 OR 24 OR 25
+- **`uses_any_combinatorial_search`** = columns 16 OR (17 AND 18)
+- **`uses_any_original_derived_feature`** = columns 32 OR 33 OR 34 OR 35 OR 36 OR 37
+- **`uses_any_model_derived_feature`** = columns 45 OR 46 OR 47
+- **`uses_any_explicit_selection`** = columns 48 OR 49 OR 50
+
+Each of these is a one-line aggregate in pandas. So the granular schema doesn't preclude coarse analyses; it enables them.
 
 ---
 
-**Next step:** react to the schema. Flag any columns that should be split / merged / dropped / added. Once the schema is locked, we pilot 3 entries, then commit to the full 45.
+**Next step:** react to the v2 schema. Flag any columns that should still split / merge / drop / add. Once the schema is locked, we pilot the 3 representative entries, then code the full 45.
