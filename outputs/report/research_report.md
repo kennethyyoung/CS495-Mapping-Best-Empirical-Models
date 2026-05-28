@@ -267,7 +267,7 @@ The Pass 1 schema captures *what techniques were used* in each solution (as dist
 
 **Dataset characteristics.** Training set size ranged from 617 to 11.5 million rows (median = 188,533; mean = 640,374). Feature counts ranged from 7 to 286 (median = 16). The large maximum feature count (286) came from one TPS entry. Excluding that outlier, 75% of entries had 21 or fewer features. Eighty percent of entries (36/45) had zero missing values — a structural property of synthetic Playground Series data — and only 9 entries had any missing values at all.
 
-**Dominant model family.** Gradient-boosted machines (GBMs — XGBoost, LightGBM, or CatBoost) were the dominant base-model family in 34 of 45 entries (76%). Neural networks were primary in 8 entries (18%). One entry used a linear model (the GAM-based pulsar-detection solution at S3E10) as the primary approach, and two used ensemble-only architectures categorized as "other."
+**Dominant model family.** Gradient-boosted machines (GBMs — XGBoost, LightGBM, or CatBoost) were the dominant base-model family in 35 of 45 entries (78%). Neural networks were primary in 7 entries (16%). One entry used a linear model (the GAM-based pulsar-detection solution at S3E10) as the primary approach, and two used ensemble-only architectures categorized as "other."
 
 **Ensembling.** Forty of 45 entries (89%) used an ensemble of multiple models. Among the 40 that ensembled, stacking was the most frequent method (mentioned in 21 entries), followed by weighted blending (9 entries), hill climbing (9 entries), and mean blending (8 entries). Many entries used multiple ensembling approaches simultaneously.
 
