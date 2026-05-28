@@ -23,6 +23,12 @@
 \usepackage{hyperref}
 \usepackage{appendixnumberbeamer}
 
+% --- Word-wrap fixes for narrow columns ---
+% Give TeX more flexibility when breaking awkward lines (helps prevent
+% overflow + ugly justification gaps in two-column layouts)
+\setlength{\emergencystretch}{3em}
+\sloppy
+
 % --- Speaker notes: comment out the \setbeameroption line below
 %     when you want a clean handout. Use it as-is while rehearsing. ---
 % \setbeameroption{show notes on second screen=right} % uncomment for dual-monitor rehearsal
@@ -185,6 +191,7 @@ winning Kaggle strategies as a population. That's what this study does.
 \begin{frame}{Data: 45 winning solutions, 2022--2026}
 \begin{columns}[T,onlytextwidth]
 \column{0.55\textwidth}
+\raggedright
 \begin{itemize}
   \item \textbf{Inclusion criteria}
   \begin{itemize}
@@ -238,18 +245,24 @@ which was a medical-data contest with a real prize pool.
 % ---------------- Pivot slide (NEW) ----------------
 \begin{frame}{From flowchart to typology: a pivot}
 \begin{columns}[T,onlytextwidth]
-\column{0.46\textwidth}
+\column{0.44\textwidth}
+\raggedright
 \small
-\textbf{Original goal:} derive a feature-engineering decision flowchart \\[4pt]
+\textbf{Original goal:}\\
+derive a feature-engineering decision flowchart
+
+\vspace{6pt}
 \textbf{What the data showed:}
 \begin{itemize}\itemsep2pt
   \item GBM dominated \alert{78\%} -- no real ``which model'' branch
-  \item FE was free text: \alert{166 unique tags, 163 appear only once} (98\%)
-  \item Several decision-node fields below 70\% completeness
+  \item FE was free text: \alert{166 unique tags, 163 appear only once}
+  \item Several fields below the 70\% completeness threshold
 \end{itemize}
-\vspace{2pt}
+
+\vspace{4pt}
 \textbf{Pivot:} characterize by \alert{paradigm}, not by individual FE technique
-\column{0.51\textwidth}
+
+\column{0.53\textwidth}
 \centering
 \includegraphics[width=\textwidth]{phase5_62_model_family.png}\\[2pt]
 \includegraphics[width=\textwidth]{phase5_61_fe_tag_frequency.png}
@@ -294,6 +307,7 @@ approach wouldn't have generalized.
 \begin{frame}{Two-pass coding design}
 \begin{columns}[T,onlytextwidth]
 \column{0.48\textwidth}
+\raggedright
 \textbf{Pass 1: structured schema}
 \begin{itemize}
   \item 38-column spreadsheet
@@ -302,6 +316,7 @@ approach wouldn't have generalized.
 \end{itemize}
 
 \column{0.48\textwidth}
+\raggedright
 \textbf{Pass 2: qualitative re-evaluation}
 \begin{itemize}
   \item Per-writeup, nine-section template
@@ -310,11 +325,11 @@ approach wouldn't have generalized.
   \item Captures \alert{what was originated}
 \end{itemize}
 \end{columns}
-\vspace{14pt}
+
+\vspace{12pt}
 \centering
-\alert{Pass 1 can tell you that target encoding was used.
-It cannot tell you whether the winner originated the technique \\
-or copied it from a public notebook.}
+\small
+\alert{Pass 1 can tell you that target encoding was used. It cannot tell you whether the winner originated the technique or copied it from a public notebook.}
 
 \note{
 The methodological centerpiece. Pass 1 is the structured spreadsheet
@@ -460,22 +475,25 @@ is empty.
 % ---------------- How winners actually build solutions (NEW) ----------------
 \begin{frame}{How winners actually build solutions}
 \begin{columns}[T,onlytextwidth]
-\column{0.46\textwidth}
+\column{0.44\textwidth}
+\raggedright
 \small
-\begin{itemize}\itemsep4pt
-  \item \textbf{67\%} draw heavily on community work \\ (origination score $\leq 2$)
+\begin{itemize}\itemsep3pt
+  \item \textbf{67\%} draw heavily on community work
   \item \textbf{18\%} fork a single public notebook
-  \item \textbf{7\%} are ``community-template-tweak'' \\ (fork + one meaningful addition)
-  \item \textbf{0\%} are pure forks -- every winner adds at least one original element
-  \item Only \textbf{33\%} are mostly-original work
+  \item \textbf{7\%} are ``community-template-tweak''
+  \item \textbf{0\%} are pure forks
+  \item Only \textbf{33\%} are mostly-original
 \end{itemize}
-\vspace{4pt}
-\alert{Two myths, both wrong:}
-\\[2pt]
-\textit{``Winners just copy popular notebooks''} \\(no -- 0\% do this) \\[2pt]
-\textit{``Winners build everything from scratch''} \\(no -- 67\% inherit heavily)
 
-\column{0.51\textwidth}
+\vspace{6pt}
+\alert{Two myths, both wrong:}
+
+\textit{``Winners just copy popular notebooks''} -- no, 0\% do this
+
+\textit{``Winners build everything from scratch''} -- no, 67\% inherit heavily
+
+\column{0.53\textwidth}
 \centering
 \includegraphics[width=\textwidth]{phase5_63_origination_score.png}
 \end{columns}
@@ -536,15 +554,17 @@ Four couplings are contradicted. The most striking is the next slide.
 \begin{frame}{The ``use as columns'' correction}
 \begin{columns}[T,onlytextwidth]
 \column{0.42\textwidth}
+\raggedright
 \small
 \textbf{Widely-shared Kaggle tip:}
-\begin{quote}
-\itshape ``When the original public dataset is available, attach it as new \textbf{columns} to your training data.''
-\end{quote}
-\vspace{4pt}
+
+\textit{``When the original public dataset is available, attach it as new \textbf{columns} to your training data.''}
+
+\vspace{6pt}
 \alert{The community pattern is rows-only concatenation.}
-\\[2pt]
-The ``as columns'' advice describes \textbf{one author's} idiosyncratic practice.
+
+\vspace{4pt}
+The ``as columns'' advice reflects \textbf{one author's} idiosyncratic practice.
 
 \column{0.55\textwidth}
 \centering
@@ -661,16 +681,25 @@ qualitative data that the structured spreadsheet alone couldn't surface.
 \column{0.55\textwidth}
 \centering
 \includegraphics[width=\textwidth]{phase5_41_author_centrality.png}
+
 \column{0.42\textwidth}
+\raggedright
+\small
 \textbf{Three archetypes:}
-\begin{itemize}
-  \item \textbf{Pure technique-source} \\ \textit{cited often, never wins} \\ siukeitin: 12 citations, 0 wins
-  \item \textbf{Occasional winner} \\ tilii7: 1 win + 8 citations \\ masayakawamata: 1 + 5
-  \item \textbf{Dominant + cited} \\ cdeotte: 4 wins + 6 citations \\ mahog: 4 + 6
+\begin{itemize}\itemsep4pt
+  \item \textbf{Pure technique-source}\\
+    \textit{cited often, never wins}\\
+    siukeitin: 12 citations, 0 wins
+  \item \textbf{Occasional winner}\\
+    tilii7: 1 win + 8 citations\\
+    masayakawamata: 1 + 5
+  \item \textbf{Dominant + cited}\\
+    cdeotte: 4 wins + 6 citations\\
+    mahog: 4 + 6
 \end{itemize}
-\vspace{6pt}
-\centering
-\alert{cdeotte: 22 months from first observer comment to first win}
+
+\vspace{4pt}
+\alert{cdeotte: 22 months from observer to first win}
 \end{columns}
 
 \note{
