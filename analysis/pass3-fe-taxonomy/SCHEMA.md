@@ -32,7 +32,7 @@ This document defines the structured-coding schema for Pass 3 — the FE taxonom
 
 | # | Column | Includes | Excludes |
 |---|---|---|---|
-| 1 | `uses_target_encoding_basic` | Single-statistic mean target encoding applied to one or more categorical columns. Vanilla "replace category with mean of target." | Multiple-statistic TE (next column). Within-fold leakage-safe TE (column 2). |
+| 1 | `uses_target_encoding_basic` | Single-statistic target encoding (mean, median, or any other single statistic) applied to one or more categorical columns. Vanilla "replace category with summary statistic of target." Mart Preusse s4e9 uses median TE. | Multiple-statistic TE (next column). Within-fold leakage-safe TE (column 2). |
 | 2 | `uses_target_encoding_within_fold` | Leakage-safe TE explicitly computed inside the CV loop (nested-fold target-aware FE; per-fold TE; "leakfree" TE). Iqbal s4e1; cdeotte signature. Three-valued: TRUE if explicitly stated in writeup or visible in notebook; FALSE if explicitly stated as globally-applied; **`null` if ambiguous** (writeup-only entries where author doesn't specify). | Vanilla TE applied to full training data (column 1). |
 | 3 | `uses_te_multiple_aggregations` | Multiple TE statistics per categorical column (mean + median + min + max + std + nunique + skew). cdeotte's 7-encoding pattern. | Single TE statistic. |
 | 4 | `uses_te_alternative_targets` | TE using a non-target column as the target. mahog s5e11 TE on `employment_status` and `debt_to_income_ratio`. | Standard TE on competition target. |
@@ -221,11 +221,13 @@ Pilot of 3 entries completed and documented in `PILOT.md`. Headline findings:
 |---|---|
 | Ensemble-stacking heavyweight (cdeotte s4e12 / s5e2 / s5e6 / s6e3) | 6–12 |
 | Ensemble-stacking standard (most s3/s4/s5 winners) | 4–9 |
-| Single-model heavy-FE | 8–15 |
+| Single-model heavy-FE | 6–15 |
 | Lookup-exploit | 1–4 |
-| Problem-fit NN | 2–6 |
+| Problem-fit NN | 1–6 |
 | Community-template-tweak | 3–7 |
 | Minimal-FE (explicit) | 0–3 |
+
+(Ranges revised after extended pilot: single-model heavy-FE widened from 8–15 because greysky s5e4 used few techniques deeply [1552 features from ~6 distinct techniques]; problem-fit NN widened from 2–6 because room722 ICR's "problem-fit" answer was architectural [VSN] rather than FE-driven.)
 
 Entries that fall well outside these ranges during the full pass are flags for re-examination — either a coding error or a methodologically interesting outlier.
 
