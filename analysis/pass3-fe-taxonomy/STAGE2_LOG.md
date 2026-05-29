@@ -119,11 +119,107 @@ This is the "generational drift" the schema's `pass3_source_confidence` column w
 
 ---
 
-## Next: medium-priority Stage 2 candidates
+---
 
-Continuing through the corpus. Priority order:
-- Heavyweight entries with notebooks: s4e12, s5e2, s5e5 (cdeotte), s6e1 (mahog), s6e2 (masaya), s6e3 (cdeotte)
-- Other notebook-available entries: s3e8, s3e11, s3e23, s4e1, s4e3, s4e4, s4e9, s4e10, s5e3, s5e6 (partial), s5e7, s5e11, s6e4, etc.
-- Writeup-only (no notebook): s3e7, s3e13, s3e17, s3e24, s4e7, s4e8, s5e5 (writeup-only), s5e6 (writeup-only)
+## Batch 2: Heavyweight + below-range entries (notebooks available)
 
-Skip: Cross Sellers (proprietary), TPS Jun 2022 (buggy notebook per author).
+### s4e12 cdeotte (n_fe 8 → 8)
+
+**Sources:** writeup + 21-cell notebook (`first-place-single-model-cv-1-016-lb-1-016.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** All 8 Stage 1 columns confirmed by notebook code:
+- Cell 4-5: Policy Start Date decomposition (year/month/day/dow/seconds) → col 30 ✓
+- Cell 7: `factorize` + HIGH_CARDINALITY detection — numerics-as-cats setup
+- Cell 9: 20 surviving combinations (the brute-force-145K survivors) → col 16 ✓ (selection step kept) + col 17 ✓ (2-6 way combos)
+- Cell 11: `target_encode` function with kfold splits, 5 aggregations (mean/median/min/max/nunique) → col 1, 2, 3 ✓
+- Cell 14: Count encoding for high-cardinality + combo features → col 5 ✓; numerics-as-cats TE/CE → col 18 ✓
+
+Stage 1 was thorough for cdeotte heavyweights.
+
+### s5e2 cdeotte (n_fe 16 → 16)
+
+**Sources:** writeup + 36-cell notebook (`first-place-single-model-lb-38-81.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** All 16 Stage 1 columns confirmed (with v3.1 col 17 flip). Notebook is the simplified 138-feature version; the actual 500-feature production code shares the same techniques.
+
+Confirmed mappings: cell 12 NaN-base-2 (col 7) + per-column-NaN-with-WC; cell 13 multi-precision rounding (col 12); cell 14-15 original price merge by WC and rounded WC (col 32); cell 16 digits 1-9 (col 11); cell 17 digit pairs + cell 18 cat pairs (col 17); cell 23 STATS = mean/std/count/nunique/median/min/max/skew (cols 19/20/24); cell 24 QUANTILES + histogram bins (cols 21/22); cell 25 nested-fold TE (col 2).
+
+### s6e2 masayakawamata (n_fe 10 → 10)
+
+**Sources:** writeup + 21-cell RealMLP single-OOF notebook (`s6e2-single-realmlp.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** This notebook is only 1 of ~150 OOFs the ensemble used. What's verifiable:
+- Cell 10: digit extraction (integer + decimal positions) → col 11 ✓
+- Cell 12: multi-strategy binning (qcut q=4/5/10/20 + cut bins=5/10 + custom domain rounds Age/5, BP/10, Cholesterol/50, Max HR/10) → col 10 ✓
+- Cell 14: ALL_CATS (treat all base as categorical strings) → col 18 ✓
+- Cell 19: cuML TargetEncoder + StratifiedKFold pattern → col 2 ✓
+
+Cols 32, 33, 38, 41 (original-target stats, DVAE, gplearn) are writeup-attested but live in other OOFs not in this single-model notebook.
+
+### s3e6 viktortaran (n_fe 1 → 1)
+
+**Sources:** writeup + 148-cell notebook (`ps-s-3-e-6.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** Notebook is large (148 cells, mostly EDA + per-model experiments). Cell 11 confirms `PermutationImportance` (eli5) → col 48 ✓. Did not exhaustively scan all 148 cells; final pipeline appears to match MD's "light FE" characterization. Conservative no-flip.
+
+### s3e9 ambrosm (n_fe 1 → 5) — **BIG FLIP**
+
+**Sources:** writeup + 20-cell notebook (`pss3e9-winning-model.ipynb`).
+
+**Stage 2 deltas:** **+4 flips.** Stage 1 from MD massively under-counted. Cell 4 reveals 9 engineered features the MD didn't enumerate:
+
+| Column | Stage 1 | Stage 2 | Evidence |
+|---|---|---|---|
+| 2 `uses_target_encoding_within_fold` | null | **1** | Cell 5: custom `TargetEncoder(BaseEstimator, TransformerMixin)` class for AgeInDays, fit per-fold in `make_pipeline(TargetEncoder(), ...)` (cell 8). |
+| 13 `uses_pairwise_multiplicative_interactions` | 0 | **1** | Cell 4: `youngCementComponent = CementComponent * (AgeInDays < 40)` and `youngSuperplasticizerComponent = SuperplasticizerComponent * (AgeInDays < 10)` — threshold-conditional multiplicative interactions. |
+| 27 `uses_domain_binary_flags` | 0 | **1** | Cell 4: `hasBlastFurnaceSlag = BlastFurnaceSlag != 0`, `hasFlyAshComponent = FlyAshComponent != 0`, `hasSuperplasticizerComponent = SuperplasticizerComponent != 0` — 3 domain-meaningful component-presence flags for concrete strength prediction. |
+| 28 `uses_domain_ratios` | 0 | **1** | Cell 4: `Age_Water = AgeInDays / WaterComponent`, `Age_Cement = AgeInDays / CementComponent`, `Coarse_Fine = CoarseAggregateComponent / FineAggregateComponent` — 3 domain-meaningful concrete-mixture ratios. |
+
+ambrosm's MD describes his approach as "PDP-derived nonlinear features for Ridge" — the notebook reveals these are the concrete-domain interactions, ratios, and threshold flags. The MD's anti-Optuna and trust-CV framing dominated the narrative; the actual FE was substantial.
+
+### s3e11 ambrosm (n_fe 1 → 4) — **BIG FLIP**
+
+**Sources:** writeup + 58-cell notebook (`pss3e11-zoo-of-models.ipynb`).
+
+**Stage 2 deltas:** **+3 flips.**
+
+| Column | Stage 1 | Stage 2 | Evidence |
+|---|---|---|---|
+| 2 `uses_target_encoding_within_fold` | null | **1** | Cell 26: `make_pipeline(TargetEncoder(cols=['store_sqft']), RandomForestRegressor(...))` — fit per-fold. |
+| 13 `uses_pairwise_multiplicative_interactions` | 0 | **1** | Cell 21-22: `PolynomialFeatures(3, interaction_only=True)` and `PolynomialFeatures(4, interaction_only=True)` create explicit a*b, a*b*c, a*b*c*d products of features. |
+| 14 `uses_pairwise_additive_interactions` | 0 | **1** | Cell 4: `salad = (salad_bar + prepared_food) / 2` — pairwise additive interaction (average of two features). |
+
+ambrosm's "Zoo of Models" included explicit polynomial-interaction-Ridge variants (cells 21, 22), captured as multiplicative interactions. The MD focused on the dendrogram and zoo structure; the FE inside each branch was glossed.
+
+---
+
+## Batch 2 summary
+
+| Entry | Stage 1 → 2 n_fe | Flips |
+|---|---|---|
+| s4e12 cdeotte | 8 → 8 | 0 |
+| s5e2 cdeotte | 16 → 16 | 0 |
+| s6e2 masayakawamata | 10 → 10 | 0 |
+| s3e6 viktortaran | 1 → 1 | 0 |
+| s3e9 ambrosm | 1 → **5** | +4 |
+| s3e11 ambrosm | 1 → **4** | +3 |
+
+**Total: 7 cells flipped across 6 entries.**
+
+**Pattern:** ambrosm entries massively under-counted in Stage 1. His MDs emphasized methodology (anti-Optuna, trust-CV, zoo structure) over per-feature FE detail. Heavyweight cdeotte entries were already thoroughly captured.
+
+**Cumulative Stage 2 deltas so far (11 entries):**
+- Batch 1: 5 flips (s4e10 +2, s4e3 +1, s5e8 +2)
+- Batch 2: 7 flips (s3e9 +4, s3e11 +3)
+- **Total: 12 cell flips / 11 × 53 = 583 cells × 2% flip rate**
+
+Higher than batch 1 alone (1.9%). The ambrosm entries are large drivers. Other ensemble-standard entries with notebooks may have similar under-counting.
+
+---
+
+## Next batch (continuing)
+
+Remaining notebook-available entries to source-validate:
+- s3e1 Kirderf (dmitryuarov coordinate-FE notebook), s3e4 Ollie Kemp (no writeup), s3e8 Craig Thomas, s4e1 Iqbal, s4e4 stopwhispering, s4e5 adaubas, s4e9 Mart Preusse, s5e3 cdeotte (starter), s5e4 greysky, s5e7 Irfan, s5e11 mahog (XGB-only), s6e1 mahog (Ridge meta), s6e3 cdeotte (LR meta), s6e4 kirill0212, ICR room722, TPS Feb 2022 ambrosm, TPS May 2022 ambrosm.
+
+Skip: Cross Sellers, TPS Jun 2022 (buggy notebook), writeup-only entries (s3e7, s3e13, s3e17, s3e24, s4e7, s4e8, s5e5, s5e6).
