@@ -217,9 +217,115 @@ Higher than batch 1 alone (1.9%). The ambrosm entries are large drivers. Other e
 
 ---
 
-## Next batch (continuing)
+---
 
-Remaining notebook-available entries to source-validate:
-- s3e1 Kirderf (dmitryuarov coordinate-FE notebook), s3e4 Ollie Kemp (no writeup), s3e8 Craig Thomas, s4e1 Iqbal, s4e4 stopwhispering, s4e5 adaubas, s4e9 Mart Preusse, s5e3 cdeotte (starter), s5e4 greysky, s5e7 Irfan, s5e11 mahog (XGB-only), s6e1 mahog (Ridge meta), s6e3 cdeotte (LR meta), s6e4 kirill0212, ICR room722, TPS Feb 2022 ambrosm, TPS May 2022 ambrosm.
+## Batch 3: Fork-based and pipeline-bundled FE entries (6 entries)
 
-Skip: Cross Sellers, TPS Jun 2022 (buggy notebook), writeup-only entries (s3e7, s3e13, s3e17, s3e24, s4e7, s4e8, s5e5, s5e6).
+### s3e1 Kirderf (n_fe 1 → 3) — **BIG FLIP**
+
+**Sources:** writeup + 41-cell dmitryuarov notebook (`ps-s3e1-coordinates-key-to-victory.ipynb`).
+
+**Stage 2 deltas:** **+2 flips.**
+
+The forked notebook is heavy on geographic FE that Stage 1 (col 53 only) didn't capture:
+
+| Column | Stage 1 | Stage 2 | Evidence |
+|---|---|---|---|
+| 31 `uses_cyclical_encoding` | 0 | **1** | Cell 8: sin/cos lat/lon embeddings at multiple frequencies (`emb_size=20, precision=1e6`). `latlon[..., 0::2] = np.cos(...)`, `latlon[..., 1::2] = np.sin(...)` — produces 40 sinusoidal features (exp_latlon1, exp_latlon2). |
+| 39 `uses_pca_svd_components` | 0 | **1** | Cell 12: `PCA().fit(coordinates)` → pca_lat, pca_lon features. |
+
+**Schema gaps surfaced** (not flipped — singletons):
+- KMeans clustering features (cell 10: 20 cluster centers + haversine distance-to-cluster features)
+- UMAP manifold projection (cell 12: umap_lat, umap_lon)
+- Coordinate rotation features (cell 15: rot_15_x/y, rot_30_x/y, rot_45_x/y, rot_52, rot_60, rot_75)
+
+Kirderf is the case for relaxing col 53 (single-fork-doing-all-FE), and now we see WHAT the dmitryuarov notebook actually produces.
+
+### s3e4 Ollie Kemp (n_fe 1 → 1)
+
+**Sources:** notebook only (`3rd-place-solution-ensemble-catboost.ipynb`, no writeup).
+
+**Stage 2 deltas:** **0 flips.** Cell 5 `create_features` confirms 8 rowwise stats: V_sum, V_min, V_max, V_avg, V_std, V_pos (count>0), V_neg (count<0), V_range — all covered by col 26. Cell 3 CatTune class and cell 14 random_jump pseudo-ensemble are modeling (out-of-scope).
+
+### s4e4 stopwhispering (n_fe 5 → 6)
+
+**Sources:** writeup + 41-cell FE preprocessor notebook + 2 supporting notebooks.
+
+**Stage 2 deltas:** **+1 flip.**
+
+| Column | Stage 1 | Stage 2 | Evidence |
+|---|---|---|---|
+| 9 `uses_power_or_polynomial_transform` | 0 | **1** | Cell 21: `preprocessing.PolynomialFeatures(degree=2)` — creates squared features + pairwise products of metric_cols. Cell 24 FeatureUnion incorporates polynomials into the pipeline. |
+
+Cell 13 `RatioFeaturesGenerator` confirms pairwise anatomical ratios → col 28 ✓. Cell 17 `LogTransformer` confirms log1p → col 8 ✓. OpenFE-generated features (from MD) not visible in this notebook — likely upstream.
+
+### s4e5 adaubas (n_fe 5 → 5)
+
+**Sources:** writeup + 35-cell ENSEMBLE notebook (`pss4e05-1st-place-solution-ensemble-with-ridge.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** This notebook is the Ridge meta-learner over 30+ pre-trained GBM OOFs. The base-model FE (row stats, count thresholds, sorted features) is upstream and NOT in this notebook. Cell 9 confirms permutation importance class → col 48 ✓.
+
+Confidence: `writeup+notes` (downgrade from `notebook+writeup` because the notebook doesn't cover the base-model FE — writeup is the canonical source for those techniques).
+
+### s4e9 Mart Preusse (n_fe 5 → 5)
+
+**Sources:** writeup + 150-cell notebook (`ps4e9-cat-svr-lgbm-nn-py.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** Scanned cells 4-76. Cell 11 regex digit extraction confirms col 43. Cell 72 milage//10000 binning confirms col 10. Notebook is too large to exhaustively scan (encoding error past cell 80). Stage 1 likely covers the headline FE.
+
+### s6e4 kirill0212 (n_fe 7 → 7)
+
+**Sources:** writeup + 59-cell notebook (`ps6e4-ensemble-cv-0-98155.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** Cell 1 FE function confirms multi-position digits + magnitude-scaled rounding (col 11 + col 12). Cell 3 frequency-based mapping (col 6). Cell 4 explicit 2-way categorical combinations via `combinations(columns, r=[2])` with string concatenation + factorize → col 17 (2+ way per v3.1). All 7 Stage 1 cols confirmed.
+
+---
+
+## Batch 3 summary
+
+| Entry | Stage 1 → 2 n_fe | Flips |
+|---|---|---|
+| s3e1 Kirderf | 1 → **3** | +2 (geographic FE) |
+| s3e4 Ollie Kemp | 1 → 1 | 0 |
+| s4e4 stopwhispering | 5 → **6** | +1 (polynomial) |
+| s4e5 adaubas | 5 → 5 | 0 |
+| s4e9 Mart Preusse | 5 → 5 | 0 |
+| s6e4 kirill0212 | 7 → 7 | 0 |
+
+**Total: 3 cells flipped across 6 entries.**
+
+**Pattern:** s3e1 was the biggest under-counter — its forked notebook is heavy on geographic FE that the MD only labeled as "geographic FE uncatalogued (col 53)". Other entries had thorough Stage 1 coverage; mid-range entries (5-7 n_fe) tend to be already well-captured.
+
+**Schema gaps surfaced (Stage 2 cumulative):**
+- 2-way categorical combos (FIXED in v3.1)
+- Single-fork forked FE (FIXED in v3.1)
+- Geographic FE family (KMeans-haversine, UMAP, coordinate rotations) — singleton, defer
+- Sorted-features (siukeitin technique) — appears at adaubas s4e5 and others; defer
+
+**Cumulative Stage 2 deltas so far (17 entries):**
+- Batch 1: 5 flips
+- Batch 2: 7 flips
+- Batch 3: 3 flips
+- **Total: 15 cell flips / 17 × 53 = 901 cells × 1.7% flip rate**
+
+---
+
+## Next batch candidates
+
+Remaining notebook-available:
+- s3e8 Craig Thomas (EDA-only notebook per MD)
+- s4e1 Iqbal (full 53-cell pipeline)
+- s5e3 cdeotte (starter only)
+- s5e4 greysky (training notebook)
+- s5e7 Irfan
+- s5e11 mahog (XGB-only)
+- s6e1 mahog (Ridge meta)
+- s6e3 cdeotte (L4 meta-learner)
+- ICR room722
+- TPS Feb 2022 ambrosm
+- TPS May 2022 ambrosm
+
+Writeup-only (no notebook → max confidence is `writeup+notes`):
+- s3e7 Hardy Xu, s3e13 Umar, s3e17 ISoft, s3e24 Ravi, s4e7 Cross Sellers, s4e8 Optimistix, s5e5 cdeotte, s5e6 cdeotte
+
+Skip: TPS Jun 2022 (buggy notebook).
