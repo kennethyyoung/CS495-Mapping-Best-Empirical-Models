@@ -411,22 +411,109 @@ Cell 4 also confirms col 43 (10 character extracts from f_27 via `df.f_27.str.ge
 
 ---
 
-## Cumulative Stage 2 progress (23 / 45 entries source-validated)
+---
+
+## Batch 5: Remaining notebook-available entries (5 entries)
+
+### s3e8 Craig Thomas (n_fe 3 → 3)
+
+**Sources:** writeup + 81-cell `play-s3e8-eda-models.ipynb`.
+
+**Stage 2 deltas:** **0 flips.** Published notebook is EDA + initial model exploration, NOT the 1,816-model custom framework. Cell 9 shows `has_missing_xyz = (x==0 | y==0 | z==0)` as gemstone-domain missing indicator and `impute_missing_xyz` formula; cells 14/17 do adversarial validation as diagnostic. Whether `has_missing_xyz` makes it into the production framework isn't clear from EDA notebook. Stage 1 from writeup stands.
+
+Confidence: `writeup+notes` (downgrade — notebook doesn't represent winning framework).
+
+### s4e1 Iqbal (n_fe 8 → 9)
+
+**Sources:** writeup + 53-cell full pipeline (`ps4e1-3rd-place-solution.ipynb`).
+
+**Stage 2 deltas:** **+1 flip.**
+
+| Column | Stage 1 | Stage 2 | Evidence |
+|---|---|---|---|
+| 28 `uses_domain_ratios` | 0 | **1** | Cell 21 `feature_generator`: `Products_Per_Tenure = Tenure / NumOfProducts` — banking-domain ratio of customer tenure to product count. |
+
+Other cells confirm Stage 1: cells 18-20 multi-feature rounders (col 10 ✓), cell 21 `IsActive_by_CreditCard = HasCrCard * IsActiveMember` (col 13 ✓), `ZeroBalance = (Balance == 0)` (col 27 ✓), `AgeCat = round(Age/20)` (col 10 ✓), `AllCat` 9-way categorical combo (col 17 ✓). Cell 25 Vectorizer TFIDF + TruncatedSVD on Surname / AllCat / EstimatedSalary / CreditScore (col 42 + col 39 ✓). Cell 30 CatBoostEncoder per-fold (col 1 + col 2 ✓).
+
+### s5e4 greysky (n_fe 6 → 6)
+
+**Sources:** writeup + 6-cell minimal training notebook.
+
+**Stage 2 deltas:** **0 flips.** Published notebook loads pre-built 1,552-feature parquet from external `podcast-listening-huge-dataset` and trains a single LGBM. **No FE in this notebook.** The 1,552-feature pipeline is in a separate `podcast-dataset-generator` notebook NOT in our local set. Stage 1 from writeup stands.
+
+Confidence: `writeup+notes` (downgrade — FE lives in external notebook).
+
+### s6e3 cdeotte (n_fe 19 → 19)
+
+**Sources:** writeup + 3-cell L4 meta-learner notebook.
+
+**Stage 2 deltas:** **0 flips.** Published notebook is the L4 cuML LogisticRegression over 154 base-model OOFs loaded from external dataset. **None of the 19 FE techniques are in this notebook.** All 850 base-model notebooks are external/LLM-generated and not all public. Stage 1 from writeup stands.
+
+Confidence: `writeup+notes` (downgrade — meta-learner doesn't cover any FE).
+
+### ICR room722 (n_fe 1 → 1)
+
+**Sources:** writeup + 9-cell `icr-adv-model.ipynb`.
+
+**Stage 2 deltas:** **0 flips.** Notebook confirms architecture-only approach:
+- Cell 1: Custom NaN fill (`nan_fill = isna().any() * (min - max)`, then replace zeros with median) — sophisticated imputation but NOT a missing-indicator feature
+- Cell 3: Custom Keras layers — `GatedLinearUnit`, `GatedResidualNetwork`, `VariableSelection` (TFT-paper VSN)
+- Cell 5: 3-level VSN with dropout cascade 0.75 → 0.5 → 0.25 (matches writeup)
+- Cell 6: probability reweighting postprocessing
+
+All architecture / preprocessing / postprocessing — no FE techniques. col 51 ✓.
+
+---
+
+## Batch 5 summary
+
+| Entry | n_fe Stage 1 → 2 | Flips |
+|---|---|---|
+| s3e8 Craig Thomas | 3 → 3 | 0 (EDA-only notebook) |
+| s4e1 Iqbal | 8 → **9** | +1 (col 28 Products_Per_Tenure ratio) |
+| s5e4 greysky | 6 → 6 | 0 (FE in external notebook) |
+| s6e3 cdeotte | 19 → 19 | 0 (L4 meta-only) |
+| ICR room722 | 1 → 1 | 0 (architecture-only) |
+
+**Total: 1 cell flip across 5 entries.**
+
+**Pattern:** "Heavyweight" entries where the published notebook is just the meta-learner or starter (s5e4, s6e3, s4e5, s5e3, s6e1) yield 0 flips at Stage 2. The actual FE lives in external/private notebooks. The writeup remains the canonical source for these entries.
+
+---
+
+## Cumulative Stage 2 progress (28 / 45 entries = 62%)
 
 | Batch | Entries | Net flips |
 |---|---|---|
 | 1 (high-priority below-range) | 5 | +5 |
 | 2 (heavyweight + ambrosm) | 6 | +7 |
 | 3 (fork-based + bundled) | 6 | +3 |
-| 4 (meta-only notebooks + TPS) | 6 | +4 (incl 1 down + 2 up) |
+| 4 (meta-only notebooks + TPS) | 6 | +4 |
+| 5 (remaining notebook-available) | 5 | +1 |
 
-**Total: 19 cell flips / 23 × 53 = 1,219 cells × 1.6% flip rate.**
+**Total: 20 cell flips / 28 × 53 = 1,484 cells × 1.3% flip rate.**
 
-The remaining 22 entries are split:
-- **Writeup-only (8):** s3e7, s3e13, s3e17, s3e24, s4e7, s4e8, s5e5, s5e6 — Stage 2 confidence cap is `writeup+notes` since no notebook source exists
-- **Notebook-available not yet validated (14):** s3e8 Craig Thomas, s4e1 Iqbal, s5e4 greysky, s6e3 cdeotte (L4 meta-learner), ICR room722, plus 9 others
+The remaining 17 entries are all **writeup-only** (no published notebook):
+- s3e7 Hardy Xu, s3e13 Umar, s3e17 ISoft, s3e24 Ravi, s4e5 adaubas (notebook is Ridge-only), s4e7 Cross Sellers, s4e8 Optimistix, s5e5 cdeotte, s5e6 cdeotte (pilot — already validated against writeup)
+- Plus a few more without notebooks
 
-Skip: TPS Jun 2022 (buggy notebook).
+For these, Stage 2 confidence cap is `writeup+notes` since no notebook source-validation possible.
+
+Skip: TPS Jun 2022 (buggy notebook per author).
+
+---
+
+## Schema gaps cumulative (post-batch-5)
+
+| Gap | Entries affected | Status |
+|---|---|---|
+| 2-way categorical combos | s5e2, s5e8, s5e11, s6e4 | **FIXED v3.1 col 17** |
+| Single-fork uncatalogued FE | s3e1, s4e7 | **FIXED v3.1 col 53** |
+| Geographic FE family (cluster-distance, UMAP, rotations) | s3e1 Kirderf | singleton, defer |
+| Reverse-transformation + gcd-reduction | TPS Feb 2022 ambrosm | singleton, defer |
+| Domain composite score | s5e11 mahog (default_risk), s3e3 Bill Cruise (AttritionRisk), s3e7 Hardy Xu (could fit) | 2+ entries — **candidate for v3.2** |
+| NN-internal preprocessing as FE | s3e26, ICR, s6e1 | architectural boundary — out-of-scope |
+| Sorted-features (siukeitin technique) | s4e5 adaubas | singleton, defer |
 
 ## Schema gaps cumulative
 
