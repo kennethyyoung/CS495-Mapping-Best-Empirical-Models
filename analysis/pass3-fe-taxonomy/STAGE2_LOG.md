@@ -271,7 +271,20 @@ Confidence: `writeup+notes` (downgrade from `notebook+writeup` because the noteb
 
 **Sources:** writeup + 150-cell notebook (`ps4e9-cat-svr-lgbm-nn-py.ipynb`).
 
-**Stage 2 deltas:** **0 flips.** Scanned cells 4-76. Cell 11 regex digit extraction confirms col 43. Cell 72 milage//10000 binning confirms col 10. Notebook is too large to exhaustively scan (encoding error past cell 80). Stage 1 likely covers the headline FE.
+**Stage 2 deltas:** **0 flips.** Full notebook scanned after fixing en-dash codec issue (scripts/stage2_inspect.py now strips non-ASCII chars before printing on Windows cp932).
+
+Cells 4-76 (EDA): mostly per-category boxplots and price distributions; cell 11 confirms regex extraction of milage/price digits from strings.
+
+Cells 80-150 (FE + modeling):
+- Cell 80 `feat_eng`: `mileage = milage//100` binning (col 10 ✓), regex `(\d+\.?\d*)HP` and `(\d+(\.\d+)?)L` extraction for horsepower/displacement (col 43 ✓)
+- Cell 91 `bin_price`: IQR-based outlier binarization (`price < upper_bound`) — input to CatBoost classifier → col 47 ✓
+- Cell 94 custom `target_encoding` with smoothing parameter, per-fold inside `crossvalidate` — agg returns count/mean/median/std but default call uses median only → col 1 ✓ (single-statistic median TE) and col 2 ✓ (per-fold)
+- Cell 103 SVR pipeline: `make_pipeline(TargetEncoder(smoothing=10, min_samples_leaf=2), StandardScaler, LinearSVR)` → col 1, col 2 ✓
+- Cell 109 `data_train2['price_is_low'] = oof_cat` — CatBoost outlier-classifier OOF added as feature for downstream LGBM → col 47 ✓
+- Cells 112-128: rare-value relabeling (Pass 1 `rare_class_handling`), OHE (Pass 1), NN architecture with `Embedding(CAT_SIZE, CAT_EMB)` layers (architectural, out-of-scope)
+- Cell 138 Ridge with `positive=True` ensembler (Pass 1)
+
+All 5 Stage 1 cols confirmed at code level. No additional FE techniques surfaced.
 
 ### s6e4 kirill0212 (n_fe 7 → 7)
 
