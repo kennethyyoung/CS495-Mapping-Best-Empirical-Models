@@ -1,4 +1,4 @@
-# Pass 3 FE Taxonomy — Stage 1 Complete (all 45 entries)
+# Pass 3 FE Taxonomy — Stage 1 Complete (all 45 entries, v3.1 schema)
 
 **Status:** Stage 1 coding complete. `pass3_source_confidence = notes-only` for all 45.
 **Branch:** `phase9/fe-taxonomy`.
@@ -7,26 +7,32 @@
 
 This document summarizes Stage 1 results: 53 boolean technique columns coded from Pass 2 MDs alone for all 45 entries. Stage 2 (source validation against original writeups + notebooks) will follow.
 
+**v3.1 revisions applied after initial Stage 1 pass:** 4 cells flipped FALSE→TRUE:
+- s5e2 col 17 (all-pairs categorical combos) → n_fe 15→16
+- s5e8 col 17 (TE on bigrams) → n_fe 5→6
+- s6e4 col 17 (pairwise crosses) → n_fe 6→7
+- s4e7 col 53 (proprietary feature store as uncatalogued forked FE) → n_fe 0→1
+
 ---
 
-## Distribution of n_fe_techniques_used
+## Distribution of n_fe_techniques_used (v3.1)
 
 | Count | Entries |
 |---|---|
-| 0 | 1 |
+| 0 | 0 |
 | 1 | 17 |
 | 2 | 5 |
 | 3 | 6 |
 | 4 | 1 |
-| 5 | 5 |
+| 5 | 4 |
 | 6 | 3 |
-| 7 | 2 |
+| 7 | 3 |
 | 8 | 4 |
 | 10 | 1 |
-| 15 | 1 |
+| 16 | 1 |
 | 19 | 1 |
 
-**Median: 2. Mean: ~3.5.** The corpus is bimodal: a long left tail (most entries at 1–3 techniques) and a small right tail (cdeotte s5e2, s5e6, s5e5; s6e2, s6e3) carrying heavyweight ensembles.
+**Median: 2. Mean: ~3.6.** The corpus is bimodal: a long left tail (most entries at 1–3 techniques) and a small right tail (cdeotte s5e2, s5e6, s5e5; s6e2, s6e3) carrying heavyweight ensembles.
 
 This bimodality is the methodologically interesting finding. It echoes the pilot's calibration: most winners do **less FE than expected**, and the schema is correctly distinguishing high-diversity heavyweights from focused recipes.
 
@@ -37,7 +43,7 @@ This bimodality is the methodologically interesting finding. It echoes the pilot
 | Entry | n_fe | Paradigm | Expected | Fit |
 |---|---|---|---|---|
 | **Heavyweight ensemble-stacking (6–12)** | | | | |
-| s5e2 cdeotte | 15 | single-model heavy-FE | 6–15 | **at top** |
+| s5e2 cdeotte | 16 | single-model heavy-FE | 6–15 | **above** |
 | s5e6 cdeotte (pilot) | 6 | heavyweight | 6–12 | **in range** |
 | s5e5 cdeotte | 8 | heavyweight | 6–12 | **in range** |
 | s4e12 cdeotte | 8 | single-model heavy-FE | 6–15 | **in range** |
@@ -50,7 +56,7 @@ This bimodality is the methodologically interesting finding. It echoes the pilot
 | s4e1 Iqbal | 8 | standard | 4–9 | **in range** |
 | s5e11 mahog | 7 | standard | 4–9 | **in range** |
 | s6e1 mahog | 7 | standard | 4–9 | **in range** |
-| s5e8 mahog | 5 | standard | 4–9 | **in range** |
+| s5e8 mahog | 6 | standard | 4–9 | **in range** |
 | s4e4 stopwhispering | 5 | standard | 4–9 | **in range** |
 | s4e9 Mart Preusse | 5 | standard | 4–9 | **in range** |
 | s4e5 adaubas | 5 | standard | 4–9 | **in range** |
@@ -64,10 +70,10 @@ This bimodality is the methodologically interesting finding. It echoes the pilot
 | s3e11 ambrosm | 1 | standard | 4–9 | below |
 | s3e6 viktortaran | 1 | standard | 4–9 | below |
 | s4e8 Optimistix | 1 | standard | 4–9 | below |
-| s4e7 Cross Sellers | 0 | standard | 4–9 | below (under-documented) |
+| s4e7 Cross Sellers | 1 | standard | 4–9 | below (col 53 only — proprietary feature store) |
 | s3e26 Hardy Xu | 1 | NN-stacker standard | 4–9 | below |
 | **Community-template-tweak (3–7)** | | | | |
-| s6e4 kirill0212 | 6 | community-template | 3–7 | **in range** |
+| s6e4 kirill0212 | 7 | community-template | 3–7 | **in range** (top) |
 | s3e3 Bill Cruise | 3 | community-template | 3–7 | **in range** (low) |
 | s4e3 Moonlit | 3 | community-template | 3–7 | **in range** (low) |
 | s3e1 Kirderf | 1 | community-template | 3–7 | below (single-fork) |
@@ -90,9 +96,9 @@ This bimodality is the methodologically interesting finding. It echoes the pilot
 | **No-writeup notebook-only** | | | | |
 | s3e4 Ollie Kemp | 1 | distinctive | n/a | n/a |
 
-**Fit summary:**
-- **In range or above:** 29 / 45 (64%)
-- **Below range:** 16 / 45 (36%)
+**Fit summary (v3.1):**
+- **In range or above:** 30 / 45 (67%)
+- **Below range:** 15 / 45 (33%)
 
 The 36% below-range rate is high. Two structural reasons:
 
@@ -113,7 +119,7 @@ The 36% below-range rate is high. Two structural reasons:
 | 2 | `uses_target_encoding_within_fold` | 6 TRUE (rest null/false) | 13% |
 | 28 | `uses_domain_ratios` | 6 | 13% |
 | 10 | `uses_binning_discretization` | 6 | 13% |
-| 17 | `uses_higher_order_categorical_combos` | 6 | 13% |
+| 17 | `uses_categorical_combos` (2+ way per v3.1) | 9 | 20% |
 | 5 | `uses_count_encoding` | 5 | 11% |
 | 26 | `uses_rowwise_statistics` | 5 | 11% |
 | 32 | `uses_original_target_mean_as_feature` | 5 | 11% |

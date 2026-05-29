@@ -16,6 +16,11 @@ This document defines the structured-coding schema for Pass 3 — the FE taxonom
 5. Clarified column 18 (numerics-as-cats then combos) — applies only when features were originally numeric (int/float) and converted, not when features were already categorical-typed.
 6. Updated expected `n_fe_techniques_used` ranges per paradigm to match what the pilot observed — the schema captures FE technique *diversity*, not feature *count*. A 2,268-feature monster model uses ~7 distinct techniques.
 
+**v3.1 changes (after full Stage 1 pass, see `STAGE1_FULL.md`):**
+
+7. **Col 17 broadened from "3+ way" to "2+ way" categorical combos.** Renamed `uses_higher_order_categorical_combos` → `uses_categorical_combos`. Affects: s5e2 (all pairs), s5e8 bigrams, s6e4 pairwise crosses. The 2-way categorical-combo case was a documented schema gap.
+8. **Col 53 relaxed from "multiple" to "one or more" forked sources with uncatalogued FE.** Affects: Kirderf s3e1 (single fork doing all FE), Cross Sellers s4e7 (1 fork + proprietary feature store). The original "multiple" wording was too strict for these single-fork-with-all-FE cases.
+
 ## Design philosophy
 
 1. **Boolean columns over free text.** Every category is TRUE or FALSE for each of the 45 entries. Avoids the 166-unique-tags problem the Pass 1 `fe_techniques` field has.
@@ -58,7 +63,7 @@ This document defines the structured-coding schema for Pass 3 — the FE taxonom
 | 14 | `uses_pairwise_additive_interactions` | Hand-coded `a+b`, `a-b` between specific feature pairs. | Sums across many features at once (rowwise stats — column 26). |
 | 15 | `uses_threshold_or_binary_flags` | Rule-based binary features: `(a > threshold)`, `(a > x) & (b > y)`. Bill Cruise s3e3 HR risk flags; adaubas s4e5 count-thresholds. | Domain-knowledge binary flags (Group E). |
 | 16 | `uses_brute_force_combinatorial_search` | Systematic enumeration of feature combinations **with a model-in-the-loop selection step** (search and keep best). cdeotte s4e12 145K combos → 170 kept; arunklenin's brute-force at s3e24. | Hand-picked combos (columns 13–15). **Pure enumeration without selection** (cdeotte s5e6 uses all 162 combos without filtering) → use column 17 only. |
-| 17 | `uses_higher_order_categorical_combos` | 3+ way categorical groupings (3 or more columns combined into one composite), with or without further TE/CE on top. cdeotte 2–6-way combos. Covers enumeration with or without selection — **if a brute-force selection step is also present, mark column 16 TRUE in addition**. | Pairwise (2-way) only. |
+| 17 | `uses_categorical_combos` | **2+ way** categorical groupings (2 or more columns combined into a composite), with or without further TE/CE on top. cdeotte 2–6-way combos; mahog s5e8 bigrams; kirill0212 s6e4 pairwise crosses; Iqbal s4e1 4-way Sun_Geo_Gend_Sal. Covers enumeration with or without selection — **if a brute-force selection step is also present, mark column 16 TRUE in addition**. | Pairwise multiplicative or additive numeric interactions (cols 13–14). |
 | 18 | `uses_numerics_as_categoricals_then_combos` | Treating a column that was **originally numeric (int/float)** as categorical (via binning or direct conversion) then combining with other features for combinatorial FE. cdeotte s4e12 numerics-as-cats + TE/CE pattern. | Plain numerics combined with plain numerics. **Does NOT apply when features were already categorical-typed** (e.g., string columns like Soil Type) — those are coded under columns 16/17 directly. |
 
 ### Group D — Aggregates and groupby (8)
@@ -134,7 +139,7 @@ This document defines the structured-coding schema for Pass 3 — the FE taxonom
 |---|---|---|---|
 | 51 | `explicit_minimal_or_no_fe` | Author explicitly states minimal or no FE was used, often as a deliberate choice. cdeotte s5e3 "small data → no FE"; Heitor s3e5 single XGB; ravaghi s4e11 "no FE." | Writeup that simply doesn't mention FE (missing data, not explicit minimal). |
 | 52 | `uses_adversarial_validation_for_fe` | Adversarial validation (train classifier to distinguish train vs test, or synthetic vs original) used to filter features or filter rows. Hardy Xu s3e7 filter original; stopwhispering s4e4 adversarial-validation notebook. | Adversarial validation used only for diagnostic purposes. |
-| 53 | `uses_forked_base_model_fe_uncatalogued` | Winner cites multiple forked public notebooks as base-model sources without enumerating the FE techniques used inside those notebooks. The winning ensemble *includes* those notebooks' FE but it isn't catalogued. Sergey s3e14 (8 forked base OOFs); Moonlit s4e3 (3 OOFs from public notebooks). Flag-only — doesn't double-count the techniques as TRUE in other columns. | Winner who cites one forked notebook AND describes its FE in detail (those techniques get coded individually). |
+| 53 | `uses_forked_base_model_fe_uncatalogued` | Winner cites **one or more** forked public notebooks (or proprietary code repositories) as base-model sources where substantial FE is performed but is NOT enumerated in the writeup. The winning ensemble *includes* those notebooks' FE but it isn't catalogued. Sergey s3e14 (8 forked base OOFs); Moonlit s4e3 (3 OOFs from public notebooks); Kirderf s3e1 (single fork doing all FE); Cross Sellers s4e7 (12-version feature store in proprietary repo). Flag-only — doesn't double-count the techniques as TRUE in other columns. | Winner who describes their forked notebook's FE in detail (those techniques get coded individually). |
 
 ## Source-confidence column (1)
 
