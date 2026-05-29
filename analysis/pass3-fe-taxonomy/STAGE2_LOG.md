@@ -503,7 +503,134 @@ Skip: TPS Jun 2022 (buggy notebook per author).
 
 ---
 
-## Schema gaps cumulative (post-batch-5)
+---
+
+## Batch 6: Writeup-only entries (7 entries, no notebook source)
+
+For these entries no notebook was published. Stage 2 = careful re-read of the original writeup to catch anything the Pass 2 MD missed. Confidence cap: `writeup+notes`.
+
+### s3e7 Hardy Xu (n_fe 1 → 2) — **FLIP**
+
+Writeup re-read finds explicit minimal-FE statement that the MD missed:
+
+> "I played around with creating additional features, but I didn't find anything that improved my CV significantly."
+
+**Stage 2 deltas:** **+1 flip (col 51).**
+
+| Column | Stage 1 | Stage 2 | Evidence |
+|---|---|---|---|
+| 51 `explicit_minimal_or_no_fe` | 0 | **1** | Author explicit no-FE conclusion in §Feature Engineering. |
+
+Other Stage 1 codings confirmed:
+- col 52 (adversarial validation to filter ~17% of original) ✓
+- Opposite-label assignment + 0.5 prediction for test duplicates = postprocessing, NOT col 34 (which requires synthetic-to-original key match — this is train-to-test internal)
+
+### s3e13 Umar (n_fe 2 → 2)
+
+**Stage 2 deltas:** **0 flips.** Writeup confirms:
+- "No feature engineering, all features being used were scaled using a standard scaler" → col 51 ✓
+- Autoencoder bottleneck 64-64-32-16-32-64 + freeze encoder + add 16relu-11softmax head → col 38 ✓
+- Simple averaging of LGBM + NN + autoencoder → Pass 1
+
+### s3e17 ISoft (n_fe 1 → 1)
+
+**Stage 2 deltas:** **0 flips.** Writeup is extremely short (~30 lines). 5 AutoML frameworks + meta-model + 10% from 2 public submissions. No FE described (AutoML handles internally). col 51 ✓.
+
+### s3e24 Ravi (n_fe 2 → 2)
+
+**Stage 2 deltas:** **0 flips.** Writeup confirms brute-force features 80-120 (col 16 ✓) + permutation importance (col 48 ✓). Secondary features tried but did not help. "Probing" = manual weight modification (postprocessing). Original dataset concat = Pass 1.
+
+### s4e7 Cross Sellers (n_fe 1 → 1)
+
+**Stage 2 deltas:** **0 flips.** Writeup describes a 12-version feature store in proprietary GitHub repo with author-itemized contents:
+- "feature importance on a single fold using a simple catboost model" (tree feature importance, not permutation — out-of-scope for col 48)
+- "borrowed ideas from the topper posts in the AutoML component" — sources noted but specific techniques not enumerated
+- Target reversal = postprocessing
+- "What did not work: Linear approaches, Optuna, Hill Climb" — modeling
+
+The col 53 captures the uncatalogued proprietary FE. No additional Stage 2 flips possible without access to the GitHub repo.
+
+### s4e8 Optimistix (n_fe 1 → 1)
+
+**Stage 2 deltas:** **0 flips.** Writeup is detailed (long narrative) but FE-light:
+- siukeitin's "exact solution to original dataset" → probability of being poisonous as feature (col 32 ✓)
+- 72 OOFs + AutoGluon ensembler — modeling
+- "Insert confident disagreements" — postprocessing
+- Hill Climbing for OOF selection — ensemble method
+- Three independent paths to 0.98535 — saturation observation
+
+No additional FE techniques. The writeup is methodologically rich but feature-engineering-thin.
+
+### s5e5 cdeotte (n_fe 8 → 10) — **FLIP**
+
+Writeup re-read finds two techniques worth coding:
+
+> "In my final ensemble 25% of the weight is XGBoost with NVIDIA cuML TargetEncoder features."
+>
+> "CatBoost loves categorical features, so I converted each numerical feature into 9 equal width binned values... Afterward I created combinations of all pairs of columns. The resultant new columns had 81 unique values and were also categorical."
+
+**Stage 2 deltas:** **+2 flips.**
+
+| Column | Stage 1 | Stage 2 | Evidence |
+|---|---|---|---|
+| 2 `uses_target_encoding_within_fold` | null | **1** | cuML TargetEncoder is per-fold inside the standard cdeotte training loop. |
+| 17 `uses_categorical_combos` (2+ way per v3.1) | 0 | **1** | 9-binned numerics combined pairwise → 81 unique cat values used as categoricals. This is 2-way categorical combos, covered by v3.1 col 17 broadening. |
+
+All other Stage 1 cols confirmed:
+- Log1p transforms (col 8 ✓)
+- "all products, divisions, sums, and differences between all pairs of features" (col 13 mult/div ✓ + col 14 sums/diffs ✓)
+- 9 equal-width binning (col 10 ✓)
+- Numerics-as-cats then combos (col 18 ✓)
+- 26 groupby z-score features (col 23 ✓)
+- NN-over-LR + XGB-over-NN residual chain (col 46 ✓)
+
+cdeotte's 100%-retrain-with-1/(K-1)-iter-boost is mentioned for every competition — modeling, out of scope.
+
+---
+
+## Batch 6 summary
+
+| Entry | n_fe Stage 1 → 2 | Flips |
+|---|---|---|
+| s3e7 Hardy Xu | 1 → **2** | +1 (col 51 explicit no-FE) |
+| s3e13 Umar | 2 → 2 | 0 |
+| s3e17 ISoft | 1 → 1 | 0 |
+| s3e24 Ravi | 2 → 2 | 0 |
+| s4e7 Cross Sellers | 1 → 1 | 0 |
+| s4e8 Optimistix | 1 → 1 | 0 |
+| s5e5 cdeotte | 8 → **10** | +2 (col 2 + col 17) |
+
+**Total: 3 cell flips across 7 entries.**
+
+**Pattern for writeup-only:** Most MDs faithfully captured the writeup's FE section. The flips found are:
+- Explicit "tried FE, didn't help" statements get under-recognized (Hardy Xu s3e7)
+- Heavyweight cdeotte signatures (within-fold TE in cuML, 2-way categorical combos with 81-unique-values) get glossed in MDs (s5e5)
+
+---
+
+## Cumulative Stage 2 progress (35 / 45 entries = 78%)
+
+| Batch | Entries | Net flips |
+|---|---|---|
+| 1 | 5 | +5 |
+| 2 | 6 | +7 |
+| 3 | 6 | +3 |
+| 4 | 6 | +4 |
+| 5 | 5 | +1 |
+| 6 (writeup-only) | 7 | +3 |
+
+**Total: 23 cell flips / 35 × 53 = 1,855 cells × 1.2% flip rate.**
+
+The remaining 10 entries already had Stage 2 done either via pilot (s5e6 cdeotte, s3e14 Sergey, s3e5 Heitor) or extended pilot (s5e6, ICR, s3e3 Bill Cruise, s4e9 Mart Preusse). Counting pilot results, **Stage 2 is effectively complete for 38/45 = 84% of the corpus.**
+
+Remaining 7 entries with limited validation:
+- TPS Jun 2022 (buggy notebook — skipped)
+- s3e10 seascape (R-based notebook — not scanned)
+- Others were validated in pilot/extended pilot batches
+
+---
+
+## Schema gaps cumulative (post-batch-6)
 
 | Gap | Entries affected | Status |
 |---|---|---|
