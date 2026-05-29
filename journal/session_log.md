@@ -847,3 +847,141 @@ The three methodology questions from Session 15 (2022+ rationale, cross-sectiona
 Critique documented, Pass 1/Pass 2/Pass 3 methodological positions clarified, Pass 3 source strategy locked. Next branch starts the actual Pass 3 implementation.
 
 `phase8/retrospective` pushed to origin. No code changes on this branch — pure reflection + planning.
+
+---
+
+## Session 17 — May 28-29, 2026
+
+**Branch:** `phase9/fe-taxonomy` (continued from Session 16).
+**Topic:** Pass 3 implementation — schema, pilot, full coding, Stage 2 source validation, aggregates, audit, fixes.
+
+### Pass 3 schema design + pilot
+
+Built a 53-column boolean taxonomy in `analysis/pass3-fe-taxonomy/SCHEMA.md` (v3, post-pilot). The schema is organized into 11 functional groups:
+
+- A: categorical encoding (c01-c07) — TE basic, TE within-fold, TE multi-aggregations, TE alt targets, count enc, freq enc, missing indicator
+- B: numeric transformations (c08-c12)
+- C: interactions/combinatorial (c13-c18)
+- D: aggregates/groupby (c19-c26)
+- E: domain/temporal (c27-c31)
+- F: external/original-derived (c32-c37)
+- G: learned/advanced (c38-c41) — autoencoder latents, PCA/SVD, random projection, gplearn
+- H: text/exotic (c42-c44)
+- I: model-derived-as-features (c45-c47) — pseudo-labels, residual, outlier/aux classifier OOF
+- J: feature selection (c48-c50)
+- K: meta indicators (c51-c53) — explicit no-FE, adversarial validation for FE, forked uncatalogued FE
+
+**User pushed for fine granularity:** "more detailed the better; can combine after but not split vague into detailed after the fact." Schema v1 (24 cols) → v2 (52 cols) → v3 (53 cols) after pilot revisions.
+
+**3-entry pilot** (cdeotte s5e6, Sergey s3e14, Heitor s3e5) surfaced 6 schema issues:
+1. Add c53 for forked-uncatalogued FE
+2. Allow null for c02 (within-fold TE) when writeup ambiguous
+3. Tighten c16 (brute-force) requires model-in-loop selection step
+4. Clarify c18 (numerics-as-cats then combos)
+5. Recalibrate expected n_fe ranges per paradigm
+6. Document out-of-scope techniques (OptimizedRounder, target reversal, etc.)
+
+All 6 applied as v3. Then extended pilot of 5 more entries (adaubas s4e5, greysky s5e4, room722 ICR, Bill Cruise s3e3, Mart Preusse s4e9) validated the schema works at scale.
+
+### Stage 1 — code all 45 entries from Pass 2 MDs
+
+Coded all remaining 37 entries against the v3 schema using their Pass 2 MDs (`pass3_source_confidence = notes-only`). Output: `stage1_data.csv` + `STAGE1_FULL.md`.
+
+**Headline distribution:** median n_fe = 2, mean ~3.5. Bimodal — long left tail (1-3 techniques) and small right tail of heavyweight ensembles (cdeotte s5e2=15, s6e3=19, s6e2=10, s5e5=8). 64% of entries within paradigm-expected range; 36% below.
+
+**v3.1 revisions** after full Stage 1 pass:
+- c17 broadened from 3+ way to 2+ way categorical combos. Renamed `uses_higher_order_categorical_combos` → `uses_categorical_combos`. Affected s5e2 (all-pairs), s5e8 bigrams, s6e4 pairwise crosses.
+- c53 relaxed from "multiple" to "one or more" forked sources with uncatalogued FE. Covered Kirderf s3e1 (single fork = all FE) and Cross Sellers s4e7 (proprietary feature store).
+
+### Stage 2 — source-validate against writeups + notebooks
+
+Six batches of source validation, 35 entries direct + 10 from pilot/extended pilot = 45/45 effectively covered:
+
+1. **Batch 1** (5 high-priority below-range): s3e23 oscarm524, s4e10 omid, s4e3 Moonlit, s3e16 Ravi, s5e8 mahog. +5 flips. Pattern: TE granularity (within-fold) + bundled log transforms.
+2. **Batch 2** (heavyweight + ambrosm): s4e12 cdeotte, s5e2 cdeotte, s6e2 masaya, s3e6 viktortaran, s3e9 ambrosm, s3e11 ambrosm. +7 flips. **ambrosm under-counting** was the big finding: s3e9 jumped 1→5 (concrete domain ratios, threshold-multiplicative interactions, has-component domain flags, custom TargetEncoder per-fold); s3e11 jumped 1→4. ambrosm's MDs emphasize methodology over per-feature FE detail.
+3. **Batch 3** (fork-based + bundled): s3e1 Kirderf, s3e4 Ollie Kemp, s4e4 stopwhispering, s4e5 adaubas, s4e9 Mart Preusse, s6e4 kirill0212. +3 flips. **Kirderf's dmitryuarov coordinate notebook is heavy on geographic FE** (sin/cos lat/lon embeddings + PCA on coordinates + KMeans-haversine + UMAP + coordinate rotations). Three of these are schema gaps (singletons).
+4. **Batch 4** (meta-only + TPS): s5e3 cdeotte starter, s5e7 Irfan, s5e11 mahog XGB, s6e1 mahog Ridge meta, TPS Feb/May 2022 ambrosm. +4 net flips. **TPS May 2022 re-coding**: Stage 1 mis-coded `i_02_21 = (f_21 + f_02 > 5.2).int - (f_21 + f_02 < -5.3).int` as multiplicative (c13). Notebook reveals it's additive sum + threshold flags (c14 + c15). Re-coded c13 FALSE, c14/c15 TRUE.
+5. **Batch 5** (remaining notebook-available): s3e8 Craig Thomas, s4e1 Iqbal, s5e4 greysky, s6e3 cdeotte L4 meta, ICR room722. +1 flip (s4e1 Iqbal's Products_Per_Tenure banking domain ratio).
+6. **Batch 6** (writeup-only): s3e7 Hardy Xu, s3e13 Umar, s3e17 ISoft, s3e24 Ravi, s4e7 Cross Sellers, s4e8 Optimistix, s5e5 cdeotte. +3 flips. **s3e7 explicit minimal-FE statement** was missed in MD ("I played around with creating additional features but did not find anything that improved my CV significantly"). **s5e5 cdeotte** had two granularity details glossed: cuML TargetEncoder per-fold (c02) and CatBoost 9-binned numerics combined pairwise = 81 unique cat values (c17 per v3.1).
+
+**Cumulative: 23 net cell flips across 35 entries = 1.3% flip rate.** Higher than pilot's 0.6%; lower than batches 1-2 alone (~2%). Stage 1 from MDs systematically under-counts when authors' narratives dominate per-feature detail.
+
+**Key methodology finding from Stage 2:** the flip pattern clusters in three predictable places:
+- TE granularity (within-fold vs vanilla) - col 2 was null in Stage 1 for many; notebooks reveal Pipeline(TargetEncoder, ...) per-fold.
+- Pipeline-bundled transformations - log/binning in cell-3 setup blocks that MDs skip.
+- Domain-specific FE - ambrosm concrete-domain ratios, Kirderf's geo FE - hidden by author's narrative-style writeups.
+
+**Technical fix during Stage 2:** `scripts/stage2_inspect.py` was silently crashing on a `–` en-dash character via Windows cp932 codec. Added `_safe()` helper to strip non-ASCII before printing. Re-ran s4e9 cells 80-150 (had been partially scanned); confirmed Stage 1 codings.
+
+### Aggregates analysis
+
+Computed schema-documented aggregations + paradigm summaries from `stage1_data.csv`:
+- `uses_any_target_encoding` = c01 OR c02 OR c03 OR c04
+- `uses_any_groupby` = c19 OR c20 OR c21 OR c22 OR c23 OR c24 OR c25
+- `uses_any_combinatorial_search` = c16 OR (c17 AND c18)
+- `uses_any_original_derived_feature` = c32 OR c33 OR c34 OR c35 OR c36 OR c37
+- `uses_any_model_derived_feature` = c45 OR c46 OR c47
+- `uses_any_explicit_selection` = c48 OR c49 OR c50
+
+**CSV drift discovered.** `stage1_data.csv` accumulated unquoted-comma drift across many incremental edits. Rows have +1/+2/+7 extra fields from commas inside notes. Several attempts to write a clean parser; final approach: read 53 booleans positionally from cols 3-55, recompute n_fe by summing, accept ±1 imperfection in some rows.
+
+### Audit (user request: "Audit the data as an expert data scientist")
+
+Wrote `AUDIT.md` with three tiers of findings:
+
+**Tier 1 (changes conclusions):** single-coder + self-designed schema (no Cohen's κ); paradigm × competition era × author confounded (heavyweight = all s5/s6 cdeotte; minimal-FE = mostly s3); sample sizes too small for percentages (Tilii s5e10 alone moves heavyweight TE% from 100→80); aggregation definitions arbitrary (c16 OR (c17 AND c18) — the AND is a choice); **Group G (autoencoder/PCA/random-projection/gplearn) was missing from any aggregate**; c51 (explicit no-FE) and c53 (forked uncatalogued) counted as +1 in n_fe — Heitor s3e5 gets n_fe=1 for declaring zero FE; c02 null-as-FALSE biases TE-within-fold downward.
+
+**Tier 2 (specific errors):** Kirderf flipped c31+c39 but shows ALL ZEROS in aggregates because Group G isn't aggregated. Tilii has c38/c41/c44/c46 but all aggregate flags = 0. s3e7 Hardy Xu paradigm-assigned to lookup-exploit but his actual exploit is postprocessing not feature lookup.
+
+**Tier 3 (bias and validity):** selection bias (winners only); cdeotte alone is 8 entries (18%) — "heavyweight uses TE" largely "cdeotte uses TE"; survivor bias on technique reporting; schema is analyst's mental model not nature.
+
+### Fixes 1, 2, 5 implemented
+
+User chose the three easy/important fixes:
+
+**Fix 1 (Group G aggregate):** Added `uses_any_learned_derived_feature` = c38 OR c39 OR c40 OR c41. **Revealed: heavyweight 60% Learned%** (Tilii s5e10 autoencoder+GP, s5e6 cdeotte pseudo-labels, s6e2 masaya DVAE+gplearn, s6e3 cdeotte DAE+PCA+GRP — 4/5). Previously invisible. Major second dimension of the heavyweight paradigm beyond TE+Orig.
+
+**Fix 2 (split n_fe):** `n_fe_techniques` (c01-c50, actual FE) vs `n_fe_meta` (c51-c53, meta-signals). Minimal-FE techniques mean dropped 1.86 → 0.86, meta mean = 1.0 — confirms the 1.0 was entirely c51 declarations. Heaviness gradient now **11× (9.6 vs 0.86)** instead of 5× — honest representation.
+
+**Fix 5 (document single-coder limitation):** Added prominent "read first" section to STAGE2_AGGREGATES.md. User correction noted: this is a single human coder (Kenneth Young) working with Claude (Anthropic AI) as research collaborator. All schema/paradigm/flip decisions made by human in dialogue with Claude. Claude read writeups, scanned notebooks, proposed codings, surfaced gaps, ran scripts. Human reviewed each batch before commit. No inter-rater reliability computed (no Cohen's κ). Numbers are exploratory, not established facts.
+
+### Current state (May 29, 2026)
+
+**Pass 3 complete with audit and fixes.** Files in `analysis/pass3-fe-taxonomy/`:
+- `SCHEMA.md` — v3.1 locked
+- `PILOT.md` — 3-entry pilot
+- `STAGE1_RESULTS.md` — extended pilot (5 entries)
+- `STAGE1_FULL.md` — Stage 1 all 45 entries
+- `STAGE2_LOG.md` — Stage 2 per-batch validation notes
+- `stage1_data.csv` — canonical per-entry boolean data
+- `stage2_aggregates.csv` — per-entry aggregates (with audit fixes)
+- `STAGE2_AGGREGATES.md` — paradigm summary + per-column TRUE rates + per-entry table (with audit fixes)
+- `AUDIT.md` — methodological audit
+
+Plus `scripts/pass3_aggregates.py` and `scripts/stage2_inspect.py`.
+
+**Headline (audit-fixed) per-paradigm summary:**
+
+| Paradigm | n | tech mean | meta mean | TE% | Combo% | Orig% | Learned% |
+|---|---|---|---|---|---|---|---|
+| heavyweight | 5 | 9.6 | 0.0 | 80% | 20% | 60% | 60% |
+| single-model-heavy | 3 | 9.67 | 0.0 | 100% | 100% | 33% | 0% |
+| ensemble-standard | 19 | 4.0 | 0.11 | 53% | 16% | 11% | 5% |
+| community-template | 4 | 3.5 | 0.5 | 25% | 0% | 0% | 25% |
+| lookup-exploit | 4 | 1.0 | 0.25 | 0% | 0% | 75% | 0% |
+| problem-fit-nn | 3 | 1.67 | 0.33 | 0% | 0% | 0% | 0% |
+| minimal-fe | 7 | 0.86 | 1.0 | 0% | 0% | 0% | 14% |
+
+**Audit-recommended next steps not yet done** (next branch will tackle robustness checks):
+- Run 4 robustness checks: drop s6e3 outlier, subset to notebook+writeup confidence (n=22), subset to s4 era onward, drop cdeotte entries (n=37).
+- Rescope claims in research report from "heavyweight paradigm" to "cdeotte/mahog/community heavyweight cluster."
+- Independent second coder for inter-rater reliability (Cohen's κ) — likely out of scope for capstone.
+
+**Lessons learned this session:**
+1. **Fine-grained schema pays off.** v1 24 cols → v3 53 cols revealed structure (60% Learned% in heavyweight) that coarser coding would have missed.
+2. **Single-coder + AI collaboration produces drift.** 23 cell flips across 35 Stage-2 entries (1.3% rate) is bounded below by what we measured; bounded above is unknown without inter-rater.
+3. **Aggregation design matters more than coding precision.** Stage 1/2 codings were ~98% stable but the Group G omission hid a major dimension. Fixing aggregates surfaced more than fixing individual cells did.
+4. **CSV-as-data-store is fragile for incremental coding.** Many small edits accumulated unquoted-comma drift. A structured editor + DB or even a strict-quoted CSV would have avoided ±1 n_fe errors.
+5. **Meta-signals (c51/c53) should be separated from technique counts at the outset.** Conflating them made n_fe a misleading summary scalar until fix #2.
+
+`phase9/fe-taxonomy` pushed to origin at commit 6de32c8. Next branch starts robustness checks.
