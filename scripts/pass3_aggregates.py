@@ -80,6 +80,12 @@ GROUP_ORIG_DERIVED = ["c32_orig_target_mean", "c33_orig_target_advanced", "c34_e
 GROUP_MODEL_DERIVED = ["c45_pseudo_labels", "c46_residual_features", "c47_outlier_aux_classifier"]
 GROUP_SELECTION = ["c48_permutation_importance", "c49_sfs_backward", "c50_correlation_constant"]
 GROUP_COMBINATORIAL = ["c16_brute_force", "c17_higher_order_combos", "c18_numerics_as_cats"]
+# Fix #1 (audit): add learned-derived feature aggregate so Group G entries appear in summaries
+GROUP_LEARNED_DERIVED = ["c38_autoencoder_latents", "c39_pca_svd", "c40_random_projection",
+                         "c41_genetic_programming"]
+# Fix #2 (audit): separate technique columns from meta-signal columns for n_fe split
+TECHNIQUE_COLS_RANGE = (1, 50)  # c01..c50 inclusive are actual FE techniques
+META_COLS = ["c51_minimal_no_fe", "c52_adversarial_validation_fe", "c53_forked_base_uncatalogued"]
 
 def to_int(v):
     """Convert CSV cell to int 0/1, treating empty/null as 0."""
@@ -141,8 +147,15 @@ def main():
         comp = row["competition_ref"]
         rank = row["finish_rank"]
         conf = row["pass3_source_confidence"]
-        # Re-compute n_fe by summing the parsed booleans (CSV value has drifted)
-        n_fe = sum(to_int(row.get(c, "0")) for c in bool_cols)
+
+        # Fix #2: split n_fe into techniques (c01-c50) and meta-signals (c51-c53)
+        # c51 (explicit no-FE) is an anti-FE signal; counting it as +1 conflates
+        # "did many techniques" with "explicitly did 0." Keep them separate.
+        tech_cols = [c for c in bool_cols
+                     if TECHNIQUE_COLS_RANGE[0] <= int(c[1:3]) <= TECHNIQUE_COLS_RANGE[1]]
+        n_fe_techniques = sum(to_int(row.get(c, "0")) for c in tech_cols)
+        n_fe_meta = sum(to_int(row.get(c, "0")) for c in META_COLS)
+        n_fe_total = n_fe_techniques + n_fe_meta
 
         # Aggregate flags
         any_te = int(any(to_int(row.get(c)) for c in GROUP_TE))
@@ -155,6 +168,8 @@ def main():
         any_orig_derived = int(any(to_int(row.get(c)) for c in GROUP_ORIG_DERIVED))
         any_model_derived = int(any(to_int(row.get(c)) for c in GROUP_MODEL_DERIVED))
         any_selection = int(any(to_int(row.get(c)) for c in GROUP_SELECTION))
+        # Fix #1: learned-derived aggregate (Group G) — was missing
+        any_learned_derived = int(any(to_int(row.get(c)) for c in GROUP_LEARNED_DERIVED))
 
         paradigm = PARADIGM.get(comp, "unknown")
 
@@ -163,11 +178,14 @@ def main():
             "finish_rank": rank,
             "paradigm": paradigm,
             "pass3_source_confidence": conf,
-            "n_fe_techniques_used": n_fe,
+            "n_fe_techniques": n_fe_techniques,
+            "n_fe_meta": n_fe_meta,
+            "n_fe_total": n_fe_total,
             "uses_any_target_encoding": any_te,
             "uses_any_groupby": any_groupby,
             "uses_any_combinatorial_search": any_combinatorial,
             "uses_any_original_derived_feature": any_orig_derived,
+            "uses_any_learned_derived_feature": any_learned_derived,
             "uses_any_model_derived_feature": any_model_derived,
             "uses_any_explicit_selection": any_selection,
         })
@@ -201,16 +219,18 @@ def main():
         if not entries:
             continue
         n = len(entries)
-        n_fe_vals = [r["n_fe_techniques_used"] for r in entries]
+        tech_vals = [r["n_fe_techniques"] for r in entries]
+        meta_vals = [r["n_fe_meta"] for r in entries]
         agg_cols = ["uses_any_target_encoding", "uses_any_groupby", "uses_any_combinatorial_search",
-                    "uses_any_original_derived_feature", "uses_any_model_derived_feature",
-                    "uses_any_explicit_selection"]
+                    "uses_any_original_derived_feature", "uses_any_learned_derived_feature",
+                    "uses_any_model_derived_feature", "uses_any_explicit_selection"]
         summary = {
             "paradigm": p,
             "n_entries": n,
-            "n_fe_min": min(n_fe_vals),
-            "n_fe_max": max(n_fe_vals),
-            "n_fe_mean": round(sum(n_fe_vals) / n, 2),
+            "n_fe_tech_min": min(tech_vals),
+            "n_fe_tech_max": max(tech_vals),
+            "n_fe_tech_mean": round(sum(tech_vals) / n, 2),
+            "n_fe_meta_mean": round(sum(meta_vals) / n, 2),
         }
         for c in agg_cols:
             count = sum(r[c] for r in entries)
@@ -286,33 +306,52 @@ def main():
     # Write markdown report
     lines = []
     lines.append("# Pass 3 FE Taxonomy — Aggregates and Paradigm Summaries\n")
-    lines.append(f"**Status:** Stage 2 source-validated. {len(rows)} entries.")
+    lines.append(f"**Status:** Stage 2 source-validated. {len(rows)} entries. Audit fixes 1, 2, 5 applied.")
     lines.append("**Date:** 2026-05-29.")
     lines.append("**Data:** `stage1_data.csv` + computed in `stage2_aggregates.csv`.\n")
-    lines.append("> **Note:** `stage1_data.csv` accumulated unquoted-comma drift across many incremental Stage 1/2 edits.")
-    lines.append("> The parser used here reads exactly 53 boolean cells positionally from columns 3–55; n_fe is recomputed by summing those booleans.")
-    lines.append("> Per-column TRUE counts and paradigm patterns are reliable. Per-entry n_fe values may be off by ±1 for ~7 entries due to inherited drift in the trailing boolean cells; these affect the minimal-FE / problem-fit / lookup paradigm means slightly but not headline patterns.\n")
-    lines.append("Aggregations follow the schema's documented paths:")
+    lines.append("## Methodological limitations (read first)\n")
+    lines.append("**Coding methodology.** This dataset was coded by a single human (Kenneth Young) working with Claude (Anthropic's AI assistant) as a research collaborator. All schema design decisions, paradigm assignments, and per-cell flip judgments were made by the human in dialogue with Claude. Claude read writeups, scanned notebooks, proposed codings, surfaced schema gaps, and ran the aggregation scripts. The human reviewed each batch's proposed flips and the schema revisions before commit. The schema, the paradigm taxonomy, and the headline framings are products of this human–AI collaboration, not of AI alone.")
+    lines.append("")
+    lines.append("**No inter-rater reliability computed.** A second independent coder did not re-code any entries. Cohen's κ is unknown. The percentages in this document are *one coder's classifications*, not measurements with quantified inter-rater agreement. Readers should treat the numbers as exploratory rather than as established facts about the Kaggle winners' corpus.")
+    lines.append("")
+    lines.append("**Known limitations to factor in when reading:**")
+    lines.append("- **n=45 with author concentration:** cdeotte 8 entries (18%), mahog + ambrosm 4 each. 'Heavyweight paradigm' patterns largely reflect these authors' shared recipes.")
+    lines.append("- **Paradigm × era × author confounded:** heavyweight = all s5/s6; minimal-FE = mostly s3. Can't disentangle with this sample.")
+    lines.append("- **Small per-paradigm n:** single-model-heavy and problem-fit-NN are n=3 each; percentages at this n have wide CIs.")
+    lines.append("- **CSV drift:** `stage1_data.csv` accumulated unquoted-comma drift across many incremental edits. Parser reads 53 booleans positionally from cols 3–55 and recomputes counts. Per-column TRUE rates and paradigm patterns are reliable; per-entry n_fe may be off by ±1 for ~7 entries.")
+    lines.append("")
+    lines.append("See `AUDIT.md` for a fuller methodological audit and `STAGE2_LOG.md` for per-batch validation notes.\n")
+    lines.append("---\n")
+    lines.append("## Aggregation definitions\n")
+    lines.append("Aggregations follow the schema's documented paths, plus the Group G aggregate added per audit fix #1:")
     lines.append("- `uses_any_target_encoding` = c01 OR c02 OR c03 OR c04")
     lines.append("- `uses_any_groupby` = c19 OR c20 OR c21 OR c22 OR c23 OR c24 OR c25")
     lines.append("- `uses_any_combinatorial_search` = c16 OR (c17 AND c18)")
     lines.append("- `uses_any_original_derived_feature` = c32 OR c33 OR c34 OR c35 OR c36 OR c37")
+    lines.append("- `uses_any_learned_derived_feature` = c38 OR c39 OR c40 OR c41 **(NEW per audit fix #1)**")
     lines.append("- `uses_any_model_derived_feature` = c45 OR c46 OR c47")
     lines.append("- `uses_any_explicit_selection` = c48 OR c49 OR c50\n")
+    lines.append("**n_fe split (per audit fix #2):**")
+    lines.append("- `n_fe_techniques` = sum of c01..c50 (actual FE techniques used)")
+    lines.append("- `n_fe_meta` = sum of c51 (explicit no-FE), c52 (adv-val for FE), c53 (forked uncatalogued FE) — meta-signals *about* FE, not techniques themselves")
+    lines.append("- The previous combined `n_fe_techniques_used` conflated 'used many techniques' with 'explicitly used 0' (entries with c51=TRUE got n_fe=1 for declaring no FE). Split makes the heaviness gradient honest.\n")
     lines.append("---\n")
 
     # Paradigm summary table
     lines.append("## Per-paradigm summary\n")
-    lines.append("| Paradigm | n | n_fe min–max (mean) | TE% | Groupby% | Combo% | Orig-derived% | Model-derived% | Selection% |")
-    lines.append("|---|---|---|---|---|---|---|---|---|")
+    lines.append("`n_fe_tech` counts actual FE techniques (c01–c50); meta-signal columns (c51 explicit-no-FE, c52 adv-val-for-FE, c53 forked-uncatalogued) are reported separately as mean. See AUDIT.md fix #2 for rationale.\n")
+    lines.append("| Paradigm | n | n_fe_tech min–max (mean) | meta mean | TE% | Groupby% | Combo% | Orig% | Learned% | Model% | Sel% |")
+    lines.append("|---|---|---|---|---|---|---|---|---|---|---|")
     for s in paradigm_summary:
         lines.append(
             f"| {s['paradigm']} | {s['n_entries']} | "
-            f"{s['n_fe_min']}–{s['n_fe_max']} ({s['n_fe_mean']}) | "
+            f"{s['n_fe_tech_min']}–{s['n_fe_tech_max']} ({s['n_fe_tech_mean']}) | "
+            f"{s['n_fe_meta_mean']} | "
             f"{s['uses_any_target_encoding_pct']}% | "
             f"{s['uses_any_groupby_pct']}% | "
             f"{s['uses_any_combinatorial_search_pct']}% | "
             f"{s['uses_any_original_derived_feature_pct']}% | "
+            f"{s['uses_any_learned_derived_feature_pct']}% | "
             f"{s['uses_any_model_derived_feature_pct']}% | "
             f"{s['uses_any_explicit_selection_pct']}% |"
         )
@@ -338,18 +377,19 @@ def main():
 
     # Per-entry table
     lines.append("## Per-entry aggregates\n")
-    lines.append("| Entry | Paradigm | n_fe | TE | Groupby | Combo | Orig | Model | Sel | Confidence |")
-    lines.append("|---|---|---|---|---|---|---|---|---|---|")
+    lines.append("| Entry | Paradigm | tech | meta | TE | Groupby | Combo | Orig | Learned | Model | Sel | Confidence |")
+    lines.append("|---|---|---|---|---|---|---|---|---|---|---|---|")
     def y(v): return "✓" if v else "—"
-    for r in sorted(agg_rows, key=lambda x: (x["paradigm"], -x["n_fe_techniques_used"])):
+    for r in sorted(agg_rows, key=lambda x: (x["paradigm"], -x["n_fe_techniques"])):
         # short entry key
         ek = r["competition_ref"].replace("playground-series-", "PS-").replace("tabular-playground-series-", "TPS-").replace("icr-identify-age-related-conditions", "ICR")
         lines.append(
-            f"| {ek} r{r['finish_rank']} | {r['paradigm']} | {r['n_fe_techniques_used']} | "
+            f"| {ek} r{r['finish_rank']} | {r['paradigm']} | {r['n_fe_techniques']} | {r['n_fe_meta']} | "
             f"{y(r['uses_any_target_encoding'])} | "
             f"{y(r['uses_any_groupby'])} | "
             f"{y(r['uses_any_combinatorial_search'])} | "
             f"{y(r['uses_any_original_derived_feature'])} | "
+            f"{y(r['uses_any_learned_derived_feature'])} | "
             f"{y(r['uses_any_model_derived_feature'])} | "
             f"{y(r['uses_any_explicit_selection'])} | "
             f"{r['pass3_source_confidence']} |"
