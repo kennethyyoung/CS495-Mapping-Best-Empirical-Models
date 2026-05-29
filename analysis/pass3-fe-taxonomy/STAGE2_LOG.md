@@ -323,22 +323,118 @@ All 5 Stage 1 cols confirmed at code level. No additional FE techniques surfaced
 
 ---
 
-## Next batch candidates
+---
 
-Remaining notebook-available:
-- s3e8 Craig Thomas (EDA-only notebook per MD)
-- s4e1 Iqbal (full 53-cell pipeline)
-- s5e3 cdeotte (starter only)
-- s5e4 greysky (training notebook)
-- s5e7 Irfan
-- s5e11 mahog (XGB-only)
-- s6e1 mahog (Ridge meta)
-- s6e3 cdeotte (L4 meta-learner)
-- ICR room722
-- TPS Feb 2022 ambrosm
-- TPS May 2022 ambrosm
+## Batch 4: Notebook-but-meta-only + TPS entries (6 entries)
 
-Writeup-only (no notebook → max confidence is `writeup+notes`):
-- s3e7 Hardy Xu, s3e13 Umar, s3e17 ISoft, s3e24 Ravi, s4e7 Cross Sellers, s4e8 Optimistix, s5e5 cdeotte, s5e6 cdeotte
+### s5e3 cdeotte (n_fe 1 → 1)
+
+**Sources:** writeup + 14-cell STARTER notebook (`rapids-svc-w-feature-engineering-lb-0-856.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** The published notebook is the *starter* (LB 0.856), NOT the 2nd-place SVC submission. Cell 9 builds pairwise multiplicative interactions; cell 10 does forward feature selection via GroupKFold-by-year. Per the writeup, the actual 2nd-place SVC used "data as is without FE." Stage 1 col 51 reflects the 2nd-place submission and stands.
+
+Confidence: `writeup+notes` (downgrade — notebook doesn't represent the 2nd-place artifact).
+
+### s5e7 Irfan (n_fe 1 → 1)
+
+**Sources:** notebook only (no writeup in local set; `2nd_introverts-and-extroverts-0-974-competetion-win.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** Cells 1-16 scanned (Config class + data load + 6 EDA visualizations). Pedagogical notebook style with extensive markdown. `match_p` exact-key-match lookup is the canonical winning move per spreadsheet — captured in col 34. No other FE techniques visible in early cells.
+
+Confidence: `notebook+writeup` (notebook is the only available source; writeup_url points to discussion sorted by votes, not authorial narrative).
+
+### s5e11 mahog (n_fe 7 → 8)
+
+**Sources:** writeup + 6-cell XGB-only notebook (`pg-s5e11-xgb-cv-0-92818-pb-0-92923.ipynb`).
+
+**Stage 2 deltas:** **+1 flip.**
+
+| Column | Stage 1 | Stage 2 | Evidence |
+|---|---|---|---|
+| 26 `uses_rowwise_statistics` | 0 | **1** | Cell 4: `X_train[f'TE_{agg}'] = X_train[TE_columns].agg(agg, axis=1)` for `agg_list = ['mean', 'std', 'min', 'max']` — row-wise aggregations across the TE-derived columns. Same pattern as greysky s5e4. |
+
+Cell 2 also reveals `default_risk = debt_to_income_ratio * 0.40 + (850 - credit_score)/850 * 0.35 + interest_rate/100 * 0.25` — a weighted-sum domain composite. No clean schema column (not col 27 binary, not col 28 ratio). Schema gap.
+
+Cell 4 confirms sklearn `TargetEncoder(cv=10)` per-fold → col 2 ✓.
+
+### s6e1 mahog (n_fe 7 → 7)
+
+**Sources:** writeup + 15-cell Ridge META notebook (`pg-s6e1-ridge-ensemble-cv-8-56634-lb-8-57273.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** Notebook is Ridge meta-learner only; loads 190 OOFs from external `pg-s6e1-oofs` dataset. Base-model FE is NOT in this notebook. Cell 4 `CenteredIsotonicRegression` per-OOF before stacking is postprocessing.
+
+Confidence: `writeup+notes` (downgrade — base-model FE not source-validatable from meta-learner notebook).
+
+### TPS Feb 2022 ambrosm (n_fe 1 → 1)
+
+**Sources:** writeup + 20-cell notebook (`tpsfeb22-exploiting-the-flawed-random-generation.ipynb`).
+
+**Stage 2 deltas:** **0 flips.** Notebook confirms:
+- Cell 6: `bias_vector` + integer recovery + `np.gcd.reduce` across feature columns — distinctive **gcd-reduction technique** (schema gap)
+- Cell 12: `transform(Z)` reconstructs the 100-element decamer sequence from per-element counts — **reverse-transformation** (schema gap)
+- Cell 16: `RadiusNeighborsClassifier(p=1, weights='distance')` Manhattan-distance lookup → col 35 ✓
+
+Reverse-transformation and gcd-reduction are distinctive techniques not in the schema (singletons in the corpus).
+
+### TPS May 2022 ambrosm + Pourchot (n_fe 2 → 3) — **RE-CODING**
+
+**Sources:** writeup + 23-cell Pourchot keras notebook (`tpsmay22-keras-test-tuned.ipynb`).
+
+**Stage 2 deltas:** **3 cell changes (1 down, 2 up). Net +1.**
+
+| Column | Stage 1 | Stage 2 | Evidence |
+|---|---|---|---|
+| 13 `uses_pairwise_multiplicative_interactions` | 1 | **0** | Stage 1 mis-coded based on MD's generic "pairwise interaction features." Notebook reveals these are **additive sums with thresholds**, not multiplicative. |
+| 14 `uses_pairwise_additive_interactions` | 0 | **1** | Cell 4: `i_02_21 = (df.f_21 + df.f_02 > 5.2).astype(int) - (df.f_21 + df.f_02 < -5.3).astype(int)`, `i_05_22 = (df.f_22 + df.f_05 > ...)`, `i_00_01_26 = df.f_00 + df.f_01 + df.f_26 > ...` — additive sums of 2-3 features. |
+| 15 `uses_threshold_or_binary_flags` | 0 | **1** | Same cell 4: thresholds applied to additive sums produce ternary {-1, 0, +1} features. |
+
+Cell 4 also confirms col 43 (10 character extracts from f_27 via `df.f_27.str.get(i).apply(ord) - ord('A')` and `unique_characters = len(set(s))`).
+
+**Methodology note:** Stage 1 read "pairwise interaction features" generically as multiplicative. Stage 2 reveals the actual mechanic. This is the kind of re-coding the source-validation step is designed to catch.
+
+---
+
+## Batch 4 summary
+
+| Entry | n_fe Stage 1 → 2 | Flips |
+|---|---|---|
+| s5e3 cdeotte (starter, not 2nd-place) | 1 → 1 | 0 |
+| s5e7 Irfan | 1 → 1 | 0 |
+| s5e11 mahog | 7 → **8** | +1 (col 26) |
+| s6e1 mahog (Ridge meta only) | 7 → 7 | 0 |
+| TPS Feb 2022 ambrosm | 1 → 1 | 0 |
+| TPS May 2022 ambrosm | 2 → **3** | +2 / -1 net (re-coding) |
+
+**Total: 4 cell changes (3 flips up + 1 flip down) across 6 entries.**
+
+**Key finding:** Stage 1 mis-coded `i_02_21` etc. as multiplicative (col 13) based on the MD's generic "interaction" wording. Source validation revealed they're additive thresholded ternary features (col 14 + col 15). This is the type of re-coding Stage 2 is designed to catch.
+
+---
+
+## Cumulative Stage 2 progress (23 / 45 entries source-validated)
+
+| Batch | Entries | Net flips |
+|---|---|---|
+| 1 (high-priority below-range) | 5 | +5 |
+| 2 (heavyweight + ambrosm) | 6 | +7 |
+| 3 (fork-based + bundled) | 6 | +3 |
+| 4 (meta-only notebooks + TPS) | 6 | +4 (incl 1 down + 2 up) |
+
+**Total: 19 cell flips / 23 × 53 = 1,219 cells × 1.6% flip rate.**
+
+The remaining 22 entries are split:
+- **Writeup-only (8):** s3e7, s3e13, s3e17, s3e24, s4e7, s4e8, s5e5, s5e6 — Stage 2 confidence cap is `writeup+notes` since no notebook source exists
+- **Notebook-available not yet validated (14):** s3e8 Craig Thomas, s4e1 Iqbal, s5e4 greysky, s6e3 cdeotte (L4 meta-learner), ICR room722, plus 9 others
 
 Skip: TPS Jun 2022 (buggy notebook).
+
+## Schema gaps cumulative
+
+1. ~~2-way categorical combos~~ → fixed in v3.1 (col 17)
+2. ~~Single-fork uncatalogued FE~~ → fixed in v3.1 (col 53 relax)
+3. Geographic FE family (KMeans-haversine, UMAP, coordinate rotations) — Kirderf s3e1 dmitryuarov singleton
+4. Reverse-transformation + gcd-reduction (TPS Feb 2022) — singleton
+5. Domain composite score (mahog s5e11 default_risk, Bill Cruise s3e3 AttritionRisk) — appearing 2+ times
+6. NN-internal preprocessing (PLE, per-feature embeddings) — singleton family
+
+Recommend: add `uses_domain_composite_score` column after Stage 2 completes (2+ entries justify); defer geo/reverse-transformation as singletons.
