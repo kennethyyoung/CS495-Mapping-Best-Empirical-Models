@@ -985,3 +985,90 @@ Plus `scripts/pass3_aggregates.py` and `scripts/stage2_inspect.py`.
 5. **Meta-signals (c51/c53) should be separated from technique counts at the outset.** Conflating them made n_fe a misleading summary scalar until fix #2.
 
 `phase9/fe-taxonomy` pushed to origin at commit 6de32c8. Next branch starts robustness checks.
+
+---
+
+## Session 18 — May 29 – Jun 1, 2026
+
+**Branches:** `phase9/fe-taxonomy` (audit fixes) → `phase10/robustness-checks` (new).
+**Topic:** Apply Pass 3 audit fixes, run robustness checks, surface what the corpus actually defends.
+
+### Audit fixes applied (continuation of Session 17 work, committed on `phase9/fe-taxonomy`)
+
+User chose three audit fixes after the discussion of which were highest-ROI:
+
+**Fix #1 — Add `uses_any_learned_derived_feature` aggregate (c38 OR c39 OR c40 OR c41).** Group G (autoencoder latents, PCA/SVD, random projection, gplearn) had been omitted from all aggregate paths. Adding it surfaced a previously-invisible finding: **heavyweight 60% Learned%**. Tilii s5e10 (autoencoder + gplearn), s5e6 cdeotte (pseudo-labels), s6e2 masaya (DVAE + gplearn), s6e3 cdeotte (DAE + PCA + GRP) — 4 of 5 heavyweight entries hit Group G. Without this fix, these techniques were "invisible" at the paradigm-summary level; both Kirderf s3e1 (PCA on coordinates) and Tilii s5e10 showed all-zero aggregate rows despite doing 2-4 distinct techniques.
+
+**Fix #2 — Split n_fe into techniques + meta.** Previously `n_fe = sum(c01..c53)` conflated actual FE techniques with anti-FE meta-signals. Heitor s3e5 (explicit minimal-FE per author) had n_fe=1 for *declaring zero FE*. New: `n_fe_techniques` (c01-c50) + `n_fe_meta` (c51 explicit no-FE, c52 adv-val for FE, c53 forked uncatalogued). Minimal-FE techniques mean dropped 1.86 → **0.86**, meta mean = 1.0 — the entire previous mean was c51 declarations. **Heaviness gradient now 11× (9.6 vs 0.86) instead of 5×** — honest representation.
+
+**Fix #5 — Document single-coder limitation prominently.** Added "read first" section to STAGE2_AGGREGATES.md. User correction noted: this is a single human coder (Kenneth Young) working with Claude (Anthropic AI) as research collaborator. Schema design, paradigm assignments, per-cell flip judgments were made by the human in dialogue with Claude; Claude read writeups, scanned notebooks, proposed codings, surfaced schema gaps, ran scripts; human reviewed each batch before commit. No inter-rater reliability (no Cohen's κ). Numbers are exploratory, not established facts.
+
+Committed on `phase9/fe-taxonomy` at `6de32c8`. Session log updated at `ba18a81`.
+
+### Robustness checks (`phase10/robustness-checks` branch)
+
+Per AUDIT.md tier-1 recommendation: four jackknife-style subsets to test which patterns survive when confounding sources of variation are removed.
+
+| Subset | n | Purpose |
+|---|---|---|
+| Baseline | 45 | Reference |
+| Drop s6e3 cdeotte (n_fe=19 outlier) | 44 | Test whether heavyweight pattern depends on single extreme entry |
+| Notebook+writeup confidence only | 22 | Test whether patterns hold at high-data-quality subset |
+| s4 era onward (Jan 2024+) | 24 | Test temporal stability — paradigm vs era confound |
+| Drop cdeotte entries | 39 | Direct test of author-confounding (cdeotte is 6 entries = 13%) |
+
+Implemented in `scripts/pass3_robustness.py`. Results in `analysis/pass3-fe-taxonomy/ROBUSTNESS_CHECKS.md`.
+
+### Key findings
+
+**Patterns that survive all checks (most defensible):**
+
+1. **Ensemble-standard is remarkably robust** (n=19 absorbs perturbations). TE% stays 53-73% across subsets; tech mean stays 4.0-5.1.
+2. **Lookup-exploit Orig% stays high** (true by paradigm definition; not really a finding).
+3. **Minimal-FE genuinely uses <1 technique on average** (0.83-1.0 across subsets, after fix #2).
+
+**Patterns that strengthen under robustness checks (newly defensible):**
+
+1. **Heavyweight Learned% goes from 60% baseline → 100% when cdeotte is dropped.** Both remaining heavyweight entries (Tilii s5e10 autoencoder+GP, masaya s6e2 DVAE+gplearn) use Group G. This is the **most defensible heavyweight finding** — it isn't a cdeotte artifact and it's the dimension that fix #1 made visible.
+2. **Ensemble-standard TE% jumps from 53% baseline → 73% in s4-onward subset.** TE adoption is era-dependent: modern (s4+) ensembles use TE more than s3-era ensembles. A new finding the baseline obscured.
+
+**Patterns that weaken substantially (need rescoping):**
+
+1. **Heavyweight tech mean: 9.6 → 7.25 (drop s6e3) → 6.5 (drop cdeotte).** "Heavyweight does heavy FE" is significantly cdeotte-driven. The defensible claim is "heavyweight winners average ~6-7 FE techniques."
+2. **Single-model-heavy "100% combinatorial" survives the percentage, but n drops to 1 (greysky s5e4) without cdeotte.** Two of three single-model-heavy entries are cdeotte (s4e12, s5e2). The 100% claim is sustained by 3 entries that include 2 cdeotte entries.
+
+**Unsurprising / unhelpful:**
+
+1. **Era subset keeps heavyweight n=5 unchanged** — all heavyweight entries are already s5/s6. We can't separate paradigm from era when they're co-extensive.
+2. **Notebook+writeup subset collapses heavyweight to n=1** — most heavyweight notebooks are meta-learner-only (confidence: writeup+notes because the actual base-model FE lives in external/proprietary code). Can't test heavyweight at high-confidence.
+
+### Implications for the research report
+
+1. **Rescope "heavyweight uses heavy FE"** to either:
+   - "The cdeotte/mahog/community heavyweight cluster averages ~9 techniques" (narrower, accurate)
+   - "Heavyweight winners average 6-7 FE techniques" (drop-cdeotte estimate)
+2. **Lead with the Learned% finding** for heavyweight. It's the strongest claim that survives drop-cdeotte (100% Learned% for non-cdeotte heavyweight). It's also "new" in that fix #1 surfaced it from a previously-invisible dimension.
+3. **Report n with every percentage** ("TE = 80% (4/5)" not "TE = 80%").
+4. **Add limitations section** noting cdeotte concentration (6 entries = 13%) and paradigm × era confound.
+5. **Single-model-heavy claims at n=3 should be qualified** — drop-cdeotte leaves n=1; the percentages become uninterpretable.
+
+### Current state
+
+**Pass 3 + audit + robustness checks complete.** Files added on `phase10/robustness-checks`:
+- `analysis/pass3-fe-taxonomy/ROBUSTNESS_CHECKS.md` — side-by-side comparison tables + survival assessment
+- `scripts/pass3_robustness.py` — reproducible subset computation
+
+`phase10/robustness-checks` pushed to origin at `ceb3948`.
+
+**Lessons learned this session:**
+
+1. **Audit fixes that change aggregation reveal more than fixes that change individual cells.** Fix #1 (Group G aggregate) surfaced the heavyweight Learned% finding that 35 entries of Stage 2 source-validation didn't.
+2. **Robustness checks separated weak from strong findings.** The "60% Learned%" looked moderate at baseline; jackknifing showed it strengthens to 100% when cdeotte is dropped. That kind of insight is only visible through subset comparison.
+3. **Some patterns turned out to be tautological.** Lookup-exploit Orig% = 75% is just the paradigm definition. Era × paradigm couldn't be separated because heavyweight = s5/s6 by construction.
+4. **Author concentration matters more than expected.** cdeotte is 13% of the corpus but drives 2-3 of the headline findings. A non-cdeotte heavyweight analysis is essentially impossible (n=2 left).
+5. **The "single-coder with Claude" framing is the right one.** Not "AI alone" and not "human alone." Human made all decisions; Claude did the high-volume reading/scanning/proposing. The methodological limitation isn't avoided by either framing.
+
+**Audit-recommended next steps still not done** (for paper-quality work, not capstone):
+- Independent second coder + Cohen's κ on a subset.
+- Rescoping pass on `outputs/report/research_report.md` to reflect what the robustness checks show.
+- Add 4-10 non-winning entries (4th-10th place) as a control.
