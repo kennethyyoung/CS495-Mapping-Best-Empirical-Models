@@ -1072,3 +1072,81 @@ Implemented in `scripts/pass3_robustness.py`. Results in `analysis/pass3-fe-taxo
 - Independent second coder + Cohen's κ on a subset.
 - Rescoping pass on `outputs/report/research_report.md` to reflect what the robustness checks show.
 - Add 4-10 non-winning entries (4th-10th place) as a control.
+
+---
+
+## Session 19 — Jun 1, 2026
+
+**Branch:** `phase11/report-rescope` (new from `phase10/robustness-checks`).
+**Topic:** Methodological discussion of what the data supports; decision to add non-winning controls; Phase 1 feasibility protocol drafted.
+
+### Methodological discussion (no code changes yet)
+
+User asked for an expert-data-scientist discussion of what data we have, what each Pass gives us, reliability, and direction. The structured framing:
+
+**Pass 1 — replicable structured coding.** Captures the "demographic" of each entry — competition metadata, model architecture, ensemble method, CV strategy. ~95% replicable on categorical fields. Exception is free-text `fe_techniques` (163 unique tags across 166 entries), which motivated Pass 3.
+
+**Pass 2 — interpretive distillation.** Per-writeup MDs with "What's actually original," "Dataset constraints," etc. Where the paradigm typology, community-graph claims, and most actual findings came from. *Least* replicable — paradigm boundaries are fuzzy; a second analyst might propose 3 or 6 paradigms instead of 4-5.
+
+**Pass 3 — structured FE-specific data.** 53 boolean columns × 45 entries with explicit inclusion/exclusion criteria. Cleanest empirical layer but narrowest scope. Surfaced findings (heavyweight Learned% 60% baseline → 100% drop-cdeotte) that Pass 2's narrative reading would never have produced.
+
+**Reliability ranking:** Pass 1 categoricals > Pass 3 booleans > Pass 1 paradigm > Pass 2 community-graph > Pass 2 typology. Pass 1 is the most "scientific" in replicability sense but it captured demographic data; Pass 2 produced most findings but is least replicable; Pass 3 is cleanest empirical layer but narrowest.
+
+**Defensibility tiers identified:**
+- **Strong** (survives all robustness): TE is most-used FE (40%); heavyweight uses learned-derived features; minimal-FE uses <1 technique; recurring-author community exists.
+- **Medium** (defensible with scope qualifiers): heavyweight winners average 6-9 FE techniques (depends on cdeotte inclusion); modern ensembles use TE more than s3-era; cdeotte's KGMON propagates.
+- **Weak** (not defensible from this data alone): per-paradigm percentages at n<5; causal claims; generalization beyond winners-only.
+
+### Decision: add non-winning controls (Path 3)
+
+User considered four directions for the next contribution:
+
+1. Add non-winning controls (Path 3) — addresses biggest validity threat (selection bias)
+2. Cohen's κ via second coder — addresses inter-rater reliability
+3. Participation data — addresses originator-vs-canonizer claim
+4. Multivariate analysis on existing data — wouldn't add power at n=45
+
+User chose Path 3 because it "comes closest to seeing the difference between winners and non-winners."
+
+### Hidden problem discussed: ranks 2-3 already on disk are not real controls
+
+I initially over-promised by noting 30/45 competition folders already have 2+ writeups. User correctly pushed back: those are rank 2-3 entries (still top 3, just lower rank), not "non-winners" in any meaningful sense. Photo-finish margins (top 3 within 0.00002 in many competitions) make 1st vs 2nd-3rd mostly a margin-of-noise question. Plus many of those lack notebooks.
+
+This shifted strategy from "use what's on disk" to "scrape rank 4-20 from Kaggle" — Path 3 proper. Realistic effort estimate revised upward from 20-30 hours to **50-65 hours**.
+
+### Phase 1 feasibility pilot protocol drafted
+
+User asked for concrete protocol with question: "How should I select from 4-20? Lowest rank available notebook plus writeup?"
+
+That selection rule is correct for the pilot (maximum-distance feasibility test). For Phase 2 it should switch to stratified sampling by rank band to avoid self-selection bias.
+
+`analysis/controls/PROTOCOL_PHASE1.md` drafted with:
+- 5 target competitions chosen for high community engagement (s4e8 Optimistix, s4e10 omid, s5e11 mahog, s6e3 cdeotte, s4e7 Cross Sellers)
+- Per-competition discovery protocol (~60 min): pull LB ranks 4-20, check Discussion + Code + Writeups tabs per entry, categorize content (A=writeup+nb, B=writeup, C=nb, D=discussion, E=brief, F=nothing)
+- Selection rule: lowest rank with content in A-D
+- Pass 3 boolean coding only — no Pass 1, no Pass 2, no paradigm assignment (typology was developed from winners, circular to apply)
+- Separate `controls_data.csv` so existing winners' analyses aren't disturbed
+- Success criteria: ≥3 codeable entries across 5 pilot competitions = scale to Phase 2; <1/competition = pivot
+- Decision memo template (`PILOT_RESULTS.md`)
+- Explicit anti-patterns documented (don't fall back to rank 2-3, don't code paradigms, don't run stat tests on n=5)
+- Time budget: ~10 hours total for pilot
+
+### Honest expectation set with user
+
+Two likely pilot outcomes:
+- **Outcome A** (TE rate winners 40-50%, controls 20-30%): validates winner-specific framing
+- **Outcome B** (winners and controls roughly equal at 35-45%): TE is community-standard; forces report to identify what *actually* distinguishes winners (probably Learned% from fix #1)
+
+Both outcomes are publishable. Outcome B is actually more interesting because it forces tighter claims.
+
+Also noted: controls only address selection bias (C1). They don't fix single-coder reliability (A1) or paradigm × era confound (A2). Limitations section will still need those.
+
+### Current state
+
+`phase11/report-rescope` at `8467f30` — protocol drafted, no coding yet. New branch `phase12/control-coding-pilot` for actual discovery + Pass 3 coding work to follow.
+
+**Lessons learned this session:**
+1. **Layered analysis is good for reliability but bad for unified claims.** Pass 1/2/3 each address different questions; combining them into a single defensible narrative requires careful scope management.
+2. **The biggest validity threat isn't always the most fixable.** Selection bias is the biggest threat; it requires real new data. Inter-rater reliability is also a big threat but requires recruiting a second person. Author concentration is unfixable without different sampling.
+3. **Honest framing strengthens claims, not weakens them.** "We tested 5 competitions and found ≥3 codeable controls" is a stronger statement than "we have controls" because it includes the methodological honesty.
+4. **Pilot-first design saves time.** Committing to a 50-65 hour study without a feasibility check would be a real mistake. 10-hour pilot can detect methodology failure early.
