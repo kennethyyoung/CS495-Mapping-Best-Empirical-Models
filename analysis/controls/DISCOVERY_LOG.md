@@ -10,7 +10,7 @@
 | 1 | playground-series-s6e4 | 19 | ? | ? | ? | kirill0212 r1 | community-template | |
 | 2 | playground-series-s6e3 | 16 | ? | ? | ? | cdeotte r1 | heavyweight | |
 | 3 | playground-series-s6e2 | 15 | emreduman05 | writeup + 2 NBs | `15th Place Solution _ Kaggle.txt`, `15th_heart-disease-basic-eda.ipynb`, `15th_predicting_heart_disease_s6e2.ipynb` | masaya r1 | heavyweight | **Coded.** n_fe_tech=4 (TE basic, TE within-fold, freq enc, pairwise mult). Adopted cdeotte's nested K-fold. Stark contrast to masaya's 10 techniques — no Group G, no original-derived stats. |
-| 4 | playground-series-s5e10 | 14 | ? | ? | ? | Tilii r1 | heavyweight | |
+| 4 | playground-series-s5e10 | 14 | metamodels | writeup + meta-only NB | `S5E10 _ 14th place solution _ Kaggle.txt`, `14th-place-simple-average-oof-ensemble.ipynb` | Tilii r1 | heavyweight | **Coded.** n_fe_tech=2 (TE basic, residual). Notebook is just meta-averager loading external OOFs. Base-model FE for 100+ pooled models is UNENUMERATED in writeup. Source confidence: writeup-only. Caveat: actual FE diversity probably higher than 2. |
 | 5 | playground-series-s5e8 | 15 | ? | ? | ? | mahog r2 | ensemble-standard | |
 
 (Author handle / content type / filenames to be filled in as we process each entry.)
