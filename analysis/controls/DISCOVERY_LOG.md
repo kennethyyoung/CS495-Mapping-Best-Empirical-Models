@@ -8,7 +8,7 @@
 | # | Competition | Control rank | Author | Content type | Local files | Winner (coded) | Winner's paradigm | Notes |
 |---|---|---|---|---|---|---|---|---|
 | 1 | playground-series-s6e4 | 19 | ? | ? | ? | kirill0212 r1 | community-template | |
-| 2 | playground-series-s6e3 | 16 | ? | ? | ? | cdeotte r1 | heavyweight | |
+| 2 | playground-series-s6e3 | 16 | mhamza0810 | writeup + NB | `16th Place Solution - Ridge Ensembling _ Kaggle.txt`, `16th_Place_ps-s6e3-pytabkit-ensemble-baseline.ipynb` | cdeotte r1 | heavyweight | **Coded.** n_fe_tech=9. Rich FE module: freq enc, digits, deviations, round-flags, n-gram combos, rowwise counts, domain ratios, cyclical embeddings, ORIG_proba. **DVAE WAS AVAILABLE but explicitly dropped** (cell 5 cols_to_drop). No other Group G. Highest control n_fe_tech yet. |
 | 3 | playground-series-s6e2 | 15 | emreduman05 | writeup + 2 NBs | `15th Place Solution _ Kaggle.txt`, `15th_heart-disease-basic-eda.ipynb`, `15th_predicting_heart_disease_s6e2.ipynb` | masaya r1 | heavyweight | **Coded.** n_fe_tech=4 (TE basic, TE within-fold, freq enc, pairwise mult). Adopted cdeotte's nested K-fold. Stark contrast to masaya's 10 techniques — no Group G, no original-derived stats. |
 | 4 | playground-series-s5e10 | 14 | metamodels | writeup + meta-only NB | `S5E10 _ 14th place solution _ Kaggle.txt`, `14th-place-simple-average-oof-ensemble.ipynb` | Tilii r1 | heavyweight | **Coded.** n_fe_tech=2 (TE basic, residual). Notebook is just meta-averager loading external OOFs. Base-model FE for 100+ pooled models is UNENUMERATED in writeup. Source confidence: writeup-only. Caveat: actual FE diversity probably higher than 2. |
 | 5 | playground-series-s5e8 | 15 | ? | ? | ? | mahog r2 | ensemble-standard | |
