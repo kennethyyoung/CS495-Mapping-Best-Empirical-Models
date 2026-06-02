@@ -1150,3 +1150,123 @@ Also noted: controls only address selection bias (C1). They don't fix single-cod
 2. **The biggest validity threat isn't always the most fixable.** Selection bias is the biggest threat; it requires real new data. Inter-rater reliability is also a big threat but requires recruiting a second person. Author concentration is unfixable without different sampling.
 3. **Honest framing strengthens claims, not weakens them.** "We tested 5 competitions and found ≥3 codeable controls" is a stronger statement than "we have controls" because it includes the methodological honesty.
 4. **Pilot-first design saves time.** Committing to a 50-65 hour study without a feasibility check would be a real mistake. 10-hour pilot can detect methodology failure early.
+
+---
+
+## Session 20 — Jun 1–2, 2026
+
+**Branch:** `phase12/control-coding-pilot` (new from `phase11/report-rescope`).
+**Topic:** Phase 1 pilot (5 controls) → Phase 1.5 (+2) → Phase 2 expansion (+3). 10 controls coded total. Critical elite-tier control problem surfaced.
+
+### Phase 1 pilot — 5 controls coded
+
+| # | Comp | Rank | Author | Paradigm | n_fe_tech | Notable |
+|---|---|---|---|---|---|---|
+| 1 | s6e4 | 19 | elenkapetrova | community-template | 7 | Control > winner (7 vs 6). Fork-heavy both. |
+| 2 | s6e3 | 16 | mhamza0810 | heavyweight | 9 | Highest control technique count. DVAE was available, explicitly dropped. |
+| 3 | s6e2 | 15 | emreduman05 | heavyweight | 4 | Photo-finish 0.00001 from winner. Stark gap to masaya's 10. |
+| 4 | s5e10 | 14 | metamodels | heavyweight | 2 | Photo-finish 0.00001. Meta-only NB, FE diversity probably undercount. |
+| 5 | s5e8 | 15 | tilii7 | ensemble-std | 3 | **AUTHOR OVERLAP** — s5e10 r1 winner. GP signature persists. |
+
+### Phase 1.5 — added 2 (s5e5, s5e6) to test Group G claim
+
+- **s5e5 r8 pinoystat** — photo-finish 0.00005. Explicit minimal FE. But cdeotte winner ALSO has 0 Group G at s5e5 — comparison doesn't test Group G claim.
+- **s5e6 r21 oscarm524** — **2nd AUTHOR OVERLAP** (s3e23 r2 winner). 100+ base models + 50+ LDA stackers. Explicit "Feature engineering didn't work." Winner-tech minus control-tech = 5. Heavyweight FE-intensity gap holds even when Group G doesn't.
+
+### Phase 2 — added 3 (s5e4, s4e11, s4e10)
+
+- **s5e4 r6 masaishi** — single-model-heavy. **REVERSE PATTERN**: control 13 techniques vs greysky winner 6. Single-model-heavy winners win via DEPTH not BREADTH.
+- **s4e11 r25 cdeotte** — **3rd AUTHOR OVERLAP**. cdeotte's own 25th-place finish BEFORE his first PS win at s4e12 next month. Minimal-FE paradigm structurally null comparison as anticipated.
+- **s4e10 r10 adaubas** — **4th AUTHOR OVERLAP** (s4e5 r1 winner). LR of 4 meta-learners. Permutation-importance signature consistent with his s4e5 win.
+
+### Headline findings from 10 controls
+
+- **Author overlap rate: 4/10 (40%)** — Tilii, oscarm524, cdeotte, adaubas. The "winner" label captures a one-month outcome within a small recurring elite pool.
+- **Heavyweight FE-intensity gap survives** even at photo-finish margins (s6e2, s5e10, s5e5).
+- **Group G gap holds for s6e2 (winner 1, control 0)** but failed test at s5e5 (both 0) and was reversed at s5e8 (winner 0, control 1). Original claim ("heavyweight winners use Group G; controls don't") narrowed.
+- **Single-model-heavy reverse pattern** discovered — first paradigm-specific reversal of winner-tech-count gap.
+- **Community-template paradigm** has no Group G in either rank — null comparison structurally.
+
+### Methodological challenge surfaced: elite-tier control problem
+
+User pushed back: given the 40% author-overlap rate, do rank 6-25 entries actually function as "controls" or are they all elite-tier near-winners? My acknowledgment: rank 4-25 is top 1% of competition population, not "typical competitor." Controls test winner-vs-near-winner gap, not winner-vs-community gap. Original audit C1 (selection bias) is only partially addressed.
+
+Laid out three options:
+
+- **Option A — Acknowledge narrowing.** Rescope every claim from "winners vs non-winners" to "winners vs near-winning elite tier." 5-10 hr writing effort. Within-elite findings (Group G heavyweight, technique-count gap, reverse pattern, author overlap) defensible. Doesn't address community-baseline question.
+- **Option B — Continue Phase 2 same scope.** 15-25 hr. Marginal value highest at ensemble-standard (only n=2/19). Doesn't change framing. Confirms patterns at higher n.
+- **Option C — Different control source** (public notebooks by LB quartile OR rank 100+ discussion descriptions). 30-40 hr. Actually addresses C1 selection bias. Methodologically correct extension but substantial work + unit-of-analysis complications.
+
+**My recommendation: Option A for capstone delivery.** The 40% author-overlap finding is genuinely the strongest result and doesn't require more data. C is the right move if extending past capstone.
+
+### s3e26 discussion (deferred)
+
+User suggested s3e26 as next control. Local content available is rank 39 luficer-G — well outside the 4-20 protocol range and beyond our previous deepest (s4e11 r25). Flagged scope concern: at rank 39 we'd be sampling a different competitor tier than other 10 controls. Winner Hardy Xu r2 is notes-only confidence anyway. User deferred.
+
+### Current state
+
+`phase12/control-coding-pilot` at `5d74a3a`. 10 controls coded in `analysis/pass3-fe-taxonomy/controls_data.csv`. `analysis/controls/DISCOVERY_LOG.md` and `analysis/controls/PILOT_RESULTS.md` exist but the latter needs Option-A rescoping (elite-tier acknowledgment + photo-finish reframe).
+
+**Lessons learned this session:**
+1. **Author overlap is a finding, not a flaw.** I initially treated overlap as noise in the control selection; user reframed it as the headline empirical observation about elite-tier composition.
+2. **Photo-finish margins force claim reframing.** When control and winner are within 0.00001 LB score, "winners use technique X, non-winners don't" becomes "winners *prefer* technique X at the same metric scores." Different claim, still empirically grounded.
+3. **Survivorship in robustness checks is easy to misread.** Earlier I read "drop-cdeotte = 100% Group G" as pattern strengthening; on inspection it was survivorship (the dropped entries were 0-Group-G, remaining were 1). Corrected.
+4. **The audit's C1 concern isn't fully closeable with near-winner controls.** Near-winners are by definition selected on outcome too. Real C1 closure requires sampling competitors who didn't medal at all — different methodology, different work.
+
+---
+
+## Session 21 — Jun 2, 2026
+
+**Branch:** `phase12/control-coding-pilot`.
+**Topic:** Coded 11th control (s6e1 r14 Ravi). Surfaced a second selection filter — documentation self-selection — that reframes how much weight the author-overlap statistic can bear.
+
+### 11th control coded: s6e1 r14 ravi20076
+
+Ravi Ramakrishnan, **FIFTH author overlap** (now 5/11 = 45%). Already in winners corpus at s3e16 r3 and s3e24 r3. His own writeup self-reports a streak: s5e2 r2 / s5e4 r4 / s5e6 r28 / s5e8 r3-5 / s5e10 r4 / s5e11 r8 — seven straight top-30 PS finishes. Coded notebook+writeup, **12 FE techniques** (ties masaishi for highest control count). Source caveat: downloaded notebook is his "Public Baseline V4" (his own words: "simple replica of public kernels" with a within-fold leak fix) — a subset of the final TABM+RealMLP+XGB+LGBM+CatBoost blend, so writeup is primary; baseline notebook corroborates the FE.
+
+### Methodological insight: documentation self-selection (a SECOND selection filter)
+
+User observed that among rank 4-30 entries, the lower the rank, the more exclusively the writeups come from **recurring documenters** — the habitual posters who write up every season regardless of where they land. Ravi is the proof: he has a rank-**28** writeup (s5e6) linked from his own s6e1 post.
+
+This means the control sample is filtered **twice**: (1) outcome (top ~1%), and (2) wrote a public writeup. The documentation filter is correlated with being a serial elite competitor, so it structurally over-samples the recurring guild.
+
+Consequence for the 45% overlap statistic — split honestly:
+- **Artifact component:** if writeups at rank 4-30 come from a pool of ~10-15 habitual documenters, ANY two writeup-filtered samples overlap heavily almost regardless of true leaderboard composition. So strictly the overlap shows the *documentation community* is small, not directly that the *winning* community is small.
+- **Genuine residual:** documentation explains why we SEE these names; it does not explain why they keep landing at rank 14 not rank 1400. Recurrence of *high finishes* among documenters is still real skill-persistence evidence — observed through the documentation keyhole.
+
+Tighter defensible claim: **"the documented top of PS leaderboards is a small recurring guild"** — not "the winners are a small clique."
+
+Key design implication: **going deeper in rank does NOT escape the filter** — it tightens it (casual competitors document even less the lower they finish). So this observation is evidence FOR Option A (accept scope) or Option C (change instrument: public NBs by LB quartile, rank-100+ discussion blurbs from non-writeup-writers), and AGAINST Option B (more rank-4-30 writeups = more of the same guild). The winners corpus carries the identical documentation filter, so the winner-vs-control comparison stays internally apples-to-apples; neither sample represents a "typical strong competitor."
+
+Recorded as a report-ready named limitation ("Documentation self-selection in the control sample") appended to `PILOT_RESULTS.md`, refining the existing Â§3.7 "Writeup availability bias" and "No external original solutions" limitations.
+
+**Lessons learned this session:**
+1. **A statistic can be real and instrument-induced at once.** The 45% overlap is both a genuine observation and partly a product of the documentation filter; honesty requires naming both halves rather than picking one.
+2. **Sampling deeper is not the same as sampling broader.** Lower ranks don't relax the documentation filter; only changing the instrument (non-writeup sources) does.
+3. **The "public baseline" trap.** A downloaded notebook can be an author's public-baseline replica, not their final solution — verify before crediting FE to the entry; lean on the writeup as canonical.
+
+---
+
+## Session 22 - Jun 2, 2026
+
+**Branch:** `phase12/control-coding-pilot`.
+**Topic:** Discovered + repaired structural corruption in the Pass 3 FE-taxonomy CSVs; confirmed n_fe convention; staged intra-rater reliability.
+
+### What happened
+Coded s6e1 r14 (ravi20076 - FIFTH author overlap) then, computing Pass 3 stats, found BOTH `stage1_data.csv` (45 winners) and `controls_data.csv` (11) were structurally corrupted: rows hand-typed into raw CSV had wrong boolean-field counts (52/54/55 vs 53), unquoted commas in notes, and n_fe field errors. Only 19/45 winners and 1/11 controls parsed cleanly. NOT a coding-judgment problem - the transcription drifted (git "row drift" commits). The judgments survived in the notes.
+
+### Repair (all validated)
+- **controls**: rebuilt 11 rows from authoritative TRUE-sets; 4 changed (masaishi n_fe 13->12 via GitHub repo; adaubas 0->1; oscarm524/cdeotte c50/c52 shift artifacts -> notes). 
+- **winners**: rebuilt 45 rows - 29 source/doc/note-verified (read 8 source notebooks: s3e1 PCA, s4e5 STAGE1_RESULTS table, s5e8 GP cell-0, s4e1 TFIDF, s4e9 regex, minimal-FE cluster, etc.), 14 intact-booleans, 2 flagged non-local (s5e4, s6e1). Cross-validated against STAGE1_FULL per-column totals (col51=8 exact; col2=14 correctly reflects Stage-2 within-fold flips).
+- **tooling**: `validate_pass3.py` integrity gate (both PASS); rebuild scripts kept for provenance; `.bak` backups.
+
+### Convention confirmed (user)
+`n_fe_techniques_used` EXCLUDES c51 (minimal/no-FE) and c53 (forked/uncatalogued) - they stay as flags but aren't summed. Creates a real n_fe=0 tier; makes winners consistent with controls.
+
+### Reliability staged (intra-rater, no 2nd coder)
+`blind_recode_sheet.csv` - seeded 12-entry stratified sample for the user to blind-code from source only; compare to v1; report % agreement + Gwet AC1 / group-level kappa. Claude-as-recoder rejected (not independent -> measures consistency not reliability). AI-assistance disclosure flagged for §3.7.
+
+**Lessons:**
+1. **Run a strict parser early.** Visual inspection can't catch "52 vs 53 zeros"; the corruption hid for months until a column-strict parse + n_fe checksum exposed it.
+2. **Checksums catch shortcuts.** The "trust booleans" pass looked valid but the per-column total (col51 8->2) proved it wrong - forcing proper note/source reconstruction.
+3. **Repair != re-code.** Restored documented intent; did NOT add newly-found missed techniques (masaishi c07/c43/c29) to preserve scope - flagged for any future re-code.
