@@ -137,15 +137,17 @@ The analytical strategy used a three-pass coding design — field-level coding (
 
 ### 3.5 Evaluation Metrics
 
-Because the unit of analysis is one already-completed competition solution and no new model is trained, the standard machine learning evaluation metrics (RMSE, accuracy, F1, etc.) do not apply to the meta-analysis itself. The evaluation framework instead consisted of three indicators.
+Because the unit of analysis is one already-completed competition solution and no new model is trained, the standard machine learning evaluation metrics (RMSE, accuracy, F1, etc.) do not apply to the meta-analysis itself. The evaluation framework instead consisted of four indicators.
 
-**Coupling support rate.** Defined as the number of entries supporting a promoted coupling divided by the number of entries where the coupling is testable. Coupling support rates were the primary indicator of whether each of the six promoted couplings is empirically supported by the corpus. The `strong` threshold of 0.75 was set a priori based on the small sample size (typical `n_testable` between 5 and 40), with the intention that couplings reaching this threshold could be defended as documented patterns rather than informal observations.
+**Coupling support rate.** Defined as the number of entries supporting a promoted coupling divided by the number of entries where the coupling is testable. Coupling support rates were the indicator used for the coupling analysis specifically — whether each of the six promoted couplings is empirically supported by the corpus. The `strong` threshold of 0.75 was set a priori based on the small sample size (typical `n_testable` between 5 and 40), with the intention that couplings reaching this threshold could be defended as documented patterns rather than informal observations.
+
+**Feature-engineering prevalence and winner–control comparison.** For the feature-engineering analysis (Sections 4.4–4.5), the primary indicators were group-level prevalence — the percentage of entries using at least one technique within a family — and, for the winner-versus-control comparison, the within-competition paired difference in technique count (`n_fe`) across the 11 winner–control pairs. The paired difference was evaluated with a sign test on the per-pair direction (which member did more feature engineering); group-level prevalence was compared descriptively between the winner and control corpora.
 
 **Field completeness rate.** For each schema field, the proportion of entries with a substantive value (anything other than `not_described`, `not_applicable`, or null) was reported. Fields with fill rates below 60% were flagged as too sparse to support reliable conditional analysis.
 
 **Paradigm distribution and stability.** The distribution of paradigm assignments across the corpus (and by era cohort) was reported, with attention to (1) which paradigms recur across multiple eras and (2) which paradigms cluster in specific eras only. Paradigms appearing in at least two eras were treated as candidates for generalization; paradigms confined to a single era were treated as descriptive observations only.
 
-A significance level of α = 0.05 was used where chi-square tests of independence were applicable on 2 × 2 contingency tables. Given the exploratory nature of the analysis and the small sample size (N = 45), chi-square and Fisher's exact-test p-values are reported as supporting evidence rather than as definitive tests of hypotheses.
+A significance level of α = 0.05 was used where chi-square tests of independence were applicable on 2 × 2 contingency tables, and a sign test was applied to the paired winner–control comparison (Section 4.5). Given the exploratory nature of the analysis and the small sample sizes (N = 45 winners; 11 paired comparisons), chi-square, Fisher's exact-test, and sign-test p-values are reported as supporting evidence rather than as definitive tests of hypotheses.
 
 ### 3.6 Coding Reliability
 
