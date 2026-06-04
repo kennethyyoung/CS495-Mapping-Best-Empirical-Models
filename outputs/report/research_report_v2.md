@@ -186,7 +186,7 @@ All work was performed in Python 3.13, with dependencies managed by Poetry (`pyp
 | Git / GitHub | — | Version control |
 | Python standard library | 3.13 | `csv` / `json` I/O, `statistics` (medians), `collections.Counter` (frequency counts) |
 
-Reliability statistics (Cohen's κ, Gwet's AC1) and the reported significance values (chi-square, Fisher's exact, and the paired sign test) were computed with custom Python routines in `notebooks/02_reanalysis.ipynb`; the project does not depend on a dedicated statistics package such as SciPy. The `pyproject.toml` also declares modeling libraries (scikit-learn, XGBoost, LightGBM, CatBoost) retained from the initial project scaffold; these are not used by the meta-analysis, which trains no models. The project was developed on Windows 11 Pro using PowerShell as the primary shell.
+Reliability statistics (Cohen's κ, Gwet's AC1, positive agreement) and the paired sign test are reproduced from the committed data by `analysis/pass3-fe-taxonomy/stats.py`; the coupling chi-square and Fisher's exact tests were computed with custom routines in `notebooks/02_reanalysis.ipynb`. These computations use only the Python standard library — the project does not depend on a dedicated statistics package such as SciPy. The `pyproject.toml` also declares modeling libraries (scikit-learn, XGBoost, LightGBM, CatBoost) retained from the initial project scaffold; these are not used by the meta-analysis, which trains no models. The project was developed on Windows 11 Pro using PowerShell as the primary shell.
 
 ### 3.8 Limitations
 
