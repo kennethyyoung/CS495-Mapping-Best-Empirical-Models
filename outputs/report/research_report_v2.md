@@ -35,9 +35,9 @@ Second, and inseparable from the first, is the *social structure* of how winning
 
 ### 1.3 Research Questions
 
-The analysis is organized around four questions:
+Building on the two gaps above — whether winning is technically distinctive, and whether it is socially structured — the analysis is organized around four questions (RQ1–RQ3 address the first; RQ4 the second):
 
-- **RQ1.** What forms do winning tabular solutions take? *(typology — Section 4.2)*
+- **RQ1.** What recurring strategy *paradigms* characterize winning tabular solutions, and how do those choices relate to the constraints of the competition? *(typology and coupling evidence — Sections 4.2–4.3)*
 - **RQ2.** Which feature-engineering techniques do winners use, and how much? *(prevalence — Section 4.4)*
 - **RQ3.** Does feature engineering distinguish winners from strong non-winners? *(winner–control comparison — Section 4.5)*
 - **RQ4.** How is the winning population structured, and how does knowledge move through it? *(community and attribution — Section 4.6)*
