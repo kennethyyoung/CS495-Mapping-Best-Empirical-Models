@@ -1270,3 +1270,42 @@ Coded s6e1 r14 (ravi20076 - FIFTH author overlap) then, computing Pass 3 stats, 
 1. **Run a strict parser early.** Visual inspection can't catch "52 vs 53 zeros"; the corruption hid for months until a column-strict parse + n_fe checksum exposed it.
 2. **Checksums catch shortcuts.** The "trust booleans" pass looked valid but the per-column total (col51 8->2) proved it wrong - forcing proper note/source reconstruction.
 3. **Repair != re-code.** Restored documented intent; did NOT add newly-found missed techniques (masaishi c07/c43/c29) to preserve scope - flagged for any future re-code.
+
+---
+
+## Session 23 — Jun 3-4, 2026
+
+**Branch:** `phase11/report-rescope`.
+**Topic:** Section-by-section expert-data-scientist critique of `outputs/report/research_report_v2.md` (§2 holistic + §3.1–3.8, one subsection at a time: critique → apply → commit). The headline outcome was a reliability-reproducibility audit that turned an asserted number into a verified, committed one — and caught three aspirational claims.
+
+### The reliability reproducibility audit (the big one)
+Writing `analysis/pass3-fe-taxonomy/stats.py` to make κ=0.65 reproducible surfaced that the reported reliability numbers had been computed inline and **could not be regenerated from committed files**. Traced the cause end-to-end:
+- The live `stage1_data.csv` is **post-adjudication**; computing agreement against it is circular (adjudication moved primary→blind) and inflates κ to 0.79/0.83.
+- `stage1_data.csv.bak` is a **pre-repair** backup that still contains the structural corruption (8 bad rows incl. s3e8, which is *in* the reliability sample) — so it must not be used either.
+- The clean **pre-adjudication** coding exists in git at commit **6bd2092** (badcells=0). Materialized it as committed `stage1_data_preadjudication.csv`.
+- `stats.py` (stdlib only) against that snapshot reproduces the report almost exactly: 53-col κ **0.60**, 11-group κ **0.65**, AC1 0.94/0.78, positive agreement **46%/58%**. Also confirmed "positive agreement" is the **Jaccard** form `a/(a+b+c)` (group 58% matches exactly), and that §4.5's "7-3-1" paired split is **n_fe**-based (families = 7-4-0) — a §4.5 wording fix is pending.
+- Updated §3.6/§3.7/§3.8 to the reproducible numbers + pre-adjudication provenance note. The reliability is now *verified*, not asserted.
+
+### Three aspirational claims caught and corrected
+The report's early-written sections described a *planned* project, not the executed one:
+1. **§3.7 toolchain** — table mirrored `pyproject.toml`'s deps. Verified against committed code: scikit-learn/seaborn/scipy/xgboost/lightgbm/catboost are **not used** by the meta-analysis; the `anthropic` SDK (programmatic AI coding, `scripts/extract_fields.py`) and requests/BeautifulSoup were **missing**. Rewrote the whole table to the real toolchain.
+2. **Control selection rule (§3.2)** — text said controls needed "a writeup *and/or* notebook"; user clarified the real rule was **both** (stricter than winners). That asymmetry is the *mechanism* behind the author-overlap finding. Corrected + verified 11 controls = 11 distinct competitions (clean pairing).
+3. **§3.8 Pass-1 "self-audit on a random 20% sample after a one-week gap"** — exists only in `PLAN.md`, never executed; the real Pass-1 check was the Pass-2 data-quality audit. Dropped it.
+
+### Methodology consistency fixes (§3 made airtight + thesis-aligned)
+- **AI-assisted coding disclosed** (§3.4 new "Coding procedure" block) — all three passes AI-assisted under researcher direction; reliability *assessed, not assumed*.
+- **Intra-rater, not inter-rater** (§3.6/§3.8) — same researcher directed primary coding and did the blind re-code; corrected the "independent"/"inter-rater" over-claim.
+- **Reliability scope owned** — Pass 3 only checked; Pass 1 = factual extraction (audit-validated); Pass 2 interpretive codings single-coded (winners-only), with §4.6's *recurrence* finding shown to rest on **factual** fields so it's unaffected.
+- **Coupling demoted in positioning** (§3.1 outputs, §3.5 indicators) to match its cautionary status everywhere else.
+- **`distribution_shift_type` corrected against the workbook** (§3.3) — assigned to all 45 (not TRUE-only); `label-noise` never occurs.
+- **Column accounting fixed** (§3.2) — 40 cols incl. the `original_data_usage` split the old "38+2" omitted.
+- §2 holistic pass: Matthew-Effect framing tightened, gap synthesis realigned to §1.2's two questions, de-duplicated the novelty claim.
+
+### Current state
+`phase11/report-rescope`. §1–§3 fully revised + internally consistent; reliability reproducible via committed `stats.py` + `stage1_data_preadjudication.csv`. Next: §4 Results (§4.1 onward). Pending §4 to-dos: (1) §4.5 "families"→"n_fe" wording; (2) typology framed as "four paradigms + two residual categories."
+
+**Lessons learned this session:**
+1. **A reproducibility script is a verification instrument, not just a deliverable.** Writing `stats.py` is what *caught* that the headline κ wasn't regenerable — and forced tracing the post-adjudication/corruption/snapshot lineage. Asserted numbers hide; committed scripts expose.
+2. **Reliability must be computed pre-adjudication.** Adjudication moves primary→blind by construction; agreement against the corrected data is circular. The clean pre-adjudication source lived in git history, not in the working tree (`.bak` was the corrupt decoy).
+3. **Early-written methods sections describe the plan, not the work.** Three separate aspirational claims (toolchain, control rule, self-audit) had survived because nobody re-checked them against the executed artifacts. Verify every procedural claim against committed code/data before a committee does.
+4. **Name the instrument honestly.** "Intra-rater" vs "inter-rater," "AI-assisted vs researcher-coded," "Jaccard vs specific agreement" — each precise label the user pressed on made the section *more* credible, not less.
