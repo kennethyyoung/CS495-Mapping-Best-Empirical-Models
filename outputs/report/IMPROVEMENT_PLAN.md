@@ -54,6 +54,7 @@ The headline comparison is the exposure. The goal is to make §4.5 the *most-cav
 10. **Downgrade §5.2 "frontier has shifted."** ✍️ → "may be shifting" (thin evidence + n=4 Season-6).
 11. **Coupling "Strong" at n_testable=5.** ✍️ Don't let the abstract/§4.1 lean on the small-n strong verdict (C6).
 12. **Housekeeping.** ✍️ Title-page date (still "May 2026"); **§6 References** in APA 7.
+    - §2 carries the densest unanchored citations (~8 author groups, no years): Caruana & Niculescu-Mizil, Gijsbers et al., Erickson et al./AutoGluon, Gorishniy et al., Borisov et al., Athey et al., Makridakis/Spiliotis/Assimakopoulos (M5), von Krogh & von Hippel, Merton 1968 (Matthew Effect). Every one needs an APA entry; add years inline during the §6 pass.
 
 ---
 
