@@ -46,14 +46,14 @@ Building on the two gaps above — whether winning is technically distinctive, a
 
 This work contributes:
 
-1. a four-paradigm typology of winning tabular solutions, with a coupling-evidence framework linking dataset constraints to chosen strategies;
-2. a 53-technique feature-engineering taxonomy (organized into 11 families), reliability-validated at the family level (κ = 0.65) — a reusable coding instrument;
+1. a four-paradigm typology of winning tabular solutions, and a coupling-evidence framework for testing claimed constraint→strategy patterns — most of which the corpus does not support;
+2. a 53-technique feature-engineering taxonomy (organized into 11 families) with substantial family-level inter-coder agreement (κ = 0.65) — a reusable, reliability-checked coding instrument;
 3. the empirical finding that winning feature engineering is a small shared core (a median of four own techniques among well-documented winners), not a uniformly elaborate craft;
-4. the finding that feature-engineering volume does not *cleanly* separate winners from near-winners (aggregate and within-competition paired comparisons disagree, both non-significant at n = 11), whereas learned/advanced features consistently favor winners;
+4. the finding that feature-engineering volume does not *cleanly* separate winners from near-winners (aggregate and within-competition paired comparisons disagree, both non-significant at n = 11), with learned/advanced features the one family more often present in winners (on small counts);
 5. a characterization of the documented top as a small recurring guild (45% author overlap with the controls) with traceable knowledge propagation; and
-6. an explicit documentation-self-selection scoping of all claims.
+6. the identification of a documentation-self-selection effect that bounds any writeup-based study of competition winners, and the explicit scoping of all claims to it.
 
-For practitioners new to competitive tabular machine learning, the resulting typology and prevalence map replace recipe-based folk knowledge with documented frequency and conditional structure; for meta-research on machine learning practice, the study demonstrates a replicable multi-pass coding methodology applicable to other platforms or modalities.
+For practitioners new to competitive tabular machine learning, the resulting typology and prevalence map replace recipe-based folk knowledge with documented frequencies and a tested — and largely cautionary — set of constraint–strategy couplings; for meta-research on machine learning practice, the study demonstrates a replicable multi-pass coding methodology applicable to other platforms or modalities.
 
 ### 1.5 Scope
 
