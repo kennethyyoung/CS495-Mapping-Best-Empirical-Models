@@ -168,24 +168,25 @@ At the full 53-column resolution Cohen's κ is only moderate (0.59); Gwet's AC1 
 
 ### 3.7 Tools and Technologies
 
-The following tools and technologies were used throughout the project:
+All work was performed in Python 3.13, with dependencies managed by Poetry (`pyproject.toml` at the project root). Because the study analyzes completed solutions rather than training new models, the toolchain centers on data wrangling, the Kaggle API, spreadsheet I/O, and visualization rather than modeling frameworks. The tools actually used were:
 
 | Tool | Version | Purpose |
 |---|---|---|
-| Python | 3.13 | Primary programming language |
-| Poetry | 2.x | Dependency and environment management |
-| pandas | 2.3 | Data manipulation, cross-tabulations, frequency tables |
-| numpy | 2.x | Numerical operations |
-| openpyxl | 3.1 | Reading and writing the Excel workbook |
-| matplotlib | 3.9 | Visualization |
-| seaborn | 0.13 | Statistical visualization |
-| scikit-learn | 1.5 | Chi-square and Fisher's exact test utilities |
-| kaggle (API) | 1.6 | Competition metadata retrieval; notebook downloads |
-| Jupyter | 1.1 | Exploratory analysis notebooks |
-| Git / GitHub | — | Version control and submission |
-| Claude Code CLI | claude-opus-4-7 | AI assistant for development support throughout the project |
+| Python | 3.13 | Primary language for all collection, coding, and analysis scripts |
+| Poetry | 2.x | Dependency and environment management (`pyproject.toml`) |
+| pandas | 2.2 | Pass-1 frequency tables (`value_counts`) and cross-tabulations (`crosstab`) |
+| numpy | 2.x | Numerical operations and figure data preparation |
+| matplotlib | 3.9 | Report figures (Figures 3–6) |
+| seaborn | 0.13 | Exploratory visualization in the EDA notebook (not the report figures) |
+| openpyxl | 3.1 | Reading and writing the `kaggle_meta_analysis.xlsx` meta-dataset |
+| kaggle (API) | 1.6 | Competition metadata, leaderboard retrieval, and notebook pulls |
+| requests + BeautifulSoup | 2.32 / 4.12 | Scraping writeup and discussion content the Kaggle API does not expose |
+| anthropic (Python SDK) + Claude Code CLI | Claude Opus 4.7–4.8 | AI-assisted coding of the corpus (Pass 1–3) under researcher direction (Section 3.4), plus development support |
+| Jupyter | 1.1 | EDA and reanalysis notebooks (`notebooks/01_eda.ipynb`, `02_reanalysis.ipynb`) |
+| Git / GitHub | — | Version control |
+| Python standard library | 3.13 | `csv` / `json` I/O, `statistics` (medians), `collections.Counter` (frequency counts) |
 
-All Python dependencies were managed through Poetry and are specified in `pyproject.toml` at the project root. The project was developed on Windows 11 Pro using PowerShell as the primary shell environment.
+Reliability statistics (Cohen's κ, Gwet's AC1) and the reported significance values (chi-square, Fisher's exact, and the paired sign test) were computed with custom Python routines in `notebooks/02_reanalysis.ipynb`; the project does not depend on a dedicated statistics package such as SciPy. The `pyproject.toml` also declares modeling libraries (scikit-learn, XGBoost, LightGBM, CatBoost) retained from the initial project scaffold; these are not used by the meta-analysis, which trains no models. The project was developed on Windows 11 Pro using PowerShell as the primary shell.
 
 ### 3.8 Limitations
 
