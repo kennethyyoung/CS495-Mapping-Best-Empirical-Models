@@ -77,7 +77,7 @@ A smaller body of work treats machine learning competitions themselves as object
 
 ### 2.3 Knowledge Propagation in Open Communities
 
-Adjacent literatures on open-source software (von Krogh and von Hippel) and open science attribution (Merton's norms of science; more recent meta-research on citation practices) have examined how knowledge flows through informal communities of practice. These literatures consistently observe a gap between the *originators* of techniques and the *canonizers* who become associated with them in the broader community. To the author's knowledge, this lens has not previously been applied to competitive machine learning. The community-and-attribution analysis presented in Section 4.6 represents a first empirical look at the originator-versus-canonizer gap in tabular Kaggle.
+How knowledge and credit flow through informal communities of practice has been studied in open-source software (von Krogh and von Hippel) and in the sociology of science. Most directly relevant is Merton's **Matthew Effect**: recognition tends to accrue to already-prominent contributors rather than to the originators of an idea, and success compounds (cumulative advantage). This predicts two patterns in a competitive community — a gap between the *originators* of techniques and the *canonizers* credited with them, and a small set of recurring high performers. To the author's knowledge, this lens has not previously been applied to competitive machine learning. Section 4.6 operationalizes it directly — through per-solution origination scores, citation counts, and win records — to examine both the originator-versus-canonizer gap and the recurrence of a small author pool in tabular Kaggle.
 
 ### 2.4 Stated Gap
 
