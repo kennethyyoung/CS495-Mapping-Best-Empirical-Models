@@ -81,7 +81,7 @@ How knowledge and credit flow through informal communities of practice has been 
 
 ### 2.4 Stated Gap
 
-The literature treats Kaggle as a *source* of techniques to be benchmarked against academic baselines. It does not treat Kaggle as a *community* whose practice patterns are themselves worth empirically characterizing. This study fills that gap by treating the winning solutions of recent tabular competitions as a population to be described, classified, and quantitatively analyzed for constraint-to-strategy structure.
+Across these literatures, two gaps converge. Algorithm benchmarking (Section 2.1) shows what models are good, not what *wins*; competition retrospectives (Section 2.2) characterize winners but only within single competitions and without a structured, comparative method; and the propagation lens (Section 2.3) has not been applied to competitive machine learning. No prior work asks whether what winners do is *distinctive of winning* — which requires comparing them to strong non-winners — or treats the winning population as a *community* with measurable origination and recurrence. This study addresses both gaps: it characterizes and classifies winning tabular solutions, tests whether their feature engineering distinguishes them from near-winning controls, and maps the community structure behind their techniques — all through a structured, reliability-checked coding scheme.
 
 ---
 
