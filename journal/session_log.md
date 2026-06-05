@@ -1309,3 +1309,35 @@ The report's early-written sections described a *planned* project, not the execu
 2. **Reliability must be computed pre-adjudication.** Adjudication moves primary→blind by construction; agreement against the corrected data is circular. The clean pre-adjudication source lived in git history, not in the working tree (`.bak` was the corrupt decoy).
 3. **Early-written methods sections describe the plan, not the work.** Three separate aspirational claims (toolchain, control rule, self-audit) had survived because nobody re-checked them against the executed artifacts. Verify every procedural claim against committed code/data before a committee does.
 4. **Name the instrument honestly.** "Intra-rater" vs "inter-rater," "AI-assisted vs researcher-coded," "Jaccard vs specific agreement" — each precise label the user pressed on made the section *more* credible, not less.
+
+---
+
+## Session 24 — Jun 4, 2026
+
+**Branch:** `phase11/report-rescope`.
+**Topic:** Completed the section-by-section expert-DS critique of `research_report_v2.md` — §4 Results (4.1–4.9), §5 Discussion (5.1–5.5), and the Abstract — each with a holistic re-read. The whole body (Abstract → §5) is now critiqued, revised, internally consistent, and quantitatively verified. Theme of the session: **verifying every number against the committed data caught multiple headline claims pointed the wrong way.**
+
+### Factual errors caught by verifying against the data
+Each §4/§5 subsection's numbers were recomputed from `stage1_data.csv` / the workbook / `stats.py` before editing:
+- **§4.5 — a false claim.** "Their winners include the corpus's three most FE-heavy entries" was wrong — the #2 most FE-heavy (s5e2, n_fe=16) isn't even paired. Replaced with the accurate paired-winner median n_fe=6 (up to 19) vs corpus median 2, which *also* resolved the §4.4↔§4.5 median tension. Also fixed "more technique *families* in 7 of 11" → it's the **n_fe** split (families = 7-4-0); dropped "≈" from the exact Group G counts (7/1).
+- **§4.9 — two stale/wrong numbers.** GBM "34/45 (76%)" vs the committed `dominant_base_model` field's **35 (78%)** / NN 7 (16%); the 34/76% was a stale hand-count from the original Results session (session_log:385). And n_rows **mean 640,374 was pre-audit** — the 300K→4M correction adds exactly 3.7M/45 = 82,222 → 722,596. Plus the recurring "five cohorts"→"six" bug. Added a note that "dominant family" is a judgment call for blended ensembles (where the 34-vs-35 lives).
+- **§5.2 — the headline claim was backwards.** "The frontier *may be shifting* toward learned features" — but the 7 Group G winners are spread flat across eras (S3:2, S4:1, S5:2, S6:2), so there is **no temporal shift**. Reframed to "learned features are a *persistent* edge that resists commoditization," and unwound the conflation of the ensemble-SIZE Season-6 shift with a feature-frontier shift. (Properly resolves IMPROVEMENT_PLAN item 10 — fix the claim, not just soften the verb.)
+- **§5.4 — a self-contradiction.** The transferability sentence called lookup-exploit/TE synthetic artifacts, then listed "the typology" (which *contains* lookup-exploit) as transferable. Refined: guild/community structure is most transferable (data-independent); typology + FE-shape only partly, with lookup-exploit and TE-prevalence carved out.
+
+### Framing / honesty fixes (§4–§5)
+- **§4.6 (centerpiece) — stopped it contradicting its own confound.** ¶3 had argued the 45% overlap is "well above chance… independently sampled… a property of the population" — directly against the documentation-self-selection finding the project established. Rewrote to the honest artifact+residual split. Also de-cherry-picked the centrality exemplars (added yekenot/mikhailnaumov; excluded arunklenin, who co-won).
+- **§4.3 coupling demotion finished** — C6 "Strong (small n)"→"Directional (n=5)"; C1 "Contradicted"→"Inconclusive (detection-limited)"; C3 reframed as confirming standard ensembling practice; added a closing synthesis (folklore weakly supported, not decision rules); removed phantom `label-noise`.
+- **§4.7** — accounted for the residual paradigms by era; Season-6 "consistent across all four" → 3 ensembles + 1 community-template.
+- **§4.8** — de-confounded the "broadest range" claim (it's the n=28 stratum); dropped the "exploit-paradigm" mislabel for heavy-FE; hedged small-n photo-finish rates.
+- **§5.1** — "table stakes / common to most" overstated §4.4 (TE only 40%); reframed to "equally present in winners and near-winners → non-differentiating"; dropped unmeasured "execution quality."
+- **§5.5** — practitioner advice no longer recommends "match paradigm to constraints" (4.3 found no reliable couplings); foregrounds ensembling (89%); "reliability-validated"→"reliability-checked." Added a **capstone synthesis** so the report body doesn't end on a future-work to-do.
+- **Abstract** — "blind re-code"→"intra-rater blind re-code" (last spot implying inter-rater). Otherwise verified consistent with the revised body.
+
+### Current state
+`phase11/report-rescope`. Abstract + §1–§5 fully revised, internally consistent, every quantitative claim verified against committed data; all carried-forward to-dos closed. **Remaining:** (1) §6 References → APA 7 (and "Merton norms of science" → **Matthew Effect 1968** per the §2.3 reframe); (2) figure regeneration (`fig4` annotation "s5e2=19" → s6e3=19; embed real images for PDF); (3) optional final top-to-bottom read.
+
+**Lessons learned this session:**
+1. **Verify every number before editing prose around it.** The biggest catches (§4.5 false claim, §4.9 stale GBM/mean, §5.2 backwards frontier) were invisible from the prose alone — only recomputing from the committed data exposed them. The data, not the draft, is the source of truth.
+2. **A reframed thesis can leave contradictions in load-bearing sections.** §4.6 and §5.4 each still argued *against* a limitation the project had carefully established elsewhere; the rescope updated the headline but not every supporting sentence. Re-read for self-consistency, not just local correctness.
+3. **A trend claim needs temporal evidence, not just a recent example.** §5.2's "shifting frontier" rode on Season-6 vibes; the actual per-era counts were flat. "Newest season looks different" ≠ "the frontier is moving."
+4. **End on the thesis, not the to-do list.** With no Conclusion section, the Discussion's last paragraph IS the closing — it should re-land the contribution, not trail off into future work.
