@@ -54,7 +54,7 @@ ax.set_title(f'Most winners use few of their own FE techniques (median {med}, me
 z = sum(1 for v in nfe if v == 0)
 ax.annotate(f'{z} winners: forked/\nminimal-only (n_fe=0)', xy=(0, nfe.count(0)), xytext=(1.5, max(nfe.count(0), 1) + 4),
             fontsize=8.5, color='#444', arrowprops=dict(arrowstyle='->', color='#888', lw=0.8))
-ax.annotate('heavyweight tail\n(cdeotte s5e2 = 19)', xy=(mx, 1), xytext=(mx - 8, 5), fontsize=8.5, color='#444',
+ax.annotate('heavyweight tail\n(cdeotte s6e3 = 19)', xy=(mx, 1), xytext=(mx - 8, 5), fontsize=8.5, color='#444',
             arrowprops=dict(arrowstyle='->', color='#888', lw=0.8))
 ax.legend(frameon=False)
 for s in ('top', 'right'): ax.spines[s].set_visible(False)
