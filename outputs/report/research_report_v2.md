@@ -392,4 +392,34 @@ Taken together, these results recast a familiar question. The decisive differenc
 
 ## 6. References
 
-*[To be completed in APA 7th Edition format. The following sources are cited or will be cited in the report and require formal entries: Caruana & Niculescu-Mizil (ensemble baselines on tabular data); Erickson et al. (AutoGluon-Tabular); Gijsbers et al. (AutoML benchmark); Gorishniy et al. (numerical embeddings for tabular DL, NeurIPS 2022); Borisov et al. (tabular DL survey); Lim et al. (Temporal Fusion Transformer, arxiv 1912.09363); Makridakis, Spiliotis, & Assimakopoulos (M5 forecasting competition retrospective); Athey et al. (data science competitions as method); von Krogh & von Hippel (open source attribution); Merton (norms of science); plus the cited NeurIPS and arxiv papers referenced inside specific Kaggle writeups (PLE Gorishniy 2022 arxiv 2203.05556, OpenFE Zhang 2022, masked-loss arxiv 2002.08338, dot-product attention arxiv 2106.16057). Kaggle competition writeups themselves (45 entries) and their associated published notebooks are cited by competition URL in the per-writeup re-evaluation documents under `analysis/writeup-reevaluation/` rather than in the References section, following the convention that primary-source online documents are referenced inline.]*
+Bell, R. M., & Koren, Y. (2007). Lessons from the Netflix Prize challenge. *ACM SIGKDD Explorations Newsletter, 9*(2), 75–79. https://doi.org/10.1145/1345448.1345465
+
+Borisov, V., Leemann, T., Seßler, K., Haug, J., Pawelczyk, M., & Kasneci, G. (2022). Deep neural networks and tabular data: A survey. *IEEE Transactions on Neural Networks and Learning Systems.* Advance online publication. https://doi.org/10.1109/TNNLS.2022.3229161
+
+Caruana, R., & Niculescu-Mizil, A. (2006). An empirical comparison of supervised learning algorithms. In *Proceedings of the 23rd International Conference on Machine Learning* (pp. 161–168). Association for Computing Machinery. https://doi.org/10.1145/1143844.1143865
+
+Erickson, N., Mueller, J., Shirkov, A., Zhang, H., Larroy, P., Li, M., & Smola, A. (2020). *AutoGluon-Tabular: Robust and accurate AutoML for structured data.* arXiv. https://arxiv.org/abs/2003.06505
+
+Gijsbers, P., Bueno, M. L. P., Coors, S., LeDell, E., Poirier, S., Thomas, J., Bischl, B., & Vanschoren, J. (2024). AMLB: An AutoML benchmark. *Journal of Machine Learning Research, 25*(101), 1–65. http://jmlr.org/papers/v25/22-0493.html
+
+Gorishniy, Y., Rubachev, I., Khrulkov, V., & Babenko, A. (2021). Revisiting deep learning models for tabular data. In *Advances in Neural Information Processing Systems* (Vol. 34, pp. 18932–18943). Curran Associates.
+
+Gorishniy, Y., Rubachev, I., & Babenko, A. (2022). On embeddings for numerical features in tabular deep learning. In *Advances in Neural Information Processing Systems* (Vol. 35). Curran Associates. https://arxiv.org/abs/2203.05556
+
+Makridakis, S., Spiliotis, E., & Assimakopoulos, V. (2022). M5 accuracy competition: Results, findings, and conclusions. *International Journal of Forecasting, 38*(4), 1346–1364. https://doi.org/10.1016/j.ijforecast.2021.11.013
+
+Merton, R. K. (1968). The Matthew effect in science. *Science, 159*(3810), 56–63. https://doi.org/10.1126/science.159.3810.56
+
+von Krogh, G., & von Hippel, E. (2006). The promise of research on open source software. *Management Science, 52*(7), 975–983. https://doi.org/10.1287/mnsc.1060.0560
+
+Zhang, T., Zhang, Z., Fan, Z., Luo, H., Liu, F., Liu, Q., Cao, W., & Li, J. (2023). OpenFE: Automated feature generation with expert-level performance. In *Proceedings of the 40th International Conference on Machine Learning* (PMLR Vol. 202, pp. 41880–41901). https://arxiv.org/abs/2211.12507
+
+---
+
+*Editorial notes (remove before submission):*
+
+- ***Athey et al. (§2.2) — source not yet pinned down.*** The in-text mention of "Athey et al. on competitions as a venue for predictive-modeling research" could not be matched to a specific publication. Confirm the exact reference (author, title, year) or replace the in-text mention; M5 (Makridakis et al.) already carries the competition-retrospective point if it is dropped.
+- ***Architecture names in §2.1 (TabNet, SAINT, RealMLP) are currently uncited.*** FT-Transformer is covered by Gorishniy et al. (2021). If the other three names are kept, add in-text citations and these entries: Arik & Pfister (2021), *TabNet*, AAAI 35(8), 6679–6687; Somepalli et al. (2021), *SAINT*, arXiv:2106.01342; Holzmüller, Grinsztajn, & Steinwart (2024), *Better by default* (RealMLP), NeurIPS 37, arXiv:2407.04491. Per APA, drop any name not cited in text rather than listing it here.
+- ***Writeup-internal papers — include only the ones actually cited in the report body.*** OpenFE (Zhang et al., 2023) is cited in §3.6 and is included above. The two denoising-autoencoder imputation papers referenced inside individual Kaggle writeups were **mislabeled in the prior draft** ("masked-loss" / "dot-product attention"); their true identities are **Lu, Perrone, & Unpingco (2020)**, *Multiple imputation with denoising autoencoder using metamorphic truth and imputation feedback* (MLDM 2020, arXiv:2002.08338) and **Tihon, Javaid, Fourure, Posocco, & Peel (2021)**, *DAEMA: Denoising autoencoder with mask attention* (ICANN 2021, arXiv:2106.16057). Add them only if the report body cites them directly; otherwise they belong in the per-writeup analysis docs, not §6.
+- ***Primary data sources.*** The 45 winning Kaggle solutions and 11 near-winning controls (writeups + notebooks) are cited by competition URL in the per-writeup re-evaluation documents under `analysis/writeup-reevaluation/`, following the convention that primary-source online documents are referenced with the data rather than in the References list.
+- *Several DOIs/page numbers above are drafted from verified metadata but should be spot-checked against the publisher of record before submission.*
