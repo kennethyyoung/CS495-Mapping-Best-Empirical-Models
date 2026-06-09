@@ -1,0 +1,394 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Multi-Class Prediction of Cirrhosis Outcomes
+
+        <https://www.kaggle.com/competitions/playground-series-s3e26>
+      o
+
+        (Rank 39 Upto 250 points added) Why there is so significant
+        difference between private and public scores???
+
+        <https://www.kaggle.com/competitions/playground-series-s3e26/
+        writeups/luficerg-rank-39-upto-250-points-added-why-there-i>
+      o
+
+        Binary Classification with a Software Defects Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e23>
+      o
+
+        Binary Classification with a Bank Churn Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e1>
+      o
+
+        ⭐ PS4E1: EDA, feature engineering, modelling
+
+        <https://www.kaggle.com/code/thomasmeiner/ps4e1-eda-feature-
+        engineering-modelling>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+(Rank 39 Upto 250 points added) Why there is so significant difference
+between private and public scores??? — Multi-Class Prediction of
+Cirrhosis Outcomes
+
+
+  (Rank 39 Upto 250 points added) Why there is so significant difference
+  between private and public scores???
+
+Multi-Class Prediction of Cirrhosis Outcomes
+
+<https://www.kaggle.com/competitions/playground-series-s3e26>
+
+Solution Writeup · 39th place · Jan 2, 2024
+
+Sup guys and girls,
+
+I very excited to share with you , *that my rank jumped to 250 points,
+39th rank in this competition* 🥳🥳🥳, here is my solution for this
+competition ,
+https://www.kaggle.com/code/luficergfree/it-s-me-luficer-g <https://
+www.kaggle.com/code/luficergfree/it-s-me-luficer-g>
+
+Although I wonder how my rank got so much above than previous may be
+because there is a lot of difference in the private and public scores ..
+if any one has answer plz. reply..
+
+Thank u guys and girls
+
+Author
+
+<https://www.kaggle.com/luficergfree>
+Luficer G <https://www.kaggle.com/luficergfree>
+
+luficergfree
+
+arrow_drop_up
+
+8
+
+Share
+
+more_horiz
+
+
+    Citation
+
+Luficer G. (Rank 39 Upto 250 points added) Why there is so significant
+difference between private and public scores???. https://www.kaggle.com/
+competitions/playground-series-s3e26/writeups/luficerg-rank-39-upto-250-
+points-added-why-there-i. 2024. Kaggle
+
+add_reactionReact
+
+comment
+
+
+    7 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/kailai>
+
+
+      kailai
+
+<https://www.kaggle.com/kailai>
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+4
+
+more_vert
+
+Public dataset has more easy samples than private one. If putting too
+much weight on easy samples , balance between easy samples and hard
+samples ruins.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/luficergfree>
+
+
+      Luficer G
+
+<https://www.kaggle.com/luficergfree>
+Topic Author
+
+Posted 2 years ago
+
+· 39th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+that's how you came first ???😂😂 COngra. man , you are only one who
+maintained his rank in both public and private set , I am interested to
+see ur solution also
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/nandomartinez>
+
+
+      nandomartinez
+
+<https://www.kaggle.com/nandomartinez>
+
+Posted 2 years ago
+
+· 584th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+In your opinion, how 'penalize' the easy samples, @kailai <https://
+www.kaggle.com/kailai>?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/byteliberator>
+
+
+      lazy_panda
+
+<https://www.kaggle.com/byteliberator>
+
+Posted 2 years ago
+
+· 22nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations on your awesome finish!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/luficergfree>
+
+
+      Luficer G
+
+<https://www.kaggle.com/luficergfree>
+Topic Author
+
+Posted 2 years ago
+
+· 39th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+thanks @byteliberator <https://www.kaggle.com/byteliberator> , you did
+great too, didn't had model overfitted. Nice job
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yantxx>
+
+
+      Yan Teixeira
+
+<https://www.kaggle.com/yantxx>
+
+Posted 2 years ago
+
+· 20th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+/"This leaderboard is calculated with approximately 20% of the test
+data. The final results will be based on the other 80%, so the final
+standings may be different."/
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/luficergfree>
+
+
+      Luficer G
+
+<https://www.kaggle.com/luficergfree>
+Topic Author
+
+Posted 2 years ago
+
+· 39th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+True words @yantxx <https://www.kaggle.com/yantxx> .. congratulations
+for 20th rank 😁😁
+
+replyReply
+add_reactionReact
+

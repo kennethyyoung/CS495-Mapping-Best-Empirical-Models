@@ -1,0 +1,552 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predict Customer Churn
+
+        <https://www.kaggle.com/competitions/playground-series-s6e3>
+      o
+
+        16th Place Solution - Ridge Ensembling
+
+        <https://www.kaggle.com/competitions/playground-series-s6e3/
+        writeups/16th-place-solution-ridge-ensembling>
+      o
+
+        Predicting Heart Disease
+
+        <https://www.kaggle.com/competitions/playground-series-s6e2>
+      o
+
+        16th Place Solution -- Trust your cv
+
+        <https://www.kaggle.com/competitions/playground-series-s6e2/
+        writeups/16th-place-solution-trust-your-cv>
+      o
+
+        15th Place Solution
+
+        <https://www.kaggle.com/competitions/playground-series-s6e2/
+        writeups/15th-place-solution>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+16th Place Solution - Ridge Ensembling — Predict Customer Churn
+
+
+  16th Place Solution - Ridge Ensembling
+
+Systematic Ensembling with Polynomial Meta Features
+
+Predict Customer Churn
+
+<https://www.kaggle.com/competitions/playground-series-s6e3>
+
+Solution Writeup · 16th place · Mar 31, 2026
+
+I'm happy to share my 16th place solution write-up for this Playground
+competition. Huge thanks to Kaggle for hosting this competition. This
+was my first time experimenting with ensembling, so I wanted to document
+my approach.
+
+------------------------------------------------------------------------
+
+
+    Overview
+
+My final solution was a *34-model stacked ensemble* with a *Ridge meta-
+learner* augmented with *polynomial interaction features*.
+
+No exotic architectures — just systematic ensembling done carefully.
+
+------------------------------------------------------------------------
+
+
+    Base Models
+
+I didn't have enormous compute or time to train hundreds of models from
+scratch, so my approach was to improve existing public notebooks and add
+my own variants.
+
+
+      Model Set Included
+
+  * LightGBM — multiple models with 20-seed averaging and different
+    parameters
+  * XGBoost — multiple models with 20-seed averaging and different
+    parameters
+  * CatBoost — multiple parameter and seed variants
+  * LightGBM DART — separate diversity variant
+  * RealMLP (multiple variants) — different feature representations
+  * TabM (5 variants) — trained with different configurations
+  * TabTransformer — improved public model
+  * Trompt — improved public model
+  * PyTabkit Ensemble — ensemble of RealMLP, XGB, CatBoost and LGBM
+  * cdeotte GPU NNs — nn_v312, v102, tepair_logit3
+  * BARTZ and GNN — from starter notebooks
+
+All models were trained using:
+
+|5-Fold StratifiedKFold CV|
+
+------------------------------------------------------------------------
+
+
+    Feature Engineering
+
+For my own trained models I built a reusable feature engineering module
+covering:
+
+
+      Numeric & Statistical Features
+
+  * Frequency encoding of numeric columns
+  * Arithmetic features
+      o charges deviation
+      o monthly-to-total ratio
+      o average monthly charges 
+  * Service count features
+
+
+      ORIG Dataset Mapping
+
+  * ORIG_proba mappings from the original Telco dataset
+  * Applied to all categorical and numeric columns
+
+
+      Distribution Features
+
+  * Percentile ranks vs churner/non-churner distributions
+  * Quantile distance features at q25, q50, q75
+
+
+      Digit-Level Features
+
+For:
+
+  * tenure
+  * MonthlyCharges
+  * TotalCharges
+
+Generated:
+
+  * first digit
+  * last digit
+  * mod10
+  * mod12
+  * round number flags
+
+
+      Categorical Interactions
+
+  * N-gram categorical interactions
+  * Bigrams and trigrams of top contract/service columns
+
+
+      Linear Embeddings
+
+  * Min-max projections
+  * Rank-based projections
+  * Z-score projections
+
+
+      Periodic Embeddings
+
+  * Sin/Cos embeddings at multiple frequencies
+  * Captures:
+      o 12-month tenure cycles
+      o round charge patterns 
+
+
+      Meta Features
+
+  * I Trained 6 NN Models and added their OOF as Feature Input for my
+    Boosting Models.
+
+------------------------------------------------------------------------
+
+
+    Ensembling
+
+I experimented with both Hill Climbing and Ridge meta-learning.
+
+With 34 models, Hill Climbing converged too quickly and produced a very
+simple 3-model equal-weight blend. Ridge generalized better across the
+full model set because it could assign continuous weights to all 34
+models simultaneously rather than greedily selecting a subset.
+
+
+      Ridge Meta-Learner Performance
+
+  * CV: 0.91976
+  * Private LB: ~0.91828
+
+------------------------------------------------------------------------
+
+
+    Adding Polynomial Features to the Meta-Learner
+
+This was the single biggest improvement in my pipeline.
+
+Instead of giving Ridge just the 34 raw OOF prediction columns, I
+expanded them with all pairwise interaction terms:
+
+  * Degree = 2
+  * interaction_only = True
+  * include_bias = False
+
+*Feature Expansion*
+
+  * 34 → 561 features
+  * (34 original + 527 interactions)
+
+
+      Intuition
+
+Plain Ridge learns weighted averages.
+Polynomial Ridge learns complementary model relationships.
+
+Examples:
+
+  * lgbm × catboost
+  * realmlp × tabm
+
+|poly = PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)
+x_train_poly = poly.fit_transform(x_train)
+x_test_poly  = poly.transform(x_test)
+
+ridge_poly = Ridge(alpha=best_poly_alpha)
+ridge_poly.fit(StandardScaler().fit_transform(x_train_poly), true)
+
+|
+content_copy
+
+
+    Alpha Tuning
+
+  * Plain Ridge: ~75
+  * Polynomial Ridge: ~235
+
+Improvement
+
+  * CV: 0.91976 → 0.91984
+  * Private LB: 0.91829 → 0.91837
+
+------------------------------------------------------------------------
+
+Final Ridge + Polynomial Performance
+
+Final CV: 0.91984
+Private LB: 0.91837
+
+------------------------------------------------------------------------
+
+
+    Isotonic Calibration
+
+I also experimented with isotonic calibration applied on top of the
+Ridge + Polynomial predictions.
+
+This fits a monotonic mapping from raw OOF predictions to true labels,
+adjusting probability values without changing their ranking order (AUC
+preserved).
+
+|from sklearn.isotonic import IsotonicRegression
+
+iso = IsotonicRegression(out_of_bounds='clip')
+iso.fit(oof_meta, true)
+calibrated_test_preds = iso.predict(raw_test_preds)
+
+|
+content_copy
+
+On public LB this submission scored slightly lower than Ridge+Poly
+alone, but I selected it as my second final submission.
+
+------------------------------------------------------------------------
+
+Acknowledgements
+
+Thanks to the public notebook authors whose work formed the foundation
+of this ensemble, Including @cdeotte <https://www.kaggle.com/cdeotte>,
+@yekenot <https://www.kaggle.com/yekenot>, @include4eto <https://
+www.kaggle.com/include4eto>, @blamerx <https://www.kaggle.com/blamerx>,
+@badalkrsharma <https://www.kaggle.com/badalkrsharma>, Also not limited
+to them!
+
+Tagged
+Ensembling <https://www.kaggle.com/search?
+q=ensembling+tag%3A%22ensembling%22>
+Authors
+
+<https://www.kaggle.com/mhamza0810>
+Hamza <https://www.kaggle.com/mhamza0810>
+
+mhamza0810
+
+<https://www.kaggle.com/badalkrsharma>
+Badal kr. Sharma <https://www.kaggle.com/badalkrsharma>
+
+badalkrsharma
+
+arrow_drop_up
+
+16
+
+Share
+
+more_horiz
+
+
+    Project Links
+
+PS-S6E3 | Pytabkit - Ensemble Baseline
+
+3 months ago · 6 upvotes
+
+code
+ <https://www.kaggle.com/mhamza0810>
+
+Kaggle Notebook
+
+Public
+
+<https://kaggle.com/code/mhamza0810/ps-s6e3-pytabkit-ensemble-baseline>
+thankYou1love1
+add_reaction
+
+comment
+
+
+    4 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/durgakumari12>
+
+
+      Durga Kumari
+
+<https://www.kaggle.com/durgakumari12>
+
+Posted 2 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Polynomial meta-features on Ridge is such a clean idea.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mirko45>
+
+
+      Mirko
+
+<https://www.kaggle.com/mirko45>
+
+Posted 2 months ago
+
+· 35th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations @mhamza0810 <https://www.kaggle.com/mhamza0810> and
+@badalkrsharma <https://www.kaggle.com/badalkrsharma> on the strong
+finish! Thank you for sharing your summary.
+
+I tried applying your Polynomial Features to my Meta-Learner (using
+RidgeCV and a 5-fold CV setup) and saw the following results:
+
+  * OOF AUC (5-fold): 0.919477 --> 0.919516
+  * Public LB Score: 0.91724 --> 0.91723 (slight drop)
+  * Private LB Score: 0.91830 --> 0.91834
+
+Even though the Public LB dropped slightly, the improvement in both CV
+and Private LB suggests that the Polynomial Features added a very stable
+signal to the ensemble. I'm planning to experiment with this approach on
+my other models as well to see if it provides a similar boost.
+
+Thanks again for the inspiration!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+
+Posted 2 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations finishing 16th. That is a strong finish! I really like
+your polynomial features that you added to Ridge meta learner. I will
+experiment with that in the future!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/mhamza0810>
+
+
+      Hamza
+
+<https://www.kaggle.com/mhamza0810>
+Topic Author
+
+Posted 2 months ago
+
+· 16th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks @cdeotte <https://www.kaggle.com/cdeotte>
+
+replyReply
+add_reactionReact
+

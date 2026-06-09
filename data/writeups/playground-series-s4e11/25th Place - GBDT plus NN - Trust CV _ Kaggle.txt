@@ -1,0 +1,765 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Exploring Mental Health Data
+
+        <https://www.kaggle.com/competitions/playground-series-s4e11>
+      o
+
+        25th Place - GBDT plus NN - Trust CV
+
+        <https://www.kaggle.com/competitions/playground-series-s4e11/
+        writeups/chris-deotte-25th-place-gbdt-plus-nn-trust-cv>
+      o
+
+        Regression with an Insurance Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s4e12>
+      o
+
+        9th place solution: With a little help from my (Kaggle) friends
+
+        <https://www.kaggle.com/competitions/playground-series-s4e12/
+        writeups/optimistix-9th-place-solution-with-a-little-help-f>
+      o
+
+        Backpack Prediction Challenge
+
+        <https://www.kaggle.com/competitions/playground-series-s5e2>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+25th Place - GBDT plus NN - Trust CV — Exploring Mental Health Data
+
+
+  25th Place - GBDT plus NN - Trust CV
+
+Exploring Mental Health Data
+
+<https://www.kaggle.com/competitions/playground-series-s4e11>
+
+Solution Writeup · 25th place · Nov 30, 2024
+
+Hi everyone. Thank you for the lively discussions and generous sharing.
+I enjoyed participating in this competition with everyone and I plan to
+participate in December's competition here <https://www.kaggle.com/
+competitions/playground-series-s4e12>! 🎉
+
+This is my second playground competition. In my previous playground
+competition, I built 100+ models and used hill climbing here <https://
+www.kaggle.com/code/cdeotte/fast-gpu-hill-climbing-starter-cv-0-94-
+lb-0-94> (discussion writeup here <https://www.kaggle.com/competitions/
+playground-series-s4e9/discussion/537202>). However from my first
+experience, I learned that more simple feature engineering and simple
+solutions work well in playground competitions, so in this competition
+my final solution is an ensemble of only 3 models (with simple feature
+engineering). Namely CATboost plus XGBoost plus NN. This is a powerful
+diverse ensemble combination! 🔥
+
+
+    Use AUC as proxy for ACC (accuracy) metric
+
+The metric in this competition was ACC. This metric is not smooth and
+has lots of random variance when trying to use it to optimize models and
+decisions. Therefore I used the more reliable metric AUC to locally find
+the best CV score. Then I chose my best CV AUC ensemble/model as my
+final submission.
+
+
+    33% CatBoost - CV ACC=0.9401 (AUC=0.9751), LB Public=0.9433,
+    Private=0.9405
+
+My CatBoost model was based on top scoring single model CatBoost public
+notebook here <https://www.kaggle.com/code/abdmental01/emh-multi-model/
+notebook?scriptVersionId=205479699> by @abdmental01 <https://
+www.kaggle.com/abdmental01>
+
+
+    33% XGBoost - CV ACC=0.9400 (AUC=0.9755), LB Public=0.9439,
+    Private=0.9400
+
+My XGBoost model was based on top scoring single model XGBoost public
+notebook here <https://www.kaggle.com/code/adyiemaz/this-code-fixed-my-
+depression/notebook?scriptVersionId=205824442> by @adyiemaz <https://
+www.kaggle.com/adyiemaz>
+
+
+    33% NN (MLP) - CV ACC=0.9399 (AUC=0.9756), LB Public=0.9427,
+    Private=0.9413
+
+My NN by itself would achieve 68th rank on private LB! It's a strong
+model! I encoded all columns the same way as my public notebook here
+<https://www.kaggle.com/code/cdeotte/fast-gpu-hill-climbing-starter-
+cv-0-94-lb-0-94>. Namely I converted every column into categorical
+strings (and transformed rare values to value = "RARE", and nan to value
+= "NAN"). Then I used my NN code from September's playground competition
+here <https://www.kaggle.com/code/cdeotte/nn-starter-lb-72300-cv-72800>.
+All hyperparameters, learning schedule, and architecture were the same.
+
+
+    Ensemble - CV ACC=0.9406 (AUC=0.9762), Public LB=0.9438, Private
+    LB=0.9415
+
+I tried adding some other models, but the three above achieved the best
+ensemble CV. So my final ensemble is only the three models described
+above and achieved 25th place in Kaggle's "Exploring Mental Health Data"
+competition! 💪
+
+Author
+
+<https://www.kaggle.com/cdeotte>
+Chris Deotte <https://www.kaggle.com/cdeotte>
+
+cdeotte
+
+arrow_drop_up
+
+36
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    16 Comments
+
+1 appreciation comment <https://www.kaggle.com/competitions/playground-
+series-s4e11/writeups/chris-deotte-25th-place-gbdt-plus-nn-trust-
+cv#appreciation>
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Thanks for sharing your approach and congratulations for finishing at a
+good place this time! 25th is great for just three models. Interstingly,
+the public score of the ensemble was worse than the single XGB score and
+you picked it nevertheless. Good luck for the next competition.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gimunu>
+
+
+      giim
+
+<https://www.kaggle.com/gimunu>
+
+Posted 2 years ago
+
+· 1212th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+@cdeotte <https://www.kaggle.com/cdeotte> Thanks for sharing the
+insights. Have you had an experience or trial at multi-objective
+optimization using both AUC and ACC?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 2 years ago
+
+· 25th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Hi. Yes I did look at both. I would mainly make decisions that would
+boost both.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/kylebautista>
+
+
+      Kyle Bautista
+
+<https://www.kaggle.com/kylebautista>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! Great work!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/olejakobrosenvold>
+
+
+      Ole-Jakob
+
+<https://www.kaggle.com/olejakobrosenvold>
+
+Posted 2 years ago
+
+· 49th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats and thanks for sharing and for the great post about metrics
+during the competition. Initially, I considered using MCC instead of
+ACC, but after reading your post I switched to AUC which made it much
+easier to compare models. Also, your GPU hill climbing implementation is
+awesome, and the trick to compute ACC based on the distribution was
+great. Thank you!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hamedabedi>
+
+
+      Hamed Abedi
+
+<https://www.kaggle.com/hamedabedi>
+
+Posted 2 years ago
+
+· 1826th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Hi Chris,
+I always enjoy your insights, and they’ve been incredibly helpful. As a
+relatively new user on this platform, I’ve always wondered—do you
+typically use the Kaggle runtime for building and training your models
+(and if so, do you use accelerators like TPUs, etc.), or do you rely on
+a local server for this?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 2 years ago
+
+· 25th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Hi. I usually train models locally (on either GPU V100 32GB or GPU A100
+80GB). Then in code competitions I upload the saved model weights and in
+CSV competitions like this one, I upload the submission.csv file. Then
+in CSV competitions, I use the "submit" button (to submit
+submission.csv) and in code competitions, I create a Kaggle inference
+notebook that uses the uploaded saved model weights to infer test data.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hamedabedi>
+
+
+      Hamed Abedi
+
+<https://www.kaggle.com/hamedabedi>
+
+Posted 2 years ago
+
+· 1826th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you, for sharing your workflow—very insightful and much appreciated!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 13th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations! Very cool for a 3 model ensemble to do so well, and
+it's especially impressive that your NN outperformed your GBDTs on the
+private LB. Maybe I'll just plug it into every month's data 😛
+
+Looking forward to your contributions this month - all the best!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravaghi>
+
+
+      Mahdi Ravaghi
+
+<https://www.kaggle.com/ravaghi>
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congrats @cdeotte <https://www.kaggle.com/cdeotte>, and thank you for
+your contributions to PS competitions. It's great to have a seasoned
+Kaggler like yourself in these types of competitions; we have a lot to
+learn from you.
+
+Regarding what you wrote about feature engineering, how about dropping
+it altogether for this month's competition and see how it goes? I know
+it's generally bad advice and goes against our intuitions, but in my
+experience, it's best to leave out feature engineering in the playground
+competitions.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 2 years ago
+
+· 25th in this Competition
+
+arrow_drop_up
+
+5
+
+more_vert
+
+Congratulations @ravaghi <https://www.kaggle.com/ravaghi> winning 1st
+place! Great job!
+
+I agree that feature engineering doesn't seem to help much in playground
+competitions. This might be a result of the synthetic data generation
+process. Feature engineering is usually about digging deep to find more
+subtle patterns. Since the original datasets are small, there doesn't
+seem to be much subtle patterns (because we lack original data size to
+provide statistically significant patterns besides very basic patterns).
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravaghi>
+
+
+      Mahdi Ravaghi
+
+<https://www.kaggle.com/ravaghi>
+
+Posted 2 years ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Thank you!
+
+Your explanation makes a lot of sense. In addition to the size of the
+original dataset, I think the noise introduced by the generator also
+plays a role here. Engineering new features just propagates this noise,
+and makes our models perform worse.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted a year ago
+
+· 13th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+While feature engineering is indeed often futile in TPS competitions,
+the 3rd and 7th place solutions this month are both solo CatBoosts with
+meaningful feature engineering.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/denkuznetz>
+
+
+      Den_Kuznetz
+
+<https://www.kaggle.com/denkuznetz>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Very informative. Great job, you're a cool!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tanishkpatil>
+
+
+      Tanishk Patil
+
+<https://www.kaggle.com/tanishkpatil>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Congratulation! looking forward to learn from you.
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 2 years ago
+
+· 25th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Our models make probability predictions which are float numbers between
+0 and 1. When we compute ACC metric, we discard information first by
+converting all prob predictions into integers |0 and 1| with |p =
+(pred>0.5).astype("int")|. When we compute AUC, we do not discard
+information.
+
+Any metric computed from less information is less informative. The
+metric AUC uses the full information from the full float probability
+prediction (and is therefore more informative for making decisions).
+
+Regarding ACC is "not smooth" means that hill climbing ends too early
+using ACC as the hill climbing metric and the resultant LB score is
+worse. When using AUC, the hill climbing progresses longer and achieves
+a better LB score. The ACC metric seems to jump around more whereas the
+AUC metric behaves more consistently.
+
+Discussions with more information are here <https://www.kaggle.com/
+competitions/playground-series-s4e11/discussion/543929> and here
+<https://www.kaggle.com/competitions/playground-series-s4e11/
+discussion/543685>
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+
+<https://www.kaggle.com/cdeotte>
+
+
+      Chris Deotte
+
+<https://www.kaggle.com/cdeotte>
+Topic Author
+
+Posted 2 years ago
+
+· 25th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Good summary.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/gimunu>
+
+
+      giim
+
+<https://www.kaggle.com/gimunu>
+
+Posted 2 years ago
+
+· 1212th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+If I can give an additional argument: accuracy is a low resolution
+metric, because its is invariant under a lot more transformations than
+AUC. If you were to move class 1 scores from the 0.8 point to 0.9 the
+ACC value wold be the same but the AUC would most probably show an
+improvement and you would want to know about that. ACC sees two score
+bands 0 to 0.5 and 0.5 to 1 and it only tracks point moving between the
+two bands, = crossing the threshold. Scores can move *a lot* without
+crossing the threshold and you may want to be aware of that when doing
+model selection. That said I only used ACC and I see my mistake now :/
+
+replyReply
+add_reactionReact
+
+
+    Appreciation (1)
+
+<https://www.kaggle.com/tasmiyashirin>
+
+
+      tasmiyashirin
+
+<https://www.kaggle.com/tasmiyashirin>
+
+Posted 2 years ago
+
+· 369th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thank you for sharing!
+
