@@ -234,7 +234,7 @@ The four paradigms above are the corpus's primary strategic archetypes. Two resi
 
 An important descriptive finding from Pass 2 is that no entry in the corpus has an `origination_score` of 0 (pure fork). Even the most fork-heavy paradigm (community-template-tweak) contains at least one meaningful original contribution per winner — domain-driven feature engineering, a meta-architecture choice, or a deliberate post-processing step. The community-template-tweak paradigm is therefore "fork-plus-meaningful-tweak," not "fork verbatim."
 
-[Figure 1 — Paradigm distribution. Source: `analysis/figures/phase5/phase5_21_paradigm_distribution.png`]
+![Figure 1. Paradigm distribution across winners.](figures/fig01_paradigm_distribution.png)
 
 ### 4.3 Coupling Evidence
 
@@ -257,7 +257,7 @@ Three couplings are clearly contradicted by the data, and a fourth (C1) is incon
 
 On balance, the constraint-to-strategy folklore is weakly supported at best: four of the six couplings are contradicted, and the two that are not are either a restatement of standard ensembling practice (C3) or too thinly sampled to rely on (C6, n = 5). The couplings are therefore reported as a cautionary characterization of practitioner folklore, not as a set of validated decision rules.
 
-[Figure 2 — Coupling evidence stacked-bar. Source: `analysis/figures/phase5/phase5_51_coupling_evidence.png`]
+![Figure 2. Coupling evidence: supporting / contradicting / neutral counts per promoted coupling.](figures/fig02_coupling_evidence.png)
 
 ### 4.4 Winning Feature Engineering Is a Small Shared Core
 
@@ -275,8 +275,8 @@ The *amount* of feature engineering per winner is modest, but it must be read ag
 
 Even at the better-documented figure the count is modest and the distribution right-skewed: among notebook-backed winners most use one to five own techniques, with a small heavyweight tail (the corpus maximum is 19) (Figure 4). Six winners use no own techniques at all, relying entirely on forked public features or an explicit no-feature-engineering strategy. Crucially, the small-core-plus-long-tail structure holds *within* the well-documented subset — so it is a property of winning practice, not merely an artifact of sparse documentation, though terse writeups do exaggerate how sparse the practice appears. Elaborate feature engineering is, on this evidence, neither typical of nor necessary for a winning tabular solution.
 
-[Figure 3 — technique long-tail (winners). Source: `analysis/figures/report/fig3_technique_longtail_winners.png`]
-[Figure 4 — `n_fe` distribution (winners). Source: `analysis/figures/report/fig4_nfe_distribution_winners.png`]
+![Figure 3. Feature-engineering technique long-tail (winners).](figures/fig03_technique_longtail.png)
+![Figure 4. Distribution of own-technique counts (n_fe) across winners.](figures/fig04_nfe_distribution.png)
 
 ### 4.5 Feature Engineering and the Winner–Control Gap
 
@@ -292,8 +292,8 @@ Whether feature engineering separates winners from strong non-winners depends cr
 
 **Scope.** Both framings are bounded by the small sample and the documentation-self-selection limitation (Section 3.8). Because controls were selected partly for having writeups detailed enough to code, the control side is biased toward *more* documented feature engineering — which works against the paired finding rather than for it: the within-competition winner advantage emerges despite a control pool selected for FE detail. The comparison characterizes patterns among documented near-winners, not among typical competitors.
 
-[Figure 5 — FE family prevalence, winners vs near-winning controls (aggregate). Source: `analysis/figures/report/fig5_fe_prevalence_winners_vs_controls.png`]
-[Figure 6 — paired within-competition winner vs control (`n_fe`). Source: `analysis/figures/report/fig6_paired_winner_control.png`]
+![Figure 5. Feature-engineering family prevalence, winners vs. near-winning controls (aggregate).](figures/fig05_fe_prevalence_winners_vs_controls.png)
+![Figure 6. Paired within-competition comparison, winner vs. control (n_fe).](figures/fig06_paired_winner_control.png)
 
 ### 4.6 The Documented Top Is a Recurring Guild
 
@@ -309,12 +309,12 @@ Part of this overlap is induced by the sampling instrument. Because controls wer
 
 **What this establishes.** What the guild result establishes, robustly, is that the population from which documented winning solutions are drawn is small and recurring — and that this, more than any difference in feature-engineering inventory, is what the "winner" label tracks.
 
-[Figure 7 — author centrality. Source: `analysis/figures/phase5/phase5_41_author_centrality.png`]
-[Figure 8 — cdeotte timeline. Source: `analysis/figures/phase5/phase5_42_cdeotte_timeline.png`]
+![Figure 7. Community centrality: top handles by total appearances.](figures/fig07_author_centrality.png)
+![Figure 8. cdeotte timeline: observer to dominant winner.](figures/fig08_cdeotte_timeline.png)
 
 ### 4.7 Paradigm by Era
 
-[Figure 9 — Paradigm composition by era. Source: `analysis/figures/phase5/phase5_22_paradigm_by_era.png`]
+![Figure 9. Paradigm composition by era.](figures/fig09_paradigm_by_era.png)
 
 Paradigm composition is era-dependent. The three Tabular Playground Series competitions from 2022 contributed two problem-fit-NN wins and one lookup-exploit win, with no ensemble-stacking wins. From PS Season 3 onward, ensemble-stacking is the modal paradigm in every era, accounting for 11 of 17 wins in S3 (65%), 8 of 10 in S4 (80%), 6 of 10 in S5 (60%), and 3 of 4 in S6 (75%). The only Featured competition in the corpus (ICR) is a problem-fit-NN win.
 
@@ -324,17 +324,19 @@ The single-model heavy-FE paradigm appears in three S3 entries, one S4 entry, an
 
 ### 4.8 Constraint Cross-Tabulations
 
-[Figure 10 — n_rows by paradigm, log scale. Source: `analysis/figures/phase5/phase5_24_paradigm_n_rows.png`]
+![Figure 10. Dataset size (n_rows) by paradigm, log scale.](figures/fig10_n_rows_by_paradigm.png)
 
 Three additional cross-tabulations characterize paradigm-versus-constraint structure.
 
 **Dataset size and paradigm.** Lookup-exploit wins cluster at small-to-medium scale (15K–200K rows), with no lookup-exploit win above 200K rows in the corpus. Problem-fit-NN wins span the full range (617 rows to 1M rows). Single-model heavy-FE wins also span a wide range (2K to 4M rows). Ensemble-stacking wins occur at every scale (707 rows to 11.5M rows); its wider observed range partly reflects its far larger sample (n = 28 versus 3–6 for the other paradigms), but the dominant paradigm is clearly not scale-restricted.
 
-**External original and paradigm** (`Figure 11`, source `analysis/figures/phase5/phase5_31_use_mode_paradigm.png`). All three problem-fit-NN wins occur in competitions where no external original is available — consistent with the interpretation that NN-primary strategies are reached for when the "exploit-original" toolkit is empty. Lookup-exploit wins by definition require an external original. The single columns-only use-mode entry in the corpus is one author's single-model heavy-FE win, confirming that the "use as columns" pattern is author-idiosyncratic rather than community-wide.
+**External original and paradigm** (Figure 11). All three problem-fit-NN wins occur in competitions where no external original is available — consistent with the interpretation that NN-primary strategies are reached for when the "exploit-original" toolkit is empty. Lookup-exploit wins by definition require an external original. The single columns-only use-mode entry in the corpus is one author's single-model heavy-FE win, confirming that the "use as columns" pattern is author-idiosyncratic rather than community-wide.
+
+![Figure 11. External-original use mode by paradigm.](figures/fig11_use_mode_by_paradigm.png)
 
 **Photo-finish margin and paradigm.** Using a metric-aware threshold (top-3 margin < 0.0005 absolute for ranking-style metrics, < 0.1% relative for regression metrics), 27 of 45 entries are classified as photo-finish wins. The photo-finish rate differs by paradigm (on small per-paradigm samples): community-template-tweak 100% (3/3), ensemble-stacking 68% (19/28), problem-fit-NN 67% (2/3), single-model heavy-FE 33% (2/6), lookup-exploit 25% (1/4). The lookup-exploit and single-model heavy-FE paradigms tend to win by wider margins, consistent with the interpretation that these paradigms change what is possible in the competition rather than squeezing the final 0.0001 from a saturated ensemble.
 
-[Figure 12 — Photo-finish rate by paradigm. Source: `analysis/figures/phase5/phase5_23_paradigm_photofinish.png`]
+![Figure 12. Photo-finish rate by paradigm.](figures/fig12_photofinish_by_paradigm.png)
 
 ### 4.9 Corpus Characteristics
 
@@ -354,9 +356,9 @@ For completeness, this section reports the descriptive composition of the winner
 
 **Attribution structure.** Two further figures underpin the community analysis of Section 4.6: Figure 13 shows the adoption frequency of canonized techniques across the corpus, and Figure 14 relates each entry's `origination_score` to the number of citations its author receives — quantifying the originator-versus-canonizer gap discussed there.
 
-[Figure 13 — Canonized-technique adoption frequency. Source: `analysis/figures/phase5/phase5_33_canonized_techniques.png`]
+![Figure 13. Canonized-technique adoption frequency.](figures/fig13_canonized_techniques.png)
 
-[Figure 14 — Citations by origination score. Source: `analysis/figures/phase5/phase5_34_citations_origination.png`]
+![Figure 14. Citation count by origination score.](figures/fig14_citations_by_origination.png)
 
 *(Three findings originally reported as "unexpected" — the absence of pure forks among winners, the most-cited contributor never winning, and the contradiction of the "use-as-columns" folklore — are now integrated into Sections 4.2, 4.6, and 4.3 respectively.)*
 
