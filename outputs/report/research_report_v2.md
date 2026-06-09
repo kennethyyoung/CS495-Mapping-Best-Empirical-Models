@@ -182,7 +182,7 @@ All work was performed in Python 3.13, with dependencies managed by Poetry (`pyp
 | kaggle (API) | 1.6 | Competition metadata, leaderboard retrieval, and notebook pulls |
 | requests + BeautifulSoup | 2.32 / 4.12 | Scraping writeup and discussion content the Kaggle API does not expose |
 | anthropic (Python SDK) + Claude Code CLI | Claude Opus 4.7–4.8 | AI-assisted coding of the corpus (Pass 1–3) under researcher direction (Section 3.4), plus development support |
-| Jupyter | 1.1 | EDA and reanalysis notebooks (`notebooks/01_eda.ipynb`, `02_reanalysis.ipynb`) |
+| Jupyter | 1.1 | EDA and reanalysis notebooks (`notebooks/archive/01_eda.ipynb`, `notebooks/02_reanalysis.ipynb`) |
 | Git / GitHub | — | Version control |
 | Python standard library | 3.13 | `csv` / `json` I/O, `statistics` (medians), `collections.Counter` (frequency counts) |
 
