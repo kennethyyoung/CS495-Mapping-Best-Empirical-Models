@@ -51,7 +51,7 @@
 
 % ---------- Block container ----------
 \newtcolorbox{posterblock}[1]{
-    enhanced, breakable,
+    enhanced, breakable, before upper={\raggedright},
     colback=white, colframe=BCSilver,
     boxrule=0.8pt, arc=6pt,
     left=18pt, right=18pt, top=10pt, bottom=14pt,
@@ -141,7 +141,7 @@
 \statbox{35/45}{GBM the dominant model}{BCBlue}\hspace*{\fill}%
 \statbox{$\kappa$\,=\,0.65}{coding reliability}{BCBlue}\hspace*{\fill}%
 \statbox{45\%}{winner--control author overlap}{BCRed}\hspace*{\fill}%
-\statbox{5 of 6}{folklore couplings fail}{BCRed}%
+\statbox{5 of 6}{folklore couplings unsupported}{BCRed}%
 \hspace*{\fill}
 
 \vspace{0.3cm}
@@ -151,9 +151,8 @@
 % =============================================================
 % THREE-COLUMN BODY
 % =============================================================
-\RaggedRight
+\raggedright
 \hyphenpenalty=10000
-\emergencystretch=2em
 \large
 
 \begin{multicols}{3}
@@ -190,7 +189,7 @@ on fixed data --- never winners against strong non-winners. We code both.
 
 \begin{posterblock}{Data Description}
 \renewcommand{\arraystretch}{1.35}
-\begin{tabular}{@{}p{0.32\linewidth}p{0.62\linewidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.32\linewidth}>{\raggedright\arraybackslash}p{0.62\linewidth}@{}}
 \toprule
 \textbf{Attribute} & \textbf{Description} \\
 \midrule
@@ -269,7 +268,7 @@ merely strong play.
 
 \begin{posterblock}{Implementation \& Tools}
 \renewcommand{\arraystretch}{1.3}
-\begin{tabular}{@{}p{0.30\linewidth}p{0.64\linewidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.30\linewidth}>{\raggedright\arraybackslash}p{0.64\linewidth}@{}}
 \toprule
 \textbf{Component} & \textbf{Tools / Libraries} \\
 \midrule
@@ -286,15 +285,16 @@ Visualization  & matplotlib \\
 \columnbreak
 
 \begin{posterblock}{Results}
-\textbf{FE does not separate winners from near-winners} ($n=11$, not significant); only
-\emph{learned} features lean winner.
+\textbf{FE does not cleanly separate winners from near-winners} ($n=11$, not significant);
+only \emph{learned} features lean winner.
 
 \vspace{0.4em}
 \centerline{\includegraphics[width=0.86\linewidth]{fig05_fe_prevalence_winners_vs_controls}}
 \figcap{Figure 3. FE-family prevalence, winners vs.\ near-winning controls.}
 
 \vspace{0.5em}
-\textbf{5 of 6 folklore couplings fail} --- only linear-stacker dominance holds.
+\textbf{5 of 6 couplings aren't supported} --- only linear-stacker dominance holds, and it
+just restates standard~ensembling.
 
 \vspace{0.4em}
 \centerline{\includegraphics[width=0.86\linewidth]{fig02_coupling_evidence}}
@@ -305,8 +305,8 @@ Visualization  & matplotlib \\
 \textbf{Key Takeaways}
 \begin{itemize}[leftmargin=1.4em,itemsep=6pt,topsep=4pt]
   \item Winning $\neq$ FE folklore --- a small shared core, not elaborate craft.
-  \item \textbf{Learned features} --- the one edge that leans to winners.
-  \item The top is a \textbf{recurring guild} (45\% author overlap) --- partly about \emph{who competes}.
+  \item \textbf{Learned features} --- the one edge that leans to~winners.
+  \item The top is a \textbf{recurring guild} (45\% author overlap)~--- partly about \emph{who competes}.
 \end{itemize}
 
 \vspace{0.4em}
