@@ -1341,3 +1341,45 @@ Each §4/§5 subsection's numbers were recomputed from `stage1_data.csv` / the w
 2. **A reframed thesis can leave contradictions in load-bearing sections.** §4.6 and §5.4 each still argued *against* a limitation the project had carefully established elsewhere; the rescope updated the headline but not every supporting sentence. Re-read for self-consistency, not just local correctness.
 3. **A trend claim needs temporal evidence, not just a recent example.** §5.2's "shifting frontier" rode on Season-6 vibes; the actual per-era counts were flat. "Newest season looks different" ≠ "the frontier is moving."
 4. **End on the thesis, not the to-do list.** With no Conclusion section, the Discussion's last paragraph IS the closing — it should re-land the contribution, not trail off into future work.
+
+---
+
+## Session 25 — Jun 8–10, 2026
+
+**Branches:** `phase11/report-rescope` (references + cleanup) → `phase12/poster-presentation` (poster).
+**Topic:** Closed out §6 References; full repository cleanup; rewrote README + Makefile to match the executed project; then built the capstone **poster** (academic A0) with a live compile-and-view loop after installing MiKTeX locally.
+
+### §6 References — completed and verified
+Drafted APA-7 entries, then **web-verified every one** against the publisher of record. Catches: Borisov corrected to the final journal version (2024, IEEE TNNLS 35(6), 7499–7519, not "advance online"); the two bare arXiv IDs in the old placeholder were **mislabeled** — actually **Lu, Perrone & Unpingco (2020)** and **Tihon et al. (2021)** (denoising-autoencoder imputation, not "masked-loss"/"dot-product attention"). Placement audit (APA: every reference needs an in-text citation): dropped **Lim** (TFT — uncited, study excludes time series), **Athey** (no sourceable competitions-as-method paper — removed the §2.2 clause; M5/Netflix carry the point), **TabNet/SAINT/RealMLP** (named but uncited), and **Gorishniy 2022/PLE** (exists but homeless — only a writeup-internal citation). Merton → **Matthew Effect (1968)**. Final §6: 10 verified, placed references + a primary-data-sources note.
+
+### Figure fixes
+- `fig4` heavyweight-tail annotation said `cdeotte s5e2 = 19`; the n_fe=19 entry is **s6e3** (s5e2 is 16). Corrected + regenerated.
+- `phase5_41` author centrality was non-deterministic (handle list built from a bare `set`); added `sorted(set(...))` + a `(total, handle)` tiebreak — now byte-reproducible.
+- `phase5_51` coupling figure relabeled to mirror §4.3: C1 → INCONCLUSIVE (detection-limited), C6 → DIRECTIONAL; legend moved below.
+
+### Repository cleanup (multiple commits)
+- Removed `scripts/__pycache__`; gitignored `.claude/`.
+- **Folded report figures into the deliverable**: new `scripts/sync_report_figures.py` copies the 14 figures into `outputs/report/figures/` as `fig01`–`fig14`; deleted the stale `outputs/figures/eda_*.png` — resolves the two-figure-locations smell (`analysis/figures/` stays the generators' working dir; `outputs/` is the self-contained deliverable tree).
+- Committed the `data/writeups/**` corpus (54 files; dropped a stray `.lnk`; the s5e4 source repo folded in cleanly, no nested `.git`).
+- Archived superseded docs: report v1/OUTLINE/DRAFT/IMPROVEMENT_PLAN → `outputs/report/archive/`; `PLAN.md`/`PlanV2.md` → `journal/archive/`; `01_eda.ipynb` → `notebooks/archive/` (+ fixed the report's §3.7 path).
+- **Documented (did NOT delete) the corrupt `.bak` files** — they are the input of record to the `_rebuild_*.py` Pass-3 repair scripts, not disposable backups; added `analysis/pass3-fe-taxonomy/README.md` warning never to use them for analysis/reliability.
+
+### README + Makefile rewrite
+Both described the *original plan* (35 entries, a decision-flowchart deliverable, an XGBoost/scikit-learn toolchain, scripts that don't exist, "all phases pending"). Rewrote README to the executed project (45+11, three-pass coding, real wrangling/Kaggle/AI-assisted toolchain, current layout, reproduce-the-analysis commands, key findings). Makefile: dropped the broken `run` target (`python -m src.main` — there is no `src/`) and added real `stats` / `validate` / `figures` workflow targets.
+
+### Poster (phase12/poster-presentation)
+- **Format decision:** Albuquerque's `.tex` template (A0 portrait academic) is *optional*; the example posters (`private/poster_examples/`) are slide-style (PowerPoint, image-heavy, landscape/portrait) — but those are *product/app* capstones. A research **meta-analysis** fits the academic poster, so kept the A0 LaTeX format and pushed it toward more visual impact.
+- Built `outputs/poster/poster.tex` from the template: filled every block; **adapted the three model-centric blocks** (Model & Analysis → Analytical Framework, dropped the regression equation + train/test setup; real toolchain; paradigm framing), wired 4 figures, embedded a TikZ methodology schematic.
+- **Installed MiKTeX user-scope via winget** to compile locally. Key gotcha: the "security risk: running with elevated privileges" message is a **non-fatal stderr warning** — PowerShell 5.1 mis-wraps native stderr as an error (exit −1/255), but the **Bash tool** runs `pdflatex` fine (exit 0, PDF produced). Established the loop: compile → `pdftocairo` high-DPI crop → Read the PNG → fix → repeat. This turned blind LaTeX editing into see-and-fix iteration.
+- Iterations: fixed a 2-page overflow (schematic `\resizebox` was full-width → enormous); added a full-width **key-numbers band** (62% · 35/45 · κ=0.65 · 45% · 5 of 6); cut body text ~40%; **redesigned the methodology schematic** from a tall vertical pipeline (ate a whole column for little info) to a compact horizontal flow with a reliability brace; fixed **cut text** in the schematic (tikz boxes inherited the poster's huge `\large` body font → text overflowed/clipped; fixed with a small fixed font that `\resizebox` scales up); disabled hyphenation (clean ragged-right, 0 overfull). Expert + typography pass on **Abstract** (restored the report's hedge: "does **not cleanly** separate … (n=11, n.s.)" — the poster had overstated an underpowered null) and **Introduction** (folded the coupling angle into RQ1 to anchor the "5 of 6 couplings" headline; killed an RQ3 one-word orphan with a non-breaking space).
+
+### Current state
+`phase12/poster-presentation`. Poster is one A0 page, compiles clean (0 overfull), with the key-numbers band, compact horizontal schematic, 4 figures, and Abstract + Intro verified against the report. Committed with a build-artifact `.gitignore`. **Remaining:** repo-URL placeholder in Acknowledgments; optional expert/typography pass on the remaining boxes (Results still has the same "cleanly" omission); then the presentation/slides.
+
+**Lessons learned this session:**
+1. **A live compile-and-view loop is transformative for visual work.** Installing MiKTeX + rendering `pdftocairo` crops and Reading them is what turned "looks bad" (which was just 2-page overflow + cut text, invisible from source) into precise, fast fixes. Don't iterate blind on layout.
+2. **Don't trust PowerShell 5.1 exit codes on native exes that print to stderr.** The MiKTeX "elevated privileges" warning looked fatal but wasn't; running via Bash and reading the actual PDF revealed a clean compile. (Whole detour into `runas`/de-elevation was unnecessary.)
+3. **Match the poster format to the kind of project.** The slide-style examples were optimized for showing a built product; a findings-driven meta-analysis fits the academic poster. Copying a format built for a different project type is a trap.
+4. **Posters silently overstate — re-verify load-bearing claims against the report.** "FE does not separate winners" dropped the report's careful "not cleanly … underpowered (n=11)" — turning a hedged null into an overclaim. Compress aggressively, but never drop a hedge that's doing scientific work.
+5. **Verify references exist AND have an in-text place.** Web-checking caught a wrong year, two mislabeled arXiv IDs, and an unsourceable author; the placement audit caught two entries with no in-text citation (APA requires dropping them).
+6. **Investigate before deleting.** The "corrupt `.bak` footgun" was actually the documented input to the rebuild scripts — the right move was to label it, not delete it.
