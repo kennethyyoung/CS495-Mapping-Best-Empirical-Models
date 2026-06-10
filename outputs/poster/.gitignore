@@ -1,0 +1,9 @@
+# LaTeX build artifacts (keep .tex, .pdf, the logo, this file)
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+a0header.ps
+compile.log
