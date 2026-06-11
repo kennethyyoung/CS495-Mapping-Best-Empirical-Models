@@ -48,8 +48,8 @@ for b in (b1, b2):
 # highlight the one family where winners > controls
 gi = labels.index('Learned / advanced')
 ax.axhspan(gi - 0.5, gi + 0.5, color='#d8f0d8', alpha=0.5, zorder=0)
-ax.annotate('only family where\nwinners > controls\n(Group G, heavyweight)',
-            xy=(win[gi] + 1, gi), xytext=(44, gi), fontsize=8.5, color='#1a5e1a',
+ax.annotate('the winner-favoring edge\nthat resists copying',
+            xy=(win[gi] + 1, gi), xytext=(42, gi), fontsize=8.5, color='#1a5e1a',
             ha='left', va='center',
             arrowprops=dict(arrowstyle='->', color='#1a5e1a', lw=1))
 for s in ('top', 'right'): ax.spines[s].set_visible(False)
