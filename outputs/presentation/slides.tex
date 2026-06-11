@@ -1,0 +1,399 @@
+% =================================================================
+% CS495 Capstone in Data Science -- Final Presentation
+% Mapping Best Empirical Models: A Meta-Analysis of Winning
+% Solutions in Kaggle Tabular Competitions
+%
+% Author: Kenneth Young
+% Instructor: Pedro Albuquerque, PhD -- Bellevue College
+%
+% Rebuilt 2026-06 against research_report_v2.md + the fig01-fig14
+% report figure set (+ wordcloud_winning).
+% =================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+
+% --- Theme ---
+\usetheme{metropolis}
+\setbeamertemplate{frame numbering}[fraction]
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+% Figures live in the report's figure folder; the second path lets the
+% deck also compile on Overleaf with the PNGs uploaded beside slides.tex.
+\graphicspath{{../report/figures/}{.}}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{appendixnumberbeamer}
+
+% --- Word-wrap fixes for narrow columns ---
+\setlength{\emergencystretch}{3em}
+\sloppy
+
+% --- Custom colors ---
+\definecolor{kc-accent}{HTML}{C8932A}   % warm gold accent for emphasis
+\definecolor{kc-muted}{HTML}{8A8A8A}    % muted gray for secondary text
+\definecolor{kc-teal}{HTML}{23373B}     % dark teal (matches the frametitle bar)
+\definecolor{kc-teallt}{HTML}{D7E3E5}   % light teal fill
+
+% --- TikZ for the methodology schematic ---
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, decorations.pathreplacing}
+
+% Metropolis tweaks
+\setbeamercolor{progress bar}{fg=kc-accent}
+\setbeamercolor{frametitle}{bg=mDarkTeal}
+\setbeamercolor{alerted text}{fg=kc-accent}
+
+% --- Title block ---
+\title{Mapping Best Empirical Models}
+\subtitle{A Meta-Analysis of Winning Solutions in Kaggle Tabular Competitions}
+\author{Kenneth Young}
+\institute{CS495 Capstone in Data Science \\ Bellevue College \\ Instructor: Pedro Albuquerque, PhD}
+\date{June 2026}
+
+% =================================================================
+\begin{document}
+% =================================================================
+
+\maketitle
+
+
+% =================================================================
+\section{Motivation}
+% =================================================================
+
+\begin{frame}{The conventional wisdom}
+  \vspace{0.8em}
+  \begin{center}
+    {\Large Winning a tabular Kaggle competition is widely taken to be}\\[0.5em]
+    {\Large about \alert{elaborate feature engineering}.}\\[1.6em]
+    {\large\color{kc-muted} Clever, hand-crafted features that
+     set the winners apart.}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Yet winners do modest feature engineering}
+  \begin{center}\large Among the winners:\end{center}
+  \vspace{0.7em}
+  \begin{columns}[T]
+    \column{0.32\textwidth}
+      \begin{center}
+        {\fontsize{42}{46}\selectfont\alert{4}}\\[0.5em]
+        median own features\\ {\small (best-documented winners)}
+      \end{center}
+    \column{0.32\textwidth}
+      \begin{center}
+        {\fontsize{42}{46}\selectfont\alert{6}}\\[0.5em]
+        winners engineered\\ \emph{no} features
+      \end{center}
+    \column{0.32\textwidth}
+      \begin{center}
+        {\fontsize{42}{46}\selectfont\alert{62\%}}\\[0.5em]
+        simply ensembled\\ existing models
+      \end{center}
+  \end{columns}
+  \vspace{1.3em}
+  \begin{center}
+    \large Feature-engineering volume looks less decisive than the conventional view suggests.
+  \end{center}
+\end{frame}
+
+\begin{frame}{What we ``know'' is anecdotal}
+  \begin{itemize}
+    \item Folk wisdom lives in blog posts, forum threads, and winner interviews.
+    \item Academic benchmarks compare \alert{algorithms} on fixed datasets,
+          rarely \alert{winners} against strong non-winners.
+    \item Nobody has systematically asked what \emph{distinguishes} a winning
+          solution from a near-winning one.
+  \end{itemize}
+  \vspace{1em}
+  \begin{center}
+    \alert{\large This study codes 45 winning solutions + 11 near-winning controls.}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Research questions}
+  \begin{description}
+    \item[RQ1] What strategy \alert{paradigms} define winning? Do folklore
+               ``constraint $\rightarrow$ strategy'' rules hold?
+    \item[RQ2] Which feature-engineering techniques do winners use, and how much?
+    \item[RQ3] Does feature engineering \alert{distinguish} winners from strong
+               non-winners?
+    \item[RQ4] How is the winning \alert{population} structured?
+  \end{description}
+\end{frame}
+
+
+% =================================================================
+\section{Data \& Method}
+% =================================================================
+
+\begin{frame}{The corpus}
+  \begin{columns}[T]
+    \column{0.5\textwidth}
+    \begin{itemize}
+      \item \alert{45 winning solutions} (top-three finishers)
+      \item \alert{11 near-winning controls} (ranks 4--25, same competitions)
+      \item February 2022 -- April 2026
+      \item Mostly Kaggle Playground Series (synthetic data); one real-data
+            Featured competition
+    \end{itemize}
+    \column{0.5\textwidth}
+    \begin{itemize}
+      \item Coded on a \alert{40-column schema} plus a \alert{53-technique}
+            feature-engineering taxonomy
+      \item Caveat: only solutions with public write-ups can be coded
+            (documentation self-selection)
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{A content-analysis meta-study}
+  No model is trained: the unit of analysis is \alert{one completed solution},
+  coded in three passes.
+  \vspace{0.6em}
+  \begin{center}
+  \resizebox{\linewidth}{!}{%
+  \begin{tikzpicture}[
+    font=\sffamily,
+    >={Stealth[length=2mm]}, node distance=5mm,
+    box/.style={rectangle, rounded corners=2pt, draw=kc-muted, line width=0.6pt,
+                fill=white, text=kc-teal, align=center, inner sep=3pt,
+                minimum height=20mm, minimum width=22mm, text width=21mm},
+    io/.style={box, fill=kc-teallt, draw=kc-teal, line width=0.9pt},
+    result/.style={box, fill=kc-teal, text=white, draw=kc-teal},
+    arr/.style={->, draw=kc-teal, line width=0.9pt},
+  ]
+  \node[io] (corpus) {{\bfseries Corpus}\\[2pt]{\small 45 winners\\+ 11 controls}};
+  \node[box, right=of corpus] (p1) {{\bfseries Pass 1}\\[2pt]{\small structured\\field coding}};
+  \node[box, right=of p1] (p2) {{\bfseries Pass 2}\\[2pt]{\small paradigm \&\\attribution}};
+  \node[box, right=of p2] (p3) {{\bfseries Pass 3}\\[2pt]{\small 53-technique\\FE taxonomy}};
+  \node[result, right=of p3] (out) {{\bfseries Analyses}\\[2pt]{\small typology\\winner--control\\couplings}};
+  \draw[arr] (corpus) -- (p1);
+  \draw[arr] (p1) -- (p2);
+  \draw[arr] (p2) -- (p3);
+  \draw[arr] (p3) -- (out);
+  \draw[decorate, decoration={brace, amplitude=3pt, mirror}, draw=kc-accent, line width=0.8pt]
+    ([yshift=-1.5mm]p1.south west) -- ([yshift=-1.5mm]p3.south east);
+  \node[text=kc-accent, font=\sffamily\bfseries\small, below=3.5mm of p2.south]
+    {blind re-code, $\kappa = 0.65$};
+  \end{tikzpicture}%
+  }
+  \end{center}
+  \vspace{0.4em}
+  Each winner is paired against a near-winning control from the \emph{same}
+  competition, isolating what distinguishes winning from merely strong play.
+\end{frame}
+
+\begin{frame}{Checking our own coding}
+  \begin{itemize}
+    \item Primary coding was \alert{AI-assisted, researcher-directed}.
+    \item A \alert{blind re-code} of a stratified 12-entry subsample gives
+          \alert{$\kappa = 0.65$}: substantial agreement at the technique-family level.
+    \item So FE results are reported at the \emph{family} level, where they are reliable.
+  \end{itemize}
+  \vspace{0.6em}
+  \alert{Limitations:} small $n$ (11 paired competitions); synthetic-data corpus;
+  intra-rater (not inter-rater) reliability; documentation self-selection.
+\end{frame}
+
+
+% =================================================================
+\section{Findings}
+% =================================================================
+
+\begin{frame}{What winners actually use}
+  \begin{center}
+    \includegraphics[width=0.95\linewidth,height=0.76\textheight,keepaspectratio]{wordcloud_winning}
+  \end{center}
+  {\small\alert{A few models (GBMs) and ensemble stacking dominate;} FE is a long, varied tail.}
+\end{frame}
+
+\begin{frame}{Winning reduces to a few paradigms}
+  \begin{columns}[c]
+    \column{0.6\textwidth}
+    \includegraphics[width=\linewidth]{fig01_paradigm_distribution}
+    \column{0.4\textwidth}
+    \begin{itemize}
+      \item \alert{Ensemble stacking} = 62\% of wins (28/45)
+      \item Gradient-boosted trees are the dominant model in \alert{35 of 45}
+      \item A short tail: single-model-FE, lookup-exploit, problem-fit-NN
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Winning FE is a small shared core}
+  \begin{center}
+    \includegraphics[width=0.68\linewidth,height=0.55\textheight,keepaspectratio]{fig04_nfe_distribution}
+  \end{center}
+  \vspace{0.2em}
+  Even the best-documented winners engineer a median of \alert{4} of their own features
+  (a corpus-wide floor of 2), and \alert{6 used none}. Target encoding is the one
+  near-universal technique; the rest is a long tail.
+\end{frame}
+
+\begin{frame}{Aggregate FE: controls look like they do \emph{more}}
+  \begin{columns}[c]
+    \column{0.55\textwidth}
+    \includegraphics[width=\linewidth]{fig05_fe_prevalence_winners_vs_controls}
+    \column{0.45\textwidth}
+    \begin{itemize}
+      \item Pooled across all entries, controls match or beat winners on nearly
+            every FE family.
+      \item But this is a \alert{confound}: the 11 competitions that have codeable
+            controls are FE-heavy (winner median $n_{fe}=6$ vs.\ corpus-wide 2).
+      \item So the aggregate measures a \alert{competition-mix} difference --- not
+            a winner-vs.-control one.
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Paired within-competition: the gap reverses (still n.s.)}
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+    \includegraphics[width=\linewidth]{fig06_paired_winner_control}
+    \column{0.45\textwidth}
+    \begin{itemize}
+      \item Each control vs.\ the winner of its \emph{own} competition removes the
+            mix confound.
+      \item Winners do more in \alert{7 of 11} pairs; medians \alert{6 vs.\ 3}.
+      \item Modest, \alert{not significant} ($n=11$, $p\approx0.34$) --- a
+            directional correction.
+      \item \alert{Learned features} (Group G) lean winner, \emph{never} controls
+            --- the edge that resists copying.
+    \end{itemize}
+  \end{columns}
+  \vspace{0.4em}
+  \begin{center}\small Either framing: FE volume does not \alert{cleanly separate}
+  winners from near-winners.\end{center}
+\end{frame}
+
+\begin{frame}{Folklore ``rules'' mostly don't hold}
+  \begin{center}
+    \includegraphics[width=0.88\linewidth,height=0.6\textheight,keepaspectratio]{coupling_slide}
+  \end{center}
+  \vspace{0.1em}
+  The lone green survivor, \alert{linear-stacker dominance}, just restates standard
+  ensembling. The 80\% ``custom CV'' rule rests on only \alert{5 cases}.
+\end{frame}
+
+\begin{frame}{The documented top is a recurring guild}
+  \begin{columns}[c]
+    \column{0.3\textwidth}
+      \begin{center}
+        {\fontsize{40}{44}\selectfont\alert{45\%}}\\[0.5em]
+        author overlap between winners and near-winners
+      \end{center}
+    \column{0.7\textwidth}
+      \includegraphics[width=\linewidth]{fig07_author_centrality}
+  \end{columns}
+  \vspace{0.4em}
+  A few central figures supply widely-used techniques without always winning
+  (originators vs.\ canonizers); recognition accrues to the already-prominent.
+\end{frame}
+
+\begin{frame}{How membership forms}
+  \begin{center}
+    \includegraphics[width=0.92\linewidth,height=0.58\textheight,keepaspectratio]{fig08_cdeotte_timeline}
+  \end{center}
+  \vspace{0.1em}
+  \begin{itemize}
+    \item The most central figure: \alert{observer in Feb 2023} $\rightarrow$
+          \alert{six wins} by Mar 2026.
+    \item Nearly \alert{two years} of comments, citations, and non-winning entries
+          \emph{before} the first win.
+    \item Recognition follows \alert{participation}, not just skill --- the
+          \emph{order} of events is the point.
+  \end{itemize}
+\end{frame}
+
+
+% =================================================================
+\section{Conclusions}
+% =================================================================
+
+\begin{frame}{Three takeaways}
+  \begin{enumerate}
+    \item Feature engineering is a \alert{small shared core}, not the elaborate
+          craft commonly assumed.
+    \item \alert{Learned features} are the one feature-level edge that resists
+          copying (directional, on small counts).
+    \item Winning is, in part, a \alert{community phenomenon}.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{What this does, and does not, establish}
+  \begin{itemize}
+    \item Claims are scoped to the \alert{documented competitive elite}: not typical
+          competitors, not real-world tabular ML.
+    \item The corpus is mostly \alert{synthetic} Playground data; some strategies
+          are generator artifacts.
+    \item The winner--control test is \alert{underpowered} ($n=11$): the result is
+          ``no clean separation,'' not ``no difference.''
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Contributions \& future work}
+  \alert{Contributions}
+  \begin{itemize}
+    \item The first structured, reliability-checked characterization of winners
+          \emph{versus near-winners}.
+    \item A reusable 53-technique FE taxonomy and multi-pass coding workflow.
+    \item Replaces folklore with documented frequencies.
+  \end{itemize}
+  \vspace{0.4em}
+  \alert{Future work}
+  \begin{itemize}
+    \item Track the emerging \alert{Season-6 shift}: very large (100+ model) ensembles
+          and LLM-assisted workflows the four-paradigm typology will need to absorb.
+    \item Real-data Featured competitions; other platforms and modalities.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+  Winning turns less on the \emph{volume} of feature engineering\\[0.3em]
+  than on \alert{paradigm fit} and \alert{who competes}.
+\end{frame}
+
+
+% =================================================================
+\appendix
+% =================================================================
+
+\begin{frame}{Appendix: coupling evidence (detailed)}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig02_coupling_evidence}\end{center}
+\end{frame}
+
+\begin{frame}{Appendix: feature-engineering technique long tail}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig03_technique_longtail}\end{center}
+\end{frame}
+
+\begin{frame}{Appendix: paradigm composition by era}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig09_paradigm_by_era}\end{center}
+\end{frame}
+
+\begin{frame}{Appendix: dataset size by paradigm}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig10_n_rows_by_paradigm}\end{center}
+\end{frame}
+
+\begin{frame}{Appendix: external-original use by paradigm}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig11_use_mode_by_paradigm}\end{center}
+\end{frame}
+
+\begin{frame}{Appendix: photo-finish rate by paradigm}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig12_photofinish_by_paradigm}\end{center}
+\end{frame}
+
+\begin{frame}{Appendix: most-canonized techniques}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig13_canonized_techniques}\end{center}
+\end{frame}
+
+\begin{frame}{Appendix: citations by origination score}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig14_citations_by_origination}\end{center}
+\end{frame}
+
+\end{document}

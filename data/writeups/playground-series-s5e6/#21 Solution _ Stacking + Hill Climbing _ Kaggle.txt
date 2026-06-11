@@ -1,0 +1,282 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predicting Optimal Fertilizers
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6>
+      o
+
+        #21 Solution | Stacking + Hill Climbing
+
+        <https://www.kaggle.com/competitions/playground-series-s5e6/
+        writeups/oscar-aguilar-21-solution-stacking-hill-climbing>
+      o
+
+        Predict Calorie Expenditure
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5>
+      o
+
+        PS_2025_05 | Keras Stacked Transfer Learning
+
+        <https://www.kaggle.com/code/pinoystat/ps-2025-05-keras-stacked-
+        transfer-learning>
+      o
+
+        [8th] Place Solution for the [Predict Calorie Expenditure]
+        Competition
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5/
+        writeups/pinoystat-8th-place-solution-for-the-predict-calor>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+#21 Solution | Stacking + Hill Climbing — Predicting Optimal Fertilizers
+
+
+  #21 Solution | Stacking + Hill Climbing
+
+Predicting Optimal Fertilizers
+
+<https://www.kaggle.com/competitions/playground-series-s5e6>
+
+Solution Writeup · 21st place
+
+First, I would like to start by sincerely thanking Kaggle for hosting
+this episode of the playground series. In this post, I will briefly
+outline my approach.
+
+
+    Base Models
+
+The table below summarizes the various models that were built using the
+data:
+
+Model 	Number of Models
+Catboost 	20+
+LGBM 	50+
+LGBM-Goss 	10+
+XGBoost 	50+
+Logistic 	10+
+Multinomial NB 	10+
+GradientBoostedTreesLearner 	5+
+
+All the base model were trained over the same 10-fold cross-validation
+strategy, |StratifiedKFold(n_splits=10, shuffle=True, random_state=42)|.
+
+
+    Stackers
+
+Most of the top-scoring public notebooks used |LogisticRegression| as
+the |final_estimator| in the |StackingClassifier|. However, in many of
+my experiments, I did not achieve good alignment between the local
+cross-validation score and the public leaderboard score. As a result, I
+decided to try a different model as the |final_estimator|. I found that
+using |LinearDiscriminantAnalysis| as the |final_estimator| in the |
+StackingClassifier| generated a consistent alignment between the local
+cross-validation score and the public leaderboard score. I also
+experimented with |GaussianNB| as the stacker and observed similar
+behavior as with |LogisticRegression|. Notably, I trained over 50
+different stackers using |LinearDiscriminantAnalysis| as the |
+final_estimator|.
+
+
+    Hill Climbing
+
+The table below displays the public leaderboard scores of my top four
+stackers:
+
+Stacker 	Public LB score
+1 	0.38239
+2 	0.38233
+3 	0.38224
+4 	0.38211
+
+Then, I saved the out-of-fold predictions from the above stackers and
+used them to estimate the weights for the ensemble using hill climbing.
+The public leaderboard score of the hill climbing ensemble was 0.38247
+and the private score was 0.38385.
+
+
+    What worked
+
+  * Treating all features as categorical as pointed out in a couple of
+    discussions.
+  * Adding multiple copies of the original dataset for training purposes.
+
+
+    What didn't work
+
+  * Feature engineering
+
+Author
+
+<https://www.kaggle.com/oscarm524>
+Oscar Aguilar <https://www.kaggle.com/oscarm524>
+
+oscarm524
+
+arrow_drop_up
+
+13
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    1 Comment
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted a year ago
+
+· 5th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats on sticking to your guns as usual, and earning a big jump up
+the LB!
+
+replyReply
+add_reactionReact
+

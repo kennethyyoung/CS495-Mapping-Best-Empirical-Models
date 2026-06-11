@@ -615,3 +615,771 @@ The `available-not-used` count (only 2) is a tiny but meaningful counter-pattern
 ### Current state (May 27, 2026)
 
 Six-sheet workbook is the Pass 1 + Pass 2 + audit-and-corrections artifact. 103 cell-level corrections logged total (13 typed-as-corrections + 90 from the split backfill). All work committed on `phase4/writeup-reevaluation`. Re-analysis (new figures, paradigm-by-margin tables, updated research_report Results section) starts on a fresh branch using the corrected data.
+
+---
+
+## Session 15 — Phase 5 Reanalysis, Phase 6 Report Revision, Phase 7 Presentation Deck
+
+**Branches:** `phase5/reanalysis` → `phase6/report-revision` → `phase7/presentation`
+
+Three connected phases compressed into one extended session. Each got its own branch and built on the previous one. Notebook → report rewrite → presentation deck + glossary, ending with two systematic sweeps for numeric errors.
+
+### Phase 5 — Reanalysis notebook + new figures
+
+Built `notebooks/02_reanalysis.ipynb` from scratch on `phase5/reanalysis` to supersede the Phase 3 EDA notebook (`notebooks/01_eda.ipynb` left in place as the historical artifact, since the corrections changed several distributional counts).
+
+Five-section structure: setup + load, distributional refresh, paradigm characterization, constraint cross-tabs, community + attribution, coupling evidence table.
+
+**11 figures generated under `analysis/figures/phase5/`:**
+
+| File | Section / purpose |
+|---|---|
+| phase5_21_paradigm_distribution.png | §2.1 — typology headline |
+| phase5_22_paradigm_by_era.png | §2.2 — paradigm × era stacked bar |
+| phase5_23_paradigm_photofinish.png | §2.3 — metric-aware photo-finish rate by paradigm |
+| phase5_24_paradigm_n_rows.png | §2.4 — n_rows scatter by paradigm (log scale) |
+| phase5_25_paradigm_origination.png | §2.5 — paradigm × origination_score heatmap |
+| phase5_31_use_mode_paradigm.png | §3.1 — external_original_use_mode × paradigm |
+| phase5_33_canonized_techniques.png | §3.3 — canonized-technique frequency bar |
+| phase5_34_citations_origination.png | §3.4 — citations × origination_score boxplot |
+| phase5_41_author_centrality.png | §4.1 — wins + citations + comments per top-15 |
+| phase5_42_cdeotte_timeline.png | §4.2 — cdeotte observer-to-winner timeline |
+| phase5_51_coupling_evidence.png | §5.1 — stacked-bar of supporting/contradicting/neutral per coupling |
+
+Plus 4 additional figures generated specifically for the presentation (Phase 7) via `scripts/build_presentation_figures.py`: phase5_61 (FE tag frequency), phase5_62 (model family distribution), phase5_63 (origination score histogram), phase5_64 (use-mode breakdown).
+
+**Coupling evidence outcome:** of 6 promoted couplings from INDEX, only 2 survive at strong-evidence threshold (≥75% support):
+- C3 linear-stacker dominance: 32/40 (80%)
+- C6 distribution-shift → custom CV: 4/5 (80%, small n)
+
+Four contradicted (one detection-limited):
+- C4 "use available original as columns": 11/30 (37%) — most striking, a direct contradiction of widely-cited cdeotte folk-knowledge
+- C5 small-data → no-FE single-model: 3/13 (23%)
+- C2 heavy-citations + recurring → fork-heavy: 3/8 (38%)
+- C1 photo-finish → validation-discipline: 6/27 (22%) — flagged as detection-limited (strategy detector keys off 200-char `winner_unique_edge` summary)
+
+**Output CSV:** `analysis/reanalysis/coupling_evidence.csv` for downstream paper use.
+
+### Phase 6 — research_report.md rewrite
+
+Branched `phase6/report-revision` from `phase5/reanalysis`. Rewrote `outputs/report/research_report.md` from 225 lines to 296 lines, pivoting framing from flowchart deliverable to typology + coupling-evidence.
+
+**Sections written from scratch:**
+- Abstract (~300 words, hits all four headlines)
+- §1 Introduction (1.1–1.6, written for Kaggle-naive audience)
+- §2 Background and Related Work (competition-as-method + knowledge-propagation framing)
+
+**Sections substantially reframed:**
+- §3 Methodology — added Pass 2 + audit + corrections workflow, replaced flowchart-rule extraction with coupling-evidence framework, expanded §3.7 Limitations
+- §4 Results — restructured paradigm-first; new subsections for paradigm typology (4.2), coupling evidence (4.3), paradigm-by-era (4.4), constraint cross-tabs (4.5), community + attribution (4.6); existing field distributions moved to 4.7 as supporting evidence; new 4.8 for unexpected findings
+
+**Sections removed per the no-Discussion presentation plan:**
+- §5 Discussion (interpretation lives in verbal narration)
+- §6 Conclusion (folded into 4.8)
+
+**Sections corrected during rewrite:**
+- §3.2 cohort sizes (previously inconsistent with §4.2) now matches: S3=17, S4=10, S5=10, S6=4, TPS=3, Featured=1
+- §3.2 column count updated (was 36, now 40 after corrections + 2 new columns)
+
+**Outstanding:** §5 References still a placeholder note. ~10 academic sources need formal APA 7th entries (Caruana, Erickson, Gorishniy, Borisov, Lim, Makridakis, Athey, von Krogh, Merton, plus inline NeurIPS/arXiv papers). Mechanical to fill in but not done.
+
+### Phase 7 — Beamer presentation deck
+
+Branched `phase7/presentation` from `phase6/report-revision`. Built Metropolis-themed Beamer deck targeting the May 4 capstone presentation (5–7 minutes, Kaggle-naive audience).
+
+**Final structure (22 slides):**
+- 1 title + 16 main content + 1 standout thank-you + 4 appendix
+- 11 figure references from `analysis/figures/phase5/`
+- 17 `\note{}` speaker-note blocks
+- README documents Overleaf upload procedure (XeLaTeX/LuaLaTeX required for Metropolis fonts)
+- 63-term glossary (`outputs/presentation/glossary.md`) added for Q&A reference
+
+**Deck went through 4 iterations:**
+1. Initial draft — 16 main slides
+2. Restructuring after discussion: net +4 slides, -3 = +1 slide. Added "From flowchart to typology" pivot slide, "How winners actually build solutions", "Use as columns correction", "What each winner uniquely did" examples. Merged cdeotte timeline into community slide. Replaced three unexpected findings closer with "What this work contributes (beyond ensembles win)".
+3. Word-wrap fixes — `\sloppy`, `\setlength{\emergencystretch}{3em}`, and `\raggedright` in every narrow column. Beamer's default justified text was overflowing narrow columns.
+4. Numeric error sweep (see below).
+
+**Adapted methodology framing for adaption note:** The Methodology guideline (and Results guideline) assumes a standard ML modeling project with baselines + RMSE/accuracy metrics. The report and deck explicitly adapt each subsection for a meta-analysis context. Captured in the report's §3.1 closing sentence.
+
+### Numeric error sweep
+
+The presentation prep surfaced a string of numeric errors propagated from earlier work into both slides and report. Caught and fixed in two sweeps; 12 errors total.
+
+**Sweep 1 (provoked by user spotting slide 10 / slide 11):**
+1. Slide 10 note: "96% / 4 paradigms" → 4 paradigms = 41/45 = 91%; 5 paradigms = 44/45 = 98%
+2. Report §4.1: same "96% / 43 of 45" error
+3. Slide 11 bullets: had inverted 67% / 33% (chart shows 67% are mostly-original, not 33%); also mixed in two metrics (`forked_from_public_notebook` flag and `community-template-tweak` paradigm count) that the audience couldn't map to chart bars — moved those to speaker note
+4. Slide 17 (closer): "96% / 'three of the four'" → 91/98% + named the three (lookup-exploit / problem-fit-NN / single-model heavy-FE align with conditions; ensemble-stacking is the universal one)
+
+**Sweep 2 (provoked by user spotting slide 16):**
+5. Slide 16 cdeotte: said "4 wins + 6 citations", chart shows 6 + 6 (chart's "wins" axis counts all top-three appearances, not only rank-1 wins)
+6. Slide 16 mahog: said "4 + 6", chart shows 3 + 4. Added paddykb (5+0) and ambrosm (4+3) to flesh out the archetypes.
+7. Slide 17: "Dominant winners spent 12–22 months as observers" — 22 is cdeotte specifically; 12 was adaubas but adaubas has only 1 win, not a dominant winner. Narrowed to "cdeotte spent 22 months..."
+8. Report §4.1: same author-count error, plus "From PS Season 4 onward" inconsistency (should be "From PS Season 3 onward" — S3 also has 65% ensemble-stacking)
+9. Report §4.6: same author-count error in Dominant-competitor-also-cited bullet
+10. Report §4.6: cdeotte timeline said "four entries in 14 months" — should be five top-three appearances in 15 months
+11. Report §4.7: "five competition cohorts" but the list enumerates six
+12. Report §4.7: external original use-mode breakdown omitted lookup=2
+
+All twelve fixed across `outputs/presentation/slides.tex` (on `phase7/presentation`) and `outputs/report/research_report.md` (on `phase6/report-revision`).
+
+### Methodology questions discussed but not fully resolved
+
+Three methodology Q&A topics surfaced during prep and have notes/answers prepared but were not applied to the report or deck because we ran out of time on the presentation side:
+
+**1. Why temporal scope 2022+?** Discussed two reasons: (a) tooling changes — RAPIDS cuML/cuDF, AutoGluon adoption, modern tabular NN architectures, A100 GPU access, and LLM-assisted coding all matured around 2021–2022; mixing earlier eras would conflate tool availability with strategy. (b) Technique propagation — Kaggle techniques migrate between competitions, so any era reflects what came before; including older competitions would mean characterizing a moving target. Possible future additions to report §1.5 Scope or §3.7 Limitations: explicit paragraph on the cutoff rationale.
+
+**2. Cross-sectional vs time-series scope.** The corpus is implicitly cross-sectional tabular but the framing isn't explicit. Time-series exclusion rationale: different model families (ARIMA / Prophet / sequence models vs GBM / NN-for-tabular), different cross-validation (walk-forward vs k-fold), different metric vocabulary (MASE/sMAPE vs RMSE/AUC), different feature engineering vocabulary (lag features / rolling windows vs target encoding / groupby aggregates). Possible future addition: explicit positive framing in §1.5 Scope and slide 5 to say "cross-sectional tabular only" rather than just "no time series."
+
+**3. FE-coding caveat for the pivot slide.** The "166 unique tags, 163 with count=1" stat is partly a coding artifact — `fe_techniques` was coded as free text, not normalized to a controlled vocabulary. The pivot rationale still holds (GBM dominance + decision-node field sparsity are coding-independent), but the FE chart is overstated supporting evidence. Honest Q&A answer drafted ("partly yes — but the underlying variance is real even after normalization, and the pivot rests on multiple legs"). Possible future addition: small footnote on slide 6 chart or one-sentence note in report §3.7 Limitations.
+
+### Files added this session
+
+- `notebooks/02_reanalysis.ipynb` (61 cells across 5 sections)
+- `scripts/scaffold_reanalysis_notebook.py` (generator for above)
+- `scripts/build_presentation_figures.py` (generator for phase5_61–64)
+- `analysis/figures/phase5/` — 11 figures
+- `analysis/reanalysis/coupling_evidence.csv`
+- `outputs/presentation/slides.tex` (Beamer deck)
+- `outputs/presentation/README.md` (Overleaf upload instructions)
+- `outputs/presentation/glossary.md` (63 alphabetical terms for Q&A reference)
+
+### Current state (May 27, 2026)
+
+Presentation deck final and uploaded to Overleaf. Report is on `phase6/report-revision` with the typology rewrite complete; References section still needs APA-formatted entries before any formal submission. Three methodology answers prepared but not committed to either document — captured here in case they need to land later.
+
+`phase4/writeup-reevaluation` → `phase5/reanalysis` → `phase6/report-revision` → `phase7/presentation` all pushed to origin. None merged to main yet. Branch decision (when ready): probably merge phase4 → main first since it's the longest-living, then merge phase5 → phase6 → phase7 → main sequentially, OR squash-merge phase7 to main as one final integrated state. To be decided.
+
+---
+
+## Session 16 — Project Retrospective + Pass 3 Design
+
+**Branch:** `phase8/retrospective`
+
+Reflective session after the presentation prep ended. Conducted a structured peer-review-style critique of the project, discussed strategic next steps, and clarified the Pass 1 vs Pass 2 methodological positions before designing Pass 3 (FE taxonomy).
+
+### Critique conducted
+
+Wrote a peer-review critique covering what works and what would need strengthening before publication outside the capstone. Findings:
+
+**What works (kept):**
+- Two-pass coding design is the strongest methodological contribution
+- The pivot from flowchart to typology was the right call under data-supported framing
+- "Use as columns" contradiction is a genuinely actionable finding for practitioners
+- Audit + corrections workflow is unusually rigorous for capstone-scale work
+
+**Major concerns identified:**
+1. Selection bias on writeup-detail (overweights authors who write thoroughly — cdeotte overrepresented)
+2. Author dependence not handled (5–6 entries are cdeotte; paradigm-by-era trends partly his recent activity)
+3. Typology is partly circular — derived from the same data it's tested on; no held-out validation
+4. Coupling-evidence verdict thresholds (75% / 50%) are intuitively chosen, not statistically grounded
+5. Originator-vs-canonizer claim assumes participation; siukeitin's "0 wins" doesn't mean what it sounds like without entry data
+6. Community-graph analysis is degree-counting, not actual graph analysis (no betweenness, no clustering)
+7. FE-coding pivot evidence partly artifactual (163-of-166 unique-tags claim depends on free-text coding choice)
+8. "No pure forks" is partly definitional artifact of the 0-3 scoring anchors
+
+**Minor concerns:** typology × constraint alignments use the same 45 entries both for derivation and validation; deck appendix has redundancy; generalization to other modalities/domains not discussed.
+
+**Net assessment:** Solid capstone work, above-average rigor for student-scale meta-research. Would need 4 specific strengthening passes before journal submission: held-out typology validation, author-removal robustness, selection-bias sensitivity, tighter originator-canonizer framing.
+
+### Pass 1 vs Pass 2 methodological clarification
+
+User pushed back on the framing of the two-pass methodology with a real question: *"the presentation mostly referenced findings from Pass 2; what makes the two-pass methodology useful? Pass 1 was just a less detailed, more rigid pass."*
+
+Honest accounting: most analytical findings did come from Pass 2 (paradigm typology, origination, attribution, community archetypes). Pass 1's load-bearing contributions are infrastructure:
+1. Cross-tabs requiring structured numerical/categorical fields (paradigm × n_rows etc.) need Pass 1
+2. The audit + corrections workflow only works because Pass 1 and Pass 2 can disagree — without Pass 1, no audit
+3. Pass 1 is replicable (a second researcher would get nearly identical results); Pass 2 is interpretive
+4. Pass 1 forces recording of absence (`not_described`) that Pass 2 silently skips
+5. Coupling-evidence strategy filters partly key off Pass 1 fields (ensemble_method for C3, cv_strategy for C6)
+
+Reframing: Pass 1 is the table-stakes structured coding any meta-analysis needs; Pass 2 is the unique contribution. The methodological argument is that the **two-pass design surfaces its own scope limits** — Pass 1's distributional sparsity revealed the original FE-flowchart wasn't supportable, which forced the Pass 2 reframing. Most ML meta-analyses don't have a built-in pivot mechanism; this one did.
+
+### Did Pass 2 capture FE techniques?
+
+Confirmed: Pass 2 captured FE in prose (per-writeup MDs have "What's actually original" sections rich with FE detail), but **not as structured data**. The only Pass-2 fields that touch FE are `uses_canonized_technique` (only 12 named techniques) and `winner_unique_edge` (200-char headline summary). Cross-tabs like "target encoding × paradigm" are not possible from existing structured data.
+
+### Pass 3 design decision
+
+Proposed Pass 3 as a structured FE taxonomy: ~20–25 canonical boolean columns (uses_target_encoding, uses_brute_force_combinations, uses_groupby_aggregates, etc.) joined to existing sheets on (competition_ref, finish_rank).
+
+**User's critical concern about Pass 3:** *"It's working off Pass 2, which means it's one generation away from the original writeups and notebooks."*
+
+This is correct. Pass 2 MDs were never written to be comprehensive FE catalogs — they distill what mattered for the typology, not what mattered for FE counting. Building Pass 3 from Pass 2 MDs alone would systematically undercount FE techniques.
+
+**Resolution: Pass 3 uses a layered source strategy.**
+
+1. **Pass 2 MD as starting checklist** — gives the qualitative narrative and the techniques already noticed
+2. **Original writeup in `data/writeups/<slug>/`** as the ground truth for what the winner *said* they did
+3. **Notebook (`.ipynb`) in same folder** as the ground truth for what the code *did* — preferred where available since writeup and code often disagree
+4. **`pass3_source_confidence` column** explicitly tracking each entry's source basis: `notebook+writeup` (highest) / `writeup+notes` / `writeup-only` / `notes-only` (lowest)
+
+**Side effect of Pass 3:** acts as an audit pass for Pass 2 (techniques the MD missed get flagged), the same way Pass 2 acted as an audit pass for Pass 1.
+
+**Expected effort:** ~2 days total. Stage 1 (half day): draft taxonomy from Pass 2 MDs as a first cut. Stage 2 (1–2 days): source-validate each entry against writeup + notebook; record additions. The delta between Stage 1 and Stage 2 is itself a methodological finding (how much Pass 2 undercounts).
+
+### Sequencing decision
+
+Discussed whether to:
+- (A) Do more audit/correction work on Pass 1/Pass 2 before extending
+- (B) Build Pass 3 first
+
+Concluded (B) for three reasons:
+1. The audit work has been thorough; continued auditing has diminishing returns
+2. Pass 3 is self-contained — needs only join keys and the per-writeup MDs/writeups, doesn't depend on Pass 1 being any cleaner than it is
+3. Pass 3 will surface more Pass 1/Pass 2 issues by side effect, same as the pattern that produced the audit in Session 14
+
+### Outstanding methodology / critique items deferred
+
+Not all critique items are addressable by Pass 3. The following remain on the post-Pass-3 roadmap if the project extends to journal-quality:
+- Held-out typology validation (apply 4-paradigm definitions to 5–10 winning solutions not in original corpus)
+- Author-removal robustness check (leave-cdeotte-out reanalysis of headline findings)
+- Writeup-detail sensitivity analysis (does selecting rank-2 vs rank-1 by writeup-detail shift the paradigm distribution?)
+- Originator-vs-canonizer claim needs either participation data or softer framing
+- Community-graph analysis upgraded from degree-counting to actual DiGraph with centrality measures
+- FE-coding caveat for slide 6 / report §3.7 (small fix, was deferred during presentation prep)
+
+The three methodology questions from Session 15 (2022+ rationale, cross-sectional scope, FE-coding caveat) also remain available for application to the report if/when it's submitted formally.
+
+### Current state (May 28, 2026)
+
+Critique documented, Pass 1/Pass 2/Pass 3 methodological positions clarified, Pass 3 source strategy locked. Next branch starts the actual Pass 3 implementation.
+
+`phase8/retrospective` pushed to origin. No code changes on this branch — pure reflection + planning.
+
+---
+
+## Session 17 — May 28-29, 2026
+
+**Branch:** `phase9/fe-taxonomy` (continued from Session 16).
+**Topic:** Pass 3 implementation — schema, pilot, full coding, Stage 2 source validation, aggregates, audit, fixes.
+
+### Pass 3 schema design + pilot
+
+Built a 53-column boolean taxonomy in `analysis/pass3-fe-taxonomy/SCHEMA.md` (v3, post-pilot). The schema is organized into 11 functional groups:
+
+- A: categorical encoding (c01-c07) — TE basic, TE within-fold, TE multi-aggregations, TE alt targets, count enc, freq enc, missing indicator
+- B: numeric transformations (c08-c12)
+- C: interactions/combinatorial (c13-c18)
+- D: aggregates/groupby (c19-c26)
+- E: domain/temporal (c27-c31)
+- F: external/original-derived (c32-c37)
+- G: learned/advanced (c38-c41) — autoencoder latents, PCA/SVD, random projection, gplearn
+- H: text/exotic (c42-c44)
+- I: model-derived-as-features (c45-c47) — pseudo-labels, residual, outlier/aux classifier OOF
+- J: feature selection (c48-c50)
+- K: meta indicators (c51-c53) — explicit no-FE, adversarial validation for FE, forked uncatalogued FE
+
+**User pushed for fine granularity:** "more detailed the better; can combine after but not split vague into detailed after the fact." Schema v1 (24 cols) → v2 (52 cols) → v3 (53 cols) after pilot revisions.
+
+**3-entry pilot** (cdeotte s5e6, Sergey s3e14, Heitor s3e5) surfaced 6 schema issues:
+1. Add c53 for forked-uncatalogued FE
+2. Allow null for c02 (within-fold TE) when writeup ambiguous
+3. Tighten c16 (brute-force) requires model-in-loop selection step
+4. Clarify c18 (numerics-as-cats then combos)
+5. Recalibrate expected n_fe ranges per paradigm
+6. Document out-of-scope techniques (OptimizedRounder, target reversal, etc.)
+
+All 6 applied as v3. Then extended pilot of 5 more entries (adaubas s4e5, greysky s5e4, room722 ICR, Bill Cruise s3e3, Mart Preusse s4e9) validated the schema works at scale.
+
+### Stage 1 — code all 45 entries from Pass 2 MDs
+
+Coded all remaining 37 entries against the v3 schema using their Pass 2 MDs (`pass3_source_confidence = notes-only`). Output: `stage1_data.csv` + `STAGE1_FULL.md`.
+
+**Headline distribution:** median n_fe = 2, mean ~3.5. Bimodal — long left tail (1-3 techniques) and small right tail of heavyweight ensembles (cdeotte s5e2=15, s6e3=19, s6e2=10, s5e5=8). 64% of entries within paradigm-expected range; 36% below.
+
+**v3.1 revisions** after full Stage 1 pass:
+- c17 broadened from 3+ way to 2+ way categorical combos. Renamed `uses_higher_order_categorical_combos` → `uses_categorical_combos`. Affected s5e2 (all-pairs), s5e8 bigrams, s6e4 pairwise crosses.
+- c53 relaxed from "multiple" to "one or more" forked sources with uncatalogued FE. Covered Kirderf s3e1 (single fork = all FE) and Cross Sellers s4e7 (proprietary feature store).
+
+### Stage 2 — source-validate against writeups + notebooks
+
+Six batches of source validation, 35 entries direct + 10 from pilot/extended pilot = 45/45 effectively covered:
+
+1. **Batch 1** (5 high-priority below-range): s3e23 oscarm524, s4e10 omid, s4e3 Moonlit, s3e16 Ravi, s5e8 mahog. +5 flips. Pattern: TE granularity (within-fold) + bundled log transforms.
+2. **Batch 2** (heavyweight + ambrosm): s4e12 cdeotte, s5e2 cdeotte, s6e2 masaya, s3e6 viktortaran, s3e9 ambrosm, s3e11 ambrosm. +7 flips. **ambrosm under-counting** was the big finding: s3e9 jumped 1→5 (concrete domain ratios, threshold-multiplicative interactions, has-component domain flags, custom TargetEncoder per-fold); s3e11 jumped 1→4. ambrosm's MDs emphasize methodology over per-feature FE detail.
+3. **Batch 3** (fork-based + bundled): s3e1 Kirderf, s3e4 Ollie Kemp, s4e4 stopwhispering, s4e5 adaubas, s4e9 Mart Preusse, s6e4 kirill0212. +3 flips. **Kirderf's dmitryuarov coordinate notebook is heavy on geographic FE** (sin/cos lat/lon embeddings + PCA on coordinates + KMeans-haversine + UMAP + coordinate rotations). Three of these are schema gaps (singletons).
+4. **Batch 4** (meta-only + TPS): s5e3 cdeotte starter, s5e7 Irfan, s5e11 mahog XGB, s6e1 mahog Ridge meta, TPS Feb/May 2022 ambrosm. +4 net flips. **TPS May 2022 re-coding**: Stage 1 mis-coded `i_02_21 = (f_21 + f_02 > 5.2).int - (f_21 + f_02 < -5.3).int` as multiplicative (c13). Notebook reveals it's additive sum + threshold flags (c14 + c15). Re-coded c13 FALSE, c14/c15 TRUE.
+5. **Batch 5** (remaining notebook-available): s3e8 Craig Thomas, s4e1 Iqbal, s5e4 greysky, s6e3 cdeotte L4 meta, ICR room722. +1 flip (s4e1 Iqbal's Products_Per_Tenure banking domain ratio).
+6. **Batch 6** (writeup-only): s3e7 Hardy Xu, s3e13 Umar, s3e17 ISoft, s3e24 Ravi, s4e7 Cross Sellers, s4e8 Optimistix, s5e5 cdeotte. +3 flips. **s3e7 explicit minimal-FE statement** was missed in MD ("I played around with creating additional features but did not find anything that improved my CV significantly"). **s5e5 cdeotte** had two granularity details glossed: cuML TargetEncoder per-fold (c02) and CatBoost 9-binned numerics combined pairwise = 81 unique cat values (c17 per v3.1).
+
+**Cumulative: 23 net cell flips across 35 entries = 1.3% flip rate.** Higher than pilot's 0.6%; lower than batches 1-2 alone (~2%). Stage 1 from MDs systematically under-counts when authors' narratives dominate per-feature detail.
+
+**Key methodology finding from Stage 2:** the flip pattern clusters in three predictable places:
+- TE granularity (within-fold vs vanilla) - col 2 was null in Stage 1 for many; notebooks reveal Pipeline(TargetEncoder, ...) per-fold.
+- Pipeline-bundled transformations - log/binning in cell-3 setup blocks that MDs skip.
+- Domain-specific FE - ambrosm concrete-domain ratios, Kirderf's geo FE - hidden by author's narrative-style writeups.
+
+**Technical fix during Stage 2:** `scripts/stage2_inspect.py` was silently crashing on a `–` en-dash character via Windows cp932 codec. Added `_safe()` helper to strip non-ASCII before printing. Re-ran s4e9 cells 80-150 (had been partially scanned); confirmed Stage 1 codings.
+
+### Aggregates analysis
+
+Computed schema-documented aggregations + paradigm summaries from `stage1_data.csv`:
+- `uses_any_target_encoding` = c01 OR c02 OR c03 OR c04
+- `uses_any_groupby` = c19 OR c20 OR c21 OR c22 OR c23 OR c24 OR c25
+- `uses_any_combinatorial_search` = c16 OR (c17 AND c18)
+- `uses_any_original_derived_feature` = c32 OR c33 OR c34 OR c35 OR c36 OR c37
+- `uses_any_model_derived_feature` = c45 OR c46 OR c47
+- `uses_any_explicit_selection` = c48 OR c49 OR c50
+
+**CSV drift discovered.** `stage1_data.csv` accumulated unquoted-comma drift across many incremental edits. Rows have +1/+2/+7 extra fields from commas inside notes. Several attempts to write a clean parser; final approach: read 53 booleans positionally from cols 3-55, recompute n_fe by summing, accept ±1 imperfection in some rows.
+
+### Audit (user request: "Audit the data as an expert data scientist")
+
+Wrote `AUDIT.md` with three tiers of findings:
+
+**Tier 1 (changes conclusions):** single-coder + self-designed schema (no Cohen's κ); paradigm × competition era × author confounded (heavyweight = all s5/s6 cdeotte; minimal-FE = mostly s3); sample sizes too small for percentages (Tilii s5e10 alone moves heavyweight TE% from 100→80); aggregation definitions arbitrary (c16 OR (c17 AND c18) — the AND is a choice); **Group G (autoencoder/PCA/random-projection/gplearn) was missing from any aggregate**; c51 (explicit no-FE) and c53 (forked uncatalogued) counted as +1 in n_fe — Heitor s3e5 gets n_fe=1 for declaring zero FE; c02 null-as-FALSE biases TE-within-fold downward.
+
+**Tier 2 (specific errors):** Kirderf flipped c31+c39 but shows ALL ZEROS in aggregates because Group G isn't aggregated. Tilii has c38/c41/c44/c46 but all aggregate flags = 0. s3e7 Hardy Xu paradigm-assigned to lookup-exploit but his actual exploit is postprocessing not feature lookup.
+
+**Tier 3 (bias and validity):** selection bias (winners only); cdeotte alone is 8 entries (18%) — "heavyweight uses TE" largely "cdeotte uses TE"; survivor bias on technique reporting; schema is analyst's mental model not nature.
+
+### Fixes 1, 2, 5 implemented
+
+User chose the three easy/important fixes:
+
+**Fix 1 (Group G aggregate):** Added `uses_any_learned_derived_feature` = c38 OR c39 OR c40 OR c41. **Revealed: heavyweight 60% Learned%** (Tilii s5e10 autoencoder+GP, s5e6 cdeotte pseudo-labels, s6e2 masaya DVAE+gplearn, s6e3 cdeotte DAE+PCA+GRP — 4/5). Previously invisible. Major second dimension of the heavyweight paradigm beyond TE+Orig.
+
+**Fix 2 (split n_fe):** `n_fe_techniques` (c01-c50, actual FE) vs `n_fe_meta` (c51-c53, meta-signals). Minimal-FE techniques mean dropped 1.86 → 0.86, meta mean = 1.0 — confirms the 1.0 was entirely c51 declarations. Heaviness gradient now **11× (9.6 vs 0.86)** instead of 5× — honest representation.
+
+**Fix 5 (document single-coder limitation):** Added prominent "read first" section to STAGE2_AGGREGATES.md. User correction noted: this is a single human coder (Kenneth Young) working with Claude (Anthropic AI) as research collaborator. All schema/paradigm/flip decisions made by human in dialogue with Claude. Claude read writeups, scanned notebooks, proposed codings, surfaced gaps, ran scripts. Human reviewed each batch before commit. No inter-rater reliability computed (no Cohen's κ). Numbers are exploratory, not established facts.
+
+### Current state (May 29, 2026)
+
+**Pass 3 complete with audit and fixes.** Files in `analysis/pass3-fe-taxonomy/`:
+- `SCHEMA.md` — v3.1 locked
+- `PILOT.md` — 3-entry pilot
+- `STAGE1_RESULTS.md` — extended pilot (5 entries)
+- `STAGE1_FULL.md` — Stage 1 all 45 entries
+- `STAGE2_LOG.md` — Stage 2 per-batch validation notes
+- `stage1_data.csv` — canonical per-entry boolean data
+- `stage2_aggregates.csv` — per-entry aggregates (with audit fixes)
+- `STAGE2_AGGREGATES.md` — paradigm summary + per-column TRUE rates + per-entry table (with audit fixes)
+- `AUDIT.md` — methodological audit
+
+Plus `scripts/pass3_aggregates.py` and `scripts/stage2_inspect.py`.
+
+**Headline (audit-fixed) per-paradigm summary:**
+
+| Paradigm | n | tech mean | meta mean | TE% | Combo% | Orig% | Learned% |
+|---|---|---|---|---|---|---|---|
+| heavyweight | 5 | 9.6 | 0.0 | 80% | 20% | 60% | 60% |
+| single-model-heavy | 3 | 9.67 | 0.0 | 100% | 100% | 33% | 0% |
+| ensemble-standard | 19 | 4.0 | 0.11 | 53% | 16% | 11% | 5% |
+| community-template | 4 | 3.5 | 0.5 | 25% | 0% | 0% | 25% |
+| lookup-exploit | 4 | 1.0 | 0.25 | 0% | 0% | 75% | 0% |
+| problem-fit-nn | 3 | 1.67 | 0.33 | 0% | 0% | 0% | 0% |
+| minimal-fe | 7 | 0.86 | 1.0 | 0% | 0% | 0% | 14% |
+
+**Audit-recommended next steps not yet done** (next branch will tackle robustness checks):
+- Run 4 robustness checks: drop s6e3 outlier, subset to notebook+writeup confidence (n=22), subset to s4 era onward, drop cdeotte entries (n=37).
+- Rescope claims in research report from "heavyweight paradigm" to "cdeotte/mahog/community heavyweight cluster."
+- Independent second coder for inter-rater reliability (Cohen's κ) — likely out of scope for capstone.
+
+**Lessons learned this session:**
+1. **Fine-grained schema pays off.** v1 24 cols → v3 53 cols revealed structure (60% Learned% in heavyweight) that coarser coding would have missed.
+2. **Single-coder + AI collaboration produces drift.** 23 cell flips across 35 Stage-2 entries (1.3% rate) is bounded below by what we measured; bounded above is unknown without inter-rater.
+3. **Aggregation design matters more than coding precision.** Stage 1/2 codings were ~98% stable but the Group G omission hid a major dimension. Fixing aggregates surfaced more than fixing individual cells did.
+4. **CSV-as-data-store is fragile for incremental coding.** Many small edits accumulated unquoted-comma drift. A structured editor + DB or even a strict-quoted CSV would have avoided ±1 n_fe errors.
+5. **Meta-signals (c51/c53) should be separated from technique counts at the outset.** Conflating them made n_fe a misleading summary scalar until fix #2.
+
+`phase9/fe-taxonomy` pushed to origin at commit 6de32c8. Next branch starts robustness checks.
+
+---
+
+## Session 18 — May 29 – Jun 1, 2026
+
+**Branches:** `phase9/fe-taxonomy` (audit fixes) → `phase10/robustness-checks` (new).
+**Topic:** Apply Pass 3 audit fixes, run robustness checks, surface what the corpus actually defends.
+
+### Audit fixes applied (continuation of Session 17 work, committed on `phase9/fe-taxonomy`)
+
+User chose three audit fixes after the discussion of which were highest-ROI:
+
+**Fix #1 — Add `uses_any_learned_derived_feature` aggregate (c38 OR c39 OR c40 OR c41).** Group G (autoencoder latents, PCA/SVD, random projection, gplearn) had been omitted from all aggregate paths. Adding it surfaced a previously-invisible finding: **heavyweight 60% Learned%**. Tilii s5e10 (autoencoder + gplearn), s5e6 cdeotte (pseudo-labels), s6e2 masaya (DVAE + gplearn), s6e3 cdeotte (DAE + PCA + GRP) — 4 of 5 heavyweight entries hit Group G. Without this fix, these techniques were "invisible" at the paradigm-summary level; both Kirderf s3e1 (PCA on coordinates) and Tilii s5e10 showed all-zero aggregate rows despite doing 2-4 distinct techniques.
+
+**Fix #2 — Split n_fe into techniques + meta.** Previously `n_fe = sum(c01..c53)` conflated actual FE techniques with anti-FE meta-signals. Heitor s3e5 (explicit minimal-FE per author) had n_fe=1 for *declaring zero FE*. New: `n_fe_techniques` (c01-c50) + `n_fe_meta` (c51 explicit no-FE, c52 adv-val for FE, c53 forked uncatalogued). Minimal-FE techniques mean dropped 1.86 → **0.86**, meta mean = 1.0 — the entire previous mean was c51 declarations. **Heaviness gradient now 11× (9.6 vs 0.86) instead of 5×** — honest representation.
+
+**Fix #5 — Document single-coder limitation prominently.** Added "read first" section to STAGE2_AGGREGATES.md. User correction noted: this is a single human coder (Kenneth Young) working with Claude (Anthropic AI) as research collaborator. Schema design, paradigm assignments, per-cell flip judgments were made by the human in dialogue with Claude; Claude read writeups, scanned notebooks, proposed codings, surfaced schema gaps, ran scripts; human reviewed each batch before commit. No inter-rater reliability (no Cohen's κ). Numbers are exploratory, not established facts.
+
+Committed on `phase9/fe-taxonomy` at `6de32c8`. Session log updated at `ba18a81`.
+
+### Robustness checks (`phase10/robustness-checks` branch)
+
+Per AUDIT.md tier-1 recommendation: four jackknife-style subsets to test which patterns survive when confounding sources of variation are removed.
+
+| Subset | n | Purpose |
+|---|---|---|
+| Baseline | 45 | Reference |
+| Drop s6e3 cdeotte (n_fe=19 outlier) | 44 | Test whether heavyweight pattern depends on single extreme entry |
+| Notebook+writeup confidence only | 22 | Test whether patterns hold at high-data-quality subset |
+| s4 era onward (Jan 2024+) | 24 | Test temporal stability — paradigm vs era confound |
+| Drop cdeotte entries | 39 | Direct test of author-confounding (cdeotte is 6 entries = 13%) |
+
+Implemented in `scripts/pass3_robustness.py`. Results in `analysis/pass3-fe-taxonomy/ROBUSTNESS_CHECKS.md`.
+
+### Key findings
+
+**Patterns that survive all checks (most defensible):**
+
+1. **Ensemble-standard is remarkably robust** (n=19 absorbs perturbations). TE% stays 53-73% across subsets; tech mean stays 4.0-5.1.
+2. **Lookup-exploit Orig% stays high** (true by paradigm definition; not really a finding).
+3. **Minimal-FE genuinely uses <1 technique on average** (0.83-1.0 across subsets, after fix #2).
+
+**Patterns that strengthen under robustness checks (newly defensible):**
+
+1. **Heavyweight Learned% goes from 60% baseline → 100% when cdeotte is dropped.** Both remaining heavyweight entries (Tilii s5e10 autoencoder+GP, masaya s6e2 DVAE+gplearn) use Group G. This is the **most defensible heavyweight finding** — it isn't a cdeotte artifact and it's the dimension that fix #1 made visible.
+2. **Ensemble-standard TE% jumps from 53% baseline → 73% in s4-onward subset.** TE adoption is era-dependent: modern (s4+) ensembles use TE more than s3-era ensembles. A new finding the baseline obscured.
+
+**Patterns that weaken substantially (need rescoping):**
+
+1. **Heavyweight tech mean: 9.6 → 7.25 (drop s6e3) → 6.5 (drop cdeotte).** "Heavyweight does heavy FE" is significantly cdeotte-driven. The defensible claim is "heavyweight winners average ~6-7 FE techniques."
+2. **Single-model-heavy "100% combinatorial" survives the percentage, but n drops to 1 (greysky s5e4) without cdeotte.** Two of three single-model-heavy entries are cdeotte (s4e12, s5e2). The 100% claim is sustained by 3 entries that include 2 cdeotte entries.
+
+**Unsurprising / unhelpful:**
+
+1. **Era subset keeps heavyweight n=5 unchanged** — all heavyweight entries are already s5/s6. We can't separate paradigm from era when they're co-extensive.
+2. **Notebook+writeup subset collapses heavyweight to n=1** — most heavyweight notebooks are meta-learner-only (confidence: writeup+notes because the actual base-model FE lives in external/proprietary code). Can't test heavyweight at high-confidence.
+
+### Implications for the research report
+
+1. **Rescope "heavyweight uses heavy FE"** to either:
+   - "The cdeotte/mahog/community heavyweight cluster averages ~9 techniques" (narrower, accurate)
+   - "Heavyweight winners average 6-7 FE techniques" (drop-cdeotte estimate)
+2. **Lead with the Learned% finding** for heavyweight. It's the strongest claim that survives drop-cdeotte (100% Learned% for non-cdeotte heavyweight). It's also "new" in that fix #1 surfaced it from a previously-invisible dimension.
+3. **Report n with every percentage** ("TE = 80% (4/5)" not "TE = 80%").
+4. **Add limitations section** noting cdeotte concentration (6 entries = 13%) and paradigm × era confound.
+5. **Single-model-heavy claims at n=3 should be qualified** — drop-cdeotte leaves n=1; the percentages become uninterpretable.
+
+### Current state
+
+**Pass 3 + audit + robustness checks complete.** Files added on `phase10/robustness-checks`:
+- `analysis/pass3-fe-taxonomy/ROBUSTNESS_CHECKS.md` — side-by-side comparison tables + survival assessment
+- `scripts/pass3_robustness.py` — reproducible subset computation
+
+`phase10/robustness-checks` pushed to origin at `ceb3948`.
+
+**Lessons learned this session:**
+
+1. **Audit fixes that change aggregation reveal more than fixes that change individual cells.** Fix #1 (Group G aggregate) surfaced the heavyweight Learned% finding that 35 entries of Stage 2 source-validation didn't.
+2. **Robustness checks separated weak from strong findings.** The "60% Learned%" looked moderate at baseline; jackknifing showed it strengthens to 100% when cdeotte is dropped. That kind of insight is only visible through subset comparison.
+3. **Some patterns turned out to be tautological.** Lookup-exploit Orig% = 75% is just the paradigm definition. Era × paradigm couldn't be separated because heavyweight = s5/s6 by construction.
+4. **Author concentration matters more than expected.** cdeotte is 13% of the corpus but drives 2-3 of the headline findings. A non-cdeotte heavyweight analysis is essentially impossible (n=2 left).
+5. **The "single-coder with Claude" framing is the right one.** Not "AI alone" and not "human alone." Human made all decisions; Claude did the high-volume reading/scanning/proposing. The methodological limitation isn't avoided by either framing.
+
+**Audit-recommended next steps still not done** (for paper-quality work, not capstone):
+- Independent second coder + Cohen's κ on a subset.
+- Rescoping pass on `outputs/report/research_report.md` to reflect what the robustness checks show.
+- Add 4-10 non-winning entries (4th-10th place) as a control.
+
+---
+
+## Session 19 — Jun 1, 2026
+
+**Branch:** `phase11/report-rescope` (new from `phase10/robustness-checks`).
+**Topic:** Methodological discussion of what the data supports; decision to add non-winning controls; Phase 1 feasibility protocol drafted.
+
+### Methodological discussion (no code changes yet)
+
+User asked for an expert-data-scientist discussion of what data we have, what each Pass gives us, reliability, and direction. The structured framing:
+
+**Pass 1 — replicable structured coding.** Captures the "demographic" of each entry — competition metadata, model architecture, ensemble method, CV strategy. ~95% replicable on categorical fields. Exception is free-text `fe_techniques` (163 unique tags across 166 entries), which motivated Pass 3.
+
+**Pass 2 — interpretive distillation.** Per-writeup MDs with "What's actually original," "Dataset constraints," etc. Where the paradigm typology, community-graph claims, and most actual findings came from. *Least* replicable — paradigm boundaries are fuzzy; a second analyst might propose 3 or 6 paradigms instead of 4-5.
+
+**Pass 3 — structured FE-specific data.** 53 boolean columns × 45 entries with explicit inclusion/exclusion criteria. Cleanest empirical layer but narrowest scope. Surfaced findings (heavyweight Learned% 60% baseline → 100% drop-cdeotte) that Pass 2's narrative reading would never have produced.
+
+**Reliability ranking:** Pass 1 categoricals > Pass 3 booleans > Pass 1 paradigm > Pass 2 community-graph > Pass 2 typology. Pass 1 is the most "scientific" in replicability sense but it captured demographic data; Pass 2 produced most findings but is least replicable; Pass 3 is cleanest empirical layer but narrowest.
+
+**Defensibility tiers identified:**
+- **Strong** (survives all robustness): TE is most-used FE (40%); heavyweight uses learned-derived features; minimal-FE uses <1 technique; recurring-author community exists.
+- **Medium** (defensible with scope qualifiers): heavyweight winners average 6-9 FE techniques (depends on cdeotte inclusion); modern ensembles use TE more than s3-era; cdeotte's KGMON propagates.
+- **Weak** (not defensible from this data alone): per-paradigm percentages at n<5; causal claims; generalization beyond winners-only.
+
+### Decision: add non-winning controls (Path 3)
+
+User considered four directions for the next contribution:
+
+1. Add non-winning controls (Path 3) — addresses biggest validity threat (selection bias)
+2. Cohen's κ via second coder — addresses inter-rater reliability
+3. Participation data — addresses originator-vs-canonizer claim
+4. Multivariate analysis on existing data — wouldn't add power at n=45
+
+User chose Path 3 because it "comes closest to seeing the difference between winners and non-winners."
+
+### Hidden problem discussed: ranks 2-3 already on disk are not real controls
+
+I initially over-promised by noting 30/45 competition folders already have 2+ writeups. User correctly pushed back: those are rank 2-3 entries (still top 3, just lower rank), not "non-winners" in any meaningful sense. Photo-finish margins (top 3 within 0.00002 in many competitions) make 1st vs 2nd-3rd mostly a margin-of-noise question. Plus many of those lack notebooks.
+
+This shifted strategy from "use what's on disk" to "scrape rank 4-20 from Kaggle" — Path 3 proper. Realistic effort estimate revised upward from 20-30 hours to **50-65 hours**.
+
+### Phase 1 feasibility pilot protocol drafted
+
+User asked for concrete protocol with question: "How should I select from 4-20? Lowest rank available notebook plus writeup?"
+
+That selection rule is correct for the pilot (maximum-distance feasibility test). For Phase 2 it should switch to stratified sampling by rank band to avoid self-selection bias.
+
+`analysis/controls/PROTOCOL_PHASE1.md` drafted with:
+- 5 target competitions chosen for high community engagement (s4e8 Optimistix, s4e10 omid, s5e11 mahog, s6e3 cdeotte, s4e7 Cross Sellers)
+- Per-competition discovery protocol (~60 min): pull LB ranks 4-20, check Discussion + Code + Writeups tabs per entry, categorize content (A=writeup+nb, B=writeup, C=nb, D=discussion, E=brief, F=nothing)
+- Selection rule: lowest rank with content in A-D
+- Pass 3 boolean coding only — no Pass 1, no Pass 2, no paradigm assignment (typology was developed from winners, circular to apply)
+- Separate `controls_data.csv` so existing winners' analyses aren't disturbed
+- Success criteria: ≥3 codeable entries across 5 pilot competitions = scale to Phase 2; <1/competition = pivot
+- Decision memo template (`PILOT_RESULTS.md`)
+- Explicit anti-patterns documented (don't fall back to rank 2-3, don't code paradigms, don't run stat tests on n=5)
+- Time budget: ~10 hours total for pilot
+
+### Honest expectation set with user
+
+Two likely pilot outcomes:
+- **Outcome A** (TE rate winners 40-50%, controls 20-30%): validates winner-specific framing
+- **Outcome B** (winners and controls roughly equal at 35-45%): TE is community-standard; forces report to identify what *actually* distinguishes winners (probably Learned% from fix #1)
+
+Both outcomes are publishable. Outcome B is actually more interesting because it forces tighter claims.
+
+Also noted: controls only address selection bias (C1). They don't fix single-coder reliability (A1) or paradigm × era confound (A2). Limitations section will still need those.
+
+### Current state
+
+`phase11/report-rescope` at `8467f30` — protocol drafted, no coding yet. New branch `phase12/control-coding-pilot` for actual discovery + Pass 3 coding work to follow.
+
+**Lessons learned this session:**
+1. **Layered analysis is good for reliability but bad for unified claims.** Pass 1/2/3 each address different questions; combining them into a single defensible narrative requires careful scope management.
+2. **The biggest validity threat isn't always the most fixable.** Selection bias is the biggest threat; it requires real new data. Inter-rater reliability is also a big threat but requires recruiting a second person. Author concentration is unfixable without different sampling.
+3. **Honest framing strengthens claims, not weakens them.** "We tested 5 competitions and found ≥3 codeable controls" is a stronger statement than "we have controls" because it includes the methodological honesty.
+4. **Pilot-first design saves time.** Committing to a 50-65 hour study without a feasibility check would be a real mistake. 10-hour pilot can detect methodology failure early.
+
+---
+
+## Session 20 — Jun 1–2, 2026
+
+**Branch:** `phase12/control-coding-pilot` (new from `phase11/report-rescope`).
+**Topic:** Phase 1 pilot (5 controls) → Phase 1.5 (+2) → Phase 2 expansion (+3). 10 controls coded total. Critical elite-tier control problem surfaced.
+
+### Phase 1 pilot — 5 controls coded
+
+| # | Comp | Rank | Author | Paradigm | n_fe_tech | Notable |
+|---|---|---|---|---|---|---|
+| 1 | s6e4 | 19 | elenkapetrova | community-template | 7 | Control > winner (7 vs 6). Fork-heavy both. |
+| 2 | s6e3 | 16 | mhamza0810 | heavyweight | 9 | Highest control technique count. DVAE was available, explicitly dropped. |
+| 3 | s6e2 | 15 | emreduman05 | heavyweight | 4 | Photo-finish 0.00001 from winner. Stark gap to masaya's 10. |
+| 4 | s5e10 | 14 | metamodels | heavyweight | 2 | Photo-finish 0.00001. Meta-only NB, FE diversity probably undercount. |
+| 5 | s5e8 | 15 | tilii7 | ensemble-std | 3 | **AUTHOR OVERLAP** — s5e10 r1 winner. GP signature persists. |
+
+### Phase 1.5 — added 2 (s5e5, s5e6) to test Group G claim
+
+- **s5e5 r8 pinoystat** — photo-finish 0.00005. Explicit minimal FE. But cdeotte winner ALSO has 0 Group G at s5e5 — comparison doesn't test Group G claim.
+- **s5e6 r21 oscarm524** — **2nd AUTHOR OVERLAP** (s3e23 r2 winner). 100+ base models + 50+ LDA stackers. Explicit "Feature engineering didn't work." Winner-tech minus control-tech = 5. Heavyweight FE-intensity gap holds even when Group G doesn't.
+
+### Phase 2 — added 3 (s5e4, s4e11, s4e10)
+
+- **s5e4 r6 masaishi** — single-model-heavy. **REVERSE PATTERN**: control 13 techniques vs greysky winner 6. Single-model-heavy winners win via DEPTH not BREADTH.
+- **s4e11 r25 cdeotte** — **3rd AUTHOR OVERLAP**. cdeotte's own 25th-place finish BEFORE his first PS win at s4e12 next month. Minimal-FE paradigm structurally null comparison as anticipated.
+- **s4e10 r10 adaubas** — **4th AUTHOR OVERLAP** (s4e5 r1 winner). LR of 4 meta-learners. Permutation-importance signature consistent with his s4e5 win.
+
+### Headline findings from 10 controls
+
+- **Author overlap rate: 4/10 (40%)** — Tilii, oscarm524, cdeotte, adaubas. The "winner" label captures a one-month outcome within a small recurring elite pool.
+- **Heavyweight FE-intensity gap survives** even at photo-finish margins (s6e2, s5e10, s5e5).
+- **Group G gap holds for s6e2 (winner 1, control 0)** but failed test at s5e5 (both 0) and was reversed at s5e8 (winner 0, control 1). Original claim ("heavyweight winners use Group G; controls don't") narrowed.
+- **Single-model-heavy reverse pattern** discovered — first paradigm-specific reversal of winner-tech-count gap.
+- **Community-template paradigm** has no Group G in either rank — null comparison structurally.
+
+### Methodological challenge surfaced: elite-tier control problem
+
+User pushed back: given the 40% author-overlap rate, do rank 6-25 entries actually function as "controls" or are they all elite-tier near-winners? My acknowledgment: rank 4-25 is top 1% of competition population, not "typical competitor." Controls test winner-vs-near-winner gap, not winner-vs-community gap. Original audit C1 (selection bias) is only partially addressed.
+
+Laid out three options:
+
+- **Option A — Acknowledge narrowing.** Rescope every claim from "winners vs non-winners" to "winners vs near-winning elite tier." 5-10 hr writing effort. Within-elite findings (Group G heavyweight, technique-count gap, reverse pattern, author overlap) defensible. Doesn't address community-baseline question.
+- **Option B — Continue Phase 2 same scope.** 15-25 hr. Marginal value highest at ensemble-standard (only n=2/19). Doesn't change framing. Confirms patterns at higher n.
+- **Option C — Different control source** (public notebooks by LB quartile OR rank 100+ discussion descriptions). 30-40 hr. Actually addresses C1 selection bias. Methodologically correct extension but substantial work + unit-of-analysis complications.
+
+**My recommendation: Option A for capstone delivery.** The 40% author-overlap finding is genuinely the strongest result and doesn't require more data. C is the right move if extending past capstone.
+
+### s3e26 discussion (deferred)
+
+User suggested s3e26 as next control. Local content available is rank 39 luficer-G — well outside the 4-20 protocol range and beyond our previous deepest (s4e11 r25). Flagged scope concern: at rank 39 we'd be sampling a different competitor tier than other 10 controls. Winner Hardy Xu r2 is notes-only confidence anyway. User deferred.
+
+### Current state
+
+`phase12/control-coding-pilot` at `5d74a3a`. 10 controls coded in `analysis/pass3-fe-taxonomy/controls_data.csv`. `analysis/controls/DISCOVERY_LOG.md` and `analysis/controls/PILOT_RESULTS.md` exist but the latter needs Option-A rescoping (elite-tier acknowledgment + photo-finish reframe).
+
+**Lessons learned this session:**
+1. **Author overlap is a finding, not a flaw.** I initially treated overlap as noise in the control selection; user reframed it as the headline empirical observation about elite-tier composition.
+2. **Photo-finish margins force claim reframing.** When control and winner are within 0.00001 LB score, "winners use technique X, non-winners don't" becomes "winners *prefer* technique X at the same metric scores." Different claim, still empirically grounded.
+3. **Survivorship in robustness checks is easy to misread.** Earlier I read "drop-cdeotte = 100% Group G" as pattern strengthening; on inspection it was survivorship (the dropped entries were 0-Group-G, remaining were 1). Corrected.
+4. **The audit's C1 concern isn't fully closeable with near-winner controls.** Near-winners are by definition selected on outcome too. Real C1 closure requires sampling competitors who didn't medal at all — different methodology, different work.
+
+---
+
+## Session 21 — Jun 2, 2026
+
+**Branch:** `phase12/control-coding-pilot`.
+**Topic:** Coded 11th control (s6e1 r14 Ravi). Surfaced a second selection filter — documentation self-selection — that reframes how much weight the author-overlap statistic can bear.
+
+### 11th control coded: s6e1 r14 ravi20076
+
+Ravi Ramakrishnan, **FIFTH author overlap** (now 5/11 = 45%). Already in winners corpus at s3e16 r3 and s3e24 r3. His own writeup self-reports a streak: s5e2 r2 / s5e4 r4 / s5e6 r28 / s5e8 r3-5 / s5e10 r4 / s5e11 r8 — seven straight top-30 PS finishes. Coded notebook+writeup, **12 FE techniques** (ties masaishi for highest control count). Source caveat: downloaded notebook is his "Public Baseline V4" (his own words: "simple replica of public kernels" with a within-fold leak fix) — a subset of the final TABM+RealMLP+XGB+LGBM+CatBoost blend, so writeup is primary; baseline notebook corroborates the FE.
+
+### Methodological insight: documentation self-selection (a SECOND selection filter)
+
+User observed that among rank 4-30 entries, the lower the rank, the more exclusively the writeups come from **recurring documenters** — the habitual posters who write up every season regardless of where they land. Ravi is the proof: he has a rank-**28** writeup (s5e6) linked from his own s6e1 post.
+
+This means the control sample is filtered **twice**: (1) outcome (top ~1%), and (2) wrote a public writeup. The documentation filter is correlated with being a serial elite competitor, so it structurally over-samples the recurring guild.
+
+Consequence for the 45% overlap statistic — split honestly:
+- **Artifact component:** if writeups at rank 4-30 come from a pool of ~10-15 habitual documenters, ANY two writeup-filtered samples overlap heavily almost regardless of true leaderboard composition. So strictly the overlap shows the *documentation community* is small, not directly that the *winning* community is small.
+- **Genuine residual:** documentation explains why we SEE these names; it does not explain why they keep landing at rank 14 not rank 1400. Recurrence of *high finishes* among documenters is still real skill-persistence evidence — observed through the documentation keyhole.
+
+Tighter defensible claim: **"the documented top of PS leaderboards is a small recurring guild"** — not "the winners are a small clique."
+
+Key design implication: **going deeper in rank does NOT escape the filter** — it tightens it (casual competitors document even less the lower they finish). So this observation is evidence FOR Option A (accept scope) or Option C (change instrument: public NBs by LB quartile, rank-100+ discussion blurbs from non-writeup-writers), and AGAINST Option B (more rank-4-30 writeups = more of the same guild). The winners corpus carries the identical documentation filter, so the winner-vs-control comparison stays internally apples-to-apples; neither sample represents a "typical strong competitor."
+
+Recorded as a report-ready named limitation ("Documentation self-selection in the control sample") appended to `PILOT_RESULTS.md`, refining the existing Â§3.7 "Writeup availability bias" and "No external original solutions" limitations.
+
+**Lessons learned this session:**
+1. **A statistic can be real and instrument-induced at once.** The 45% overlap is both a genuine observation and partly a product of the documentation filter; honesty requires naming both halves rather than picking one.
+2. **Sampling deeper is not the same as sampling broader.** Lower ranks don't relax the documentation filter; only changing the instrument (non-writeup sources) does.
+3. **The "public baseline" trap.** A downloaded notebook can be an author's public-baseline replica, not their final solution — verify before crediting FE to the entry; lean on the writeup as canonical.
+
+---
+
+## Session 22 - Jun 2, 2026
+
+**Branch:** `phase12/control-coding-pilot`.
+**Topic:** Discovered + repaired structural corruption in the Pass 3 FE-taxonomy CSVs; confirmed n_fe convention; staged intra-rater reliability.
+
+### What happened
+Coded s6e1 r14 (ravi20076 - FIFTH author overlap) then, computing Pass 3 stats, found BOTH `stage1_data.csv` (45 winners) and `controls_data.csv` (11) were structurally corrupted: rows hand-typed into raw CSV had wrong boolean-field counts (52/54/55 vs 53), unquoted commas in notes, and n_fe field errors. Only 19/45 winners and 1/11 controls parsed cleanly. NOT a coding-judgment problem - the transcription drifted (git "row drift" commits). The judgments survived in the notes.
+
+### Repair (all validated)
+- **controls**: rebuilt 11 rows from authoritative TRUE-sets; 4 changed (masaishi n_fe 13->12 via GitHub repo; adaubas 0->1; oscarm524/cdeotte c50/c52 shift artifacts -> notes). 
+- **winners**: rebuilt 45 rows - 29 source/doc/note-verified (read 8 source notebooks: s3e1 PCA, s4e5 STAGE1_RESULTS table, s5e8 GP cell-0, s4e1 TFIDF, s4e9 regex, minimal-FE cluster, etc.), 14 intact-booleans, 2 flagged non-local (s5e4, s6e1). Cross-validated against STAGE1_FULL per-column totals (col51=8 exact; col2=14 correctly reflects Stage-2 within-fold flips).
+- **tooling**: `validate_pass3.py` integrity gate (both PASS); rebuild scripts kept for provenance; `.bak` backups.
+
+### Convention confirmed (user)
+`n_fe_techniques_used` EXCLUDES c51 (minimal/no-FE) and c53 (forked/uncatalogued) - they stay as flags but aren't summed. Creates a real n_fe=0 tier; makes winners consistent with controls.
+
+### Reliability staged (intra-rater, no 2nd coder)
+`blind_recode_sheet.csv` - seeded 12-entry stratified sample for the user to blind-code from source only; compare to v1; report % agreement + Gwet AC1 / group-level kappa. Claude-as-recoder rejected (not independent -> measures consistency not reliability). AI-assistance disclosure flagged for §3.7.
+
+**Lessons:**
+1. **Run a strict parser early.** Visual inspection can't catch "52 vs 53 zeros"; the corruption hid for months until a column-strict parse + n_fe checksum exposed it.
+2. **Checksums catch shortcuts.** The "trust booleans" pass looked valid but the per-column total (col51 8->2) proved it wrong - forcing proper note/source reconstruction.
+3. **Repair != re-code.** Restored documented intent; did NOT add newly-found missed techniques (masaishi c07/c43/c29) to preserve scope - flagged for any future re-code.
+
+---
+
+## Session 23 — Jun 3-4, 2026
+
+**Branch:** `phase11/report-rescope`.
+**Topic:** Section-by-section expert-data-scientist critique of `outputs/report/research_report_v2.md` (§2 holistic + §3.1–3.8, one subsection at a time: critique → apply → commit). The headline outcome was a reliability-reproducibility audit that turned an asserted number into a verified, committed one — and caught three aspirational claims.
+
+### The reliability reproducibility audit (the big one)
+Writing `analysis/pass3-fe-taxonomy/stats.py` to make κ=0.65 reproducible surfaced that the reported reliability numbers had been computed inline and **could not be regenerated from committed files**. Traced the cause end-to-end:
+- The live `stage1_data.csv` is **post-adjudication**; computing agreement against it is circular (adjudication moved primary→blind) and inflates κ to 0.79/0.83.
+- `stage1_data.csv.bak` is a **pre-repair** backup that still contains the structural corruption (8 bad rows incl. s3e8, which is *in* the reliability sample) — so it must not be used either.
+- The clean **pre-adjudication** coding exists in git at commit **6bd2092** (badcells=0). Materialized it as committed `stage1_data_preadjudication.csv`.
+- `stats.py` (stdlib only) against that snapshot reproduces the report almost exactly: 53-col κ **0.60**, 11-group κ **0.65**, AC1 0.94/0.78, positive agreement **46%/58%**. Also confirmed "positive agreement" is the **Jaccard** form `a/(a+b+c)` (group 58% matches exactly), and that §4.5's "7-3-1" paired split is **n_fe**-based (families = 7-4-0) — a §4.5 wording fix is pending.
+- Updated §3.6/§3.7/§3.8 to the reproducible numbers + pre-adjudication provenance note. The reliability is now *verified*, not asserted.
+
+### Three aspirational claims caught and corrected
+The report's early-written sections described a *planned* project, not the executed one:
+1. **§3.7 toolchain** — table mirrored `pyproject.toml`'s deps. Verified against committed code: scikit-learn/seaborn/scipy/xgboost/lightgbm/catboost are **not used** by the meta-analysis; the `anthropic` SDK (programmatic AI coding, `scripts/extract_fields.py`) and requests/BeautifulSoup were **missing**. Rewrote the whole table to the real toolchain.
+2. **Control selection rule (§3.2)** — text said controls needed "a writeup *and/or* notebook"; user clarified the real rule was **both** (stricter than winners). That asymmetry is the *mechanism* behind the author-overlap finding. Corrected + verified 11 controls = 11 distinct competitions (clean pairing).
+3. **§3.8 Pass-1 "self-audit on a random 20% sample after a one-week gap"** — exists only in `PLAN.md`, never executed; the real Pass-1 check was the Pass-2 data-quality audit. Dropped it.
+
+### Methodology consistency fixes (§3 made airtight + thesis-aligned)
+- **AI-assisted coding disclosed** (§3.4 new "Coding procedure" block) — all three passes AI-assisted under researcher direction; reliability *assessed, not assumed*.
+- **Intra-rater, not inter-rater** (§3.6/§3.8) — same researcher directed primary coding and did the blind re-code; corrected the "independent"/"inter-rater" over-claim.
+- **Reliability scope owned** — Pass 3 only checked; Pass 1 = factual extraction (audit-validated); Pass 2 interpretive codings single-coded (winners-only), with §4.6's *recurrence* finding shown to rest on **factual** fields so it's unaffected.
+- **Coupling demoted in positioning** (§3.1 outputs, §3.5 indicators) to match its cautionary status everywhere else.
+- **`distribution_shift_type` corrected against the workbook** (§3.3) — assigned to all 45 (not TRUE-only); `label-noise` never occurs.
+- **Column accounting fixed** (§3.2) — 40 cols incl. the `original_data_usage` split the old "38+2" omitted.
+- §2 holistic pass: Matthew-Effect framing tightened, gap synthesis realigned to §1.2's two questions, de-duplicated the novelty claim.
+
+### Current state
+`phase11/report-rescope`. §1–§3 fully revised + internally consistent; reliability reproducible via committed `stats.py` + `stage1_data_preadjudication.csv`. Next: §4 Results (§4.1 onward). Pending §4 to-dos: (1) §4.5 "families"→"n_fe" wording; (2) typology framed as "four paradigms + two residual categories."
+
+**Lessons learned this session:**
+1. **A reproducibility script is a verification instrument, not just a deliverable.** Writing `stats.py` is what *caught* that the headline κ wasn't regenerable — and forced tracing the post-adjudication/corruption/snapshot lineage. Asserted numbers hide; committed scripts expose.
+2. **Reliability must be computed pre-adjudication.** Adjudication moves primary→blind by construction; agreement against the corrected data is circular. The clean pre-adjudication source lived in git history, not in the working tree (`.bak` was the corrupt decoy).
+3. **Early-written methods sections describe the plan, not the work.** Three separate aspirational claims (toolchain, control rule, self-audit) had survived because nobody re-checked them against the executed artifacts. Verify every procedural claim against committed code/data before a committee does.
+4. **Name the instrument honestly.** "Intra-rater" vs "inter-rater," "AI-assisted vs researcher-coded," "Jaccard vs specific agreement" — each precise label the user pressed on made the section *more* credible, not less.
+
+---
+
+## Session 24 — Jun 4, 2026
+
+**Branch:** `phase11/report-rescope`.
+**Topic:** Completed the section-by-section expert-DS critique of `research_report_v2.md` — §4 Results (4.1–4.9), §5 Discussion (5.1–5.5), and the Abstract — each with a holistic re-read. The whole body (Abstract → §5) is now critiqued, revised, internally consistent, and quantitatively verified. Theme of the session: **verifying every number against the committed data caught multiple headline claims pointed the wrong way.**
+
+### Factual errors caught by verifying against the data
+Each §4/§5 subsection's numbers were recomputed from `stage1_data.csv` / the workbook / `stats.py` before editing:
+- **§4.5 — a false claim.** "Their winners include the corpus's three most FE-heavy entries" was wrong — the #2 most FE-heavy (s5e2, n_fe=16) isn't even paired. Replaced with the accurate paired-winner median n_fe=6 (up to 19) vs corpus median 2, which *also* resolved the §4.4↔§4.5 median tension. Also fixed "more technique *families* in 7 of 11" → it's the **n_fe** split (families = 7-4-0); dropped "≈" from the exact Group G counts (7/1).
+- **§4.9 — two stale/wrong numbers.** GBM "34/45 (76%)" vs the committed `dominant_base_model` field's **35 (78%)** / NN 7 (16%); the 34/76% was a stale hand-count from the original Results session (session_log:385). And n_rows **mean 640,374 was pre-audit** — the 300K→4M correction adds exactly 3.7M/45 = 82,222 → 722,596. Plus the recurring "five cohorts"→"six" bug. Added a note that "dominant family" is a judgment call for blended ensembles (where the 34-vs-35 lives).
+- **§5.2 — the headline claim was backwards.** "The frontier *may be shifting* toward learned features" — but the 7 Group G winners are spread flat across eras (S3:2, S4:1, S5:2, S6:2), so there is **no temporal shift**. Reframed to "learned features are a *persistent* edge that resists commoditization," and unwound the conflation of the ensemble-SIZE Season-6 shift with a feature-frontier shift. (Properly resolves IMPROVEMENT_PLAN item 10 — fix the claim, not just soften the verb.)
+- **§5.4 — a self-contradiction.** The transferability sentence called lookup-exploit/TE synthetic artifacts, then listed "the typology" (which *contains* lookup-exploit) as transferable. Refined: guild/community structure is most transferable (data-independent); typology + FE-shape only partly, with lookup-exploit and TE-prevalence carved out.
+
+### Framing / honesty fixes (§4–§5)
+- **§4.6 (centerpiece) — stopped it contradicting its own confound.** ¶3 had argued the 45% overlap is "well above chance… independently sampled… a property of the population" — directly against the documentation-self-selection finding the project established. Rewrote to the honest artifact+residual split. Also de-cherry-picked the centrality exemplars (added yekenot/mikhailnaumov; excluded arunklenin, who co-won).
+- **§4.3 coupling demotion finished** — C6 "Strong (small n)"→"Directional (n=5)"; C1 "Contradicted"→"Inconclusive (detection-limited)"; C3 reframed as confirming standard ensembling practice; added a closing synthesis (folklore weakly supported, not decision rules); removed phantom `label-noise`.
+- **§4.7** — accounted for the residual paradigms by era; Season-6 "consistent across all four" → 3 ensembles + 1 community-template.
+- **§4.8** — de-confounded the "broadest range" claim (it's the n=28 stratum); dropped the "exploit-paradigm" mislabel for heavy-FE; hedged small-n photo-finish rates.
+- **§5.1** — "table stakes / common to most" overstated §4.4 (TE only 40%); reframed to "equally present in winners and near-winners → non-differentiating"; dropped unmeasured "execution quality."
+- **§5.5** — practitioner advice no longer recommends "match paradigm to constraints" (4.3 found no reliable couplings); foregrounds ensembling (89%); "reliability-validated"→"reliability-checked." Added a **capstone synthesis** so the report body doesn't end on a future-work to-do.
+- **Abstract** — "blind re-code"→"intra-rater blind re-code" (last spot implying inter-rater). Otherwise verified consistent with the revised body.
+
+### Current state
+`phase11/report-rescope`. Abstract + §1–§5 fully revised, internally consistent, every quantitative claim verified against committed data; all carried-forward to-dos closed. **Remaining:** (1) §6 References → APA 7 (and "Merton norms of science" → **Matthew Effect 1968** per the §2.3 reframe); (2) figure regeneration (`fig4` annotation "s5e2=19" → s6e3=19; embed real images for PDF); (3) optional final top-to-bottom read.
+
+**Lessons learned this session:**
+1. **Verify every number before editing prose around it.** The biggest catches (§4.5 false claim, §4.9 stale GBM/mean, §5.2 backwards frontier) were invisible from the prose alone — only recomputing from the committed data exposed them. The data, not the draft, is the source of truth.
+2. **A reframed thesis can leave contradictions in load-bearing sections.** §4.6 and §5.4 each still argued *against* a limitation the project had carefully established elsewhere; the rescope updated the headline but not every supporting sentence. Re-read for self-consistency, not just local correctness.
+3. **A trend claim needs temporal evidence, not just a recent example.** §5.2's "shifting frontier" rode on Season-6 vibes; the actual per-era counts were flat. "Newest season looks different" ≠ "the frontier is moving."
+4. **End on the thesis, not the to-do list.** With no Conclusion section, the Discussion's last paragraph IS the closing — it should re-land the contribution, not trail off into future work.
+
+---
+
+## Session 25 — Jun 8–10, 2026
+
+**Branches:** `phase11/report-rescope` (references + cleanup) → `phase12/poster-presentation` (poster).
+**Topic:** Closed out §6 References; full repository cleanup; rewrote README + Makefile to match the executed project; then built the capstone **poster** (academic A0) with a live compile-and-view loop after installing MiKTeX locally.
+
+### §6 References — completed and verified
+Drafted APA-7 entries, then **web-verified every one** against the publisher of record. Catches: Borisov corrected to the final journal version (2024, IEEE TNNLS 35(6), 7499–7519, not "advance online"); the two bare arXiv IDs in the old placeholder were **mislabeled** — actually **Lu, Perrone & Unpingco (2020)** and **Tihon et al. (2021)** (denoising-autoencoder imputation, not "masked-loss"/"dot-product attention"). Placement audit (APA: every reference needs an in-text citation): dropped **Lim** (TFT — uncited, study excludes time series), **Athey** (no sourceable competitions-as-method paper — removed the §2.2 clause; M5/Netflix carry the point), **TabNet/SAINT/RealMLP** (named but uncited), and **Gorishniy 2022/PLE** (exists but homeless — only a writeup-internal citation). Merton → **Matthew Effect (1968)**. Final §6: 10 verified, placed references + a primary-data-sources note.
+
+### Figure fixes
+- `fig4` heavyweight-tail annotation said `cdeotte s5e2 = 19`; the n_fe=19 entry is **s6e3** (s5e2 is 16). Corrected + regenerated.
+- `phase5_41` author centrality was non-deterministic (handle list built from a bare `set`); added `sorted(set(...))` + a `(total, handle)` tiebreak — now byte-reproducible.
+- `phase5_51` coupling figure relabeled to mirror §4.3: C1 → INCONCLUSIVE (detection-limited), C6 → DIRECTIONAL; legend moved below.
+
+### Repository cleanup (multiple commits)
+- Removed `scripts/__pycache__`; gitignored `.claude/`.
+- **Folded report figures into the deliverable**: new `scripts/sync_report_figures.py` copies the 14 figures into `outputs/report/figures/` as `fig01`–`fig14`; deleted the stale `outputs/figures/eda_*.png` — resolves the two-figure-locations smell (`analysis/figures/` stays the generators' working dir; `outputs/` is the self-contained deliverable tree).
+- Committed the `data/writeups/**` corpus (54 files; dropped a stray `.lnk`; the s5e4 source repo folded in cleanly, no nested `.git`).
+- Archived superseded docs: report v1/OUTLINE/DRAFT/IMPROVEMENT_PLAN → `outputs/report/archive/`; `PLAN.md`/`PlanV2.md` → `journal/archive/`; `01_eda.ipynb` → `notebooks/archive/` (+ fixed the report's §3.7 path).
+- **Documented (did NOT delete) the corrupt `.bak` files** — they are the input of record to the `_rebuild_*.py` Pass-3 repair scripts, not disposable backups; added `analysis/pass3-fe-taxonomy/README.md` warning never to use them for analysis/reliability.
+
+### README + Makefile rewrite
+Both described the *original plan* (35 entries, a decision-flowchart deliverable, an XGBoost/scikit-learn toolchain, scripts that don't exist, "all phases pending"). Rewrote README to the executed project (45+11, three-pass coding, real wrangling/Kaggle/AI-assisted toolchain, current layout, reproduce-the-analysis commands, key findings). Makefile: dropped the broken `run` target (`python -m src.main` — there is no `src/`) and added real `stats` / `validate` / `figures` workflow targets.
+
+### Poster (phase12/poster-presentation)
+- **Format decision:** Albuquerque's `.tex` template (A0 portrait academic) is *optional*; the example posters (`private/poster_examples/`) are slide-style (PowerPoint, image-heavy, landscape/portrait) — but those are *product/app* capstones. A research **meta-analysis** fits the academic poster, so kept the A0 LaTeX format and pushed it toward more visual impact.
+- Built `outputs/poster/poster.tex` from the template: filled every block; **adapted the three model-centric blocks** (Model & Analysis → Analytical Framework, dropped the regression equation + train/test setup; real toolchain; paradigm framing), wired 4 figures, embedded a TikZ methodology schematic.
+- **Installed MiKTeX user-scope via winget** to compile locally. Key gotcha: the "security risk: running with elevated privileges" message is a **non-fatal stderr warning** — PowerShell 5.1 mis-wraps native stderr as an error (exit −1/255), but the **Bash tool** runs `pdflatex` fine (exit 0, PDF produced). Established the loop: compile → `pdftocairo` high-DPI crop → Read the PNG → fix → repeat. This turned blind LaTeX editing into see-and-fix iteration.
+- Iterations: fixed a 2-page overflow (schematic `\resizebox` was full-width → enormous); added a full-width **key-numbers band** (62% · 35/45 · κ=0.65 · 45% · 5 of 6); cut body text ~40%; **redesigned the methodology schematic** from a tall vertical pipeline (ate a whole column for little info) to a compact horizontal flow with a reliability brace; fixed **cut text** in the schematic (tikz boxes inherited the poster's huge `\large` body font → text overflowed/clipped; fixed with a small fixed font that `\resizebox` scales up); disabled hyphenation (clean ragged-right, 0 overfull). Expert + typography pass on **Abstract** (restored the report's hedge: "does **not cleanly** separate … (n=11, n.s.)" — the poster had overstated an underpowered null) and **Introduction** (folded the coupling angle into RQ1 to anchor the "5 of 6 couplings" headline; killed an RQ3 one-word orphan with a non-breaking space).
+
+### Current state
+`phase12/poster-presentation`. Poster is one A0 page, compiles clean (0 overfull), with the key-numbers band, compact horizontal schematic, 4 figures, and Abstract + Intro verified against the report. Committed with a build-artifact `.gitignore`. **Remaining:** repo-URL placeholder in Acknowledgments; optional expert/typography pass on the remaining boxes (Results still has the same "cleanly" omission); then the presentation/slides.
+
+**Lessons learned this session:**
+1. **A live compile-and-view loop is transformative for visual work.** Installing MiKTeX + rendering `pdftocairo` crops and Reading them is what turned "looks bad" (which was just 2-page overflow + cut text, invisible from source) into precise, fast fixes. Don't iterate blind on layout.
+2. **Don't trust PowerShell 5.1 exit codes on native exes that print to stderr.** The MiKTeX "elevated privileges" warning looked fatal but wasn't; running via Bash and reading the actual PDF revealed a clean compile. (Whole detour into `runas`/de-elevation was unnecessary.)
+3. **Match the poster format to the kind of project.** The slide-style examples were optimized for showing a built product; a findings-driven meta-analysis fits the academic poster. Copying a format built for a different project type is a trap.
+4. **Posters silently overstate — re-verify load-bearing claims against the report.** "FE does not separate winners" dropped the report's careful "not cleanly … underpowered (n=11)" — turning a hedged null into an overclaim. Compress aggressively, but never drop a hedge that's doing scientific work.
+5. **Verify references exist AND have an in-text place.** Web-checking caught a wrong year, two mislabeled arXiv IDs, and an unsourceable author; the placement audit caught two entries with no in-text citation (APA requires dropping them).
+6. **Investigate before deleting.** The "corrupt `.bak` footgun" was actually the documented input to the rebuild scripts — the right move was to label it, not delete it.

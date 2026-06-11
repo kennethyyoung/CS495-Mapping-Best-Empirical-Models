@@ -1,78 +1,96 @@
 # Mapping Best Empirical Models: A Meta-Analysis of Winning Kaggle Solutions
 
-## Project Description
+A systematic content-analysis meta-analysis of winning solutions across recent Kaggle **tabular** competitions, asking not which models *benchmark* best but which approaches actually *win* — and what, beyond model choice, separates winning pipelines from strong non-winners.
 
-A systematic meta-analysis of top-finishing solutions across Kaggle tabular competitions, focused on identifying which preprocessing and feature engineering decisions separate winning solutions from the rest.
+## Overview
 
-The study collects structured data from 35 winning competition writeups and notebooks, encodes key pipeline decisions into a dataset, and synthesizes findings into an empirically-grounded decision flowchart for tabular ML pipelines. Competitions are scoped to Playground Series seasons 3–5 and Featured competitions from 2022 onward, restricted to cross-sectional tabular data with tree-based models as the primary or significant ensemble component.
+The study codes one solution per competition (the highest-placing top-3 finisher with enough public documentation) across **45 competitions**, plus **11 near-winning controls** (rank 4–25 finishers with both a writeup and a notebook) used to test whether winning feature engineering is actually *distinctive of winning*. Each solution is coded through three passes: structured field extraction, a qualitative paradigm/attribution re-evaluation, and a 53-technique feature-engineering taxonomy.
 
-## Objectives
+**Scope:** Playground Series Seasons 3–6 (Jan 2023 – Apr 2026), three 2022 Tabular Playground Series competitions, and Featured competitions from 2022 onward — restricted to cross-sectional (non–time-series) tabular tasks.
 
-- Build a structured dataset of 30+ top-finishing competition solutions with one entry per competition (best-documented of top-3 finishers)
-- Identify which preprocessing and feature engineering decisions are most consistently associated with winning, using frequency tables and conditional cross-tabulations
-- Produce a decision flowchart covering key decision nodes (encoding strategy, CV strategy, missing data handling) that maps dataset characteristics to recommended pipeline decisions
-- Validate the flowchart by replicating its recommendations on a held-out competition
+## Key findings
 
-## Tools & Technologies
+- Winning is **not** what feature-engineering folklore predicts: winners' feature engineering is a small shared core, not an elaborate per-competition edge.
+- **Ensembling dominates** (≈89% of winners); the dominant base model is a gradient-boosted tree in 35/45 entries.
+- **Learned features** are the one feature-level edge that resists commoditization — a persistent, not emerging, differentiator.
+- Winning is, in part, a **community phenomenon**: the documented top is a recurring guild, with measurable originator-vs-canonizer structure.
+- Six promoted "constraint → strategy" couplings are mostly **not** supported; the folklore is weakly grounded at best.
 
-- **Language:** Python 3.13
-- **Environment:** Poetry (dependency management)
-- **Data:** openpyxl, pandas
-- **Modeling:** XGBoost, LightGBM, CatBoost, scikit-learn
-- **Visualization:** matplotlib, seaborn
-- **Data source:** Kaggle API (`kaggle` Python package)
+The full writeup is **[`outputs/report/research_report_v2.md`](outputs/report/research_report_v2.md)** (Abstract + 6 sections, 14 embedded figures).
 
-## Project Structure
+## Tools & technologies
+
+The study analyzes completed solutions rather than training new models, so the toolchain centers on data wrangling, the Kaggle API, and visualization — not modeling frameworks.
+
+- **Language / env:** Python 3.13, Poetry
+- **Analysis:** pandas, numpy, the Python standard library (`csv`, `json`, `statistics`)
+- **Visualization:** matplotlib
+- **Spreadsheet I/O:** openpyxl (the `kaggle_meta_analysis.xlsx` dataset)
+- **Collection:** Kaggle API (`kaggle`), requests + BeautifulSoup
+- **AI-assisted coding:** `anthropic` SDK + Claude Code, under researcher direction (see report §3.4)
+
+## Project structure
 
 ```
-├── data/
-│   ├── kaggle_candidates_v2.xlsx   # Scraped competition shortlist (49 candidates)
-│   └── kaggle_meta_analysis.xlsx   # Main dataset — 35 hand-coded entries
-├── scripts/
-│   ├── kaggle_scraper_v2.py        # Competition discovery & pre-filtering
-│   ├── write_entries.py            # Writes coded entries to Excel dataset
-│   └── build_bar_plots.py          # Generates EDA bar plots from dataset
-├── notebooks/                      # Analysis notebooks (Phase 3+)
+├── data/                          # Inputs
+│   ├── kaggle_meta_analysis.xlsx  #   primary dataset (45 entries, 6 worksheets)
+│   ├── kaggle_candidates_v2.xlsx  #   competition shortlist
+│   ├── raw/                       #   per-competition leaderboards + dataset stats
+│   └── writeups/                  #   collected solution writeups & notebooks (corpus)
+├── scripts/                       # Data-processing helpers + figure generators
+│   ├── build_presentation_figures.py
+│   └── sync_report_figures.py     #   folds report figures into outputs/report/figures/
+├── notebooks/
+│   ├── 02_reanalysis.ipynb        # main paradigm / coupling / community analysis
+│   └── archive/01_eda.ipynb       #   superseded exploratory notebook
+├── analysis/                      # Derived analysis artifacts
+│   ├── pass3-fe-taxonomy/         #   53-technique FE coding, stats.py (reliability), validate_pass3.py
+│   ├── writeup-reevaluation/      #   per-writeup re-evaluation docs (Pass 2)
+│   ├── figures/                   #   generated figures (generators' working location)
+│   ├── controls/  reanalysis/
 ├── outputs/
-│   ├── figures/                    # EDA and analysis plots
-│   └── report/                     # Final writeup
-└── PLAN.md                         # Full project plan with tasks and timeline
+│   ├── report/
+│   │   ├── research_report_v2.md  # the deliverable
+│   │   ├── figures/               #   14 embedded report figures (fig01–fig14)
+│   │   └── archive/               #   superseded drafts
+│   └── presentation/              # slides
+├── journal/                       # session log + archived plans
+└── private/                       # local-only grading materials (gitignored)
 ```
 
-## How to Run
+## Reproducing the analysis
 
-**Install dependencies:**
+Install dependencies:
 ```bash
 poetry install
 ```
 
-**Run Kaggle scraper** (requires `~/.kaggle/kaggle.json`):
+Reproduce the coding-reliability figures (Cohen's κ, Gwet's AC1, positive agreement — standard library only):
 ```bash
-python scripts/kaggle_scraper_v2.py
+poetry run python analysis/pass3-fe-taxonomy/stats.py
 ```
 
-**Write dataset entries to Excel:**
+Validate Pass-3 data integrity:
 ```bash
-python scripts/write_entries.py
+poetry run python analysis/pass3-fe-taxonomy/validate_pass3.py
 ```
 
-**Generate bar plots:**
+Regenerate the report figures, then fold them into the deliverable tree:
 ```bash
-python scripts/build_bar_plots.py
+poetry run python analysis/figures/report/make_fig3_4_winners.py
+poetry run python analysis/figures/report/make_fig5_fe_prevalence.py
+poetry run python analysis/figures/report/make_fig6_paired.py
+poetry run jupyter nbconvert --to notebook --execute notebooks/02_reanalysis.ipynb
+poetry run python scripts/sync_report_figures.py
 ```
 
-## Current Status
+The `phase5_*` figures (Figures 1, 2, 7–14) are generated by `notebooks/02_reanalysis.ipynb`; `fig3`–`fig6` (Figures 3–6) by the `make_fig*` scripts. `sync_report_figures.py` copies the final set into `outputs/report/figures/` as `fig01`–`fig14`.
 
-- Phase 1 (competition discovery & schema design): complete
-- Phase 2 (data collection): 35 entries coded; code exploration pass for `writeup_detail=3` entries pending
-- Phase 3 (EDA & analysis): pending
-- Phase 4 (flowchart construction): pending
-- Phase 5 (replication & validation): pending
+## Status
 
-## Team
+The report (Abstract through §6 References) is complete: every quantitative claim verified against the committed data, coding reliability reproducible from `analysis/pass3-fe-taxonomy/stats.py`, and all 14 figures embedded. Remaining work is the conference-style poster and presentation.
 
-- Kenneth Young (kenneth.young@bellevuecollege.edu)
+## Author
 
-## Timeline
-
-April 28 – June 24, 2026. See [PLAN.md](PLAN.md) for full milestone breakdown.
+Kenneth Young — kenneth.young@bellevuecollege.edu
+CS495 Capstone in Data Science, Bellevue College · Instructor: Pedro Albuquerque, PhD

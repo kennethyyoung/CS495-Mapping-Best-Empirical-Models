@@ -27,3 +27,6 @@ kaggle.json
 
 # Private context (rubrics, grading materials — local only)
 private/
+
+# Claude Code local config / state
+.claude/

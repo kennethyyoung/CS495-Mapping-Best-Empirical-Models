@@ -1,0 +1,502 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Loan Approval Prediction
+
+        <https://www.kaggle.com/competitions/playground-series-s4e10>
+      o
+
+        10th place solution : no blind blend
+
+        <https://www.kaggle.com/competitions/playground-series-s4e10/
+        writeups/aldparis-10th-place-solution-no-blind-blend>
+      o
+
+        Exploring Mental Health Data
+
+        <https://www.kaggle.com/competitions/playground-series-s4e11>
+      o
+
+        Fast GPU Hill Climbing Starter - [CV 0.94 LB 0.94]
+
+        <https://www.kaggle.com/code/cdeotte/fast-gpu-hill-climbing-
+        starter-cv-0-94-lb-0-94>
+      o
+
+        35 place solution (baseline submission 588 places up)
+
+        <https://www.kaggle.com/competitions/playground-series-s4e11/
+        writeups/baseer-shah-35-place-solution-baseline-submission->
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+10th place solution : no blind blend — Loan Approval Prediction
+
+
+  10th place solution : no blind blend
+
+Loan Approval Prediction
+
+<https://www.kaggle.com/competitions/playground-series-s4e10>
+
+Solution Writeup · 10th place · Nov 1, 2024
+
+Hi,
+
+Thank you Kaggle for this competition, congratulations to everyone and
+thank you to have shared so many usefull insights during this episode.
+
+I'm on vacation a few days and write this message with my phone.
+
+My solution is a *LogisticRegression* of 4 meta learners : each meta
+learner (bold below) is a stack of GBMs :
+
+Boxplots are the 4 repetitions with various OOF predictions obtained
+with various random seeds : I wanted robust results.
+
+Before this Logistic, I trained more than 30 GBMs, I tried everything I
+was able to try with categorical hyperparameters of XGBoost, CatBoost
+and LightGBM and I learned a lot from these personal experiments.
+
+I kept both categorical and numerical features for several columns of
+train dataset (|person_income| especially) . I didn't impute missing
+values, I didn't made feature engineering and kept the original dataset
+only for training (not for validation). I used optuna to fit
+hyperparameters of each GBM.
+
+Here is my final submission <https://www.kaggle.com/code/adaubas/
+pss4e10-logistic-of-gbms>.
+
+Good luck for next competitions and have fun !
+
+Author
+
+<https://www.kaggle.com/adaubas>
+aldparis <https://www.kaggle.com/adaubas>
+
+adaubas
+
+arrow_drop_up
+
+19
+
+Share
+
+more_horiz
+
+love1
+add_reaction
+
+comment
+
+
+    10 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+format_strikethrough
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+table_chart
+
+insert_photo
+
+smart_display
+
+insert_emoticon
+
+help
+
+Preview
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 2 years ago
+
+· 299th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Congrats once again! This approach is reminiscent of @oscarm524
+<https://www.kaggle.com/oscarm524>'s ensemble-of-ensembles approach,
+with your emphasis on robustness on top.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 10th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+To learn to be robust is my goal by playing with Kaggle competitions.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/oscarm524>
+
+
+      Oscar Aguilar
+
+<https://www.kaggle.com/oscarm524>
+
+Posted 2 years ago
+
+· 242nd in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations, @adaubas <https://www.kaggle.com/adaubas>. I considered
+doing something similar to your logistic stacker with four |CatBoost|
+models, but I ran out of time. I focused too much on Ridge in this
+competition.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/vishesh75>
+
+
+      Vishesh75
+
+<https://www.kaggle.com/vishesh75>
+
+Posted a year ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations!
+I'm relatively new to the community, but I got great insights from your
+solution.
+
+replyReply
+add_reactionReact
+
+emoji_people
+ <https://www.kaggle.com/introverstein>
+
+
+      Bhargav Borah
+
+<https://www.kaggle.com/introverstein>
+
+Posted 2 years ago
+
+· 102nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations, @adaubas <https://www.kaggle.com/adaubas>! That was a
+neat solution.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/khwaishsaxena>
+
+
+      Khwaish Saxena
+
+<https://www.kaggle.com/khwaishsaxena>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulations,
+that was a good solution.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/martinapreusse>
+
+
+      Mart Preusse
+
+<https://www.kaggle.com/martinapreusse>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Congratulation on place 10 and thanks for sharing your submission
+notebook. I will check how you utilized XGB as I sometimes get a
+relatively poor score with it.
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 10th in this Competition
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Hi @martinapreusse <https://www.kaggle.com/martinapreusse>,
+
+I did sometimes had poor score too with XGBoost. But sometimes it is
+with LightGBM, and some other times it is with CatBoost… XGBoost is the
+oldest one of the three, but it is very fast with GPU and sometines it
+is the best ! With Kaggle I learned to use the 3.
+
+And instead of playing with the |grow_policy| hyper parameter of each
+GBM techique, I'm using native grow policy of each GBM technique and
+blend their results.
+
+Hope to see you soon in another competition !
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 2 years ago
+
+arrow_drop_up
+
+2
+
+more_vert
+
+Making a strong ensemble of one model type is very difficult, even when
+using 3 different implementations. Props to you @adaubas <https://
+www.kaggle.com/adaubas> and good to have you back!
+
+replyReply
+thankYou1
+add_reaction
+
+<https://www.kaggle.com/adaubas>
+
+
+      aldparis
+
+<https://www.kaggle.com/adaubas>
+Topic Author
+
+Posted 2 years ago
+
+· 10th in this Competition
+
+arrow_drop_up
+
+3
+
+more_vert
+
+Yes, I was a little bit lucky to have such CV improvments with only
+GBMs. It's interesting to see the 3 methods of GBM can be quite diverse.
+
+And I wasn't able to adapt the fantastic embedding NN from @paddykb
+<https://www.kaggle.com/paddykb> to my ideas (had numerical features…).
+Unfortunately, the public NN didn't improve my CV score
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/hanifimaduddin02>
+
+
+      Hanif Imaduddin
+
+<https://www.kaggle.com/hanifimaduddin02>
+
+Posted a year ago
+
+arrow_drop_up
+
+0
+
+more_vert
+
+very Great!!
+
+replyReply
+add_reactionReact
+

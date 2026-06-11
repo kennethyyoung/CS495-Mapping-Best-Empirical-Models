@@ -1,0 +1,558 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predicting Road Accident Risk
+
+        <https://www.kaggle.com/competitions/playground-series-s5e10>
+      o
+
+        S5E10 | 14th place solution
+
+        <https://www.kaggle.com/competitions/playground-series-s5e10/
+        writeups/s5e10-14th-place-solution>
+      o
+
+        Predicting Loan Payback
+
+        <https://www.kaggle.com/competitions/playground-series-s5e11>
+      o
+
+        A 10th Place Experiment
+
+        <https://www.kaggle.com/competitions/playground-series-s5e11/
+        writeups/a-10th-place-experiment>
+      o
+
+        Diabetes Prediction Challenge
+
+        <https://www.kaggle.com/competitions/playground-series-s5e12>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+S5E10 | 14th place solution — Predicting Road Accident Risk
+
+
+  S5E10 | 14th place solution
+
+Predicting Road Accident Risk
+
+<https://www.kaggle.com/competitions/playground-series-s5e10>
+
+Solution Writeup · 14th place · Oct 31, 2025
+
+Final Scores: Public LB: 0.05536| Private LB: 0.05564
+
+Approach: Simple average of 3 HC ensembles (pooling ~100 diverse models)
++ 1 Ridge ensemble.
+Key Insight: Trust your CV, but carefully assess also overfitting risk.
+With 70+ Hill Climbing ensemble variants, each with different model
+combinations and weights, I faced critical decision: trust the lowest CV
+score or hedge against overfitting?
+
+I had around 20+ submissions all scored 0.05539 on public LB with CV
+scores ranged from 0.055822 to 0.055833. All these submissions would
+ensure me private LB scores of 0.05562 or 0.05563. Lower CV scores below
+0.055800 came from more aggressive HC optimization – ensembles from 30+
+models with finely-tuned negative weights ranging from -0.30 to +0.65
+allowing to correct correlated errors and improvements at the 1e-7
+tolerance level.
+
+My Hill Climbing ensembles were diverse and included:
+
+  * XGBoost variants (with original data, residual-based, features-rich,
+    with target encoding);
+  * LightGBM variants (Optuna-tuned, residual-based, with statistical
+    features);
+  * CatBoost variants;
+  * Neural Networks (TabM, RealMLP, FastAI, PyTorch);
+  * Tree ensembles (Random Forest, Extra Trees, YDF).
+
+This created predictions that captured different aspects of the data,
+reducing correlation and improving generalization.
+
+From this competition I learned that lower CV doesn't always mean better
+- context and overfitting risk matters. The winning submissions were in
+my arsenal, but they seemed too conservative.
+
+Published final solution is simple average of the 4 ensembles (~40 lines
+of code) – 3 HC greedy ensembles (21-26 models each, with negative
+weights) and Ridge stacking ensemble with no post-processing or
+calibration. All OOF and test predictions were generated with 7-fold CV,
+saved as NumPy arrays, and combined using basic NumPy operations.
+
+Thanks to the Kaggle competitors who published strong public notebooks
+(@cdeotte, @masayakawamata <https://www.kaggle.com/masayakawamata>,
+@mahoganybuttstrings <https://www.kaggle.com/mahoganybuttstrings>,
+@mikhailnaumov <https://www.kaggle.com/mikhailnaumov>). The diversity in
+my solutions came from testing many different ideas and discussions
+posts published by @tilii7 <https://www.kaggle.com/tilii7> and
+@siukeitin <https://www.kaggle.com/siukeitin>.
+
+Author
+
+<https://www.kaggle.com/metamodels>
+Meta Models <https://www.kaggle.com/metamodels>
+
+metamodels
+
+arrow_drop_up
+
+19
+
+Share
+
+more_horiz
+
+
+    Project Links
+
+14th Place| Simple Average OOF Ensemble
+
+7 months ago · 27 upvotes
+
+code
+ <https://www.kaggle.com/metamodels>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://www.kaggle.com/code/metamodels/14th-place-simple-average-oof-
+ensemble>
+add_reactionReact
+
+comment
+
+
+    9 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/dnyaneshbharambe>
+
+
+      God
+
+<https://www.kaggle.com/dnyaneshbharambe>
+
+Posted 7 months ago
+
+· 240th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! you really did a great job
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/aadityaiscoding>
+
+
+      Aaditya Khanal
+
+<https://www.kaggle.com/aadityaiscoding>
+
+Posted 7 months ago
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Your approach of balancing CV scores with overfitting risk is really
+insightful! The detailed reflection on model selection is invaluable for
+the community. Congrats on 14th place!
+
+replyReply
+love1
+add_reaction
+
+emoji_people
+ <https://www.kaggle.com/bassetkerouche>
+
+
+      abdelbasset Basto
+
+<https://www.kaggle.com/bassetkerouche>
+
+Posted 7 months ago
+
+· 4th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! You really deserve a top spot. Seeing your private score of
+0.5562, I don’t think it’s just luck — it’s a fascinating case worth
+analyzing. The CV scores ranged from 0.055822 to 0.055833, yet they led
+to the best private score. Thanks for sharing — your write-up will
+surely be my reference in the
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 7 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I like the way you name your submission files - probably because I do it
+similarly.
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/metamodels>
+
+
+      Meta Models
+
+<https://www.kaggle.com/metamodels>
+Topic Author
+
+Posted 7 months ago
+
+· 14th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+Thanks, @tilii7 <https://www.kaggle.com/tilii7>! From your earlier forum
+posts I’d already noticed our naming schemes are similar (auto-labeled
+filenames with model, ensemble size, metric, timestamp included). It
+really speeds up finding the right output files among hundreds.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/optimistix>
+
+
+      Optimistix
+
+<https://www.kaggle.com/optimistix>
+
+Posted 7 months ago
+
+· 12th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats! You shared some great public notebooks.
+
+replyReply
+love1
+add_reaction
+
+<https://www.kaggle.com/metamodels>
+
+
+      Meta Models
+
+<https://www.kaggle.com/metamodels>
+Topic Author
+
+Posted 7 months ago
+
+· 14th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks, @optimistix <https://www.kaggle.com/optimistix> ! And congrats
+to you on 12th place—amazing result!
+
+My published notebooks were mostly experiments: pushing single model CV
+as low as possible, and trying hierarchical bidirectional rank ensemble
+for the first time using OOF predictions.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 7 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I think you did great, but it is always difficult dealing with the |what
+if| feeling. That's why my main goal is always to select the best models
+for scoring, and luckily for me this time I did.
+
+I also know about your dilemma. I had almost 10 models that scored |
+0.05538|, so worse than more than a dozen models that scored |0.05537|,
+but the first group had better CV scores. I almost selected one of them,
+but in the end all of them scored the same to the 5th decimal on private LB.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/metamodels>
+
+
+      Meta Models
+
+<https://www.kaggle.com/metamodels>
+Topic Author
+
+Posted 7 months ago
+
+· 14th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Appreciate the insight. The way you navigated those mixed signals to
+pick the right models is impressive. It is a good reminder of how hard
+it is to choose correctly when the evidence is so mixed.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/tilii7>
+
+
+      Tilii
+
+<https://www.kaggle.com/tilii7>
+
+Posted 7 months ago
+
+· 1st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+    It is a good reminder of how hard it is to choose correctly when the
+    evidence is so mixed.
+
+Yes, that's always the case when many models converge to within 0.00001
+of each other. Most people would never bother making more than a few
+models with identical scores before they give up further work. It is
+something that people experience only in highly competitive situations.
+
+The two models I selected for scoring were made 11 and 16 days ago,
+which means that for practical purposes I could have stopped working at
+that point. It seems that most of your top models were made two weeks
+ago as well. If we stopped at that point, there would have been fewer
+compounding variables and not so many models to choose from. It is human
+nature to pick more recently made models, as it feels like more work was
+invested in making them, but I learned over many competitions that often
+the best models are made early.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/metamodels>
+
+
+      Meta Models
+
+<https://www.kaggle.com/metamodels>
+Topic Author
+
+Posted 7 months ago
+
+· 14th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Your post is a great reminder that "good enough, early" often beats
+"newer, shinier, riskier." I continued to experiment with reducing CV
+RMSE and entered a dangerous overfitting zone.
+
+Two of my best models with the best private LB scores were created
+relatively early and were essentially indistinguishable:
+
+  * Private RMSE: 0.05562 vs 0.05563
+  * OOF RMSE: M1 = 0.055821862, M2 = 0.055822070 (Δ = +0.000000208)
+  * OOF MAE: M1 = 0.043338337, M2 = 0.043342060
+  * OOF corr (preds): Pearson = 0.999999, Spearman = 0.999999
+  * Row-wise wins: M1/M2/ties = 263,148 / 254,606 / 0
+
+Thanks for the great lessons for next time!
+
+replyReply
+add_reactionReact
+

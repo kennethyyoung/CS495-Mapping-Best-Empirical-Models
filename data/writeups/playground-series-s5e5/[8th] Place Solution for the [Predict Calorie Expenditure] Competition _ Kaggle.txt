@@ -1,0 +1,301 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predict Calorie Expenditure
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5>
+      o
+
+        [8th] Place Solution for the [Predict Calorie Expenditure]
+        Competition
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5/
+        writeups/pinoystat-8th-place-solution-for-the-predict-calor>
+      o
+
+        17th place - Poor Public LB scores
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5/
+        writeups/paperxd-17th-place-poor-public-lb-scores>
+      o
+
+        P5E5 Data Analysis
+
+        <https://www.kaggle.com/code/jliangwork/p5e5-data-analysis>
+      o
+
+        43rd Place Solution for the Predict Calorie Expenditure Competition
+
+        <https://www.kaggle.com/competitions/playground-series-s5e5/
+        writeups/jason-43rd-place-solution-for-the-predict-calorie->
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+[8th] Place Solution for the [Predict Calorie Expenditure] Competition —
+Predict Calorie Expenditure
+
+
+  [8th] Place Solution for the [Predict Calorie Expenditure] Competition
+
+Predict Calorie Expenditure
+
+<https://www.kaggle.com/competitions/playground-series-s5e5>
+
+Solution Writeup · 8th place · Jun 1, 2025
+
+Despite my last submission being 16 days old, I was surprised to secure
+8th place in the final standings. My solution utilized a weighted
+ensemble optimized via a Hill Climbing algorithm. The final ensemble
+combined five distinct test predictions: three TensorFlow models, one
+CatBoost model, and one XGBoost model.
+
+My primary objective in this competition was to deepen my understanding
+of TensorFlow through hands-on practice. By focusing on tensor
+manipulations and library-specific architectures, I was able to build
+specialized models that contributed significantly to the diversity and
+overall performance of the final ensemble."
+
+*Notebooks Ensemble of Predictions Summary*
+Notebook # F_1027 is an XGBoost public notebook you can find here
+<https://www.kaggle.com/code/jiaoyouzhang/calorie-only-xgboost>. Thanks
+to @jiaoyouzhang <https://www.kaggle.com/jiaoyouzhang>
+
+Notebook #F_1023 -> CatBoost public notebook. Many thanks to @chrisk321
+<https://www.kaggle.com/chrisk321> .You can find it here. <https://
+www.kaggle.com/code/chrisk321/lb-0-05696-ps5e5-solo-cb-model>
+
+The rest below are all tensorflow from my private notebooks:
+Notebook #F_1025, F_1021 and F_1024
+
+I did not bother optimizing or doing some unique stuff on the public
+notebooks. I just mixed this up with my Tensorflow models and call it a
+day.
+
+Logs from Hill Climbing algo:
+
+|Current Best model: F_1023 Models to add to the best model: Starting
+RMSE: [0.058812503] Iteration: 1, Model added: F_1025, Best weight:
+0.41, Best RMSE: 0.05860217 Iteration: 2, Model added: F_1027, Best
+weight: 0.27, Best RMSE: 0.05848809 Iteration: 3, Model added: F_1021,
+Best weight: 0.12, Best RMSE: 0.05847134 Iteration: 4, Model added:
+F_1024, Best weight: 0.05, Best RMSE: 0.05846814 complete|
+
+Author
+
+<https://www.kaggle.com/pinoystat>
+pinoystat <https://www.kaggle.com/pinoystat>
+
+pinoystat
+
+arrow_drop_up
+
+10
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    4 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/chrisk321>
+
+
+      ChrisK321
+
+<https://www.kaggle.com/chrisk321>
+
+Posted a year ago
+
+· 695th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Appreciate the shout out @pinoystat <https://www.kaggle.com/pinoystat>
+and congrats on 8th place -- well done!
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/paperxd>
+
+
+      paperxd
+
+<https://www.kaggle.com/paperxd>
+
+Posted a year ago
+
+· 17th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+What was your tolerance you used for hill climbing?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/pinoystat>
+
+
+      pinoystat
+
+<https://www.kaggle.com/pinoystat>
+Topic Author
+
+Posted a year ago
+
+· 8th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+I did not put any tolerance (minimum metric improvement). As long as the
+mix improve the metric, its fine with me.
+
+replyReply
+add_reactionReact
+
+This comment has been deleted.
+

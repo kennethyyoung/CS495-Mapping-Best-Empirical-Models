@@ -1,0 +1,241 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predicting Irrigation Need
+
+        <https://www.kaggle.com/competitions/playground-series-s6e4>
+      o
+
+        19th Place - Ensemble of 29 models
+
+        <https://www.kaggle.com/competitions/playground-series-s6e4/
+        writeups/19nd-place-ensemble-of-29-models>
+      o
+
+        Predict Customer Churn
+
+        <https://www.kaggle.com/competitions/playground-series-s6e3>
+      o
+
+        16th Place Solution - Ridge Ensembling
+
+        <https://www.kaggle.com/competitions/playground-series-s6e3/
+        writeups/16th-place-solution-ridge-ensembling>
+      o
+
+        Predicting Heart Disease
+
+        <https://www.kaggle.com/competitions/playground-series-s6e2>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+19th Place - Ensemble of 29 models — Predicting Irrigation Need
+
+
+  19th Place - Ensemble of 29 models
+
+Predicting Irrigation Need
+
+<https://www.kaggle.com/competitions/playground-series-s6e4>
+
+Solution Writeup · 19th place · May 1, 2026
+
+*Dear Friends!*
+
+Congratulations to all the winners and all who improved their own
+results in this Competition.
+I was glad to take part in the Competition. My laptop became my constant
+companion everywhere last month).
+
+*Solution*
+
+My solution is an ensemble of 29 models. Meta-model –
+RidgeClassification with hyperparameters tuned by Optuna. The features
+used to train the meta-model include not only class probabilities, but
+also the class predicted by the models and the Chris' exact formula.
+
+*Models and Feature Engineering*
+
+I used the following models: XGBClassifier, LightGBMClassifier,
+CatBoostClassifier, HistGradientBoostingClassifier, RealMLP_TD_Classifier.
+Hyperparameters were tuned for some of them with Optuna, but not for
+all. All models were trained on 5-folds CV.
+
+The models were trained on different sets of features:
+- The initial set of features + Ohe
+- The initial set - of features + Ohe
+- The initial set of features + Ohe + Chris formula
+- The initial set of features + magical feature (combination of all
+important features)+Ohe
+- The initial set of features + Frequency Encoding
+- Combinations of categorial features+ohe
+- Digits ) +initial set of features
+- Binning numerical features + nested target Encoding
+- Nested target Ecoding (categorical features)
+- TargetEncoding using Original dataset
+- 2 models were taken from open from public notebooks: https://
+www.kaggle.com/code/arshikhan810/xgb-with-te-t4 <https://www.kaggle.com/
+code/arshikhan810/xgb-with-te-t4> and https://www.kaggle.com/code/
+rawashishsin/s6e4-highest-score-xgboost-cv-0-98109 <https://
+www.kaggle.com/code/rawashishsin/s6e4-highest-score-xgboost-cv-0-98109>
+
+*What didn't work*
+I tried to do bias tuning. This gave an increase on cross validation,
+but lowered the rating on private leaderboard.
+
+*My notebook:*
+https://www.kaggle.com/code/elenkapetrova/ps-s6-e4-metamodel-ridge
+<https://www.kaggle.com/code/elenkapetrova/ps-s6-e4-metamodel-ridge>
+
+Many thanks to @cdeotte <https://www.kaggle.com/cdeotte>, @yekenot
+<https://www.kaggle.com/yekenot>, @rawashishsin <https://www.kaggle.com/
+rawashishsin>, @arshikhan810 <https://www.kaggle.com/arshikhan810>!
+
+Author
+
+<https://www.kaggle.com/elenkapetrova>
+Elena Petrova <https://www.kaggle.com/elenkapetrova>
+
+elenkapetrova
+
+arrow_drop_up
+
+4
+
+Share
+
+more_horiz
+
+add_reactionReact
+
+comment
+
+
+    0 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+

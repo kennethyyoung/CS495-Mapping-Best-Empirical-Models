@@ -1,0 +1,600 @@
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Create
+
+search
+​
+
+  *
+    explore
+
+    Home
+
+    <https://www.kaggle.com/>
+  *
+    emoji_events
+
+    Competitions
+
+    <https://www.kaggle.com/competitions>
+  *
+    leaderboard
+
+    Benchmarks
+
+    <https://www.kaggle.com/benchmarks>
+  *
+    smart_toy
+
+    Game Arena
+
+    <https://www.kaggle.com/game-arena>
+
+  *
+    code
+
+    Data Hub
+
+    <#>
+    expand_more
+
+  *
+    format_list_bulleted
+
+    More
+
+    <#>
+    expand_more
+
+  *
+    note_alt
+
+    Your Work
+
+    <https://www.kaggle.com/work>
+    expand_less
+
+  *
+    code
+
+    Viewed
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        Predicting Student Test Scores
+
+        <https://www.kaggle.com/competitions/playground-series-s6e1>
+      o
+
+        Rank14 approach - Grand blend of diverse models
+
+        <https://www.kaggle.com/competitions/playground-series-s6e1/
+        writeups/rank14-approach-grand-blend-of-diverse-models>
+      o
+
+        1st Contest- 15th Place
+
+        <https://www.kaggle.com/competitions/playground-series-s6e1/
+        writeups/1st-contest-15th-place>
+      o
+
+        Predicting F1 Pit Stops
+
+        <https://www.kaggle.com/competitions/playground-series-s6e5>
+      o
+
+        Regression with a Mohs Hardness Dataset
+
+        <https://www.kaggle.com/competitions/playground-series-s3e25>
+  *
+    code
+
+    Bookmarks
+
+    <#>
+    expand_less
+
+  *
+      o
+
+        MyAnimeList Anime and Manga Datasets
+
+        <https://www.kaggle.com/datasets/andreuvallhernndez/myanimelist>
+
+auto_awesome_motion
+
+View Active Events
+
+menu
+Skip to
+content <#site-content>
+Kaggle <https://www.kaggle.com/>
+
+Kaggle uses cookies from Google to deliver and enhance the quality of
+its services and to analyze traffic.
+Learn more
+ <https://www.kaggle.com/cookies>
+OK, Got it.
+Rank14 approach - Grand blend of diverse models — Predicting Student
+Test Scores
+
+
+  Rank14 approach - Grand blend of diverse models
+
+Blended a lot of diverse NN-GBDT models with varied features and trusted
+the CV score!
+
+Predicting Student Test Scores
+
+<https://www.kaggle.com/competitions/playground-series-s6e1>
+
+Solution Writeup · 14th place · Jan 31, 2026
+
+Hello all,
+
+Thanks to Kaggle for a wonderful stable dataset this time around! This
+episode was one of the best Playground dataset I have seen since the
+July2024 - Insurance cross selling <https://www.kaggle.com/competitions/
+playground-series-s4e7> episode. The CV scheme worked perfectly and all
+improvements locally translated wonderfully to the leaderboard. Many
+thanks to the forum contributors (except for the blind blending junk)
+for some good ideas across kernels and discussions. Also, best wishes to
+the winners too!
+
+
+    CV scheme details
+
+I followed a simple 5-fold scheme and saved the folds across all my
+experiments.
+
+|cv = KFold(n_splits= 5, shuffle = True, random_state = 42)|
+
+All my single models and ensembles followed this CV scheme. I did not do
+any full-refit type of training and relied on the CV scheme all throughout.
+
+
+    Feature engineering
+
+Since day-1, we were clear that this dataset was stable. Hence, adding
+meaningful features was key to creating a diverse ensemble and a large
+blend of single models. One may engender a successful ensemble in 3 ways-
+
+ 1. Similar model algorithms with varied features
+ 2. Varied model parameters across chosen algorithms
+ 3. Custom parameters, loss functions and models
+ 4. Innovation in ensemble design
+
+Strong feature engineering is the backbone behind all of this and is
+cynosure to a successful ensemble all throughout.
+
+My feature engineering for this competition included the below-
+
+ 1. n-gram features (1-2-3-4 grams were considered)
+ 2. Additive/ multiplicative type of features
+ 3. Varied datatypes (some / all columns as category dtype)
+ 4. Public features across shared kernels with some personal modifications
+ 5. Adding multiple copies of train / original datasets as rows /
+    columns - these are normally discussed and shared across public work too
+
+Most of my single models included between 30-200 features based on the
+CV score and code-runtime and GPU consumption.
+
+
+    Single models
+
+My single model suite consisted of the below. I shall resort to general
+comments here as we experienced a 100% CV-LB linkage.
+
+Model algorithm type 	Comments
+TABM regressor 	- Best single model by a distance
+- All variants and model parameter adjustments worked wonderfully
+Real-MLP regressor 	- Very reliable single model and provided a lot of
+diversity and quality
+- All variants and model parameter adjustments worked wonderfully
+XgBoost regressor 	- Best single model option among boosted tree model
+category
+- Adjusting the loss function helped somewhat
+LightGBM regressor 	- Decent performance but was overshadowed by XgBoost
+regressor
+- Adjusting the loss function helped reasonably but performance was not
+as good as XGB anyway
+Catboost regressor 	- Did not perform well at all despite a lot of
+effort with features
+- I resorted to a set of 4-5 catboost models for diversity but stopped
+pursuing this model option after a while for other better options
+
+
+I considered the below loss functions for my models -
+
+ 1. L2 loss - most common and provided a good enough model across
+    boosted trees
+ 2. Huber loss - provided a bit of diversity and resulted in a CV
+    slightly better than the MSE option across boosted trees
+ 3. Weighted MSE loss function - the 13th place solution has described
+    this as well quite well. My code does not include as many levels /
+    categories but is on similar lines. This provided a decent boost to
+    the CV score for XgBoost but not for LightGBM.
+ 4. I trained my TABM and Real-MLP regressors on standard L2 losses only
+
+
+    Model ensemble
+
+I resorted to a 3-stage ensemble process including -
+
+ 1. Autogluon ensemble stack using some / all of the single models as base
+ 2. A second stage blend with ridge / hill climb that combined all the
+    autogluon models and selected single models
+ 3. A simple average of the model options in point-2 for my submission
+
+
+    Key learnings
+
+ 1. Trust the CV
+ 2. One does not need to submit a lot if one experiences a good CV-LB
+    relation. Whatever improves the CV is most likely to improve the LB
+    as well
+ 3. Diversity is key in an ensemble and not necessarily the individual
+    model quality. *Quality adds value, so does diversity*
+ 4. Avoid blind gambles with public work - ingest and consume public
+    work correctly rather than misusing them with soft vote manipulations
+
+Finally, wishing all of you the best for your personal and professional
+endeavors and your onward Kaggle journey! All the best for the February-
+Playground episode as well!!
+
+
+    Past Playground solutions
+
+I have added a few of my past Playground solutions as reference, this
+one draws inference from a lot of them too -
+
+ 1. Nov-2025 <https://www.kaggle.com/competitions/playground-series-
+    s5e11/writeups/rank8-approach-trust-the-cv-score>
+ 2. Oct-2025 <https://www.kaggle.com/competitions/playground-series-
+    s5e10/writeups/4th-place-residual-xgboost-meta-nn-hill-clim>
+ 3. Aug-2025 <https://www.kaggle.com/competitions/playground-series-
+    s5e8/writeups/rank-3-public-rank-5-private-approach>
+ 4. June-2025 <https://www.kaggle.com/competitions/playground-series-
+    s5e6/writeups/ravi-ramakrishnan-rank-28-approach-diversity-and-c>
+ 5. April-2025 <https://www.kaggle.com/competitions/playground-series-
+    s5e4/writeups/ravi-ramakrishnan-rank-4-approach-lots-of-features>
+ 6. Feb-2025 <https://www.kaggle.com/competitions/playground-series-
+    s5e2/writeups/ravi-ramakrishnan-rank-2-approach-a-century-of-com>
+
+Best regards,
+
+Ravi Ramakrishnan
+
+Tagged
+Tabular <https://www.kaggle.com/search?
+q=tabular+tag%3A%22tabular%22>Regression <https://www.kaggle.com/search?
+q=regression+tag%3A%22regression%22>Education <https://www.kaggle.com/
+search?q=education+tag%3A%22education%22>
+Author
+
+<https://www.kaggle.com/ravi20076>
+Ravi Ramakrishnan <https://www.kaggle.com/ravi20076>
+
+ravi20076
+
+arrow_drop_up
+
+14
+
+Share
+
+more_horiz
+
+
+    Project Links
+
+PlaygroundS6E1|Public|Baseline|V3
+
+5 months ago · 34 upvotes
+
+code
+ <https://www.kaggle.com/ravi20076>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://www.kaggle.com/code/ravi20076/playgrounds6e1-public-baseline-v3>
+PlaygroundS6E1|Public|Imports|V1
+
+5 months ago · 11 upvotes
+
+code
+ <https://www.kaggle.com/ravi20076>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://www.kaggle.com/code/ravi20076/playgrounds6e1-public-imports-v1>
+PlaygroundS6E1|Public|Baseline|V2
+
+5 months ago · 13 upvotes
+
+code
+ <https://www.kaggle.com/ravi20076>
+
+Kaggle Notebook
+
+bronze medal
+
+Public
+
+<https://www.kaggle.com/code/ravi20076/playgrounds6e1-public-baseline-v2>
+PlaygroundS6E1|Public|Baseline|V1
+
+5 months ago · 10 upvotes
+
+code
+ <https://www.kaggle.com/ravi20076>
+
+Kaggle Notebook
+
+Public
+
+<https://www.kaggle.com/code/ravi20076/playgrounds6e1-public-baseline-v1>
+PlaygroundS6E1|Public|Baseline|V4
+
+5 months ago · 10 upvotes
+
+code
+ <https://www.kaggle.com/ravi20076>
+
+Kaggle Notebook
+
+Public
+
+<https://www.kaggle.com/code/ravi20076/playgrounds6e1-public-baseline-v4>
+PlaygroundS6E1|SingleModels|V1
+
+4 months ago · Usability 8.8
+
+table_chart
+
+Kaggle Dataset
+
+Public
+
+<https://www.kaggle.com/datasets/ravi20076/playgrounds6e1singlemodelsv1/
+data/data/data/data>
+
+
+    Citation
+
+Ravi Ramakrishnan. Rank14 approach - Grand blend of diverse models.
+https://www.kaggle.com/competitions/playground-series-s6e1/writeups/
+rank14-approach-grand-blend-of-diverse-models. 2026. Kaggle
+
+add_reactionReact
+
+comment
+
+
+    6 Comments
+
+Hotness
+
+<https://www.kaggle.com/youngyken>
+undo
+
+redo
+
+format_size
+
+format_bold
+
+format_italic
+
+insert_link
+
+format_quote
+
+code
+
+format_list_numbered
+
+format_list_bulleted
+
+more_horiz
+
+ 
+
+This comment will be made public once posted.
+
+attach_file
+
+Post Comment
+
+<https://www.kaggle.com/iamvijay7>
+
+
+      Vijay Kumar
+
+<https://www.kaggle.com/iamvijay7>
+
+Posted 4 months ago
+
+· 2270th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+just finished this writeup and honestly learned a lot from it. It helped
+me to realize where my thinking during the competition was off. Thanks
+for sharing @ravi20076 <https://www.kaggle.com/ravi20076>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cartoonistbeard>
+
+
+      Arko Bera
+
+<https://www.kaggle.com/cartoonistbeard>
+
+Posted 4 months ago
+
+· 51st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congrats 🎉🎉. I had a doubt about the ensembling method. You first
+created different autogluon models like took 5-20 ensembled them then
+the next set. This might have created some let's say 50 new oof and
+pred. Then you again ensembled these 50 with the original single models.
+Is my inference correct.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 4 months ago
+
+· 14th in this Competition
+
+arrow_drop_up
+
+0
+
+more_vert
+
+No, this is not correct @cartoonistbeard <https://www.kaggle.com/
+cartoonistbeard>
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/cartoonistbeard>
+
+
+      Arko Bera
+
+<https://www.kaggle.com/cartoonistbeard>
+
+Posted 4 months ago
+
+· 51st in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Please correct me in that case
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/sylvesterdalmeida>
+
+
+      kobby_
+
+<https://www.kaggle.com/sylvesterdalmeida>
+
+Posted 4 months ago
+
+· 9th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Thanks for this insightful piece, and congrats on your spot. You've
+provided great guides over the months. Your contributions are appreciated.
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/yunsuxiaozi>
+
+
+      yunsuxiaozi
+
+<https://www.kaggle.com/yunsuxiaozi>
+
+Posted 4 months ago
+
+· 462nd in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+Congratulations.How to achieve diversification in general? If only a few
+small changes are made, such as modifying the parameters or features of
+the model, the CV of the model will be basically the same as before the
+modification, and the prediction results will be very similar. If there
+are many modifications, there will definitely be one model with a high
+CV and one with a low CV. What is the acceptable gap in general?For
+example, CV=8.60 and CV=8.58.What is the gap in CV that you can accept?
+
+replyReply
+add_reactionReact
+
+<https://www.kaggle.com/ravi20076>
+
+
+      Ravi Ramakrishnan
+
+<https://www.kaggle.com/ravi20076>
+Topic Author
+
+Posted 4 months ago
+
+· 14th in this Competition
+
+arrow_drop_up
+
+1
+
+more_vert
+
+I achieve diversification with feature selection, model parameters and
+algorithm choices. Also this time, we had pseudo-labels, sample-weights,
+loss functions, etc.
+
+In playground competition, genuine diversification is tough. But we need
+to diversify as much as feasible to ensure we have a reasonable
+diversity to add value to the ensemble @yunsuxiaozi <https://
+www.kaggle.com/yunsuxiaozi>
+
+replyReply
+add_reactionReact
+

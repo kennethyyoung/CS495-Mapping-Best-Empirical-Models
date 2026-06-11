@@ -25,7 +25,7 @@ POETRY := $(VENV_BIN)$(SEP)poetry
 
 # ── Targets ──────────────────────────────────
 
-.PHONY: help venv install update lock clean reset run lint format test check
+.PHONY: help venv install update lock clean reset lint format test check stats validate figures
 
 help: ## Show this help
 	@echo ""
@@ -59,9 +59,6 @@ clean: ## Remove venv, caches, and build artifacts
 
 reset: clean install ## Clean everything then reinstall
 
-run: ## Run the main application (edit as needed)
-	$(VENV_BIN)$(SEP)python -m src.main
-
 lint: ## Run ruff linter
 	$(POETRY) run ruff check .
 
@@ -72,3 +69,18 @@ test: ## Run tests with pytest
 	$(POETRY) run pytest
 
 check: lint test ## Run lint + tests
+
+# ── Analysis workflows ───────────────────────
+
+stats: ## Reproduce coding-reliability figures (Cohen's kappa, Gwet's AC1) from committed data
+	$(POETRY) run python analysis/pass3-fe-taxonomy/stats.py
+
+validate: ## Validate Pass-3 data integrity
+	$(POETRY) run python analysis/pass3-fe-taxonomy/validate_pass3.py
+
+figures: ## Regenerate report figures, then fold them into outputs/report/figures/
+	$(POETRY) run python analysis/figures/report/make_fig3_4_winners.py
+	$(POETRY) run python analysis/figures/report/make_fig5_fe_prevalence.py
+	$(POETRY) run python analysis/figures/report/make_fig6_paired.py
+	$(POETRY) run jupyter nbconvert --to notebook --execute --inplace notebooks/02_reanalysis.ipynb
+	$(POETRY) run python scripts/sync_report_figures.py
