@@ -172,7 +172,7 @@ def fig_origination_score(p2):
     # Special annotation for the empty bar
     if counts[0] == 0:
         ax.annotate("no pure-fork wins\nin the entire corpus",
-                    xy=(0, 0.3), xytext=(0.3, max(counts.values) * 0.4),
+                    xy=(0, max(counts.values) * 0.07 + 1.7), xytext=(0.35, max(counts.values) * 0.42),
                     fontsize=9, color="#d62728",
                     arrowprops=dict(arrowstyle="->", color="#d62728", lw=1))
     ax.set_ylim(0, max(counts.values) * 1.18)
