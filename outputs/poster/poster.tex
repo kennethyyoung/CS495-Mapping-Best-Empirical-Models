@@ -160,17 +160,14 @@
 % ---------- LEFT COLUMN ----------
 \begin{posterblock}{Abstract}
 \textbf{Does elaborate feature engineering win tabular Kaggle competitions?} This study codes
-\textbf{45 winning solutions} (2022--2026) and \textbf{11 near-winning controls} across a
-53-technique taxonomy. Three findings:
+\textbf{45 winners} and \textbf{11 near-winning controls} across a 53-technique taxonomy.
+Three findings:
 \begin{itemize}[leftmargin=1.4em,itemsep=4pt,topsep=4pt]
   \item Winning reduces to a few \textbf{paradigms}: ensemble stacking dominates (28/45).
   \item Winning feature engineering is a \textbf{small shared core} that does \emph{not cleanly} separate winners from near-winners ($n=11$, n.s.).
   \item The documented top is a small recurring \textbf{guild}.
 \end{itemize}
 Winning turns less on FE \emph{volume} than on paradigm fit and community membership.
-
-\vspace{0.5em}
-\textbf{Keywords:} \textit{meta-analysis, Kaggle, tabular ML, feature engineering, ensembling, content analysis}
 \end{posterblock}
 
 \begin{posterblock}{Introduction \& Motivation}
@@ -180,8 +177,8 @@ on fixed data, never winners against strong non-winners. Both are coded here.
 \vspace{0.5em}
 \textbf{Research Questions}
 \begin{itemize}[leftmargin=1.4em,itemsep=5pt,topsep=4pt]
-  \item \textbf{RQ1:} What strategy \emph{paradigms} define winning, and do claimed constraint$\rightarrow$strategy rules hold?
-  \item \textbf{RQ2:} Which FE techniques do winners use, and how much?
+  \item \textbf{RQ1:} What \emph{paradigms} define winning? Do folklore constraint$\rightarrow$strategy rules hold?
+  \item \textbf{RQ2:} Which FE techniques, and how much?
   \item \textbf{RQ3:} Does FE \emph{distinguish} winners from strong~non-winners?
   \item \textbf{RQ4:} How is the winning population \emph{structured}?
 \end{itemize}
@@ -202,18 +199,6 @@ Selection     & voluntary writeups $\Rightarrow$ documentation-self-selection bi
 \end{tabular}
 \end{posterblock}
 
-\begin{posterblock}{Exploratory Data Analysis}
-Strategies are not evenly spread: \textbf{ensemble stacking} takes most wins, and
-gradient-boosted trees are the dominant model in \textbf{35 of 45} entries.
-
-\vspace{0.4em}
-\includegraphics[width=\linewidth]{fig01_paradigm_distribution}
-\figcap{Figure 1. Paradigm distribution across the 45 winning solutions.}
-\end{posterblock}
-
-% ---------- COLUMN BREAK ----------
-\columnbreak
-
 \begin{posterblock}{Methodology}
 \textbf{Three-pass content-analysis} coding of each solution, with a near-winner
 \emph{control group} and a \emph{blind reliability re-code}.
@@ -221,32 +206,35 @@ gradient-boosted trees are the dominant model in \textbf{35 of 45} entries.
 \vspace{0.5em}
 \centerline{\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
-  font=\fontsize{11}{13}\selectfont\sffamily,
-  >={Stealth[length=2.5mm]}, node distance=6mm,
+  font=\fontsize{13}{16}\selectfont\sffamily,
+  >={Stealth[length=2.5mm]}, node distance=7mm,
   box/.style={rectangle, rounded corners=3pt, draw=BCSilver, line width=0.8pt,
               fill=white, text=BCInk, align=center, inner sep=4pt,
-              minimum height=30mm, minimum width=34mm, text width=32mm},
+              minimum height=50mm, minimum width=36mm, text width=34mm},
   io/.style={box, fill=BCLightBlue, draw=BCBlue, line width=1pt},
   result/.style={box, fill=BCBlue, text=white, draw=BCBlue},
   arr/.style={->, draw=BCBlue, line width=1pt},
 ]
-\node[io] (corpus) {{\fontsize{15}{17}\selectfont\bfseries Corpus}\\[4pt]45 winners\\+ 11 controls};
-\node[box, right=of corpus] (p1) {{\fontsize{15}{17}\selectfont\bfseries\color{BCBlue}Pass 1}\\[4pt]structured\\field coding};
-\node[box, right=of p1] (p2) {{\fontsize{15}{17}\selectfont\bfseries\color{BCBlue}Pass 2}\\[4pt]paradigm \&\\attribution};
-\node[box, right=of p2] (p3) {{\fontsize{15}{17}\selectfont\bfseries\color{BCBlue}Pass 3}\\[4pt]FE taxonomy\\(53 techniques)};
-\node[result, right=of p3] (out) {{\fontsize{15}{17}\selectfont\bfseries Analyses}\\[4pt]typology\\winner--control\\couplings};
+\node[io] (corpus) {{\fontsize{19}{22}\selectfont\bfseries Corpus}\\[4pt]45 winners\\+ 11 controls};
+\node[box, right=of corpus] (p1) {{\fontsize{19}{22}\selectfont\bfseries\color{BCBlue}Pass 1}\\[4pt]structured\\field coding};
+\node[box, right=of p1] (p2) {{\fontsize{19}{22}\selectfont\bfseries\color{BCBlue}Pass 2}\\[4pt]paradigm \&\\attribution};
+\node[box, right=of p2] (p3) {{\fontsize{19}{22}\selectfont\bfseries\color{BCBlue}Pass 3}\\[4pt]FE taxonomy\\(53 techniques)};
+\node[result, right=of p3] (out) {{\fontsize{19}{22}\selectfont\bfseries Analyses}\\[4pt]typology\\winner--control\\couplings};
 \draw[arr] (corpus) -- (p1);
 \draw[arr] (p1) -- (p2);
 \draw[arr] (p2) -- (p3);
 \draw[arr] (p3) -- (out);
 \draw[decorate, decoration={brace, amplitude=4pt, mirror}, draw=BCRed, line width=0.8pt]
   ([yshift=-2mm]p1.south west) -- ([yshift=-2mm]p3.south east);
-\node[text=BCRed, font=\fontsize{11}{13}\selectfont\bfseries, below=5mm of p2.south]
+\node[text=BCRed, font=\fontsize{13}{16}\selectfont\bfseries, below=7mm of p2.south]
   {blind intra-rater re-code \textbullet\ $\kappa = 0.65$};
 \end{tikzpicture}%
 }}
-\figcap{Figure 2. Multi-pass coding workflow with a near-winner control group and reliability check.}
+\figcap{Figure 1. Multi-pass coding workflow with a near-winner control group and reliability check.}
 \end{posterblock}
+
+% ---------- COLUMN BREAK ----------
+\columnbreak
 
 \begin{posterblock}{Analytical Framework}
 No model is trained. The unit is one completed solution (no RMSE/accuracy). The framework:
@@ -281,12 +269,16 @@ Visualization  & matplotlib \\
 \end{tabular}
 \end{posterblock}
 
-\begin{posterblock}{Community Structure}
-\textbf{A small recurring guild.} A few authors recur across winners and near-winners; some win, others mainly supply widely-cited techniques (originators vs.\ canonizers).
+\begin{posterblock}{Inside Winning Solutions}
+Sized by how many of the 45 winners use each: a few models and \textbf{ensemble
+stacking} dominate, while feature engineering is a long, varied tail.
 
-\vspace{0.3em}
-\centerline{\includegraphics[width=\linewidth]{fig07_author_centrality}}
-\figcap{Figure 5. Most-central community members, by wins + citations + notable comments.}
+\vspace{0.9em}
+\includegraphics[width=\linewidth]{wordcloud_winning}
+
+\vspace{1.1em}
+\includegraphics[width=\linewidth]{fig01_paradigm_distribution}
+\figcap{Figure 2. Technique vocabulary (word size = winners using it) and the paradigm split.}
 \end{posterblock}
 
 % ---------- COLUMN BREAK ----------
@@ -309,6 +301,14 @@ just restates standard~ensembling.
 \figcap{Figure 4. Coupling-evidence verdicts across the six promoted couplings.}
 \end{posterblock}
 
+\begin{posterblock}{Community Structure}
+\textbf{A small recurring guild.} A few authors recur across winners and near-winners; some win, others mainly supply widely-cited techniques (originators vs.\ canonizers).
+
+\vspace{0.3em}
+\centerline{\includegraphics[width=\linewidth]{fig07_author_centrality}}
+\figcap{Figure 5. Most-central community members, by wins + citations + notable comments.}
+\end{posterblock}
+
 \begin{posterblock}{Discussion \& Conclusions}
 \textbf{Key Takeaways}
 \begin{itemize}[leftmargin=1.4em,itemsep=6pt,topsep=4pt]
@@ -324,9 +324,15 @@ just restates standard~ensembling.
 \textbf{Future Work:} real-data Featured competitions; other platforms and modalities.
 \end{posterblock}
 
+\end{multicols}
+
+% ---------- Full-width References + Acknowledgments band (ancillary) ----------
+\vfill
+\noindent
+\begin{minipage}[t]{0.635\textwidth}
 \begin{posterblock}{References}
 \small
-\begin{enumerate}[leftmargin=1.6em,itemsep=2pt,topsep=3pt]
+\begin{enumerate}[leftmargin=1.6em,itemsep=2pt,topsep=2pt]
   \item Caruana, R., \& Niculescu-Mizil, A. (2006). An empirical comparison of supervised learning algorithms. \textit{ICML}, 161--168.
   \item Gorishniy, Y., et al. (2021). Revisiting deep learning models for tabular data. \textit{NeurIPS 34}.
   \item Borisov, V., et al. (2024). Deep neural networks and tabular data: A survey. \textit{IEEE TNNLS, 35}(6).
@@ -335,21 +341,21 @@ just restates standard~ensembling.
   \item Zhang, T., et al. (2023). OpenFE: Automated feature generation with expert-level performance. \textit{ICML}.
 \end{enumerate}
 \end{posterblock}
-
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.345\textwidth}
 \begin{posterblock}{Acknowledgments \& Contact}
-The author thanks \textbf{Dr.~Pedro Albuquerque} for his guidance throughout CS\,495, and
-the Bellevue College Computer Science program for supporting this capstone.
+The author thanks \textbf{Dr.~Pedro Albuquerque} for his guidance throughout CS\,495, and the
+Bellevue College Computer Science program for supporting this capstone.
 
-\vspace{0.5em}
+\vspace{0.4em}
 \textbf{Contact:} kenneth.young@bellevuecollege.edu\\
-\textbf{Code / Repository:}\\
-github.com/kennethyyoung/CS495-Mapping-Best-Empirical-Models
+\textbf{Code:} github.com/kennethyyoung/CS495-Mapping-Best-Empirical-Models
 \end{posterblock}
-
-\end{multicols}
+\end{minipage}
 
 % ---------- Footer band ----------
-\vfill
+\vspace{0.6em}
 \noindent\begin{tikzpicture}
   \fill[BCBlue] (0,0) rectangle (\textwidth, 2cm);
   \fill[BCRed]  (0,2cm) rectangle (\textwidth, 2.25cm);

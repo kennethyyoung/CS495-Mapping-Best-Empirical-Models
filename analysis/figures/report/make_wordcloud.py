@@ -93,10 +93,8 @@ def render(rel_scaling, suffix):
                    prefer_horizontal=1.0, color_func=color_func, max_words=100,
                    relative_scaling=rel_scaling, margin=6, collocations=False,
                    random_state=42).generate_from_frequencies(freq)
-    fig, ax = plt.subplots(figsize=(12, 6.8))
+    fig, ax = plt.subplots(figsize=(12, 6.0))
     ax.imshow(wc, interpolation='bilinear'); ax.axis('off')
-    ax.set_title('What winning looks like: models, ensembling, and feature engineering\n'
-                 '(word size = number of the 45 winners using it)', fontsize=13, fontweight='bold')
     ax.legend(handles=[Patch(color=MODEL_C, label='Models'),
                        Patch(color=ENS_C, label='Ensembling'),
                        Patch(color=FE_C, label='Feature engineering')],
