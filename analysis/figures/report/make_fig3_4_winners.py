@@ -45,15 +45,19 @@ fig, ax = plt.subplots(figsize=(8, 4.6))
 mx = max(nfe)
 bins = np.arange(0, mx + 2) - 0.5
 ax.hist(nfe, bins=bins, color='#2c6fbb', edgecolor='white')
+ymax = int(np.histogram(nfe, bins=bins)[0].max())
+ax.set_ylim(0, ymax + 4)  # headroom for the n_fe=0 callout above the tall bars
 med = st.median(nfe); mean = st.mean(nfe)
-ax.axvline(med, color='#c0392b', lw=1.6, ls='--', label=f'median = {med}')
+ax.plot([med, med], [0, ymax + 1], color='#c0392b', lw=1.6, ls='--', label=f'median = {med}')  # stop below the top callout
 ax.set_xticks(range(0, mx + 1))
 ax.set_xlabel('number of own FE techniques (n_fe, excl. meta flags)')
 ax.set_ylabel('# of winners')
 ax.set_title(f'Most winners use few of their own FE techniques (median {med}, mean {mean:.1f})', fontsize=12, fontweight='bold')
 z = sum(1 for v in nfe if v == 0)
-ax.annotate(f'{z} winners: forked/\nminimal-only (n_fe=0)', xy=(0, nfe.count(0)), xytext=(1.5, max(nfe.count(0), 1) + 4),
-            fontsize=8.5, color='#444', arrowprops=dict(arrowstyle='->', color='#888', lw=0.8))
+ax.annotate(f'{z} winners: forked/\nminimal-only (n_fe=0)', xy=(0, nfe.count(0) + 0.2),
+            xytext=(0, ymax + 3), ha='left', va='top',
+            fontsize=8.5, color='#444',
+            arrowprops=dict(arrowstyle='->', color='#888', lw=0.8, relpos=(0, 0)))
 ax.annotate('heavyweight tail\n(cdeotte s6e3 = 19)', xy=(mx, 1), xytext=(mx - 8, 5), fontsize=8.5, color='#444',
             arrowprops=dict(arrowstyle='->', color='#888', lw=0.8))
 ax.legend(frameon=False)
