@@ -77,23 +77,23 @@
 \end{frame}
 
 \begin{frame}{But the winners disagree}
-  \begin{center}\large Across the 45 winning solutions:\end{center}
+  \begin{center}\large Among the winners:\end{center}
   \vspace{0.7em}
   \begin{columns}[T]
     \column{0.32\textwidth}
       \begin{center}
-        {\fontsize{42}{46}\selectfont\alert{2}}\\[0.5em]
-        median own features engineered\\ {\small (mean 3.9)}
+        {\fontsize{42}{46}\selectfont\alert{4}}\\[0.5em]
+        median own features\\ {\small (best-documented winners)}
       \end{center}
     \column{0.32\textwidth}
       \begin{center}
         {\fontsize{42}{46}\selectfont\alert{6}}\\[0.5em]
-        winners engineered \emph{none} at all
+        winners engineered\\ \emph{no} features
       \end{center}
     \column{0.32\textwidth}
       \begin{center}
         {\fontsize{42}{46}\selectfont\alert{62\%}}\\[0.5em]
-        simply ensembled existing models
+        simply ensembled\\ existing models
       \end{center}
   \end{columns}
   \vspace{1.3em}
@@ -171,7 +171,7 @@
   \node[io] (corpus) {{\bfseries Corpus}\\[2pt]{\small 45 winners\\+ 11 controls}};
   \node[box, right=of corpus] (p1) {{\bfseries Pass 1}\\[2pt]{\small structured\\field coding}};
   \node[box, right=of p1] (p2) {{\bfseries Pass 2}\\[2pt]{\small paradigm \&\\attribution}};
-  \node[box, right=of p2] (p3) {{\bfseries Pass 3}\\[2pt]{\small FE taxonomy\\(53 techniques)}};
+  \node[box, right=of p2] (p3) {{\bfseries Pass 3}\\[2pt]{\small 53-technique\\FE taxonomy}};
   \node[result, right=of p3] (out) {{\bfseries Analyses}\\[2pt]{\small typology\\winner--control\\couplings}};
   \draw[arr] (corpus) -- (p1);
   \draw[arr] (p1) -- (p2);
@@ -208,10 +208,9 @@
 
 \begin{frame}{What winners actually use}
   \begin{center}
-    \includegraphics[width=0.84\linewidth]{wordcloud_winning}
+    \includegraphics[width=0.95\linewidth,height=0.76\textheight,keepaspectratio]{wordcloud_winning}
   \end{center}
-  \alert{A few models (GBMs) and ensemble stacking dominate;} feature engineering
-  is a long, varied tail, with no single technique universal.
+  {\small\alert{A few models (GBMs) and ensemble stacking dominate;} FE is a long, varied tail.}
 \end{frame}
 
 \begin{frame}{Winning reduces to a few paradigms}
@@ -229,11 +228,12 @@
 
 \begin{frame}{Winning FE is a small shared core}
   \begin{center}
-    \includegraphics[width=0.74\linewidth]{fig04_nfe_distribution}
+    \includegraphics[width=0.68\linewidth,height=0.55\textheight,keepaspectratio]{fig04_nfe_distribution}
   \end{center}
   \vspace{0.2em}
-  The median winner engineers \alert{2} of its own features, and \alert{6 used none}.
-  Target encoding is the one near-universal technique; the rest is a long tail.
+  Even the best-documented winners engineer a median of \alert{4} of their own features
+  (a corpus-wide floor of 2), and \alert{6 used none}. Target encoding is the one
+  near-universal technique; the rest is a long tail.
 \end{frame}
 
 \begin{frame}{FE does not separate winners from near-winners}
@@ -252,7 +252,7 @@
 
 \begin{frame}{Folklore ``rules'' mostly don't hold}
   \begin{center}
-    \includegraphics[width=0.92\linewidth]{coupling_slide}
+    \includegraphics[width=0.88\linewidth,height=0.6\textheight,keepaspectratio]{coupling_slide}
   \end{center}
   \vspace{0.1em}
   The lone green survivor, \alert{linear-stacker dominance}, just restates standard
@@ -310,6 +310,8 @@
   \vspace{0.4em}
   \alert{Future work}
   \begin{itemize}
+    \item Track the emerging \alert{Season-6 shift}: very large (100+ model) ensembles
+          and LLM-assisted workflows the four-paradigm typology will need to absorb.
     \item Real-data Featured competitions; other platforms and modalities.
   \end{itemize}
 \end{frame}
@@ -325,43 +327,43 @@
 % =================================================================
 
 \begin{frame}{Appendix: coupling evidence (detailed)}
-  \begin{center}\includegraphics[width=0.9\linewidth]{fig02_coupling_evidence}\end{center}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig02_coupling_evidence}\end{center}
 \end{frame}
 
 \begin{frame}{Appendix: feature-engineering technique long tail}
-  \begin{center}\includegraphics[width=0.9\linewidth]{fig03_technique_longtail}\end{center}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig03_technique_longtail}\end{center}
 \end{frame}
 
 \begin{frame}{Appendix: paired winner vs.\ control ($n_{fe}$)}
-  \begin{center}\includegraphics[width=0.9\linewidth]{fig06_paired_winner_control}\end{center}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig06_paired_winner_control}\end{center}
 \end{frame}
 
 \begin{frame}{Appendix: cdeotte, observer to dominant winner}
-  \begin{center}\includegraphics[width=0.9\linewidth]{fig08_cdeotte_timeline}\end{center}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig08_cdeotte_timeline}\end{center}
 \end{frame}
 
 \begin{frame}{Appendix: paradigm composition by era}
-  \begin{center}\includegraphics[width=0.9\linewidth]{fig09_paradigm_by_era}\end{center}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig09_paradigm_by_era}\end{center}
 \end{frame}
 
 \begin{frame}{Appendix: dataset size by paradigm}
-  \begin{center}\includegraphics[width=0.9\linewidth]{fig10_n_rows_by_paradigm}\end{center}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig10_n_rows_by_paradigm}\end{center}
 \end{frame}
 
 \begin{frame}{Appendix: external-original use by paradigm}
-  \begin{center}\includegraphics[width=0.9\linewidth]{fig11_use_mode_by_paradigm}\end{center}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig11_use_mode_by_paradigm}\end{center}
 \end{frame}
 
 \begin{frame}{Appendix: photo-finish rate by paradigm}
-  \begin{center}\includegraphics[width=0.9\linewidth]{fig12_photofinish_by_paradigm}\end{center}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig12_photofinish_by_paradigm}\end{center}
 \end{frame}
 
 \begin{frame}{Appendix: most-canonized techniques}
-  \begin{center}\includegraphics[width=0.9\linewidth]{fig13_canonized_techniques}\end{center}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig13_canonized_techniques}\end{center}
 \end{frame}
 
 \begin{frame}{Appendix: citations by origination score}
-  \begin{center}\includegraphics[width=0.9\linewidth]{fig14_citations_by_origination}\end{center}
+  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig14_citations_by_origination}\end{center}
 \end{frame}
 
 \end{document}
