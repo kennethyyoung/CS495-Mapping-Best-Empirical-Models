@@ -66,17 +66,17 @@
 \section{Motivation}
 % =================================================================
 
-\begin{frame}{The folklore}
+\begin{frame}{The conventional wisdom}
   \vspace{0.8em}
   \begin{center}
-    {\Large Winning a tabular Kaggle competition is supposed to be}\\[0.5em]
+    {\Large Winning a tabular Kaggle competition is widely taken to be}\\[0.5em]
     {\Large about \alert{elaborate feature engineering}.}\\[1.6em]
-    {\large\color{kc-muted} The clever, hand-crafted features that
-     separate the best from the rest.}
+    {\large\color{kc-muted} Clever, hand-crafted features that
+     set the winners apart.}
   \end{center}
 \end{frame}
 
-\begin{frame}{But the winners disagree}
+\begin{frame}{Yet winners do modest feature engineering}
   \begin{center}\large Among the winners:\end{center}
   \vspace{0.7em}
   \begin{columns}[T]
@@ -98,7 +98,7 @@
   \end{columns}
   \vspace{1.3em}
   \begin{center}
-    \large Winning isn't the feature-engineering craft the folklore promises.
+    \large Feature-engineering volume looks less decisive than the conventional view suggests.
   \end{center}
 \end{frame}
 
@@ -106,7 +106,7 @@
   \begin{itemize}
     \item Folk wisdom lives in blog posts, forum threads, and winner interviews.
     \item Academic benchmarks compare \alert{algorithms} on fixed datasets,
-          never \alert{winners} against strong non-winners.
+          rarely \alert{winners} against strong non-winners.
     \item Nobody has systematically asked what \emph{distinguishes} a winning
           solution from a near-winning one.
   \end{itemize}
@@ -236,18 +236,40 @@
   near-universal technique; the rest is a long tail.
 \end{frame}
 
-\begin{frame}{FE does not separate winners from near-winners}
+\begin{frame}{Aggregate FE: controls look like they do \emph{more}}
   \begin{columns}[c]
-    \column{0.52\textwidth}
+    \column{0.55\textwidth}
     \includegraphics[width=\linewidth]{fig05_fe_prevalence_winners_vs_controls}
-    \column{0.48\textwidth}
+    \column{0.45\textwidth}
     \begin{itemize}
-      \item Aggregate: controls do \emph{more} FE, but that's a confound (their
-            competitions are FE-heavy)
-      \item Paired, within-competition: winners do more in \alert{7 of 11} (n.s.)
-      \item \alert{Learned features} are the one family that consistently leans winner
+      \item Pooled across all entries, controls match or beat winners on nearly
+            every FE family.
+      \item But this is a \alert{confound}: the 11 competitions that have codeable
+            controls are FE-heavy (winner median $n_{fe}=6$ vs.\ corpus-wide 2).
+      \item So the aggregate measures a \alert{competition-mix} difference --- not
+            a winner-vs.-control one.
     \end{itemize}
   \end{columns}
+\end{frame}
+
+\begin{frame}{Paired within-competition: the gap reverses (still n.s.)}
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+    \includegraphics[width=\linewidth]{fig06_paired_winner_control}
+    \column{0.45\textwidth}
+    \begin{itemize}
+      \item Each control vs.\ the winner of its \emph{own} competition removes the
+            mix confound.
+      \item Winners do more in \alert{7 of 11} pairs; medians \alert{6 vs.\ 3}.
+      \item Modest, \alert{not significant} ($n=11$, $p\approx0.34$) --- a
+            directional correction.
+      \item \alert{Learned features} (Group G) lean winner, \emph{never} controls
+            --- the edge that resists copying.
+    \end{itemize}
+  \end{columns}
+  \vspace{0.4em}
+  \begin{center}\small Either framing: FE volume does not \alert{cleanly separate}
+  winners from near-winners.\end{center}
 \end{frame}
 
 \begin{frame}{Folklore ``rules'' mostly don't hold}
@@ -274,6 +296,21 @@
   (originators vs.\ canonizers); recognition accrues to the already-prominent.
 \end{frame}
 
+\begin{frame}{How membership forms}
+  \begin{center}
+    \includegraphics[width=0.92\linewidth,height=0.58\textheight,keepaspectratio]{fig08_cdeotte_timeline}
+  \end{center}
+  \vspace{0.1em}
+  \begin{itemize}
+    \item The most central figure: \alert{observer in Feb 2023} $\rightarrow$
+          \alert{six wins} by Mar 2026.
+    \item Nearly \alert{two years} of comments, citations, and non-winning entries
+          \emph{before} the first win.
+    \item Recognition follows \alert{participation}, not just skill --- the
+          \emph{order} of events is the point.
+  \end{itemize}
+\end{frame}
+
 
 % =================================================================
 \section{Conclusions}
@@ -281,9 +318,10 @@
 
 \begin{frame}{Three takeaways}
   \begin{enumerate}
-    \item Winning \alert{$\neq$ FE folklore}: a small shared core, not elaborate craft.
+    \item Feature engineering is a \alert{small shared core}, not the elaborate
+          craft commonly assumed.
     \item \alert{Learned features} are the one feature-level edge that resists
-          copying from a public notebook.
+          copying (directional, on small counts).
     \item Winning is, in part, a \alert{community phenomenon}.
   \end{enumerate}
 \end{frame}
@@ -332,14 +370,6 @@
 
 \begin{frame}{Appendix: feature-engineering technique long tail}
   \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig03_technique_longtail}\end{center}
-\end{frame}
-
-\begin{frame}{Appendix: paired winner vs.\ control ($n_{fe}$)}
-  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig06_paired_winner_control}\end{center}
-\end{frame}
-
-\begin{frame}{Appendix: cdeotte, observer to dominant winner}
-  \begin{center}\includegraphics[width=0.9\linewidth,height=0.82\textheight,keepaspectratio]{fig08_cdeotte_timeline}\end{center}
 \end{frame}
 
 \begin{frame}{Appendix: paradigm composition by era}
