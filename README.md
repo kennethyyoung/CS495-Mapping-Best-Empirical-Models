@@ -1,6 +1,6 @@
-# Mapping Best Empirical Models: A Meta-Analysis of Winning Kaggle Solutions
+# Winning Strategies in Kaggle Tabular Competitions: A Content Analysis of Top-Finishing and Near-Winning Solutions
 
-A systematic content-analysis meta-analysis of winning solutions across recent Kaggle **tabular** competitions, asking not which models *benchmark* best but which approaches actually *win* — and what, beyond model choice, separates winning pipelines from strong non-winners.
+A systematic content analysis of winning solutions across recent Kaggle **tabular** competitions, asking not which models *benchmark* best but which approaches actually *win* — and what, beyond model choice, separates winning pipelines from strong non-winners.
 
 ## Overview
 
