@@ -30,3 +30,6 @@ private/
 
 # Claude Code local config / state
 .claude/
+
+# Local working journal (session logs / planning notes) -- kept out of the public repo
+journal/
