@@ -1,0 +1,18 @@
+% Map the Unicode math/Greek symbols used in the report to LaTeX equivalents.
+% Latin Modern (the xelatex default body font) lacks these glyphs, which would
+% otherwise drop out with "Missing character" warnings.
+% Figure captions are authored with their own "Figure N." prefix; suppress the
+% automatic "Figure N:" label so it isn't doubled (and keeps the numbers aligned
+% with the hard-coded "(Figure N)" references in the prose).
+\usepackage{caption}
+\captionsetup{labelformat=empty}
+
+\usepackage{amssymb}
+\usepackage{newunicodechar}
+\newunicodechar{κ}{\ensuremath{\kappa}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
