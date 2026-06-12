@@ -1383,3 +1383,35 @@ Both described the *original plan* (35 entries, a decision-flowchart deliverable
 4. **Posters silently overstate — re-verify load-bearing claims against the report.** "FE does not separate winners" dropped the report's careful "not cleanly … underpowered (n=11)" — turning a hedged null into an overclaim. Compress aggressively, but never drop a hedge that's doing scientific work.
 5. **Verify references exist AND have an in-text place.** Web-checking caught a wrong year, two mislabeled arXiv IDs, and an unsourceable author; the placement audit caught two entries with no in-text citation (APA requires dropping them).
 6. **Investigate before deleting.** The "corrupt `.bak` footgun" was actually the documented input to the rebuild scripts — the right move was to label it, not delete it.
+
+---
+
+## Session 26 — Jun 11, 2026
+
+**Branches:** `phase12/slide-presentation` (deck + figure fixes) → `phase12/report-pdf` (report PDF build).
+**Topic:** Slide-deck review pass and two figure-driven restructures; fixed a misleading figure that surfaced a stale report number; then built the markdown report into a PDF (pandoc → xelatex).
+
+### Slide deck — fidelity + restructure (`phase12/slide-presentation`)
+- **Opening slide tone pass:** "folklore"/"conventional wisdom" softened; subtitle "separate the best from the rest" → "set the winners apart." (Left open: who *makes* the conventional-wisdom claim — report attributes it to *practitioners* via blogs/tutorials/talks; opening slide still floats it unattributed. Also a leftover "Folk wisdom lives in blog posts…" line on the gap slide.)
+- **fig08 (cdeotte timeline) — fixed a genuinely misleading figure.** The legend said `CITED n=0` while the centrality figure showed cdeotte cited. Root cause: fig08 assigned each entry ONE status by priority `WIN > COMMENTER > CITED`, so all 6 citation-entries (each also a commenter entry) collapsed into COMMENTER. Redrew as **independent role swimlanes** (an entry can appear in several lanes) so the 6 citations show as blue dots under their commenter dots. Also moved the first-presence label below the absent dots (it had covered them). Built a standalone openpyxl+matplotlib regenerator (`make_fig08_cdeotte_timeline.py`) since pandas isn't installed, and updated notebook cell 44 to match.
+- **Stale report number caught via the figure.** Labeling fig08's WIN lane forced a `finish_rank` check: cdeotte has **6 top-3 author entries (5 first)**, not "four wins." Report §4.6 said "four wins"; verifying the whole sentence also caught mahoganybuttstrings "four"→**three**. Fixed both + "fourteen months"→"fifteen months" (Dec 2024 → Mar 2026). "Win" = top-3 throughout the study (30/9/6 across 45), so the figure's `wins (n=6)` is the consistent label; the prose was the outlier.
+- **RQ3 two-beat.** The "FE doesn't separate winners" slide showed only fig05 (aggregate prevalence) — whose visual reading ("controls do *more*") contradicts the headline — and buried fig06 (the within-competition **paired** test, the actual RQ3 answer) in the appendix. Split into two beats: **aggregate-confound (fig05) → paired-reversal (fig06)**, promoting fig06 out of the appendix. Walks the Simpson's-paradox reversal visually instead of asserting it.
+- **fig08 promoted** to a "How membership forms" slide after the guild slide (mechanism after structure), paralleling the FE two-beat. Removed both promoted figures from the appendix (no duplication).
+- **fig10 declutter.** Dropped the orphaned "cdeotte 50K threshold" line — it marked contradicted coupling C5, is never referenced by the figure's own §4.8 text, can't be visualized by a size-only plot, and collided with the 100K tick. Standalone regenerator + notebook cell 24 update.
+- Committed (`a4c25dc`) and pushed.
+
+### Report PDF build (`phase12/report-pdf`)
+- Branched from the slide branch deliberately: **`main` has neither the report nor the figures** (they live only on the phase branches), so a PDF build must base on the current report + fixed figures.
+- Toolchain (user chose pandoc → LaTeX): installed **pandoc 3.10** via winget; MiKTeX xelatex already present. Built a reusable `build_pdf.ps1` + `metadata.yaml` + `header.tex`; output `research_report_v2.pdf` (32 pp, letter, title block + TOC). Committed (`98dd998`) and pushed.
+- Three build bugs fixed: (1) **CP932 mojibake** — `Get-Content` read the UTF-8 source in the system Japanese codepage; fixed with `-Encoding UTF8`. (2) **5 missing glyphs** (κ α ≥ ≈ ∈) absent from Latin Modern — mapped to math equivalents via `newunicodechar` rather than swapping the body font. (3) **Doubled figure labels** ("Figure 1: Figure 1.") — captions are authored with their own "Figure N."; suppressed pandoc's auto label (`\captionsetup{labelformat=empty}`), which also keeps numbering aligned with the prose's hard-coded "(Figure N)" refs.
+- **False alarm I should not have raised:** flagged "the PDF doesn't include references" without checking. §6 has 10 verified APA entries + a primary-data note, and they render correctly on pp. 31–32. Corrected on inspection.
+
+### Current state
+`phase12/report-pdf` (pushed). Report PDF builds clean (0 missing-char warnings) and is verified page-by-page (title/TOC, a figure with single caption, Table 1, references). Slide deck is at 18 main frames + appendix, all today's figure fixes propagated to report + deck. **Remaining (deck):** opening-slide attribution, the "Folk wisdom" leftover line. **Open question:** report PDF is markdown-built; no References-as-bibliography automation (entries are hand-authored paragraphs — fine for this report).
+
+**Lessons learned this session:**
+1. **A figure whose one-glance reading contradicts your claim is a liability in a *talk*.** fig05 ("controls do more") needed spoken correction; fig06 (paired) matches the headline. Posters can carry the nuance in a caption; linear talks should show the figure that *is* the punchline. Hence the two-beat.
+2. **A mutually-exclusive status collapses co-occurring roles — and hides data.** fig08's priority rule silently zeroed CITED. When an entity can hold several roles at once, plot them independently (swimlanes), don't rank-and-pick.
+3. **Labeling a figure forces a data check that prose review misses.** "What does the WIN lane count?" exposed the stale "four wins" in §4.6 (and a second stale count next to it). Touch a number → verify the number.
+4. **Check before flagging.** I told the user references were missing without reading §6; they were present and complete. Don't speculate about artifacts I can open.
+5. **Match the build's encoding to the file, not the OS.** The PDF mojibake was entirely a CP932-default `Get-Content` reading UTF-8 — explicit `-Encoding UTF8` is mandatory on this machine.
