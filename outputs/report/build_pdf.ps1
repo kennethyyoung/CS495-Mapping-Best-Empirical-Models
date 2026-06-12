@@ -30,6 +30,7 @@ Set-Content -Path $tmpMd -Value $body -Encoding utf8
 
 try {
     & $pandoc $tmpMd `
+        --from=markdown+autolink_bare_uris `
         --metadata-file metadata.yaml `
         --include-in-header header.tex `
         --resource-path "$here" `
