@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "cs495-mapping-best-empirical-models"
 version = "0.1.0"
-description = "Mapping Best Empirical Models"
+description = "Winning Strategies in Kaggle Tabular Competitions"
 readme = "README.md"
 
 [tool.poetry.dependencies]

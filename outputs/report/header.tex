@@ -16,3 +16,17 @@
 \newunicodechar{∈}{\ensuremath{\in}}
 \newunicodechar{×}{\ensuremath{\times}}
 \newunicodechar{→}{\ensuremath{\rightarrow}}
+
+% Keep long inline code and URLs inside the text margins.
+% Long file paths / identifiers in inline code (e.g. data/kaggle_meta_analysis.xlsx)
+% and long DOIs/arXiv URLs in the reference list otherwise overflow the right
+% margin as unbreakable tokens. Make both breakable.
+\usepackage{seqsplit}
+\let\origtexttt\texttt
+\renewcommand{\texttt}[1]{\origtexttt{\seqsplit{#1}}}
+
+% Break long DOIs/arXiv URLs anywhere (incl. between digits) so reference
+% entries stay within the right margin. xurl patches \url to allow this; it
+% cooperates with the hyperref the pandoc template loads after this header.
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
